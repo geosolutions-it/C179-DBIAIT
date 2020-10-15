@@ -1,2 +1,27 @@
+# build artifacts
+*.pyc
+*.egg-info
+build
+target
+pip-log.txt
+MANIFEST
+dist
+.idea/
+.vscode/
+.pytest_cache/
 /.idea
+
+# OSX specific
+.Python
+.DS_Store
+
+# virtual env
+/venv
 /pyenv
+
+# sqlite DB
+*.sqlite3*
+
+# cache files
+*__pycache__*
+*.pyc*
