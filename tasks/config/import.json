@@ -1,4 +1,5 @@
 {
+	"domains": "",
 	"featureclasses": [
 		 "A_ACQ_ACCUMULO"
 		,"A_ACQ_ADDUTTRICE"
