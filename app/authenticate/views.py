@@ -8,7 +8,7 @@ from django.urls import reverse
 class LoginView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            print("Redirect user to dashboard")
+            return render(request, 'dashboard/index.html')
         return render(request, 'login/index.html')
 
     def post(self, request):
@@ -18,9 +18,10 @@ class LoginView(View):
         user = authenticate(username=username, password=password)
         if user and user.is_active:
             login(request, user)
-            print("Redirect user to dashboard")
+            return render(request, 'dashboard/index.html')
 
-        return render(request, 'login/index.html')
+        context = {"message": "Your username or password was incorrect."}
+        return render(request, 'login/index.html', context=context)
 
 
 def logout_view(request):
