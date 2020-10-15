@@ -14,8 +14,10 @@ def import_gpkg():
     for i in range(steps):
         offset = i*MAX_TABLES_PER_RUN
         limit = MAX_TABLES_PER_RUN
+        #Import of Feature Classes
         subprocess.call("python " + DIR_NAME + "/import_task.py " + str(offset) + " " + str(limit), shell=False)
-
+    #Import of Domains
+    subprocess.call("python " + DIR_NAME + "/import_csv.py", shell=False)
 
 if __name__ == "__main__":
     import_gpkg()

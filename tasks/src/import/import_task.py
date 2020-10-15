@@ -1,53 +1,26 @@
 #!/usr/bin/python3
 import os
 import sys
+#sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import traceback
 import json
-from base_task import BaseTask
+from import_task_base import ImportTaskBase
 from qgis.core import *
-from qgis.analysis import QgsNativeAlgorithms
-
-qgis_path = r'C:\OSGeo4W64\apps\qgis'
-QgsApplication.setPrefixPath(qgis_path, True)
-qgs = QgsApplication([], True)
-qgs.initQgis()
-# Add the path to processing so we can import it next
-sys.path.append(qgis_path + r'\python\plugins')
-# Imports usually should be at the top of a script but this unconventional
-# order is necessary here because QGIS has to be initialized first
-import processing
-from processing.core.Processing import Processing
-from processing.tools import postgis
-
-Processing.initialize()
-QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
-
-# list available algorithms
-#for alg in QgsApplication.processingRegistry().algorithms():
-#    print(alg.id(), "->", alg.displayName())
-
-DB_CONNECTION_NAME = 'DBIAIT'
 
 
-class ImportTask(BaseTask):
+class ImportTask(ImportTaskBase):
 
     def __init__(self, config=None, offset=0, limit=50):
-        BaseTask.__init__(self, config)
-        self.gpkg_path = self.get_parameter("GPKG_PATH")
-        self.qgis_path = self.get_parameter("QGIS_PATH")
-        self.database = self.get_parameter("DATABASE")
-        self.qs_pg_prefix = "PostgreSQL/connections/" + DB_CONNECTION_NAME + "/"
-        self.context = QgsProcessingContext()
-        self.offset = offset
-        self.limit = limit
+        ImportTaskBase.__init__(self, config, offset, limit)
 
     @staticmethod
     def get_feature_classes():
         """
         Read list of Feature Classes to import from the configuration file (import.json)
         """
-        dirname = os.path.dirname(__file__)
-        config_file = os.path.join(dirname, "../config/import.json")
+        #dirname = os.path.dirname(__file__)
+        #config_file = os.path.join(dirname, "../../config/import.json")
+        config_file = os.path.join(ImportTaskBase.get_config_folder(), 'import.json')
         with open(config_file, 'r') as cfg:
             config = json.load(cfg)
         fc_list = config["featureclasses"]
@@ -113,7 +86,7 @@ class ImportTask(BaseTask):
             # Export in PostgreSQL
             alg_params = {
                 'CREATEINDEX': True,
-                'DATABASE': DB_CONNECTION_NAME,
+                'DATABASE': ImportTaskBase.DB_CONNECTION_NAME(),
                 'DROP_STRING_LENGTH': False,
                 'ENCODING': 'UTF-8',
                 'FORCE_SINGLEPART': False,
@@ -125,33 +98,11 @@ class ImportTask(BaseTask):
                 'SCHEMA': self.database['SCHEMA'],
                 'TABLENAME': name
             }
-            result = processing.run('qgis:importintopostgis', alg_params, context=self.context, feedback=feedback, is_child_algorithm=True)
+            result = self.processing.run('qgis:importintopostgis', alg_params, context=self.context, feedback=feedback, is_child_algorithm=True)
         except Exception as e:
             print(e)
             traceback.print_exc()
         return result
-
-    def define_pg_connection(self):
-        """
-        Define QgsSettings to make connection available by name to the ImportToPG algorithm
-        """
-        qs = QgsSettings()
-        qs.setValue(self.qs_pg_prefix + "allowGeometrylessTables", True)
-        qs.setValue(self.qs_pg_prefix + "authcfg", "")
-        qs.setValue(self.qs_pg_prefix + "database", self.database["DATABASE"])
-        qs.setValue(self.qs_pg_prefix + "dontResolveType", False)
-        qs.setValue(self.qs_pg_prefix + "estimatedMetadata", False)
-        qs.setValue(self.qs_pg_prefix + "geometryColumnsOnly", False)
-        qs.setValue(self.qs_pg_prefix + "host", self.database["HOST"])
-        qs.setValue(self.qs_pg_prefix + "port", self.database["PORT"])
-        qs.setValue(self.qs_pg_prefix + "username", self.database["USERNAME"])
-        qs.setValue(self.qs_pg_prefix + "password", self.database["PASSWORD"])
-        qs.setValue(self.qs_pg_prefix + "projectsInDatabase", False)
-        qs.setValue(self.qs_pg_prefix + "publicOnly", False)
-        qs.setValue(self.qs_pg_prefix + "savePassword", True)
-        qs.setValue(self.qs_pg_prefix + "saveUsername", True)
-        qs.setValue(self.qs_pg_prefix + "service", "")
-        qs.setValue(self.qs_pg_prefix + "sslmode", "SslDisable")
 
     def run(self):
         """
