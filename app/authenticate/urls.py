@@ -1,4 +1,4 @@
-from C179.authenticate.views import LoginView, logout_view
+from app.authenticate.views import LoginView, logout_view
 from django.urls import path
 
 urlpatterns = [

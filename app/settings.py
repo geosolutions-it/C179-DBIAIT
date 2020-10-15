@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'C179.authenticate'
+    'app.authenticate'
 ]
 
 MIDDLEWARE = [
@@ -55,13 +55,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'C179.urls'
+ROOT_URLCONF = 'app.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'app', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'C179.wsgi.application'
+WSGI_APPLICATION = 'app.wsgi.application'
 
 
 # Database
@@ -144,8 +143,8 @@ AUTH_LDAP_USER_ATTR_MAP = {
 
 AUTH_LDAP_ALWAYS_UPDATE_USER = ast.literal_eval(os.getenv('AUTH_LDAP_ALWAYS_UPDATE_USER', 'True'))
 
-AUTH_LDAP_GROUP_BASE = "ou=roles,dc=wimpi,dc=net"
-AUTH_LDAP_GROUP_FILTER = "(cn=admin)"
+AUTH_LDAP_GROUP_BASE = os.getenv("AUTH_LDAP_GROUP_BASE", "ou=roles,dc=wimpi,dc=net")
+AUTH_LDAP_GROUP_FILTER = os.getenv("AUTH_LDAP_GROUP_FILTER", "(cn=admin)")
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(AUTH_LDAP_GROUP_BASE, ldap.SCOPE_SUBTREE, AUTH_LDAP_GROUP_FILTER)
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
