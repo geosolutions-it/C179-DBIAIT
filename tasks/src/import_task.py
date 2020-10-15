@@ -102,16 +102,15 @@ class ImportTask(BaseTask):
             layer = self._get_gpkg_vector_layer(name.upper())
         return layer
 
-    def import_into_postgis(self, name, cont):
+    def import_into_postgis(self, name, cont, feedback):
         """
         Run the importintopostgis algorithm
         """
         result = None
         try:
-            feedback = QgsProcessingFeedback()
             vlayer = self.get_gpkg_vector_layer(name)
             print("importing layer (" + str(cont) + "): " + name + " => " + str(vlayer.featureCount()))
-            # Esporta in PostgreSQL
+            # Export in PostgreSQL
             alg_params = {
                 'CREATEINDEX': True,
                 'DATABASE': DB_CONNECTION_NAME,
@@ -166,18 +165,18 @@ class ImportTask(BaseTask):
         to_load = self.get_feature_classes()
         cont = self.offset
         n_step = len(to_load)
-        #fbk = QgsProcessingFeedback()
-        #feedback = QgsProcessingMultiStepFeedback(self.limit, fbk)
+        fbk = QgsProcessingFeedback()
+        feedback = QgsProcessingMultiStepFeedback(self.limit, fbk)
         if n_step > 0:
             prg_step = 100.0/n_step
             for layername in to_load[self.offset:self.offset+self.limit]:
                 cont += 1
                 print(layername + ": " + str(cont))
-                self.import_into_postgis(layername.lower(), cont)
-                #prg = cont/n_step
-                #feedback.setCurrentStep(cont-self.offset)
-                #if feedback.isCanceled():
-                #    break
+                self.import_into_postgis(layername.lower(), cont, feedback)
+                prg = cont/n_step
+                feedback.setCurrentStep(cont-self.offset)
+                if feedback.isCanceled():
+                    break
 
 
 if __name__ == "__main__":

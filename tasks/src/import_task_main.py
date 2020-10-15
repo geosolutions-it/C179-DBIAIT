@@ -16,5 +16,6 @@ def import_gpkg():
         limit = MAX_TABLES_PER_RUN
         subprocess.call("python " + DIR_NAME + "/import_task.py " + str(offset) + " " + str(limit), shell=False)
 
+
 if __name__ == "__main__":
     import_gpkg()
