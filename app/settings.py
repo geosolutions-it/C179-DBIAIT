@@ -128,6 +128,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
 AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://127.0.0.1:10389")
 
@@ -136,21 +137,29 @@ AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "secret")
 AUTH_LDAP_USER_DN_TEMPLATE = os.getenv("USER_DN_TEMPLATE", 'uid=%(user)s,ou=users,dc=wimpi,dc=net')
 
 AUTH_LDAP_USER_ATTR_MAP = {
-    'first_name': os.getenv("LDAP_FIRST_NAME", 'cn'),
+    'first_name': os.getenv("LDAP_FIRST_NAME", 'givenName'),
     'last_name': os.getenv("LDAP_LAST_NAME", 'sn'),
-    'email': os.getenv("LDAP_EMAIL", 'samaccountname'),
+    'email': os.getenv("LDAP_EMAIL", 'mail'),
 }
 
 AUTH_LDAP_ALWAYS_UPDATE_USER = ast.literal_eval(os.getenv('AUTH_LDAP_ALWAYS_UPDATE_USER', 'True'))
 
+
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
+AUTH_LDAP_FIND_GROUP_PERMS = True
+AUTH_LDAP_CACHE_GROUPS = True
+
+AUTH_LDAP_MIRROR_GROUPS = True
+
 AUTH_LDAP_GROUP_BASE = os.getenv("AUTH_LDAP_GROUP_BASE", "ou=roles,dc=wimpi,dc=net")
-AUTH_LDAP_GROUP_FILTER = os.getenv("AUTH_LDAP_GROUP_FILTER", "(cn=admin)")
+
+AUTH_LDAP_GROUP_FILTER = os.getenv("AUTH_LDAP_GROUP_FILTER", "(|(CN=managements)(CN=administrators)(CN=operators))")
+
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(AUTH_LDAP_GROUP_BASE, ldap.SCOPE_SUBTREE, AUTH_LDAP_GROUP_FILTER)
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    'is_staff': AUTH_LDAP_GROUP_BASE,
-    'is_support': AUTH_LDAP_GROUP_BASE,
-    'is_superuser': AUTH_LDAP_GROUP_BASE,
+    'is_staff': "cn=managements,{}".format(AUTH_LDAP_GROUP_BASE),
+    'is_superuser': "cn=administrators,{}".format(AUTH_LDAP_GROUP_BASE),
 }
 
 AUTHENTICATION_BACKENDS = (
