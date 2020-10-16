@@ -1,0 +1,11 @@
+.base-footer {
+    border-top: 1px solid;
+    padding: 1% 0% 1% 0%;
+    text-align: center;
+    background-color: #222222;
+    color: #ffffff;
+}
+
+.login-form {
+    margin-top: 6%;
+}
