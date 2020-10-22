@@ -29,14 +29,22 @@ CREATE TABLE DBIAIT_ANALYSIS.DISTRIB_LOC_SERV (
 
  -- DEFINZIONE DEI CAMPI???
 CREATE TABLE DBIAIT_ANALYSIS.POP_RES_COMUNE (
-	PRO_COM VARCHAR(5),
-	DENOM VARCHAR(100),
-	D_AMBITO VARCHAR(100)
+	PRO_COM 	VARCHAR(8),
+	DENOM 		VARCHAR(100),
+	POP_RES 	INTEGER,
+	anno 		INTEGER,
+	D_AMBITO 	VARCHAR(8),
+	perc_acq 	double precision,
+	pop_ser_acq INTEGER,
+	perc_fgn 	double precision,
+	pop_ser_fgn INTEGER,
+	perc_dep 	double precision,
+	pop_ser_dep INTEGER
 );
 
 CREATE TABLE DBIAIT_ANALYSIS.DISTRIB_COM_SERV(
 	codice_opera 		VARCHAR(32) NOT NULL,				
-	id_comune_istat 	VARCHAR(4) NOT NULL,
+	id_comune_istat 	VARCHAR(8) NOT NULL,
 	perc_popsrv			double precision NOT NULL DEFAULT 0.0,
 	PRIMARY KEY(codice_opera, id_comune_istat)
 );
@@ -271,7 +279,7 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE(
 	codice_ato		VARCHAR(32),
 	tipo_infr		VARCHAR(100),
 	lunghezza 		double precision,
-	lunghezza_dep 	double precision,
+	lunghezza_dep 	double precision
 );
 
 --Lunghezze???
@@ -282,7 +290,7 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_ALLACCIO(
 	nr_allacci 		INTEGER,
 	lung_alla 		double precision,
 	nr_allacci_ril 	INTEGER,
-	lung_alla_ril	double precision,
+	lung_alla_ril	double precision
 );
 
 --Lunghezze???
@@ -490,7 +498,7 @@ CREATE TABLE DBIAIT_ANALYSIS.POTAB_INRETI(
 
 CREATE TABLE DBIAIT_ANALYSIS.ADDUT_COM_SERV(
 	ids_codice 		VARCHAR(32), 
-	id_comune_istat VARCHAR(4)
+	id_comune_istat VARCHAR(8)
 );
 
 CREATE TABLE DBIAIT_ANALYSIS.ADDUT_INRETI(
@@ -525,7 +533,7 @@ CREATE TABLE DBIAIT_ANALYSIS.POMPAGGI_INSERBA(
 
 CREATE TABLE DBIAIT_ANALYSIS.COLLET_COM_SERV(
 	ids_codice 		VARCHAR(32), 
-	id_comune_istat VARCHAR(4)
+	id_comune_istat VARCHAR(8)
 );
 
 CREATE TABLE DBIAIT_ANALYSIS.DEPURATO_INCOLL(
