@@ -1,5 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>this is the dashboard</h1>
+<div class="container dashboard">
+    <div class="row">
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'import-view' %}">
+                <i class="glyphicon glyphicon-import"></i>
+                <h5>IMPORT</h5>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'export-view' %}">
+                <i class="glyphicon glyphicon-export"></i>
+                <h5>EXPORT</h5>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'process-view' %}">
+                <i class="glyphicon glyphicon-cog"></i>
+                <h5>PROCESS</h5>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'freeze-view' %}">
+                <i class="glyphicon glyphicon-hourglass"></i>
+                <h5>FREEZE</h5>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'configuration-view' %}">
+                <i class="glyphicon glyphicon-wrench"></i>
+                <h5>CONFIGURAZIONI</h5>
+            </a>
+        </div>
+    </div>  
+</div>  
 {% endblock %}

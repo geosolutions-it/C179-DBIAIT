@@ -67,6 +67,8 @@ DRAMATIQ_BROKER = {
 
 DRAMATIQ_TASKS_DATABASE = "default"
 
+LOGIN_URL = 'auth/'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

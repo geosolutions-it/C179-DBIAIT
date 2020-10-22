@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="tab">
+    <a href="{% url 'import-view' %}" class="tablinks{% if current_url == 'import-view'%} active{% endif %}">Corrente</a>
+    <a href="{% url 'historical-import-view' %}" class="tablinks{% if current_url == 'historical-import-view'%} active{% endif %}">Storico</a>
+</div>
+    {% block import_content %}
+    <div class="col-md-4 col-md-offset-4">
+        <form method="post" class="top-spacing">
+            {% csrf_token %}
+            <div class="form-group">
+                <select class="form-control form-control-lg">
+                    <option>XYZ.gpkg</option>
+                    <option>ABC.gpkg</option>
+                    <option>FGH.gpkg</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mb-2 btn-block">AVVIA</button>
+        </form>
+    </div>
+    {% endblock %}
+{% endblock %}
