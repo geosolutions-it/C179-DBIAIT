@@ -7,3 +7,6 @@ pyasn1-modules==0.2.8
 python-ldap==3.3.1
 pytz==2020.1
 sqlparse==0.4.1
+django-dramatiq==0.9.1
+dramatiq==1.9.0
+pika==1.1.0
