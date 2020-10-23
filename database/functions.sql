@@ -165,6 +165,7 @@ BEGIN
 	DELETE FROM DISTRIB_COM_SERV;
 	
 	-- populate table
+	EXECUTE '
 	INSERT INTO DISTRIB_COM_SERV(codice_opera, id_comune_istat, perc_popsrv)
 	select t1.codice_ato, t1.pro_com, 100*t1.pop_ser_acq/p.pop_res perc_acq
 	from (
@@ -172,13 +173,139 @@ BEGIN
 		from(
 			SELECT codice_ato, l.pro_com::VARCHAR, popres, ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc 
 			FROM ACQ_RETE_DISTRIB r, LOCALITA l
-			WHERE r.D_GESTORE = 'PUBLIACQUA' AND COALESCE(r.D_AMBITO, 'AT3')='AT3' 
-				AND r.D_STATO NOT IN ('IPR','IAC')
+			WHERE r.D_GESTORE = ''PUBLIACQUA'' AND COALESCE(r.D_AMBITO, ''AT3'')=''AT3'' 
+				AND r.D_STATO NOT IN (''IPR'',''IAC'')
 				AND r.geom && l.geom AND ST_INTERSECTS(r.geom, l.geom)
 		) t
 		group by t.codice_ato, t.pro_com
 	) t1, POP_RES_COMUNE p
-	WHERE t1.pro_com=p.pro_com;
+	WHERE t1.pro_com=p.pro_com';
+	v_result:= TRUE;
+    RETURN v_result;
+EXCEPTION WHEN OTHERS THEN
+	RAISE NOTICE 'Exception: %', SQLERRM;
+	RETURN v_result;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
+-- Populate the UTENZA_SERVIZIO table 
+-- using information from ACQ_RETE_DISTRIB, LOCALITA and FGN_RETE_RACC, FGN_BACINO (FGN_TRATTAMENTO, FGN_PNT_SCARICO)
+-- (Ref. 4.2. SERVIZIO UTENZA)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_utenza_servizio();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_utenza_servizio(
+) RETURNS BOOLEAN AS $$
+DECLARE 
+	v_result BOOLEAN := FALSE;
+BEGIN    
+	-- reset dei dati
+	DELETE FROM UTENZA_SERVIZIO;
+	DELETE FROM UTENZA_SERVIZIO_LOC;
+	DELETE FROM UTENZA_SERVIZIO_ACQ;
+	DELETE FROM UTENZA_SERVIZIO_FGN;
+	DELETE FROM UTENZA_SERVIZIO_BAC;
+	
+	--LOCALITA
+	EXECUTE '
+		INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
+		SELECT s.impianto, s.id_ubic_contatore, l.loc2011 as id_localita_istat
+		FROM acq_ubic_contatore c, utenza_sap s, localita l
+		WHERE l.geom && c.geom AND ST_INTERSECTS(l.geom, c.geom)
+		AND s.id_ubic_contatore=c.idgis';
+		
+	-- ACQ_RETE_DISTRIB
+	EXECUTE '
+		INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
+		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		FROM acq_ubic_contatore c, utenza_sap s, acq_rete_distrib g
+		WHERE g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
+		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
+		AND s.id_ubic_contatore=c.idgis';
+
+	-- FGN_RETE_RACC
+	EXECUTE '
+		INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
+		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		FROM acq_ubic_contatore c, utenza_sap s, fgn_rete_racc g
+		WHERE g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
+		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
+		AND s.id_ubic_contatore=c.idgis';
+
+	-- FGN_BACINO + FGN_TRATTAMENTO/FGN_PNT_SCARICO
+	EXECUTE '
+		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
+		select s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		from acq_ubic_contatore c, utenza_sap s, (
+			select t.codice_ato, b.geom 
+			from FGN_BACINO b, FGN_TRATTAMENTO t
+			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
+		) g
+		WHERE g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
+		AND s.id_ubic_contatore=c.idgis';
+	EXECUTE '
+		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
+		select s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		from acq_ubic_contatore c, utenza_sap s, (
+			select t.codice as codice_ato, b.geom 
+			from FGN_BACINO b, FGN_PNT_SCARICO t
+			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
+		) g
+		WHERE g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
+		AND s.id_ubic_contatore=c.idgis';
+
+
+	-- initialize table UTENZA_SERVIZIO.id_ubic_contatore with data from ACQ_UBIC_CONTATORE.idgis
+	EXECUTE '
+	INSERT INTO utenza_servizio(id_ubic_contatore)
+	SELECT DISTINCT idgis from ACQ_UBIC_CONTATORE';
+	-- update field ids_codice_orig_acq
+	EXECUTE '
+		UPDATE utenza_servizio 
+		SET impianto = t.imp, ids_codice_orig_acq = t.codice 
+		FROM (
+			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
+			FROM UTENZA_SERVIZIO_ACQ
+			GROUP BY id_ubic_contatore
+			HAVING COUNT(id_ubic_contatore)=1
+		) t
+		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
+	-- update field id_localita_istat
+	EXECUTE '
+		UPDATE utenza_servizio 
+		SET impianto = t.imp, id_localita_istat = t.codice 
+		FROM (
+			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
+			FROM UTENZA_SERVIZIO_LOC
+			GROUP BY id_ubic_contatore
+			HAVING COUNT(id_ubic_contatore)=1
+		) t
+		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
+	-- update field ids_codice_orig_fgn
+	EXECUTE '
+		UPDATE utenza_servizio 
+		SET impianto = t.imp, ids_codice_orig_fgn = t.codice 
+		FROM (
+			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
+			FROM UTENZA_SERVIZIO_FGN
+			GROUP BY id_ubic_contatore
+			HAVING COUNT(id_ubic_contatore)=1
+		) t
+		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
+	-- update field ids_codice_orig_dep_sca
+	EXECUTE '
+		UPDATE utenza_servizio 
+		SET impianto = t.imp, ids_codice_orig_dep_sca = t.codice 
+		FROM (
+			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
+			FROM UTENZA_SERVIZIO_BAC
+			GROUP BY id_ubic_contatore
+			HAVING COUNT(id_ubic_contatore)=1
+		) t
+		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
 
 	v_result:= TRUE;
     RETURN v_result;
@@ -190,5 +317,3 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
--------------------------------------------------------------------------------
-
