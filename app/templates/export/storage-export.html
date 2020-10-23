@@ -1,0 +1,15 @@
+{% extends "export/base-export.html" %}
+
+{% block export_content%}
+    <div class="jumbotron login-form">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="exampleInputEmail1">Username</label>
+              <input type="date" class="form-control" name="year" required />
+            </div>
+            <button type="submit" class="btn btn-info">CC</button>
+            <button type="submit" class="btn btn-primary">OK</button>
+          </form>
+    </div>
+{% endblock %}

@@ -3,37 +3,72 @@
 <html>
 
 <head>
-    <title>DBIAIT</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'index.css' %}" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <title>DBIAIT</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'index.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
+  <div class="nav-container">
     <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="/">DBIAIT</a>
-          </div>
-          {% if request.user.is_authenticated %}
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-          </ul>
-          {% endif %}
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">DBIAIT</a>
         </div>
-      </nav>
-    {% block content %}
-        {# Main Page Content #}
-    {% endblock %}
-    <div class="navbar-fixed-bottom row-fluid">
-        <div class="navbar-inner base-footer">
-          <div class="container">
-            Footer placeholder
-          </div>
+        {% if request.user.is_authenticated %}
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-log-in"></span>
+              Disconnettersi</a></li>
+        </ul>
+        {% endif %}
+      </div>
+    </nav>
+  </div>
+  {% if request.user.is_authenticated %}
+  <div class="toolbar">
+    <ol class="breadcrumb">
+      <li class="home"><a href="/"><i class="fa fa-home"></i><span> Home</span></a></li>
+      {% for name, path in bread_crumbs.items %}
+      <li><a href="{{ path }}">{{ name }}</a></li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endif %}
+  {% block content %}
+  {# Main Page Content #}
+  {% endblock %}
+  <div class="navbar-fixed-bottom row-fluid">
+    <div class="navbar-inner base-footer">
+      <div class="container">
+        Footer placeholder
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>Sei sicuro di voler uscire?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Annulla</button>
+          <a href="{% url 'logout-view' %}">
+            <button type="button" class="btn btn-info">Disconnettersi</button>
+          </a>
         </div>
       </div>
+
+    </div>
+  </div>
 </body>
+
 </html>

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="container">
+    <table class="table">
+      <tbody>     
+        <tr>
+          <td>Versione:</td>
+          <td>1.0</td>
+        </tr>
+        <tr>
+          <td>Ambiente:</td>
+          <td>PRODUZIONE</td>
+        </tr>
+        <tr>
+          <td>GeoPackage:</td>
+          <td><span class="badge">PBAP_20201012_205830.gpkg</span> <span class="badge">PBAP_20201011_205830.gpkg</span> <span class="badge">PBAP_20201010_205830.gpkg</span></td>
+        </tr>
+        <tr>
+          <td>DATABASE HOST:</td>
+          <td>127.0.0.1</td>
+        </tr>
+        <tr>
+          <td>DATABASE PORT:</td>
+          <td>5432</td>
+        </tr>
+        <tr>
+            <td>DATABASE USER:</td>
+            <td>dbiait</td>
+        </tr>
+        <tr>
+            <td>NFS FOLDER:</td>
+            <td>/mnt/shared/dbiait</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

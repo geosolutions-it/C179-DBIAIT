@@ -1,0 +1,42 @@
+{% extends "import/base-import.html" %}
+
+{% block import_content %}
+<div class="container">
+    <table class="table">
+        <thead>
+          <tr>
+            <th>Processi</th>
+            <th>Stato</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>     
+          <tr class="success">
+            <td>Layer</td>
+            <td>Complete</td>
+            <td>Icon</td>
+          </tr>
+          <tr class="danger">
+            <td>Layer 2</td>
+            <td>Failed</td>
+            <td>Icon</td>
+          </tr>
+          <tr class="info">
+            <td>Layer 3</td>
+            <td>Restarted</td>
+            <td>Icon</td>
+          </tr>
+          <tr class="warning">
+            <td>Layer 4</td>
+            <td>Has errors</td>
+            <td>Icon</td>
+          </tr>
+          <tr class="active">
+            <td>Layer 5</td>
+            <td>active</td>
+            <td>Icon</td>
+          </tr>
+        </tbody>
+      </table>
+</div>
+{% endblock %}
