@@ -11,27 +11,27 @@
         </tr>
         <tr>
           <td>Ambiente:</td>
-          <td>PRODUZIONE</td>
+          <td>{{ environment }}</td>
         </tr>
         <tr>
           <td>GeoPackage:</td>
-          <td><span class="badge">PBAP_20201012_205830.gpkg</span> <span class="badge">PBAP_20201011_205830.gpkg</span> <span class="badge">PBAP_20201010_205830.gpkg</span></td>
+          <td><span class="badge badge-secondary">PBAP_20201012_205830.gpkg</span> <span class="badge badge-secondary">PBAP_20201011_205830.gpkg</span> <span class="badge badge-secondary">PBAP_20201010_205830.gpkg</span></td>
         </tr>
         <tr>
           <td>DATABASE HOST:</td>
-          <td>127.0.0.1</td>
+          <td>{{ database_host }}</td>
         </tr>
         <tr>
           <td>DATABASE PORT:</td>
-          <td>5432</td>
+          <td>{{ database_port }}</td>
         </tr>
         <tr>
             <td>DATABASE USER:</td>
-            <td>dbiait</td>
+            <td>{{ database_user }}</td>
         </tr>
         <tr>
             <td>NFS FOLDER:</td>
-            <td>/mnt/shared/dbiait</td>
+            <td>{{ nfs_folder }}</td>
         </tr>
       </tbody>
     </table>

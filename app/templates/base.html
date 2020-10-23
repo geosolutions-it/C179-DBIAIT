@@ -6,14 +6,23 @@
   <title>DBIAIT</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="{% static 'index.css' %}" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+    integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
   <div class="nav-container">
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
@@ -22,7 +31,7 @@
         </div>
         {% if request.user.is_authenticated %}
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-log-in"></span>
+          <li><a href="#" data-toggle="modal" data-target="#myModal"><span class="fas fa-sign-out-alt"></span>
               Disconnettersi</a></li>
         </ul>
         {% endif %}
@@ -30,25 +39,31 @@
     </nav>
   </div>
   {% if request.user.is_authenticated %}
-  <div class="toolbar">
-    <ol class="breadcrumb">
-      <li class="home"><a href="/"><i class="fa fa-home"></i><span> Home</span></a></li>
-      {% for name, path in bread_crumbs.items %}
-      <li><a href="{{ path }}">{{ name }}</a></li>
-      {% endfor %}
-    </ol>
+  <div class="toolbar" style="background-color: #ffffff;">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="fas fa-home"></i><a href="/"> Home</a></li>
+        {% for name, path in bread_crumbs.items %}
+        {% if path != "#" %}
+        <li class="breadcrumb-item"><a href="{{ path }}">{{ name }}</a></li>
+        {% else %}
+        <li class="breadcrumb-item active" aria-current="page">{{ name }}</li>
+        {% endif %}
+        {% endfor %}
+      </ol>
+    </nav>
   </div>
   {% endif %}
   {% block content %}
   {# Main Page Content #}
   {% endblock %}
-  <div class="navbar-fixed-bottom row-fluid">
-    <div class="navbar-inner base-footer">
+  <footer class="navbar-fixed-bottom row-fluid mt-auto base-footer">
+    <div class="navbar-inner">
       <div class="container">
         Footer placeholder
       </div>
     </div>
-  </div>
+  </footer>
 
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">

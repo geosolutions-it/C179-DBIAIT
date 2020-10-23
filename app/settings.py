@@ -189,3 +189,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_auth_ldap.backend.LDAPBackend',
 )
+
+# Directory from which export files are selected
+NFS_FOLDER = os.getenv("NFS_FOLDER")

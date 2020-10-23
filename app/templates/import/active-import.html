@@ -1,42 +1,43 @@
 {% extends "import/base-import.html" %}
+{% load utils %}
 
 {% block import_content %}
+{% if object_list%}
 <div class="container">
-    <table class="table">
-        <thead>
-          <tr>
-            <th>Processi</th>
-            <th>Stato</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>     
-          <tr class="success">
-            <td>Layer</td>
-            <td>Complete</td>
-            <td>Icon</td>
-          </tr>
-          <tr class="danger">
-            <td>Layer 2</td>
-            <td>Failed</td>
-            <td>Icon</td>
-          </tr>
-          <tr class="info">
-            <td>Layer 3</td>
-            <td>Restarted</td>
-            <td>Icon</td>
-          </tr>
-          <tr class="warning">
-            <td>Layer 4</td>
-            <td>Has errors</td>
-            <td>Icon</td>
-          </tr>
-          <tr class="active">
-            <td>Layer 5</td>
-            <td>active</td>
-            <td>Icon</td>
-          </tr>
-        </tbody>
-      </table>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Processi</th>
+        <th>Stato</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for import in object_list %}
+      <tr class="{% get_style_class import.status %}">
+        <td>{{ import.uuid }}</td>
+        <td class="text-lowercase">{{ import.status }}</td>
+        <td>
+          <i class="{% get_status_icon import.status %}"></i>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+{% else %}
+<div class="container mt-5">
+  <form method="post" action="{% url 'queue-import-view' %}" class="mt-5">
+    {% csrf_token %}
+    <div class="form-group mt-5">
+      <select class="form-control form-control-lg">
+        {% for file in geopackage_files %}
+        <option>{{ file }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary mb-2 btn-block">AVVIA</button>
+  </form>
+</div>
+{% endif %}
 {% endblock %}
