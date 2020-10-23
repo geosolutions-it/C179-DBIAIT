@@ -12,8 +12,13 @@ class TaskStatus:
     SUCCESS = 'SUCCESS'
 
 
+class Schema:
+    ANALYSIS = 'analysis'
+    FREEZE = 'freeze'
+
+
 def default_storage():
-    return {}
+    return {'args': [], 'kwargs': {}}
 
 
 class GeoPackage(models.Model):
