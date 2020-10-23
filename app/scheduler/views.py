@@ -1,11 +1,15 @@
+from os import listdir
+
 from app.scheduler.models import Task, TaskStatus
+from app.scheduler.serializers import ImportSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.generic import ListView
-from os import listdir
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 
 class Dashboard(LoginRequiredMixin, View):
@@ -31,6 +35,12 @@ class Import(LoginRequiredMixin, ListView):
         context['current_url'] = current_url
         context['geopackage_files'] = self.get_geopackage_files()
         return context
+
+
+class GetImportStatus(generics.ListAPIView):
+    queryset = Task.objects.filter(type='IMPORT')
+    serializer_class = ImportSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class HistoricalImport(LoginRequiredMixin, ListView):

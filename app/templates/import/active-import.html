@@ -12,19 +12,37 @@
         <th></th>
       </tr>
     </thead>
-    <tbody>
-      {% for import in object_list %}
-      <tr class="{% get_style_class import.status %}">
-        <td>{{ import.uuid }}</td>
-        <td class="text-lowercase">{{ import.status }}</td>
-        <td>
-          <i class="{% get_status_icon import.status %}"></i>
+    <tbody id="import-status-table">
+      <tr>
+        <td colspan="3" class="text-center">
+          <small class="text-secondary">please wait..</small>
         </td>
       </tr>
-      {% endfor %}
     </tbody>
   </table>
 </div>
+<script>
+  function populate_table() {
+    $.ajax({
+      type: "GET",
+      url: "{% url 'get-import-statis-api-view' %}",
+      dataType: "json",
+      success: function (response) {
+        const table = $("#import-status-table");
+        if (response){
+          table.empty();
+          response.forEach(function (data) {
+            table.append(`<tr class="${data.style_class}"><td>${data.uuid}</td><td class="text-lowercase">${data.status}</td><td><i class="${data.status_icon}"></i></td></tr>`);
+          });
+        }
+      }
+    });
+  }
+  window.addEventListener("load", function () {
+    populate_table();
+    setInterval(populate_table, 10000);
+  });
+</script>
 {% else %}
 <div class="container mt-5">
   <form method="post" action="{% url 'queue-import-view' %}" class="mt-5">
