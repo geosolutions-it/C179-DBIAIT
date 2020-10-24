@@ -1,42 +1,61 @@
 {% extends "import/base-import.html" %}
+{% load utils %}
 
 {% block import_content %}
+{% if object_list%}
 <div class="container">
-    <table class="table">
-        <thead>
-          <tr>
-            <th>Processi</th>
-            <th>Stato</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>     
-          <tr class="success">
-            <td>Layer</td>
-            <td>Complete</td>
-            <td>Icon</td>
-          </tr>
-          <tr class="danger">
-            <td>Layer 2</td>
-            <td>Failed</td>
-            <td>Icon</td>
-          </tr>
-          <tr class="info">
-            <td>Layer 3</td>
-            <td>Restarted</td>
-            <td>Icon</td>
-          </tr>
-          <tr class="warning">
-            <td>Layer 4</td>
-            <td>Has errors</td>
-            <td>Icon</td>
-          </tr>
-          <tr class="active">
-            <td>Layer 5</td>
-            <td>active</td>
-            <td>Icon</td>
-          </tr>
-        </tbody>
-      </table>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Processi</th>
+        <th>Stato</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="import-status-table">
+      <tr>
+        <td colspan="3" class="text-center">
+          <small class="text-secondary">please wait..</small>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
+<script>
+  function populate_table() {
+    $.ajax({
+      type: "GET",
+      url: "{% url 'get-import-statis-api-view' %}",
+      dataType: "json",
+      success: function (response) {
+        const table = $("#import-status-table");
+        if (response){
+          table.empty();
+          response.forEach(function (data) {
+            table.append(`<tr class="${data.style_class}"><td>${data.uuid}</td><td class="text-lowercase">${data.status}</td><td><i class="${data.status_icon}"></i></td></tr>`);
+          });
+        }
+      }
+    });
+  }
+  window.addEventListener("load", function () {
+    populate_table();
+    setInterval(populate_table, 10000);
+  });
+</script>
+{% else %}
+<div class="container mt-5">
+  <form method="post" action="{% url 'queue-import-view' %}" class="mt-5">
+    {% csrf_token %}
+    <div class="form-group mt-5">
+      <select class="form-control form-control-lg">
+        {% for file in geopackage_files %}
+        <option>{{ file }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary mb-2 btn-block">AVVIA</button>
+  </form>
+</div>
+{% endif %}
 {% endblock %}

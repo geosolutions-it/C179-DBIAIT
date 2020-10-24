@@ -1,4 +1,5 @@
 {% extends "import/base-import.html" %}
+{% load utils %}
 
 {% block import_content %}
 <div class="container">
@@ -13,47 +14,19 @@
         <th></th>
       </tr>
     </thead>
-    <tbody>     
+    <tbody>
+      {% for import in object_list %}
       <tr>
-        <td>17/05/2020</td>
-        <td>18/05/2020</td>
-        <td>Josh</td>
-        <td>XYZ.gpkg</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
+        <td>{{ import.end_date }}</td>
+        <td>{{ import.start_date }}</td>
+        <td>{{ import.requesting_user }}</td>
+        <td>{{ import.name }}</td>
+        <td class="text-lowercase">{{ import.status }}</td>
+        <td>
+          <i class="{% get_status_icon import.status %}"></i>
+        </td>
       </tr>
-      <tr>
-        <td>17/05/2020</td>
-        <td>18/05/2020</td>
-        <td>Messi</td>
-        <td>XYZ.gpkg</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
-      </tr>
-      <tr>
-        <td>17/05/2020</td>
-        <td>18/05/2020</td>
-        <td>Dybala</td>
-        <td>XYZ.gpkg</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
-      </tr>
-      <tr>
-        <td>17/05/2020</td>
-        <td>18/05/2020</td>
-        <td>Zlatan</td>
-        <td>XYZ.gpkg</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
-      </tr>
-      <tr>
-        <td>17/05/2020</td>
-        <td>18/05/2020</td>
-        <td>Mario Balotelli</td>
-        <td>XYZ.gpkg</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
-      </tr>
+      {% endfor %}
     </tbody>
   </table>
 </div>

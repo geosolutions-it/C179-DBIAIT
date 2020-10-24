@@ -1,9 +1,24 @@
+body {
+    min-height: 100vh;
+    position: relative;
+    margin: 0;
+    padding-bottom: 100px; //height of the footer
+    box-sizing: border-box;
+  }
+  
+  footer {
+    position: absolute;
+    bottom: 0;
+    height: 100px;
+  }
+
 .base-footer {
     border-top: 1px solid;
     padding: 1% 0% 1% 0%;
     text-align: center;
     background-color: #222222;
     color: #ffffff;
+    width: 100%;
 }
 
 .login-form {

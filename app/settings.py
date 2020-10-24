@@ -45,8 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # DBIAIT apps
     'app.authenticate',
     'app.scheduler',
+
+    # Installed apps
+    'rest_framework',
 ]
 
 DRAMATIQ_BROKER = {
@@ -189,3 +193,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_auth_ldap.backend.LDAPBackend',
 )
+
+# Directory from which export files are selected
+NFS_FOLDER = os.getenv("NFS_FOLDER")
