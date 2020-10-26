@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="container">
+    <table class="table">
+      <tbody>     
+        <tr>
+          <td>Versione:</td>
+          <td>1.0</td>
+        </tr>
+        <tr>
+          <td>Ambiente:</td>
+          <td>{{ environment }}</td>
+        </tr>
+        <tr>
+          <td>GeoPackage:</td>
+          <td><span class="badge badge-secondary">PBAP_20201012_205830.gpkg</span> <span class="badge badge-secondary">PBAP_20201011_205830.gpkg</span> <span class="badge badge-secondary">PBAP_20201010_205830.gpkg</span></td>
+        </tr>
+        <tr>
+          <td>DATABASE HOST:</td>
+          <td>{{ database_host }}</td>
+        </tr>
+        <tr>
+          <td>DATABASE PORT:</td>
+          <td>{{ database_port }}</td>
+        </tr>
+        <tr>
+            <td>DATABASE USER:</td>
+            <td>{{ database_user }}</td>
+        </tr>
+        <tr>
+            <td>NFS FOLDER:</td>
+            <td>{{ nfs_folder }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

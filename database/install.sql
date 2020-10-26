@@ -14,7 +14,7 @@ CREATE TABLE DBIAIT_ANALYSIS.ALL_DOMAINS(
 
 -- SUPPORT TABLES --
 CREATE TABLE DBIAIT_ANALYSIS.POP_RES_LOC (
-	id_localita_istat VARCHAR(16) NOT NULL,
+	id_localita_istat VARCHAR(20) NOT NULL,
 	anno_rif INTEGER NOT NULL,
 	popres	INTEGER NOT NULL,
 	PRIMARY KEY(id_localita_istat)
@@ -29,14 +29,22 @@ CREATE TABLE DBIAIT_ANALYSIS.DISTRIB_LOC_SERV (
 
  -- DEFINZIONE DEI CAMPI???
 CREATE TABLE DBIAIT_ANALYSIS.POP_RES_COMUNE (
-	PRO_COM VARCHAR(5),
-	DENOM VARCHAR(100),
-	D_AMBITO VARCHAR(100)
+	PRO_COM 	VARCHAR(8),
+	DENOM 		VARCHAR(100),
+	POP_RES 	INTEGER,
+	anno 		INTEGER,
+	D_AMBITO 	VARCHAR(8),
+	perc_acq 	double precision,
+	pop_ser_acq INTEGER,
+	perc_fgn 	double precision,
+	pop_ser_fgn INTEGER,
+	perc_dep 	double precision,
+	pop_ser_dep INTEGER
 );
 
 CREATE TABLE DBIAIT_ANALYSIS.DISTRIB_COM_SERV(
 	codice_opera 		VARCHAR(32) NOT NULL,				
-	id_comune_istat 	VARCHAR(4) NOT NULL,
+	id_comune_istat 	VARCHAR(8) NOT NULL,
 	perc_popsrv			double precision NOT NULL DEFAULT 0.0,
 	PRIMARY KEY(codice_opera, id_comune_istat)
 );
@@ -57,14 +65,13 @@ CREATE TABLE DBIAIT_ANALYSIS.FOGNAT_COM_SERV(
 	PRIMARY KEY(codice_opera, id_comune_istat)
 );
 
--- Lunghezze campi?
 CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SAP(
-	impianto 				INTEGER,		--INTERO??? (in altre tabelle e' VARCHAR!!!)	
+	impianto 				VARCHAR(32),		
 	ID_UBIC_CONTATORE		VARCHAR(32),	
 	CATTARIFFA				VARCHAR(32),
 	ESENTE_FOG				INTEGER,
 	ESENTE_DEP				INTEGER,
-	TIPO_USO				VARCHAR(32),
+	TIPO_USO				VARCHAR(50),
 	NR_CONTAT_DIAM_MIN		INTEGER,
 	NR_CONTAT				INTEGER,
 	VOL_ACQ_FATT			double precision,
@@ -74,18 +81,43 @@ CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SAP(
 	VOL_DEP_FATT			double precision,
 	VOL_DEP_ERO				double precision,
 	DT_RIF_VOL_FATT			DATE,
-	DT_RIF_VOL_ERO			DATE
+	DT_RIF_VOL_ERO			DATE,
+	ANNO_RIF				INTEGER,
+	U_AB					INTEGER,
+	DEFALCO					VARCHAR(2)
 );
 
--- Lunghezze campi?
+-------------------------------------------------
 CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SERVIZIO(
-	impianto 				INTEGER,	
+	impianto 				VARCHAR(32),	
 	ID_UBIC_CONTATORE		VARCHAR(32),	
 	ids_codice_orig_ACQ		VARCHAR(32),
 	id_localita_istat		VARCHAR(32),
 	ids_codice_orig_FGN		VARCHAR(32),
 	ids_codice_orig_DEP_SCA	VARCHAR(32)	
 );
+
+CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SERVIZIO_ACQ(
+	impianto 				VARCHAR(32),	
+	ID_UBIC_CONTATORE		VARCHAR(32),	
+	codice					VARCHAR(32)	
+);
+CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SERVIZIO_LOC(
+	impianto 				VARCHAR(32),	
+	ID_UBIC_CONTATORE		VARCHAR(32),	
+	codice					VARCHAR(32)	
+);
+CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SERVIZIO_FGN(
+	impianto 				VARCHAR(32),	
+	ID_UBIC_CONTATORE		VARCHAR(32),	
+	codice					VARCHAR(32)	
+);
+CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SERVIZIO_BAC(
+	impianto 				VARCHAR(32),	
+	ID_UBIC_CONTATORE		VARCHAR(32),	
+	codice					VARCHAR(32)	
+);
+-------------------------------------------------
 
 -- Lunghezze campi?
 CREATE TABLE DBIAIT_ANALYSIS.ABITANTI_TRATTATI(
@@ -271,7 +303,7 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE(
 	codice_ato		VARCHAR(32),
 	tipo_infr		VARCHAR(100),
 	lunghezza 		double precision,
-	lunghezza_dep 	double precision,
+	lunghezza_dep 	double precision
 );
 
 --Lunghezze???
@@ -282,7 +314,7 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_ALLACCIO(
 	nr_allacci 		INTEGER,
 	lung_alla 		double precision,
 	nr_allacci_ril 	INTEGER,
-	lung_alla_ril	double precision,
+	lung_alla_ril	double precision
 );
 
 --Lunghezze???
@@ -490,7 +522,7 @@ CREATE TABLE DBIAIT_ANALYSIS.POTAB_INRETI(
 
 CREATE TABLE DBIAIT_ANALYSIS.ADDUT_COM_SERV(
 	ids_codice 		VARCHAR(32), 
-	id_comune_istat VARCHAR(4)
+	id_comune_istat VARCHAR(8)
 );
 
 CREATE TABLE DBIAIT_ANALYSIS.ADDUT_INRETI(
@@ -525,7 +557,7 @@ CREATE TABLE DBIAIT_ANALYSIS.POMPAGGI_INSERBA(
 
 CREATE TABLE DBIAIT_ANALYSIS.COLLET_COM_SERV(
 	ids_codice 		VARCHAR(32), 
-	id_comune_istat VARCHAR(4)
+	id_comune_istat VARCHAR(8)
 );
 
 CREATE TABLE DBIAIT_ANALYSIS.DEPURATO_INCOLL(
@@ -571,13 +603,13 @@ SELECT AddGeometryColumn ('dbiait_analysis','localita','geom', 25832, 'MULTIPOLY
 CREATE TABLE dbiait_analysis.confine_comunale
 (
     cod_istat double precision,
-    provincia character varying(30),
-    pro_com_tx character varying(10),
-    pro_com bigint,
-    denom character varying(50),
+    provincia character varying(50),	--
+    pro_com_tx character varying(20),	--
+    pro_com bigint,						--
+    denom character varying(100),		--
     pro_com__1 character varying(50),
     shape_leng double precision,
-    shape_area double precision
+    shape_area double precision			--
 );
 SELECT AddGeometryColumn ('dbiait_analysis','confine_comunale','geom', 25832, 'MULTIPOLYGON',2);
 

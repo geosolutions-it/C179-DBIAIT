@@ -6,6 +6,21 @@ from django.conf import settings
 from app.scheduler.utils import TaskStatus, default_storage
 
 
+style_class_mapper = {
+    TaskStatus.QUEUED: u"table-primary",
+    TaskStatus.FAILED: u"table-danger",
+    TaskStatus.RUNNING: u"table-info",
+    TaskStatus.SUCCESS: u"table-success"
+}
+
+status_icon_mapper = {
+    TaskStatus.QUEUED: u"fas fa-circle text-warning",
+    TaskStatus.FAILED: u"fas fa-times-circle text-danger",
+    TaskStatus.RUNNING: u"fas fa-sync fa-spin text-primary",
+    TaskStatus.SUCCESS: u"fas fa-check-circle text-success"
+}
+
+
 class GeoPackage(models.Model):
     name = models.CharField(max_length=50, blank=False)
 
@@ -37,3 +52,11 @@ class Task(models.Model):
 
     def __str__(self):
         return f"{self.type}:{self.name}"
+
+    @property
+    def style_class(self):
+        return style_class_mapper.get(self.status)
+
+    @property
+    def status_icon(self):
+        return status_icon_mapper.get(self.status)

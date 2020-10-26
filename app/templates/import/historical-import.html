@@ -1,0 +1,33 @@
+{% extends "import/base-import.html" %}
+{% load utils %}
+
+{% block import_content %}
+<div class="container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Iniziato alle</th>
+        <th>Completato alle</th>
+        <th>Iniziato da</th>
+        <th>file elaborato</th>
+        <th>stato di completamento</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for import in object_list %}
+      <tr>
+        <td>{{ import.end_date }}</td>
+        <td>{{ import.start_date }}</td>
+        <td>{{ import.requesting_user }}</td>
+        <td>{{ import.name }}</td>
+        <td class="text-lowercase">{{ import.status }}</td>
+        <td>
+          <i class="{% get_status_icon import.status %}"></i>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
