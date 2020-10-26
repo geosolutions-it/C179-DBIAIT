@@ -15,8 +15,9 @@ PYTHONPATH=%OSGEO4W_ROOT%\apps\qgis\python
 ## Linux
 export PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
 
+# Scheduling system
 
-## starting the scheduler
+## Starting the scheduler
 The scheduler requires a task queue to be configured. By default RabbitMQ is used, but Redis can also be used (note: Redis requires change in settings.py file).
 1. start RabbitMQ (may be dockerized version)
 ``` shell
@@ -30,3 +31,24 @@ python manage.py rundramatiq
 ``` shell
 python manage.py runserver 0.0.0.0:8000
 ```
+
+Note: On every change of your Dramatiq tasks it is required to restart `dramatiq` process, otherwise your changes may not be included in the next background task execution
+
+
+## Ordering Task execution
+Background Task execution should be ordered similarly to Dramatiq's `GenericActor`, with the only difference that Task.send() method takes a single argument - ORM Task ID, which is created by pre_send() class method.
+
+``` python
+Task.send(Task.pre_send(*args, **kwargs))
+```
+
+In case ordering Task execution violates querying criteria, the `app.scheduler.exceptions.QueuingCriteriaViolated` will be raised.
+
+
+## Adding new Tasks
+
+All tasks should inherit from `app.scheduler.tasks.base_task.BaseTask` class, and they should always define the following methods and attributes:
+- name: str - class property, the name of the Task. It is mainly useful to distinct process tasks. For other tasks, the convention is to use task type in lower case.
+- task_type: str - class property, the type of the Task (e.g. `PROCESS`, `IMPORT`, `FREEZE`, `EXPORT`) 
+- pre_send(): method - **class** method, determining whether the task may be queued and creating the Task ORM model instance for reporting task's status. This function should return ORM model Task's ID or raise `scheduler.exceptions.QueuingCriteriaViolated`.
+- execute(): method - method containing all logic executed by the background executor. As the arguments it receives ORM Task's ID (`task_id`) along with args and kwargs defined in the ORM Task instance, which was created by `pre_send()` method. 
