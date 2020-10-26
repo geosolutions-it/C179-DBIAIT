@@ -3,9 +3,27 @@ from .models import Task, GeoPackage
 
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('id', 'type', 'name', 'geopackage', 'requesting_user', 'start_date', 'end_date', 'status')
-    list_filter = ('id', 'type', 'name', 'geopackage', 'requesting_user', 'start_date', 'end_date', 'status')
-    search_fields = ('type', 'name', 'geopackage')
+    list_display = (
+        "id",
+        "type",
+        "name",
+        "geopackage",
+        "requesting_user",
+        "start_date",
+        "end_date",
+        "status",
+    )
+    list_filter = (
+        "id",
+        "type",
+        "name",
+        "geopackage",
+        "requesting_user",
+        "start_date",
+        "end_date",
+        "status",
+    )
+    search_fields = ("type", "name", "geopackage")
 
     def has_change_permission(self, request, obj=None):
         return False
@@ -18,9 +36,9 @@ class TaskAdmin(admin.ModelAdmin):
 
 
 class GeoPackageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
-    list_filter = ('id', 'name')
-    search_fields = ('name',)
+    list_display = ("id", "name")
+    list_filter = ("id", "name")
+    search_fields = ("name",)
 
     def has_change_permission(self, request, obj=None):
         return False

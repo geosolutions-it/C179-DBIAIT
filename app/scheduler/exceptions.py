@@ -1,4 +1,3 @@
-
 class SchedulerException(Exception):
     pass
 

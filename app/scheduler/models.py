@@ -3,22 +3,7 @@ import uuid
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.conf import settings
-
-
-class TaskStatus:
-    QUEUED = 'QUEUED'
-    RUNNING = 'RUNNING'
-    FAILED = 'FAILED'
-    SUCCESS = 'SUCCESS'
-
-
-class Schema:
-    ANALYSIS = 'analysis'
-    FREEZE = 'freeze'
-
-
-def default_storage():
-    return {'args': [], 'kwargs': {}}
+from app.scheduler.utils import TaskStatus, default_storage
 
 
 class GeoPackage(models.Model):
@@ -45,7 +30,7 @@ class Task(models.Model):
     def save(self, *args, **kwargs):
         if not self.logfile:
             self.logfile = os.path.join(
-                settings.BASE_DIR, 'task_logs', f"{self.type}_{self.uuid}.log"
+                settings.BASE_DIR, "task_logs", f"{self.type}_{self.uuid}.log"
             )
 
         super().save(*args, **kwargs)

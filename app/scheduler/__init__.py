@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 
 class SchedulerConfig(AppConfig):
-    name = 'app.scheduler'
-    verbose_name = 'Scheduler'
+    name = "app.scheduler"
+    verbose_name = "Scheduler"
 
 
-default_app_config = "scheduler.SchedulerConfig"
+default_app_config = "app.scheduler.SchedulerConfig"
