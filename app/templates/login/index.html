@@ -2,25 +2,27 @@
 
 
 {% block content %}
-    <div class="col-md-4 col-md-offset-4 login-form">
-        {% if message %}
-        <div class="alert alert-danger">
-            <strong>Error!</strong> {{ message }}
-        </div>
-        {% else %}
-        <h3>Sign into your account</h3>
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="exampleInputEmail1">Username</label>
-              <input type="text" class="form-control" name="username" placeholder="Username" required />
-            </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1">Password</label>
-              <input type="password" name="password" class="form-control" placeholder="Password" required />
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Login</button>
-          </form>
+<div class="container">
+  <div class="login-container">
+    {% if message %}
+    <div class="alert alert-danger">
+        <strong>Error!</strong> {{ message }}
     </div>
+    {% else %}
+    <h3 class="text-center">Sign into your account</h3>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="exampleInputEmail1">Username</label>
+          <input type="text" class="form-control" name="username" placeholder="Username" required />
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Password" required />
+        </div>
+        <button type="submit" class="btn btn-info btn-block">Login</button>
+      </form>
+</div>
+</div>
 {% endblock %}
