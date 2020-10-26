@@ -54,9 +54,9 @@ INSTALLED_APPS = [
 ]
 
 DRAMATIQ_BROKER = {
-    "BROKER": "dramatiq.brokers.rabbitmq.RabbitmqBroker",
+    "BROKER": os.getenv('DRAMATIQ_BROKER', "dramatiq.brokers.rabbitmq.RabbitmqBroker"),
     "OPTIONS": {
-        "url": "amqp://localhost:5672",
+        "url": os.getenv('DRAMATIQ_BROKER_URL', "amqp://localhost:5672"),
     },
     "MIDDLEWARE": [
         "dramatiq.middleware.Prometheus",

@@ -3,7 +3,8 @@
 <html>
 
 <head>
-  <title>DBIAIT</title>
+  <title>Progetto DBI per AIT</title>
+  <link rel="icon" href="{% static 'DBIAIT_logo.png' %}" type="image/png">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{% static 'index.css' %}" />
@@ -25,7 +26,10 @@
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/">DBIAIT</a>
+          <a class="navbar-brand" href="/">
+            <img src="{% static 'DBIAIT_logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+            Progetto DBI per AIT
+          </a>
         </div>
         {% if request.user.is_authenticated %}
         <ul class="nav navbar-nav navbar-right">
@@ -37,19 +41,27 @@
     </nav>
   </div>
   {% if request.user.is_authenticated %}
-  <div class="toolbar" style="background-color: #ffffff;">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><i class="fas fa-home"></i><a href="/"> Home</a></li>
-        {% for name, path in bread_crumbs.items %}
-        {% if path != "#" %}
-        <li class="breadcrumb-item"><a href="{{ path }}">{{ name }}</a></li>
-        {% else %}
-        <li class="breadcrumb-item active" aria-current="page">{{ name }}</li>
-        {% endif %}
-        {% endfor %}
-      </ol>
-    </nav>
+  <div class="toolbar dbiait-header" style="background-image: url('{% static 'DBIAIT_header_img.jpeg' %}');">
+    <div class="dbiait-container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: transparent;">
+          <li class="breadcrumb-item">
+            <a href="/">
+              <i class="fas fa-home"></i> Home
+            </a>
+          </li>
+          {% for name, path in bread_crumbs.items %}
+          {% if path != "#" %}
+          <li class="breadcrumb-item">
+            <a href="{{ path }}">{{ name }}</a>
+          </li>
+          {% else %}
+          <li class="breadcrumb-item active" aria-current="page">{{ name }}</li>
+          {% endif %}
+          {% endfor %}
+        </ol>
+      </nav>
+    </div>
   </div>
   {% endif %}
   {% block content %}
@@ -58,7 +70,7 @@
   <footer class="navbar-fixed-bottom row-fluid mt-auto base-footer">
     <div class="navbar-inner">
       <div class="container">
-        Footer placeholder
+        © Copyright 2020
       </div>
     </div>
   </footer>
