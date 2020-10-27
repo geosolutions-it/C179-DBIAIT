@@ -18,6 +18,30 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;	
+------------------------------------------------------------------
+-- Transform a Geometry from EPSG:25832 to EPSG:3003 using NTV2 nadgrids
+--SELECT ST_X(geom), ST_Y(geom) FROM(
+--	SELECT DBIAIT_ANALYSIS.ST_TRANSFORM_RM40_ETRS89(
+--		ST_SETSRID(ST_POINT(705438.9186,4830672.536), 25832)
+--	) geom
+--) t
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.ST_TRANSFORM_RM40_ETRS89(
+	v_geom GEOMETRY
+) RETURNS GEOMETRY AS $$
+DECLARE 
+	v_folder VARCHAR := '/apps/pgsql/data/';
+BEGIN
+	RETURN ST_TRANSFORM(
+		v_geom, 
+		'+proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=1500000 +y_0=0 +ellps=intl +units=m +nadgrids=' || v_folder || 'gridRM40_ETRS89.gsb'
+	);
+EXCEPTION WHEN OTHERS THEN
+	RETURN ST_TRANSFORM(v_geom, 3003);
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
 --------------------------------------------------------------------
 -- Populate data into the POP_RES_LOC table using information 
 -- from LOCALITA ISTAT (2011) - (Ref. 2.1. LOCALITA ISTAT)
@@ -214,7 +238,7 @@ BEGIN
 		INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
 		SELECT s.impianto, s.id_ubic_contatore, l.loc2011 as id_localita_istat
 		FROM acq_ubic_contatore c, utenza_sap s, localita l
-		WHERE l.geom && c.geom AND ST_INTERSECTS(l.geom, c.geom)
+		WHERE c.id_impianto is not null AND l.geom && c.geom AND ST_INTERSECTS(l.geom, c.geom)
 		AND s.id_ubic_contatore=c.idgis';
 		
 	-- ACQ_RETE_DISTRIB
@@ -222,7 +246,7 @@ BEGIN
 		INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
 		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
 		FROM acq_ubic_contatore c, utenza_sap s, acq_rete_distrib g
-		WHERE g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
+		WHERE c.id_impianto is not null AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
 		AND s.id_ubic_contatore=c.idgis';
 
@@ -231,7 +255,7 @@ BEGIN
 		INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
 		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
 		FROM acq_ubic_contatore c, utenza_sap s, fgn_rete_racc g
-		WHERE g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
+		WHERE c.id_impianto is not null AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
 		AND s.id_ubic_contatore=c.idgis';
 
@@ -244,7 +268,7 @@ BEGIN
 			from FGN_BACINO b, FGN_TRATTAMENTO t
 			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
 		) g
-		WHERE g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
+		WHERE c.id_impianto is not null AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
 		AND s.id_ubic_contatore=c.idgis';
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
@@ -254,14 +278,14 @@ BEGIN
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
 		) g
-		WHERE g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
+		WHERE c.id_impianto is not null AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
 		AND s.id_ubic_contatore=c.idgis';
 
 
 	-- initialize table UTENZA_SERVIZIO.id_ubic_contatore with data from ACQ_UBIC_CONTATORE.idgis
 	EXECUTE '
 	INSERT INTO utenza_servizio(id_ubic_contatore)
-	SELECT DISTINCT idgis from ACQ_UBIC_CONTATORE';
+	SELECT DISTINCT idgis from ACQ_UBIC_CONTATORE WHERE id_impianto is not NULL';
 	-- update field ids_codice_orig_acq
 	EXECUTE '
 		UPDATE utenza_servizio 

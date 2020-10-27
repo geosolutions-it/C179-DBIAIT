@@ -135,12 +135,12 @@ if __name__ == "__main__":
     limit = int(sys.argv[2])
     task = ImportTask(config={
         'QGIS_PATH': r'C:\OSGeo4W64\apps\qgis',
-        'GPKG_PATH': r'C:\geo-solutions\repositories\C179-PUBLIACQUA\NETSIC\GPKG\PBAP_20201005_000734.gpkg',
+        'GPKG_PATH': r'C:\geo-solutions\repositories\C179-PUBLIACQUA\NETSIC\GPKG\PBAP_20200203.gpkg',
         'DATABASE': {
             'HOST': '127.0.0.1',
             'PORT': '5432',
             'DATABASE': 'pa',
-            'SCHEMA': 'DBIAIT_ANALYSIS',
+            'SCHEMA': 'dbiait_analysis',
             'USERNAME': 'postgres',
             'PASSWORD': 'pc060574'
         }
