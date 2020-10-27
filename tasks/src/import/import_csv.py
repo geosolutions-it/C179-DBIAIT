@@ -99,7 +99,7 @@ if __name__ == "__main__":
             'HOST': '127.0.0.1',
             'PORT': '5432',
             'DATABASE': 'pa',
-            'SCHEMA': 'DBIAIT_ANALYSIS',
+            'SCHEMA': 'dbiait_analysis',
             'USERNAME': 'postgres',
             'PASSWORD': 'pc060574'
         }
