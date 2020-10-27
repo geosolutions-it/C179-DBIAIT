@@ -36,9 +36,11 @@
         <td>{{ import.geopackage }}</td>
         <td>{{ import.end_date }}</td>
         <td>{{ import.start_date }}</td>
-        <td>60 tabelle importate</td>
         <td>
-          <a href="#">
+          <i class="{{ import.status_icon }}"></i>
+        </td>
+        <td>
+          <a href="{% url 'export-download-view' task_id=import.pk %}" target="_blank">
             <i class="fas fa-download"></i>
           </a>
         </td>

@@ -1,24 +1,11 @@
 import os
 import uuid
-from django.db import models
-from django.contrib.auth import get_user_model
+
+from app.scheduler.utils import (TaskStatus, default_storage,
+                                 status_icon_mapper, style_class_mapper)
 from django.conf import settings
-from app.scheduler.utils import TaskStatus, default_storage
-
-
-style_class_mapper = {
-    TaskStatus.QUEUED: u"table-primary",
-    TaskStatus.FAILED: u"table-danger",
-    TaskStatus.RUNNING: u"table-info",
-    TaskStatus.SUCCESS: u"table-success"
-}
-
-status_icon_mapper = {
-    TaskStatus.QUEUED: u"fas fa-circle text-warning",
-    TaskStatus.FAILED: u"fas fa-times-circle text-danger",
-    TaskStatus.RUNNING: u"fas fa-sync fa-spin text-primary",
-    TaskStatus.SUCCESS: u"fas fa-check-circle text-success"
-}
+from django.contrib.auth import get_user_model
+from django.db import models
 
 
 class GeoPackage(models.Model):
@@ -55,8 +42,8 @@ class Task(models.Model):
 
     @property
     def style_class(self):
-        return style_class_mapper.get(self.status)
+        return style_class_mapper.get(self.status, u"")
 
     @property
     def status_icon(self):
-        return status_icon_mapper.get(self.status)
+        return status_icon_mapper.get(self.status, u"")

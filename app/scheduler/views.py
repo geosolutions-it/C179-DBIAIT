@@ -1,9 +1,10 @@
-from os import listdir
+from os import fstat, listdir, path
 
 from app.scheduler.models import Task, TaskStatus
 from app.scheduler.serializers import ImportSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse
 from django.views import View
@@ -117,3 +118,19 @@ class Freeze(LoginRequiredMixin, View):
         }
         context = {'bread_crumbs': bread_crumbs}
         return render(request, 'freeze/base-freeze.html', context)
+
+
+class ExportDownloadView(LoginRequiredMixin, View):
+    def get(self, request, task_id: int):
+        file_path = path.join(settings.EXPORT_FOLDER, f"{task_id}.zip")
+        if path.exists(file_path) and Task.objects.filter(id=task_id).exists():
+            with open(file_path, u"rb") as file_obj:
+                response = HttpResponse(
+                    file_obj.read(), content_type=u"application/x-gzip")
+                response[u"Content-Length"] = fstat(file_obj.fileno()).st_size
+                response[u"Content-Type"] = u"application/zip"
+                response[u"Content-Disposition"] = u"attachment; filename=export.zip"
+            return response
+        context = {u"error": u"Il file è stato eliminato o non è attualmente accessibile",
+                   u"bread_crumbs": {u"Error": u"#"}}
+        return render(request, u"errors/error.html", context=context, status=404)
