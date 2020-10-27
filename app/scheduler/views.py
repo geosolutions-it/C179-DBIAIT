@@ -129,8 +129,8 @@ class ExportDownloadView(LoginRequiredMixin, View):
                     file_obj.read(), content_type=u"application/x-gzip")
                 response[u"Content-Length"] = fstat(file_obj.fileno()).st_size
                 response[u"Content-Type"] = u"application/zip"
-                response[u"Content-Disposition"] = u"attachment; filename=export.zip"
+                response[u"Content-Disposition"] = f"attachment; filename={task_id}.zip"
             return response
-        context = {u"error": u"Il file è stato eliminato o non è attualmente accessibile",
+        context = {u"error": f"Siamo spiacenti che l'archivio richiesto {task_id}.zip non sia presente",
                    u"bread_crumbs": {u"Error": u"#"}}
         return render(request, u"errors/error.html", context=context, status=404)

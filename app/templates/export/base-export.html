@@ -40,7 +40,7 @@
           <i class="{{ import.status_icon }}"></i>
         </td>
         <td>
-          <a href="{% url 'export-download-view' task_id=import.pk %}" target="_blank">
+          <a href="#" onclick="window.open('{% url 'export-download-view' task_id=100 %}', '_blank')" target="_blank">
             <i class="fas fa-download"></i>
           </a>
         </td>
