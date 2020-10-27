@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <form method="get" class="form-inline">
+    {% csrf_token %}
+    <div class="form-group mx-sm-3 mb-2">
+      <label for="Ambiente" class="mx-sm-1">Ambiente: </label>
+      <select name="schema" class="form-control">
+        <option value="analysis">Analisi</option>
+        <option value="freeze">Storicizzazione</option>
+      </select>
+    </div>
+    <div class="form-group mb-2">
+      <button type="submit" class="btn btn-info">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+  </form>
+  {% block export_content%}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Utente</th>
+        <th>GeoPackage</th>
+        <th>Data Inizio</th>
+        <th>Data Fine</th>
+        <th>Esito</th>
+        <th>Download</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for import in object_list %}
+      <tr>
+        <td>{{ import.requesting_user }}</td>
+        <td>{{ import.geopackage }}</td>
+        <td>{{ import.end_date }}</td>
+        <td>{{ import.start_date }}</td>
+        <td>60 tabelle importate</td>
+        <td>
+          <a href="#">
+            <i class="fas fa-download"></i>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+{% endblock %}

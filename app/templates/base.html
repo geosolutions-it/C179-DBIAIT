@@ -3,37 +3,97 @@
 <html>
 
 <head>
-    <title>DBIAIT</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'index.css' %}" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <title>Progetto DBI per AIT</title>
+  <link rel="icon" href="{% static 'DBIAIT_logo.png' %}" type="image/png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'index.css' %}" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+    integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
+  <div class="nav-container">
     <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="/">DBIAIT</a>
-          </div>
-          {% if request.user.is_authenticated %}
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-          </ul>
-          {% endif %}
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">
+            <img src="{% static 'DBIAIT_logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+            Progetto DBI per AIT
+          </a>
         </div>
+        {% if request.user.is_authenticated %}
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" data-toggle="modal" data-target="#myModal"><span class="fas fa-sign-out-alt"></span>
+              Disconnettersi</a></li>
+        </ul>
+        {% endif %}
+      </div>
+    </nav>
+  </div>
+  {% if request.user.is_authenticated %}
+  <div class="toolbar dbiait-header" style="background-image: url('{% static 'DBIAIT_header_img.jpeg' %}');">
+    <div class="dbiait-container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: transparent;">
+          <li class="breadcrumb-item">
+            <a href="/">
+              <i class="fas fa-home"></i> Home
+            </a>
+          </li>
+          {% for name, path in bread_crumbs.items %}
+          {% if path != "#" %}
+          <li class="breadcrumb-item">
+            <a href="{{ path }}">{{ name }}</a>
+          </li>
+          {% else %}
+          <li class="breadcrumb-item active" aria-current="page">{{ name }}</li>
+          {% endif %}
+          {% endfor %}
+        </ol>
       </nav>
-    {% block content %}
-        {# Main Page Content #}
-    {% endblock %}
-    <div class="navbar-fixed-bottom row-fluid">
-        <div class="navbar-inner base-footer">
-          <div class="container">
-            Footer placeholder
-          </div>
+    </div>
+  </div>
+  {% endif %}
+  {% block content %}
+  {# Main Page Content #}
+  {% endblock %}
+  <footer class="navbar-fixed-bottom row-fluid mt-auto base-footer">
+    <div class="navbar-inner">
+      <div class="container">
+        © Copyright 2020
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>Sei sicuro di voler uscire?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Annulla</button>
+          <a href="{% url 'logout-view' %}">
+            <button type="button" class="btn btn-info">Disconnettersi</button>
+          </a>
         </div>
       </div>
+
+    </div>
+  </div>
 </body>
+
 </html>

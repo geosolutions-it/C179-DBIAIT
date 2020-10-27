@@ -1,5 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>this is the dashboard</h1>
+<div class="container dashboard">
+    <div class="row">
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'import-view' %}">
+                <i class="fas fas fa-file-import"></i>
+                <h5>Import</h5>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'export-view' %}">
+                <i class="fas fa-file-export"></i>
+                <h5>Export</h5>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'process-view' %}">
+                <i class="fas fa-microchip"></i>
+                <h5>Process</h5>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'freeze-view' %}">
+                <i class="fas fa-snowflake"></i>
+                <h5>Freeze</h5>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 dashboard-item">
+            <a href="{% url 'configuration-view' %}">
+                <i class="fas fa-cogs"></i>
+                <h5>Configurazioni</h5>
+            </a>
+        </div>
+    </div>  
+</div>  
 {% endblock %}

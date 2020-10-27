@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="tab">
+            <a href="{% url 'import-view' %}" class="tablinks{% if current_url == 'import-view'%} active{% endif %}">Corrente</a>
+            <a href="{% url 'historical-import-view' %}" class="tablinks{% if current_url == 'historical-import-view'%} active{% endif %}">Storico</a>
+        </div>
+    </div>
+    {% block import_content %}
+        {# content of the running/current import#}
+    {% endblock %}
+{% endblock %}
