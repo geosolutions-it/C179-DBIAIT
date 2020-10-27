@@ -3,6 +3,12 @@ DBIAIT project for C179
 
 # Python QGIS environment
 
+## QGIS
+Version is 3.12.2 Bucaresti
+
+## Python
+Version is 3.7.0
+
 ## Windows
 PYTHONUNBUFFERED=1;
 OSGEO4W_ROOT=C:\OSGeo4W64;
