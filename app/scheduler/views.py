@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.generic import ListView
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -133,4 +133,4 @@ class ExportDownloadView(LoginRequiredMixin, View):
             return response
         context = {u"error": f"Siamo spiacenti che l'archivio richiesto {task_id}.zip non sia presente",
                    u"bread_crumbs": {u"Error": u"#"}}
-        return render(request, u"errors/error.html", context=context, status=404)
+        return render(request, u"errors/error.html", context=context, status=status.HTTP_404_NOT_FOUND)
