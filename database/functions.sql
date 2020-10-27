@@ -28,14 +28,15 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.ST_TRANSFORM_RM40_ETRS89(
 	v_geom GEOMETRY
 ) RETURNS GEOMETRY AS $$
+DECLARE 
+	v_folder VARCHAR := '/apps/pgsql/data/';
 BEGIN
-	--/apps/pgsql/data/gridRM40_ETRS89.gsb
 	RETURN ST_TRANSFORM(
 		v_geom, 
-		'+proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=1500000 +y_0=0 +ellps=intl +units=m +nadgrids=gridRM40_ETRS89.gsb'
+		'+proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=1500000 +y_0=0 +ellps=intl +units=m +nadgrids=' || v_folder || 'gridRM40_ETRS89.gsb'
 	);
 EXCEPTION WHEN OTHERS THEN
-	RETURN NULL;
+	RETURN ST_TRANSFORM(v_geom, 3003);
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
