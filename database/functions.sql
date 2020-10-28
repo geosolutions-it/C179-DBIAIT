@@ -44,7 +44,7 @@ $$  LANGUAGE plpgsql
     SET search_path = public, DBIAIT_ANALYSIS;	
 --------------------------------------------------------------------
 -- Populate data into the POP_RES_LOC table using information 
--- from LOCALITA ISTAT (2011) - (Ref. 2.1. LOCALITA ISTAT)
+-- from LOCALITA ISTAT (2011) - (Ref. 2.3. LOCALITA ISTAT)
 -- OUT: BOOLEAN
 -- Example:
 -- 	select DBIAIT_ANALYSIS.populate_pop_res_loc();
@@ -64,11 +64,10 @@ BEGIN
 		loc2011 as id_localita_istat, 
 		--loc.popres as popres_before, 
 		ROUND(loc.popres*(p.pop_res/l.popres)) popres 
-	FROM
-	LOCALITA loc,
+	FROM LOCALITA loc,
 	(
 		SELECT anno, pro_com, pop_res 
-		from POP_RES_COMUNE 
+		FROM POP_RES_COMUNE 
 	) p,
 	(
 		SELECT pro_com, sum(popres) popres 
@@ -83,7 +82,7 @@ BEGIN
 	UPDATE POP_RES_LOC
 	SET popres = t.new_popres
 	FROM (
-		SELECT l.id_localita_istat, l.popres + d.delta new_popres
+		SELECT l.id_localita_istat, (l.popres + d.delta) new_popres
 		FROM 
 		(
 			SELECT DISTINCT ON (pro_com)
@@ -92,26 +91,25 @@ BEGIN
 			ORDER  BY pro_com, popres DESC
 		) l,
 		(
-			select p.pro_com, p.pop_res - l.popres delta
-			from 
-			pop_res_comune p,
+			SELECT p.pro_com, (p.pop_res - l.popres) delta
+			FROM pop_res_comune p,
 			(
-				select pro_com, sum(popres) popres 
-				from POP_RES_LOC
-				group by pro_com
+				SELECT pro_com, sum(popres) popres 
+				FROM POP_RES_LOC
+				GROUP BY pro_com
 			) l
-			where p.pro_com=l.pro_com
+			WHERE p.pro_com=l.pro_com
 			AND  p.pop_res - l.popres  <> 0
 		) d
-		where l.pro_com = d.pro_com
+		WHERE l.pro_com = d.pro_com
 	) t
 	WHERE t.id_localita_istat = POP_RES_LOC.id_localita_istat;
 	
 	v_result:= TRUE;
 
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -120,7 +118,7 @@ $$  LANGUAGE plpgsql
 --------------------------------------------------------------------
 -- Populate data into the DISTRIB_LOC_SERV table using information 
 -- from LOCALITA ISTAT (2011) and ACQ_RETE_DISTRIB
--- (Ref. 2.3. LOCALITA ISTAT)
+-- (Ref. 2.3. Percentuale Popolazione Servita Per Localita)
 -- OUT: BOOLEAN
 -- Example:
 -- 	select DBIAIT_ANALYSIS.populate_distrib_loc_serv();
@@ -148,8 +146,8 @@ BEGIN
 	GROUP BY id_localita_istat, codice_ato;
 	v_result:= TRUE;
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -172,7 +170,7 @@ BEGIN
 	UPDATE POP_RES_COMUNE
 	SET pop_ser_acq = NULL, perc_acq = NULL;
 
-	-- updating filed pop_ser_acq
+	-- updating field pop_ser_acq
 	UPDATE POP_RES_COMUNE
 	SET pop_ser_acq = t2.ab_srv_com, perc_acq = 100*t2.ab_srv_com/POP_RES_COMUNE.pop_res
 	FROM (
@@ -192,9 +190,9 @@ BEGIN
 
 	v_result:= TRUE;
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RAISE NOTICE 'Exception: %', SQLERRM;
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RAISE NOTICE 'Exception: %', SQLERRM;
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -234,9 +232,9 @@ BEGIN
 	WHERE t1.pro_com=p.pro_com';
 	v_result:= TRUE;
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RAISE NOTICE 'Exception: %', SQLERRM;
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RAISE NOTICE 'Exception: %', SQLERRM;
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -366,9 +364,9 @@ BEGIN
 
 	v_result:= TRUE;
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RAISE NOTICE 'Exception: %', SQLERRM;
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RAISE NOTICE 'Exception: %', SQLERRM;
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
