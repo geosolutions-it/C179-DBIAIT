@@ -44,13 +44,12 @@ $$  LANGUAGE plpgsql
     SET search_path = public, DBIAIT_ANALYSIS;	
 --------------------------------------------------------------------
 -- Populate data into the POP_RES_LOC table using information 
--- from LOCALITA ISTAT (2011) - (Ref. 2.1. LOCALITA ISTAT)
+-- from LOCALITA ISTAT (2011) - (Ref. 2.3. LOCALITA ISTAT)
 -- OUT: BOOLEAN
 -- Example:
 -- 	select DBIAIT_ANALYSIS.populate_pop_res_loc();
 --------------------------------------------------------------------	
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_pop_res_loc(
-	v_year INTEGER
 ) RETURNS BOOLEAN AS $$
 DECLARE 
 	v_result BOOLEAN := FALSE;
@@ -58,32 +57,59 @@ BEGIN
     
 	DELETE FROM POP_RES_LOC;
 
-	INSERT INTO POP_RES_LOC(anno_rif, id_localita_istat, popres)
+	INSERT INTO POP_RES_LOC(anno_rif, pro_com, id_localita_istat, popres)
 	SELECT 
 		p.anno as anno_rif, 
+		l.pro_com,
 		loc2011 as id_localita_istat, 
 		--loc.popres as popres_before, 
-		CEIL(loc.popres*(p.pop_res/l.popres)) popres 
-	FROM
+		ROUND(loc.popres*(p.pop_res/l.popres)) popres 
+	FROM LOCALITA loc,
 	(
 		SELECT anno, pro_com, pop_res 
-		from POP_RES_COMUNE 
+		FROM POP_RES_COMUNE 
 	) p,
 	(
 		SELECT pro_com, sum(popres) popres 
 		FROM LOCALITA 
 		GROUP BY pro_com
-	) l, 
-	LOCALITA loc
+	) l 
 	WHERE 
 		p.pro_com::VARCHAR = l.pro_com::VARCHAR 
 		AND l.pro_com = loc.pro_com;
 
+	-- update delta (group by pro_com)
+	UPDATE POP_RES_LOC
+	SET popres = t.new_popres
+	FROM (
+		SELECT l.id_localita_istat, (l.popres + d.delta) new_popres
+		FROM 
+		(
+			SELECT DISTINCT ON (pro_com)
+				   pro_com,id_localita_istat,popres
+			FROM   POP_RES_LOC
+			ORDER  BY pro_com, popres DESC
+		) l,
+		(
+			SELECT p.pro_com, (p.pop_res - l.popres) delta
+			FROM pop_res_comune p,
+			(
+				SELECT pro_com, sum(popres) popres 
+				FROM POP_RES_LOC
+				GROUP BY pro_com
+			) l
+			WHERE p.pro_com=l.pro_com
+			AND  p.pop_res - l.popres  <> 0
+		) d
+		WHERE l.pro_com = d.pro_com
+	) t
+	WHERE t.id_localita_istat = POP_RES_LOC.id_localita_istat;
+	
 	v_result:= TRUE;
 
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -92,7 +118,7 @@ $$  LANGUAGE plpgsql
 --------------------------------------------------------------------
 -- Populate data into the DISTRIB_LOC_SERV table using information 
 -- from LOCALITA ISTAT (2011) and ACQ_RETE_DISTRIB
--- (Ref. 2.3. LOCALITA ISTAT)
+-- (Ref. 2.3. Percentuale Popolazione Servita Per Localita)
 -- OUT: BOOLEAN
 -- Example:
 -- 	select DBIAIT_ANALYSIS.populate_distrib_loc_serv();
@@ -120,8 +146,8 @@ BEGIN
 	GROUP BY id_localita_istat, codice_ato;
 	v_result:= TRUE;
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -144,7 +170,7 @@ BEGIN
 	UPDATE POP_RES_COMUNE
 	SET pop_ser_acq = NULL, perc_acq = NULL;
 
-	-- updating filed pop_ser_acq
+	-- updating field pop_ser_acq
 	UPDATE POP_RES_COMUNE
 	SET pop_ser_acq = t2.ab_srv_com, perc_acq = 100*t2.ab_srv_com/POP_RES_COMUNE.pop_res
 	FROM (
@@ -164,9 +190,9 @@ BEGIN
 
 	v_result:= TRUE;
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RAISE NOTICE 'Exception: %', SQLERRM;
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RAISE NOTICE 'Exception: %', SQLERRM;
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -206,9 +232,9 @@ BEGIN
 	WHERE t1.pro_com=p.pro_com';
 	v_result:= TRUE;
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RAISE NOTICE 'Exception: %', SQLERRM;
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RAISE NOTICE 'Exception: %', SQLERRM;
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -264,19 +290,22 @@ BEGIN
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
 		select s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
 		from acq_ubic_contatore c, utenza_sap s, (
-			select t.codice_ato, b.geom 
+			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
 			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
+			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
 		) g
-		WHERE c.id_impianto is not null AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
+		WHERE c.id_impianto is not null 
+		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
 		AND s.id_ubic_contatore=c.idgis';
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
 		select s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
 		from acq_ubic_contatore c, utenza_sap s, (
-			select t.codice as codice_ato, b.geom 
+			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO 
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
+			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
 		) g
 		WHERE c.id_impianto is not null AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
 		AND s.id_ubic_contatore=c.idgis';
@@ -284,12 +313,14 @@ BEGIN
 
 	-- initialize table UTENZA_SERVIZIO.id_ubic_contatore with data from ACQ_UBIC_CONTATORE.idgis
 	EXECUTE '
-	INSERT INTO utenza_servizio(id_ubic_contatore)
-	SELECT DISTINCT idgis from ACQ_UBIC_CONTATORE WHERE id_impianto is not NULL';
+	INSERT INTO utenza_servizio(impianto, id_ubic_contatore)
+	SELECT DISTINCT u.id_impianto, u.idgis 
+	FROM ACQ_UBIC_CONTATORE u, ACQ_CONTATORE c 
+	WHERE u.id_impianto is not NULL AND c.D_STATO=''ATT'' AND u.idgis=c.id_ubic_contatore';
 	-- update field ids_codice_orig_acq
 	EXECUTE '
 		UPDATE utenza_servizio 
-		SET impianto = t.imp, ids_codice_orig_acq = t.codice 
+		SET ids_codice_orig_acq = t.codice 
 		FROM (
 			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
 			FROM UTENZA_SERVIZIO_ACQ
@@ -300,7 +331,7 @@ BEGIN
 	-- update field id_localita_istat
 	EXECUTE '
 		UPDATE utenza_servizio 
-		SET impianto = t.imp, id_localita_istat = t.codice 
+		SET id_localita_istat = t.codice 
 		FROM (
 			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
 			FROM UTENZA_SERVIZIO_LOC
@@ -311,7 +342,7 @@ BEGIN
 	-- update field ids_codice_orig_fgn
 	EXECUTE '
 		UPDATE utenza_servizio 
-		SET impianto = t.imp, ids_codice_orig_fgn = t.codice 
+		SET ids_codice_orig_fgn = t.codice 
 		FROM (
 			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
 			FROM UTENZA_SERVIZIO_FGN
@@ -322,7 +353,7 @@ BEGIN
 	-- update field ids_codice_orig_dep_sca
 	EXECUTE '
 		UPDATE utenza_servizio 
-		SET impianto = t.imp, ids_codice_orig_dep_sca = t.codice 
+		SET ids_codice_orig_dep_sca = t.codice 
 		FROM (
 			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
 			FROM UTENZA_SERVIZIO_BAC
@@ -333,9 +364,9 @@ BEGIN
 
 	v_result:= TRUE;
     RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RAISE NOTICE 'Exception: %', SQLERRM;
-	RETURN v_result;
+--EXCEPTION WHEN OTHERS THEN
+--	RAISE NOTICE 'Exception: %', SQLERRM;
+--	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
