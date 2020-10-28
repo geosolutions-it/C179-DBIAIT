@@ -196,3 +196,6 @@ AUTHENTICATION_BACKENDS = (
 
 # Directory from which export files are selected
 NFS_FOLDER = os.getenv("NFS_FOLDER")
+
+# Directory in which generated exports are kept
+EXPORT_FOLDER = os.getenv("EXPORT_FOLDER")
