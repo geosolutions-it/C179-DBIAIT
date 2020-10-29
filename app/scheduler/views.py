@@ -1,11 +1,14 @@
 from os import fstat, listdir, path
+from urllib import parse
 
-from app.scheduler.models import Task, TaskStatus
-from app.scheduler.serializers import ImportSerializer
+from app.scheduler.exceptions import QueuingCriteriaViolated
+from app.scheduler.models import Process, ProcessHistory, Task, TaskStatus
+from app.scheduler.serializers import ImportSerializer, ProcessSerializer
+from app.scheduler.tasks.process_tasks import ProcessTask
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.generic import ListView
@@ -102,13 +105,57 @@ class Export(LoginRequiredMixin, ListView):
         return context
 
 
-class Process(LoginRequiredMixin, View):
+class ProcessView(LoginRequiredMixin, ListView):
     def get(self, request):
+        try:
+            process_id = int(request.GET.get(u"process_id"))
+        except ValueError:
+            process_id = None
+        error = request.GET.get(u"error")
         bread_crumbs = {
-            'Process': reverse('process-view'),
+            u"Process": reverse(u"process-view"),
         }
-        context = {'bread_crumbs': bread_crumbs}
-        return render(request, 'process/base-process.html', context)
+        process_queryset = Process.objects.all()
+        if process_id:
+            process_history_queryset = ProcessHistory.objects.filter(
+                process=int(process_id))
+        else:
+            process = process_queryset.first()
+            process_id = int(process.pk) if process else None
+            process_history_queryset = ProcessHistory.objects.filter(
+                process=process)
+        context = {
+            u"bread_crumbs": bread_crumbs,
+            u"process_queryset": process_queryset,
+            u"process_history_queryset": process_history_queryset.order_by(u"-task__start_date"),
+            u"process_id": process_id,
+            u"error": error
+        }
+        return render(request, u"process/base-process.html", context)
+
+
+class GetProcessStatusListAPIView(generics.ListAPIView):
+    serializer_class = ProcessSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        process_id = self.kwargs[u"process_id"]
+        process_history = ProcessHistory.objects.filter(
+            process_id=process_id).values_list('task__id', flat=True)
+        queryset = Task.objects.filter(
+            type=u"PROCESS", id__in=process_history).order_by(u"-start_date")
+        return queryset
+
+
+class QueueProcessView(LoginRequiredMixin, ListView):
+    def get(self, request, process_id):
+        process_object = get_object_or_404(Process, pk=process_id)
+        try:
+            ProcessTask.send(ProcessTask.pre_send(
+                requesting_user=request.user, process=process_object))
+            return redirect(f"{reverse(u'process-view')}?process_id={process_id}")
+        except QueuingCriteriaViolated as e:
+            return redirect(f"{reverse(u'process-view')}?process_id={process_id}&error={parse.quote(str(e))}")
 
 
 class Freeze(LoginRequiredMixin, View):

@@ -1,7 +1,8 @@
 from app.scheduler.views import (Configuration, Dashboard, Export,
                                  ExportDownloadView, Freeze, GetImportStatus,
-                                 HistoricalImport, Import, Process,
-                                 QueueImportView)
+                                 GetProcessStatusListAPIView, HistoricalImport,
+                                 Import, ProcessView, QueueImportView,
+                                 QueueProcessView)
 from django.urls import include, path
 
 urlpatterns = [
@@ -13,12 +14,21 @@ urlpatterns = [
              name=u'historical-import-view'),
         path(u"dump/", Export.as_view(), name=u'export-view'),
         path(u"start/", QueueImportView.as_view(), name=u'queue-import-view'),
-        path(u"download/<int:task_id>", ExportDownloadView.as_view(), name=u'export-download-view'),
+        path(u"download/<int:task_id>", ExportDownloadView.as_view(),
+             name=u'export-download-view'),
         path(u"api/", include([
             path("status", GetImportStatus.as_view(),
-                 name=u'get-import-statis-api-view')
+                 name=u'get-import-status-api-view')
         ])),
     ])),
-    path(u"process/", Process.as_view(), name=u'process-view'),
+    path(u"process/", include([
+        path(u"", ProcessView.as_view(), name=u'process-view'),
+        path(u"start/<int:process_id>", QueueProcessView.as_view(),
+             name=u'queue-process-view'),
+        path(u"api/", include([
+            path(u"status/<int:process_id>", GetProcessStatusListAPIView.as_view(),
+                 name=u'get-process-status-api-view')
+        ])),
+    ])),
     path(u"freeze/", Freeze.as_view(), name=u"freeze-view"),
 ]
