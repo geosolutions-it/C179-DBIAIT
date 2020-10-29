@@ -259,6 +259,9 @@ BEGIN
 	DELETE FROM UTENZA_SERVIZIO_FGN;
 	DELETE FROM UTENZA_SERVIZIO_BAC;
 	
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UTENZA_SERVIZIO';
+	
+	
 	--LOCALITA
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
@@ -362,6 +365,36 @@ BEGIN
 		) t
 		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
 
+
+	-- Log duplicated items
+	EXECUTE '
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in acquedotto''
+	FROM UTENZA_SERVIZIO_ACQ
+	GROUP BY id_ubic_contatore
+	HAVING COUNT(id_ubic_contatore) > 1';
+	
+	EXECUTE '
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in localita''
+	FROM UTENZA_SERVIZIO_LOC
+	GROUP BY id_ubic_contatore
+	HAVING COUNT(id_ubic_contatore) > 1';
+	
+	EXECUTE '
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in fognatura''
+	FROM UTENZA_SERVIZIO_FGN
+	GROUP BY id_ubic_contatore
+	HAVING COUNT(id_ubic_contatore) > 1';
+	
+	EXECUTE '
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in bacino''
+	FROM UTENZA_SERVIZIO_BAC
+	GROUP BY id_ubic_contatore
+	HAVING COUNT(id_ubic_contatore) > 1';
+	
 	v_result:= TRUE;
     RETURN v_result;
 --EXCEPTION WHEN OTHERS THEN
@@ -372,3 +405,241 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
+-- Populate data into the DISTRIB_TRONCHI/ADDUT_TRONCHI table 
+-- (Ref. 5.1/5.2. Tronchi)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_tronchi('DISTRIB_TRONCHI');
+--  select DBIAIT_ANALYSIS.populate_tronchi('ADDUT_TRONCHI');
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi(
+	v_table VARCHAR
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_sub_funzione INTEGER := 0;
+	v_field VARCHAR(32);
+	v_join_table VARCHAR(32);
+BEGIN
+
+	IF v_table = 'DISTRIB_TRONCHI' THEN
+		v_sub_funzione := 4;
+		v_field := 'pressione';
+		v_join_table := 'ACQ_RETE_DISTRIB';
+	ELSIF v_table = 'ADDUT_TRONCHI' THEN
+		v_sub_funzione := 1;
+		v_field := 'protezione_catodica';
+		v_join_table := 'ACQ_ADDUTTRICE';
+	else
+		return false;
+	--	RAISE EXCEPTION 'Table ' || v_table || ' is not supported'; 
+	end IF;	
+
+	EXECUTE 'DELETE FROM ' || v_table || ';';
+	
+	EXECUTE '
+		INSERT INTO ' || v_table || '(
+			 codice_ato
+			,idgis			
+			,id_materiale	
+			,id_conservazione
+			,diametro		
+			,anno			
+			,lunghezza		
+			,idx_materiale	
+			,idx_diametro	
+			,idx_anno		
+			,idx_lunghezza	
+			,' || v_field || '		
+		)
+		SELECT 
+			r.codice_ato, 
+			a.idgis, 
+			a.d_materiale as d_materiale_idr, -- da all_domains
+			a.d_stato_cons,
+			a.d_diametro,
+			CASE 
+				WHEN a.data_esercizio IS NULL THEN 9999 
+				ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER 
+			END anno_messa_opera,
+			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
+			CASE 
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				ELSE ''B''
+			END idx_materiale,
+			CASE 
+				WHEN a.d_diametro IS NULL THEN ''X''
+				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_diametro, 
+			CASE 
+				WHEN a.data_esercizio IS NULL THEN ''X''
+				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_anno, 
+			a.d_tipo_rilievo,
+			0::BIT
+		FROM 
+			ACQ_CONDOTTA a,  
+			' || v_join_table || ' r
+		WHERE 
+			(a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR
+			a.D_STATO IS NULL) AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) AND (a.D_GESTORE
+			= ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
+			AND a.id_rete=r.idgis;
+		';
+
+		-- (TIPO_RILIEVO = ASB or TIPO_RILIEVO  DIN) allora l'indice assume valore A, altrimenti B
+
+
+	--D_MATERIALE convertito in D_MATERIALE_IDR
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_materiale = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = COALESCE(' || v_table || '.id_materiale,''NULL'') AND d.dominio_gis = ''D_MATERIALE_IDR''
+	';
+
+	--D_STATO_CONS convertito in id_conserva
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_conservazione = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = COALESCE(' || v_table || '.id_conservazione,''SCO'') AND d.dominio_gis = ''D_STATO_CONS'';
+	';
+	
+	-- -- valorizzazione idx_materiale
+	-- EXECUTE '
+	-- 	UPDATE ' || v_table || '
+	-- 	SET idx_materiale = CASE 
+	-- 		WHEN id_materiale = ''1'' THEN ''X''
+	-- 		WHEN id_materiale <> ''1'' AND a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+	-- 		ELSE ''B'' END
+	-- 	FROM acq_condotta a
+	-- 	WHERE a.idgis = ' || v_table || '.idgis;
+	-- ';
+	
+	-- valorizzazione idx_lunghezza (da chiarire)
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET idx_lunghezza = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = ' || v_table || '.idx_lunghezza AND d.dominio_netsic = ''id_indice_idx'';
+	';
+	
+	-- valorizzazione rete con gestione delle pressioni
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET ' || v_field || ' = 1::BIT WHERE EXISTS(
+			SELECT * FROM (
+				SELECT a.idgis 
+				FROM 
+					acq_distretto d,
+					acq_condotta a
+				WHERE d_tipo = ''MIS'' 
+				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
+				GROUP by a.idgis having count(*)>0
+			) t WHERE t.idgis = ' || v_table || '.idgis		
+		);
+	';
+	
+	RETURN TRUE;
+
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
+-- Populate data into the DISTRIB_TRONCHI table 
+-- (Ref. 5.1 DISTRIB_TRONCHI)
+-- OUT: BOOLEAN
+-- Example:
+--  select DBIAIT_ANALYSIS.populate_distrib_tronchi();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_distrib_tronchi(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN populate_tronchi('DISTRIB_TRONCHI');
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
+-- Populate data into the ADDUT_TRONCHI table 
+-- (Ref. 5.2. ADDUT_TRONCHI)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_addut_tronchi();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_addut_tronchi(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN populate_tronchi('ADDUT_TRONCHI');
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;		
+--------------------------------------------------------------------
+-- Populate data into the XXX_POMPE tables 
+--  * POZZI_POMPE
+--  * POTAB_POMPE
+--  * POMPAGGI_POMPE
+--  * SOLLEV_POMPE
+--  * DEPURATO_POMPE
+-- using information from ARCHIVIO_POMPE table
+-- (Ref. 8. Archivio POMPE)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_archivi_pompe();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_archivi_pompe(
+) RETURNS BOOLEAN AS $$
+DECLARE 
+	v_t INTEGER;
+	v_f INTEGER;
+	v_tables VARCHAR[] := ARRAY['POZZI_POMPE', 'POTAB_POMPE', 'POMPAGGI_POMPE', 'SOLLEV_POMPE', 'DEPURATO_POMPE'];
+	v_fields VARCHAR[] := ARRAY['IDX_ANNO_INSTAL', 'IDX_ANNO_RISTR', 'IDX_POTENZA', 'IDX_PORTATA', 'IDX_PREVALENZA'];
+BEGIN
+
+    FOR v_t IN array_lower(v_tables,1) .. array_upper(v_tables,1)
+	LOOP
+	
+		EXECUTE 'DELETE FROM ' || v_tables[v_t];
+		EXECUTE '
+			INSERT INTO ' || v_tables[v_t] || '(
+				CODICE_ATO, D_STATO_CONS, ANNO_INSTAL,
+				ANNO_RISTR, POTENZA, PORTATA, 
+				PREVALENZA, SN_RISERVA,
+				IDX_ANNO_INSTAL, IDX_ANNO_RISTR,
+				IDX_POTENZA, IDX_PORTATA, IDX_PREVALENZA
+			)
+			SELECT 
+				CODICE_ATO, D_STATO_CONS, ANNO_INSTAL, 
+				ANNO_RISTR, POTENZA, PORTATA, 
+				PREVALENZA, 
+				CASE WHEN 
+					SN_RISERVA = ''NO'' THEN 0::BIT
+				ELSE 1::BIT END,
+				A_ANNO_INSTAL, A_ANNO_RISTR,
+				A_POTENZA, A_PORTATA, A_PREVALENZA				
+			FROM ARCHIVIO_POMPE p, ALL_DOMAINS d
+			WHERE TIPO_OGGETTO = ''ACQ_CAPTAZIONE'';'; -- TODO: add other condition (?)
+
+			FOR v_f IN array_lower(v_fields,1) .. array_upper(v_fields,1)
+			LOOP
+				EXECUTE '
+					UPDATE ' || v_tables[v_t] || '
+					SET ' || v_fields[v_f] || ' = d.valore_netsic
+					FROM all_domains d
+					WHERE d.dominio_netsic = ''id_indice_idx'' 
+					AND d.valore_gis = ' || v_tables[v_t] || '.' || v_fields[v_f] || ';';
+			END LOOP;		
+		
+	END LOOP;	
+	
+	RETURN TRUE;
+
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;		
