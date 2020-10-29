@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Task, GeoPackage
+from .models import Task, GeoPackage, Process
 
 
 class TaskAdmin(admin.ModelAdmin):
@@ -50,5 +50,10 @@ class GeoPackageAdmin(admin.ModelAdmin):
         return False
 
 
+class ProcessAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(Task, TaskAdmin)
 admin.site.register(GeoPackage, GeoPackageAdmin)
+admin.site.register(Process, ProcessAdmin)

@@ -110,7 +110,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DATABASE_NAME', 'c179'),
+        'NAME': os.getenv('DATABASE_NAME', 'dbiait'),
         'USER': os.getenv('DATABASE_USER', 'postgres'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
         'HOST': os.getenv('DATABASE_HOST', 'localhost'),
@@ -196,3 +196,6 @@ AUTHENTICATION_BACKENDS = (
 
 # Directory from which export files are selected
 NFS_FOLDER = os.getenv("NFS_FOLDER")
+
+# Directory in which generated exports are kept
+EXPORT_FOLDER = os.getenv("EXPORT_FOLDER")

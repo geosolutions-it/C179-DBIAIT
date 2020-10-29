@@ -1,4 +1,4 @@
-from app.scheduler.models import status_icon_mapper, style_class_mapper
+from app.scheduler.utils import status_icon_mapper, style_class_mapper
 from django import template
 
 register = template.Library()

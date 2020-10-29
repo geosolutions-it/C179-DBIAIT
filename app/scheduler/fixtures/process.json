@@ -1,0 +1,42 @@
+[
+    {
+        "pk": 1,
+        "model": "scheduler.Process",
+        "fields": {
+            "name": "Località Istat",
+            "algorithm": "populate_pop_res_loc"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "scheduler.Process",
+        "fields": {
+            "name": "Percentuale popolazione servita per località",
+            "algorithm": "populate_distrib_loc_serv"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "scheduler.Process",
+        "fields": {
+            "name": "Popolazione residente Istat per comune",
+            "algorithm": "populate_pop_res_comune"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "scheduler.Process",
+        "fields": {
+            "name": "Percentuale popolazione servita sulla rete per comune",
+            "algorithm": "populate_distr_com_serv"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "scheduler.Process",
+        "fields": {
+            "name": "Servizio utenza",
+            "algorithm": "populate_utenza_servizio"
+        }
+    }
+]
