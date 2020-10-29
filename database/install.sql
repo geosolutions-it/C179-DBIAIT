@@ -13,6 +13,13 @@ CREATE TABLE DBIAIT_ANALYSIS.ALL_DOMAINS(
 )
 
 -- SUPPORT TABLES --
+CREATE TABLE DBIAIT_ANALYSIS.LOG_STANDALONE (
+	id 			VARCHAR(32) NOT NULL,
+	alg_name	VARCHAR(50) NOT NULL,
+	description	VARCHAR(500) NOT NULL
+);
+
+
 CREATE TABLE DBIAIT_ANALYSIS.POP_RES_LOC (
 	pro_com 	VARCHAR(8) NOT NULL,
 	id_localita_istat VARCHAR(20) NOT NULL,
@@ -135,38 +142,38 @@ CREATE TABLE DBIAIT_ANALYSIS.ABITANTI_TRATTATI(
 
 CREATE TABLE DBIAIT_ANALYSIS.DISTRIB_TRONCHI(
 	codice_ato			VARCHAR(32),
-	idgis				VARCHAR(16),
-	id_materiale		INTEGER,
-	id_conservazione	INTEGER,
+	idgis				VARCHAR(32),
+	id_materiale		VARCHAR(5),
+	id_conservazione	VARCHAR(5),
 	diametro			INTEGER,
 	anno				INTEGER,
 	lunghezza			double precision,
-	idx_materiale		VARCHAR(2),
-	idx_diametro		VARCHAR(2),
-	idx_anno			VARCHAR(2),
-	idx_lunghezza		VARCHAR(2),
+	idx_materiale		VARCHAR(5),
+	idx_diametro		VARCHAR(5),
+	idx_anno			VARCHAR(5),
+	idx_lunghezza		VARCHAR(5),
 	pressione			BIT(1),
 	note				VARCHAR(255)
 );
 
 CREATE TABLE DBIAIT_ANALYSIS.ADDUT_TRONCHI(
 	codice_ato			VARCHAR(32),
-	idgis				VARCHAR(16),
-	id_materiale		INTEGER,
-	id_conservazione	INTEGER,
+	idgis				VARCHAR(32),
+	id_materiale		VARCHAR(5),
+	id_conservazione	VARCHAR(5),
 	diametro			INTEGER,
 	anno				INTEGER,
 	lunghezza			double precision,
-	idx_materiale		VARCHAR(2),
-	idx_diametro		VARCHAR(2),
-	idx_anno			VARCHAR(2),
-	idx_lunghezza		VARCHAR(2),
+	idx_materiale		VARCHAR(5),
+	idx_diametro		VARCHAR(5),
+	idx_anno			VARCHAR(5),
+	idx_lunghezza		VARCHAR(5),
 	protezione_catodica	BIT(1),
 	note				VARCHAR(255)
 );
 
 CREATE TABLE DBIAIT_ANALYSIS.ACQ_COND_ALTRO(
-	idgis			VARCHAR(16),
+	idgis			VARCHAR(32),
 	pr_min			double precision,
 	pr_avg			double precision,
 	pr_max			double precision,
@@ -214,7 +221,7 @@ SELECT AddGeometryColumn ('dbiait_analysis','acq_shape','geom', 25832, 'LINESTRI
 
 --Lunghezze???
 CREATE TABLE DBIAIT_ANALYSIS.ACQ_LUNGHEZZA_RETE(
-	idgis			VARCHAR(16),
+	idgis			VARCHAR(32),
 	codice_ato		VARCHAR(32),
 	tipo_infr		VARCHAR(100),
 	lunghezza 		double precision,
@@ -223,7 +230,7 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_LUNGHEZZA_RETE(
 
 -- Lunghezze???
 CREATE TABLE DBIAIT_ANALYSIS.FOGNAT_TRONCHI(
-	idgis					VARCHAR(16),
+	idgis					VARCHAR(32),
 	codice_ato				VARCHAR(32),
 	id_materiale 			VARCHAR(2),  
 	id_conservazione 		VARCHAR(2),  
@@ -242,7 +249,7 @@ CREATE TABLE DBIAIT_ANALYSIS.FOGNAT_TRONCHI(
 
 -- Lunghezze???
 CREATE TABLE DBIAIT_ANALYSIS.COLLETT_TRONCHI(
-	idgis					VARCHAR(16),
+	idgis					VARCHAR(32),
 	codice_ato				VARCHAR(32),
 	id_materiale 			VARCHAR(2),  
 	id_conservazione 		VARCHAR(2),  
@@ -260,7 +267,7 @@ CREATE TABLE DBIAIT_ANALYSIS.COLLETT_TRONCHI(
 
 -- Lunghezze???
 CREATE TABLE DBIAIT_ANALYSIS.FGN_COND_ALTRO(
-	idgis		VARCHAR(16),
+	idgis		VARCHAR(32),
 	rip_rete 	double precision,  
 	rip_alla 	double precision
 );
@@ -300,7 +307,7 @@ SELECT AddGeometryColumn ('dbiait_analysis','fgn_shape','geom', 25832, 'LINESTRI
 
 --Lunghezze???
 CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE(
-	idgis			VARCHAR(16),
+	idgis			VARCHAR(32),
 	codice_ato		VARCHAR(32),
 	tipo_infr		VARCHAR(100),
 	lunghezza 		double precision,
@@ -309,7 +316,7 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE(
 
 --Lunghezze???
 CREATE TABLE DBIAIT_ANALYSIS.ACQ_ALLACCIO(
-	idgis			VARCHAR(16),
+	idgis			VARCHAR(32),
 	codice_ato		VARCHAR(32),
 	tipo_infr		VARCHAR(100),
 	nr_allacci 		INTEGER,
@@ -320,7 +327,7 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_ALLACCIO(
 
 --Lunghezze???
 CREATE TABLE DBIAIT_ANALYSIS.FGN_ALLACCIO(
-	idgis			VARCHAR(16),
+	idgis			VARCHAR(32),
 	codice_ato		VARCHAR(32),
 	tipo_infr		VARCHAR(100),
 	nr_allacci_c 	INTEGER,
@@ -335,16 +342,16 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_ALLACCIO(
 
 --Lunghezze???
 CREATE TABLE DBIAIT_ANALYSIS.REL_PROD_CONT(
-	idgis_contatore		VARCHAR(16),
-	idgis_produttivo	VARCHAR(16),
+	idgis_contatore		VARCHAR(32),
+	idgis_produttivo	VARCHAR(32),
 	sn_allac_fgn_335	VARCHAR(2),
 	note 				VARCHAR(255) 
 );
 
 --Lunghezze???
 CREATE TABLE DBIAIT_ANALYSIS.A_REL_PROD_CONT(
-	idgis_contatore		VARCHAR(16),
-	idgis_produttivo	VARCHAR(16),
+	idgis_contatore		VARCHAR(32),
+	idgis_produttivo	VARCHAR(32),
 	sn_allac_fgn_335	VARCHAR(2),
 	note 				VARCHAR(255) 
 );
@@ -360,23 +367,23 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_REL_PROD_IMM(
 CREATE TABLE DBIAIT_ANALYSIS.ARCHIVIO_POMPE(
 	ID_OGGETTO 		VARCHAR(32), 
 	CODICE_ATO 		VARCHAR(32), 
-	D_STATO_CONS 	VARCHAR(2), 
+	D_STATO_CONS 	VARCHAR(3), 
 	ANNO_INSTAL 	INTEGER, 
 	ANNO_RISTR 		INTEGER, 
 	POTENZA 		double precision, 
 	PORTATA 		double precision, 
 	PREVALENZA 		double precision, 
-	SN_RISERVA 		VARCHAR(2), 
-	A_ANNO_INSTAL 	VARCHAR(2), 
-	A_ANNO_RISTR 	VARCHAR(2), 
-	A_POTENZA 		VARCHAR(2), 
-	A_PORTATA 		VARCHAR(2), 
-	A_PREVALENZA 	VARCHAR(2), 
-	MARCA 			VARCHAR(32), 
-	MODELLO 		VARCHAR(32), 
-	MATRICOLA 		VARCHAR(32), 
-	TIPO_OGGETTO 	VARCHAR(32), 
-	ANNOTAZIONE 	VARCHAR(32) 
+	SN_RISERVA 		VARCHAR(3), 
+	A_ANNO_INSTAL 	VARCHAR(3), 
+	A_ANNO_RISTR 	VARCHAR(3), 
+	A_POTENZA 		VARCHAR(3), 
+	A_PORTATA 		VARCHAR(3), 
+	A_PREVALENZA 	VARCHAR(3), 
+	MARCA 			VARCHAR(20), 
+	MODELLO 		VARCHAR(20), 
+	MATRICOLA 		VARCHAR(20), 
+	TIPO_OGGETTO 	VARCHAR(50), 
+	ANNOTAZIONE 	VARCHAR(150) 
 );
 
 --Lunghezze ???
@@ -389,11 +396,11 @@ CREATE TABLE DBIAIT_ANALYSIS.POZZI_POMPE(
 	PORTATA 		double precision, 
 	PREVALENZA 		double precision, 
 	SN_RISERVA 		BIT(1),
-	IDX_ANNO_INSTAL VARCHAR(2),
-	IDX_ANNO_RISTR 	VARCHAR(2),
-	IDX_POTENZA 	VARCHAR(2),	
-	IDX_PORTATA 	VARCHAR(2),
-	IDX_PREVALENZA 	VARCHAR(2)
+	IDX_ANNO_INSTAL VARCHAR(3),
+	IDX_ANNO_RISTR 	VARCHAR(3),
+	IDX_POTENZA 	VARCHAR(3),	
+	IDX_PORTATA 	VARCHAR(3),
+	IDX_PREVALENZA 	VARCHAR(3)
 );
 
 CREATE TABLE DBIAIT_ANALYSIS.POTAB_POMPE(
@@ -575,7 +582,7 @@ CREATE TABLE DBIAIT_ANALYSIS.SCARICATO_INFOG(
 
 -- 
 
-CREATE TABLE dbiait_analysis.localita(
+CREATE TABLE DBIAIT_ANALYSIS.localita(
     objectid bigint,
     cod_istat double precision,
     cod_reg double precision,
@@ -597,11 +604,11 @@ CREATE TABLE dbiait_analysis.localita(
     shape_leng double precision,
     shape_area double precision
 );
-SELECT AddGeometryColumn ('dbiait_analysis','localita','geom', 25832, 'MULTIPOLYGON',2);
+SELECT AddGeometryColumn ('dbiait_analysis', 'localita', 'geom', 25832, 'MULTIPOLYGON', 2);
 
 --
 
-CREATE TABLE dbiait_analysis.confine_comunale
+CREATE TABLE DBIAIT_ANALYSIS.confine_comunale
 (
     cod_istat double precision,
     provincia character varying(50),	--
@@ -612,5 +619,5 @@ CREATE TABLE dbiait_analysis.confine_comunale
     shape_leng double precision,
     shape_area double precision			--
 );
-SELECT AddGeometryColumn ('dbiait_analysis','confine_comunale','geom', 25832, 'MULTIPOLYGON',2);
+SELECT AddGeometryColumn ('dbiait_analysis', 'confine_comunale', 'geom', 25832, 'MULTIPOLYGON', 2);
 

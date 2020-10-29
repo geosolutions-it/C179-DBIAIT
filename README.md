@@ -7,7 +7,7 @@ DBIAIT project for C179
 Version is 3.12.2 Bucaresti
 
 ## Python
-Version is 3.7.0
+Version is 3.8.2
 
 ## Windows
 PYTHONUNBUFFERED=1;
