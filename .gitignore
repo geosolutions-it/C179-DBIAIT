@@ -25,3 +25,6 @@ dist
 # cache files
 *__pycache__*
 *.pyc*
+
+# django_dramatiq task logs
+task_logs
