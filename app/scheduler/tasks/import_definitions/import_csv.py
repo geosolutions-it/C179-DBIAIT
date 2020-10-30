@@ -1,14 +1,20 @@
-import os, sys
 import csv
-from import_task_base import ImportTaskBase
+import pathlib
+
+# import QGis API
 from qgis.core import *
-from qgis.PyQt.QtCore import QVariant
+
+from django.conf import settings
+
+from app.scheduler.utils import Schema
+from app.scheduler.exceptions import SchedulerException
+from .base_import import BaseImportDefinition
 
 
-class ImportCsvTask(ImportTaskBase):
+class CsvImportDefinition(BaseImportDefinition):
 
-    def __init__(self, config=None):
-        ImportTaskBase.__init__(self, config)
+    def __init__(self, schema=Schema.ANALYSIS):
+        super().__init__(schema=schema)
         self.columns = {
             "DOMINIO_GIS": 0,
             "VALORE_GIS": 1,
@@ -20,7 +26,6 @@ class ImportCsvTask(ImportTaskBase):
         self.db = None
 
     def check_columns(self, row):
-        ret = True
         if len(row) == 5:
             row = [i.upper().replace(" ", "_") for i in row]
             for key in self.columns.keys():
@@ -28,10 +33,11 @@ class ImportCsvTask(ImportTaskBase):
                     index = row.index(key)
                     self.columns[key] = index
                 except Exception as e:
-                    ret = False
+                    return False
         else:
-            ret=False
-        return ret
+            return False
+
+        return True
 
     def drop_table_if_exists(self, table):
         try:
@@ -60,8 +66,11 @@ class ImportCsvTask(ImportTaskBase):
         Run the CSV import process
         """
         self.define_pg_connection()
-        csv_path = os.path.join(ImportTaskBase.config_file, 'domains.csv')
-        with open(csv_path) as csv_file:
+        csv_path = pathlib.Path(settings.IMPORT_DOMAINS_FILE)
+        if not csv_path.exists():
+            raise SchedulerException(f'Import configuration file {settings.IMPORT_DOMAINS_FILE} does not exist.')
+
+        with open(csv_path, 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             for row in csv_reader:
@@ -77,9 +86,10 @@ class ImportCsvTask(ImportTaskBase):
                     line_count += 1
             print(f'Processed {line_count} lines.')
 
-        self.db = self.postgis.GeoDB.from_name(ImportTaskBase.DB_CONNECTION_NAME())
+        self.db = self.postgis.GeoDB.from_name(self.database_config['DATABASE'])
         self.db.empty_table('all_domains', self.database_config["SCHEMA"])
         crs = self.db.con.cursor()
+
         try:
             # For each table
             for table in self.domains.keys():
@@ -89,19 +99,3 @@ class ImportCsvTask(ImportTaskBase):
             self.db.con.commit()
         except Exception as e:
             self.db.con.rollback()
-
-
-if __name__ == "__main__":
-    task = ImportCsvTask(config={
-        'QGIS_PATH': r'C:\OSGeo4W64\apps\qgis',
-        'GPKG_PATH': r'C:\geo-solutions\repositories\C179-PUBLIACQUA\NETSIC\GPKG\PBAP_20201005_000734.gpkg',
-        'DATABASE': {
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-            'DATABASE': 'pa',
-            'SCHEMA': 'dbiait_analysis',
-            'USERNAME': 'postgres',
-            'PASSWORD': 'pc060574'
-        }
-    })
-    task.run()

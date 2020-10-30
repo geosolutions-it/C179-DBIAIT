@@ -1,54 +1,40 @@
-#!/usr/bin/python3
-import os
-import sys
-#sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-import traceback
 import json
-from import_task_base import ImportTaskBase
+import pathlib
+import traceback
+
+# import QGis API
 from qgis.core import *
 
+from django.conf import settings
 
-class ImportTask(ImportTaskBase):
+from app.scheduler.utils import Schema
+from app.scheduler.exceptions import SchedulerException
+from .base_import import BaseImportDefinition
 
-    def __init__(self, config=None, offset=0, limit=50):
-        ImportTaskBase.__init__(self, config, offset, limit)
+
+class GpkgImportDefinition(BaseImportDefinition):
+
+    def __init__(self, gpkg_path, offset=0, limit=50, schema=Schema.ANALYSIS):
+        super().__init__(schema=schema)
+
+        self.gpkg_path = gpkg_path
+        self.offset = offset
+        self.limit = limit
 
     @staticmethod
     def get_feature_classes():
         """
         Read list of Feature Classes to import from the configuration file (import.json)
         """
-        #dirname = os.path.dirname(__file__)
-        #config_file = os.path.join(dirname, "../../config/import.json")
-        config_file = os.path.join(ImportTaskBase.config_file, 'import.json')
+        config_file = pathlib.Path(settings.IMPORT_CONF_FILE)
+        if not config_file.exists():
+            raise SchedulerException(f'Import configuration file {settings.IMPORT_CONF_FILE} does not exist.')
+
         with open(config_file, 'r') as cfg:
             config = json.load(cfg)
         fc_list = config["featureclasses"]
         fc_list.sort()
         return fc_list
-
-    def get_gpkg_layer_names(self):
-        """
-        Read and return the layers' name in the GeoPackage
-        """
-        if self.gpkg_path is not None:
-            layer = QgsVectorLayer(self.gpkg_path, "gpkg", "ogr")
-            subLayers = layer.dataProvider().subLayers()
-            names = []
-            count = 0
-            for subLayer in subLayers:
-                name = subLayer.split('!!::!!')[1]
-                #count += 1
-                #gpkg_layer = gpkg_path + "|layername=" + name
-                #vlayer = QgsVectorLayer(gpkg_layer, name, "ogr")
-                #valid = "-"
-                #if vlayer.isValid():
-                #    valid = "+ " + str(vlayer.geometryType())
-                #print("[" + str(count) + "]: (" + valid + ") => " + name)
-                names.append(name)
-            return names
-        else:
-            return None
 
     def _get_gpkg_vector_layer(self, name):
         """
@@ -86,7 +72,7 @@ class ImportTask(ImportTaskBase):
             # Export in PostgreSQL
             alg_params = {
                 'CREATEINDEX': True,
-                'DATABASE': ImportTaskBase.DB_CONNECTION_NAME(),
+                'DATABASE': self.database_config['DATABASE'],
                 'DROP_STRING_LENGTH': False,
                 'ENCODING': 'UTF-8',
                 'FORCE_SINGLEPART': False,
@@ -112,6 +98,7 @@ class ImportTask(ImportTaskBase):
             raise FileNotFoundError
         if self.database_config is None:
             raise AttributeError
+
         self.define_pg_connection()
         to_load = self.get_feature_classes()
         cont = self.offset
@@ -128,21 +115,3 @@ class ImportTask(ImportTaskBase):
                 feedback.setCurrentStep(cont-self.offset)
                 if feedback.isCanceled():
                     break
-
-
-if __name__ == "__main__":
-    offset = int(sys.argv[1])
-    limit = int(sys.argv[2])
-    task = ImportTask(config={
-        'QGIS_PATH': r'/home/biegan/Apps/qgis',
-        'GPKG_PATH': r'/home/biegan/PycharmProjects/C179-DBIAIT/tasks/tests/data/PBAP_20200203_test.gpkg',
-        'DATABASE': {
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-            'DATABASE': 'dbiait',
-            'SCHEMA': 'dbiait_analysis',
-            'USERNAME': 'biegan',
-            'PASSWORD': 'rev'
-        }
-    }, offset=offset, limit=limit)
-    task.run()

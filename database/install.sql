@@ -10,7 +10,7 @@ CREATE TABLE DBIAIT_ANALYSIS.ALL_DOMAINS(
     dominio_netsic 	VARCHAR(50),
     valore_netsic 	VARCHAR(100),
 	PRIMARY KEY(dominio_gis, valore_gis)
-)
+);
 
 -- SUPPORT TABLES --
 CREATE TABLE DBIAIT_ANALYSIS.LOG_STANDALONE (

@@ -21,6 +21,10 @@ PYTHONPATH=%OSGEO4W_ROOT%\apps\qgis\python
 ## Linux
 export PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
 
+# Prerequisites
+
+1. Run SQL script from `database/install.sql` on the database
+
 # Scheduling system
 
 ## Starting the scheduler

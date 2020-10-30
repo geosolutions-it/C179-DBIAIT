@@ -1,22 +1,14 @@
-#!/usr/bin/python3
-import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
-import processing
+# import QGis API
 from qgis.core import *
 from qgis.analysis import QgsNativeAlgorithms
-from processing.core.Processing import Processing
-from processing.tools import postgis
 
 from django.conf import settings
+from app.scheduler.utils import Schema
 
 
-class ImportTaskBase:
+class BaseImportDefinition:
 
-    config_file = os.path.join(os.path.dirname(__file__), "../../config/")
-
-    def __init__(self, gpkg_path, offset=0, limit=50, schema=Schema.ANALYSIS):
+    def __init__(self, schema=Schema.ANALYSIS):
         database = settings.DATABASES[settings.TASKS_DATABASE]
         self.database_config = {
             'HOST': database['HOST'],
@@ -26,16 +18,12 @@ class ImportTaskBase:
             'USERNAME': database['USER'],
             'PASSWORD': database['PASSWORD']
         }
-
-        self.gpkg_path = gpkg_path
         self.qs_pg_prefix = "PostgreSQL/connections/" + database['NAME'] + "/"
         self.processing = None
         self.postgis = None
         self.qgs = None
         self.initQgis()
         self.context = QgsProcessingContext()
-        self.offset = offset
-        self.limit = limit
 
     def initQgis(self):
         """

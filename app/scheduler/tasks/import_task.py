@@ -1,13 +1,17 @@
+import math
 import pathlib
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Q, ObjectDoesNotExist
 
 from app.scheduler import exceptions
 from app.scheduler.models import GeoPackage, Task
 from app.scheduler.utils import Schema, TaskType, TaskStatus
 
 from .base_task import BaseTask
+from .import_definitions.import_gpkg import GpkgImportDefinition
+from .import_definitions.import_csv import CsvImportDefinition
 
 
 class ImportTask(BaseTask):
@@ -28,14 +32,17 @@ class ImportTask(BaseTask):
     name = "import"
     schema = Schema.ANALYSIS
 
+    max_tables_per_import_run = 50
+
     @classmethod
     def pre_send(
         cls,
         requesting_user: get_user_model(),
-        gpkg_path: pathlib.Path,
+        gpkg_name: str,
     ):
 
         # 1. check if the Task may be queued
+        gpkg_path = pathlib.Path(settings.IMPORT_FOLDER, gpkg_name)
         if not gpkg_path.exists():
             raise exceptions.SchedulingParametersError(
                 f"Provided *.gpkg file does not exist: {gpkg_path.absolute()}"
@@ -68,18 +75,42 @@ class ImportTask(BaseTask):
 
     def execute(self, task_id: int, *args, gpkg_path: str = None, **kwargs) -> None:
         """
-        This function should contain the actual code for gpkg import
+        This function executes the logic of the Import Task.
 
-        general example:
-            geopackage = pathlib.Path(gpkg)
-
-            if not geopackage.exists():
-                raise Exception('Geopackage not found')
-
-            layers = get_feature_classes(geopackage)
-            for layer in layers:
-                import_layer(layer)
-                task.progress = int(layer/layers*100)
-                task.save()
+        Note: import must be divided in steps, since maximum number of layers imported by QGis library in one run
+        is limited. By default the limit is 50 tables.
         """
-        pass
+        print(f"Starting IMPORT execution of package from: {gpkg_path}")
+
+        try:
+            orm_task = Task.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f'Task with ID {task_id} was not found! Manual removal had to appear '
+                f'between task scheduling and execution.'
+            )
+            raise
+
+        # get *.gpkg file's feature classes based on the configuration file
+        feature_classes = GpkgImportDefinition.get_feature_classes()
+        total_feature_classes_number = len(feature_classes)
+        import_steps_number = math.ceil(total_feature_classes_number / self.max_tables_per_import_run)
+
+        for step in range(import_steps_number):
+
+            offset = step * self.max_tables_per_import_run
+            limit = self.max_tables_per_import_run
+            # Import of Feature Classes
+            gpkg_import = GpkgImportDefinition(gpkg_path=gpkg_path, offset=offset, limit=limit)
+            gpkg_import.run()
+
+            orm_task.progress = math.floor(step * 100 / (import_steps_number + 1))
+            orm_task.save()
+
+        csv_import = CsvImportDefinition()
+        csv_import.run()
+
+        orm_task.progress = 100
+        orm_task.save()
+
+        print(f"Finished IMPORT execution of package from: {gpkg_path}")
