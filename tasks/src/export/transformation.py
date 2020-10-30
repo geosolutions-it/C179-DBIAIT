@@ -1,3 +1,5 @@
+from sympy import Symbol
+from sympy.parsing.sympy_parser import parse_expr
 
 
 class Domain:
@@ -141,6 +143,24 @@ class LstripTransformation(DirectTransformation):
 # ------------------------------------------------
 
 
+class ExpressionTransformation(DirectTransformation):
+
+    def __init__(self, value):
+        DirectTransformation.__init__(self, value)
+
+    def apply(self):
+        """
+        Apply the transformation
+        """
+        result = DirectTransformation.apply(self)
+        if result is not None and "expr" in self.args:
+            f = Symbol("_value_")
+            sympy_exp = parse_expr(self.args["expr"])
+            result = sympy_exp.evalf(subs={f: result})
+        return result
+# ------------------------------------------------
+
+
 class TransformationFactory:
     @staticmethod
     def from_name(name, args):
@@ -156,7 +176,10 @@ class TransformationFactory:
             transformation = DomainTransformation(args)
         elif u_name == "LSTRIP":
             transformation = LstripTransformation(args)
+        elif u_name == "EXPR":
+            transformation = ExpressionTransformation(args)
         return transformation
+# ------------------------------------------------
 
 
 if __name__ == "__main__":
@@ -182,3 +205,8 @@ if __name__ == "__main__":
     row = {"code": "000123"}
     tr = TransformationFactory.from_name("LSTRIP", {"row": row, "field_name": "code", "char": "0"})
     print("lstrip is " + str(tr.apply()))
+
+    row = {"total": 1234.5}
+    tr = TransformationFactory.from_name("EXPR", {"row": row, "field_name": "total", "expr": "_value_*1000/365/3600/24"})
+    print("expression is " + str(tr.apply()))
+
