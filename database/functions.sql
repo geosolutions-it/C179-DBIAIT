@@ -410,9 +410,9 @@ $$  LANGUAGE plpgsql
 -- (Ref. 5.1/5.2. Tronchi)
 -- OUT: BOOLEAN
 -- Example:
--- 	select DBIAIT_ANALYSIS.populate_tronchi('DISTRIB_TRONCHI');
---  select DBIAIT_ANALYSIS.populate_tronchi('ADDUT_TRONCHI');
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi(
+-- 	select DBIAIT_ANALYSIS.populate_tronchi_acq('DISTRIB_TRONCHI');
+--  select DBIAIT_ANALYSIS.populate_tronchi_acq('ADDUT_TRONCHI');
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi_acq(
 	v_table VARCHAR
 ) RETURNS BOOLEAN AS $$
 DECLARE
@@ -438,8 +438,11 @@ BEGIN
 	
 	EXECUTE '
 		INSERT INTO ' || v_table || '(
-			 codice_ato
-			,idgis			
+			 geom
+			,codice_ato
+			,idgis	
+			,idgis_rete	
+			,id_tipo_telecon			
 			,id_materiale	
 			,id_conservazione
 			,diametro		
@@ -452,8 +455,11 @@ BEGIN
 			,' || v_field || '		
 		)
 		SELECT 
+			a.geom,
 			r.codice_ato, 
-			a.idgis, 
+			a.idgis as idgis, 
+			r.idgis as idgis_rete,
+			1,
 			a.d_materiale as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,
 			a.d_diametro,
@@ -473,7 +479,7 @@ BEGIN
 			END idx_diametro, 
 			CASE 
 				WHEN a.data_esercizio IS NULL THEN ''X''
-				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
 			END idx_anno, 
 			a.d_tipo_rilievo,
@@ -507,23 +513,12 @@ BEGIN
 		WHERE d.valore_gis = COALESCE(' || v_table || '.id_conservazione,''SCO'') AND d.dominio_gis = ''D_STATO_CONS'';
 	';
 	
-	-- -- valorizzazione idx_materiale
-	-- EXECUTE '
-	-- 	UPDATE ' || v_table || '
-	-- 	SET idx_materiale = CASE 
-	-- 		WHEN id_materiale = ''1'' THEN ''X''
-	-- 		WHEN id_materiale <> ''1'' AND a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
-	-- 		ELSE ''B'' END
-	-- 	FROM acq_condotta a
-	-- 	WHERE a.idgis = ' || v_table || '.idgis;
-	-- ';
-	
 	-- valorizzazione idx_lunghezza (da chiarire)
 	EXECUTE '
 		UPDATE ' || v_table || '
 		SET idx_lunghezza = d.valore_netsic
 		FROM ALL_DOMAINS d
-		WHERE d.valore_gis = ' || v_table || '.idx_lunghezza AND d.dominio_netsic = ''id_indice_idx'';
+		WHERE d.valore_gis = COALESCE(' || v_table || '.idx_lunghezza,''SCO'') AND d.dominio_gis = ''D_T_RILIEVO'';
 	';
 	
 	-- valorizzazione rete con gestione delle pressioni
@@ -538,6 +533,22 @@ BEGIN
 				WHERE d_tipo = ''MIS'' 
 				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
 				GROUP by a.idgis having count(*)>0
+			) t WHERE t.idgis = ' || v_table || '.idgis		
+		);
+	';
+	
+	-- Aggiornamento tipo telecontrollo
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_tipo_telecon = 2 WHERE EXISTS(
+			SELECT * FROM (
+				SELECT a.idgis 
+				FROM 
+					acq_distretto d,
+					acq_condotta a
+				WHERE d_tipo = ''MIS'' 
+				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
+				AND d.d_tipo = ''MIS''
 			) t WHERE t.idgis = ' || v_table || '.idgis		
 		);
 	';
@@ -558,7 +569,7 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_distrib_tronchi(
 ) RETURNS BOOLEAN AS $$
 BEGIN
-	RETURN populate_tronchi('DISTRIB_TRONCHI');
+	RETURN populate_tronchi_acq('DISTRIB_TRONCHI');
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -573,12 +584,384 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_addut_tronchi(
 ) RETURNS BOOLEAN AS $$
 BEGIN
-	RETURN populate_tronchi('ADDUT_TRONCHI');
+	RETURN populate_tronchi_acq('ADDUT_TRONCHI');
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;		
+--------------------------------------------------------------------
+-- Populate data into the ACQ_COND_ALTRO table 
+-- (Ref. 5.3. INFORMAZIONI SU CONDOTTE)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_info_condotte_acq();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_info_condotte_acq(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	DELETE FROM ACQ_COND_ALTRO;
+	INSERT INTO ACQ_COND_ALTRO(idgis)
+	SELECT idgis FROM distrib_tronchi
+	UNION ALL
+	SELECT idgis FROM addut_tronchi;
+	RETURN TRUE;	
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
+-- Populate data into the ACQ_LUNGHEZZA_RETE table 
+-- (Ref. 5.5. LUNGHEZZA RETE ACQUEDOTTO)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_lung_rete_acq();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_lung_rete_acq(
+) RETURNS BOOLEAN AS $$
+BEGIN
+
+	DELETE FROM ACQ_LUNGHEZZA_RETE;
+	
+	INSERT INTO ACQ_LUNGHEZZA_RETE(
+		idgis,
+		codice_ato,
+		tipo_infr,
+		lunghezza,
+		lunghezza_tlc
+	)
+	SELECT 
+		idgis_rete, codice_ato, 'DISTRIBUZIONE', sum(lunghezza) lung, 
+		sum(case when id_tipo_telecon=1 then lunghezza else 0 end) lung_tlc 
+	FROM distrib_tronchi
+	GROUP BY codice_ato, idgis_rete;
+
+	INSERT INTO ACQ_LUNGHEZZA_RETE(
+		idgis,
+		codice_ato,
+		tipo_infr,
+		lunghezza,
+		lunghezza_tlc
+	)
+	SELECT 
+		idgis_rete, codice_ato, 'ADDUZIONE', sum(lunghezza) lung, 
+		sum(case when id_tipo_telecon=1 then lunghezza else 0 end) lung_tlc 
+	FROM addut_tronchi
+	GROUP BY codice_ato, idgis_rete;
+	
+	RETURN TRUE;
+	
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;		
+--------------------------------------------------------------------
+-- Populate data into the FOGNAT_TRONCHI/COLLET_TRONCHI table 
+-- (Ref. 6.1/6.2. Tronchi)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_tronchi_fgn('FOGNAT_TRONCHI');
+--  select DBIAIT_ANALYSIS.populate_tronchi_fgn('COLLETT_TRONCHI');
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi_fgn(
+	v_table VARCHAR
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_sub_funzione INTEGER := 0;
+	v_join_table VARCHAR(32):='';
+	v_col_refluo VARCHAR(32):='';
+	v_exp_refluo VARCHAR(64):='';
+BEGIN
+
+	IF v_table = 'FOGNAT_TRONCHI' THEN
+		v_sub_funzione := 1;
+		v_join_table := 'FGN_RETE_RACC';
+		v_col_refluo := ',id_refluo_trasportato';
+		v_exp_refluo := 'a.d_tipo_acqua as id_refluo_trasportato,';
+	ELSIF v_table = 'COLLETT_TRONCHI' THEN
+		v_sub_funzione := 2;
+		v_join_table := 'FGN_COLLETTORE';
+	ELSE
+		return FALSE;
+	END IF;	
+
+	EXECUTE 'DELETE FROM ' || v_table || ';';
+		
+	EXECUTE '
+		INSERT INTO ' || v_table || '(
+			 geom
+			,codice_ato
+			,idgis	
+			,idgis_rete
+			,recapito			
+			,id_materiale	
+			,id_conservazione
+			,diametro		
+			,anno			
+			,lunghezza		
+			,idx_materiale	
+			,idx_diametro	
+			,idx_anno		
+			,idx_lunghezza	
+			' || v_col_refluo || '
+			,funziona_gravita
+			,depurazione		
+		)
+		SELECT 
+			a.geom,
+			r.codice_ato, 
+			a.idgis,
+			r.idgis as idgis_rete,	
+			NULL,
+			a.d_materiale as d_materiale_idr, -- da all_domains
+			a.d_stato_cons,
+			a.d_diametro,
+			CASE 
+				WHEN a.data_esercizio IS NULL THEN 9999 
+				ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER 
+			END anno_messa_opera,
+			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
+			CASE 
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				ELSE ''B''
+			END idx_materiale,
+			CASE 
+				WHEN a.d_diametro IS NULL THEN ''X''
+				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_diametro, 
+			CASE 
+				WHEN a.data_esercizio IS NULL THEN ''X''
+				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_anno, 
+			a.d_tipo_rilievo as idx_lunghezza,
+			' || v_exp_refluo || '
+			0::BIT,
+			0::BIT
+		FROM 
+			FGN_CONDOTTA a,  
+			' || v_join_table || ' r
+		WHERE 
+			(a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) 
+			AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR a.D_STATO IS NULL) 
+			AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) 
+			AND (a.D_TIPO_ACQUA in (''MIS'',''NER'',''SCA'') or a.D_TIPO_ACQUA IS NULL)
+			AND (a.D_GESTORE = ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
+			AND a.id_rete=r.idgis;
+		';
+
+	--D_MATERIALE convertito in D_MATERIALE_IDR
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_materiale = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = COALESCE(' || v_table || '.id_materiale,''NULL'') AND d.dominio_gis = ''D_MATERIALE_IDR''
+	';
+
+	--D_STATO_CONS convertito in id_conserva
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_conservazione = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = COALESCE(' || v_table || '.id_conservazione,''SCO'') AND d.dominio_gis = ''D_STATO_CONS'';
+	';
+	
+	-- valorizzazione idx_lunghezza
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET idx_lunghezza = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = COALESCE(' || v_table || '.idx_lunghezza,''SCO'') AND d.dominio_gis = ''D_T_RILIEVO'';
+	';
+	
+	IF v_table = 'FOGNAT_TRONCHI' THEN	
+		-- valorizzazione id_refluo_trasportato
+		EXECUTE '
+			UPDATE ' || v_table || '
+			SET id_refluo_trasportato = d.valore_netsic
+			FROM ALL_DOMAINS d
+			WHERE d.valore_gis = COALESCE(' || v_table || '.id_refluo_trasportato,''MIS'') AND d.dominio_netsic = ''id_refluo_trasportato'';
+		';
+	END IF;
+	
+	-- valorizzazione funziona_gravita
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET funziona_gravita = 1::BIT WHERE EXISTS(
+			SELECT * FROM (
+				SELECT c.idgis
+				FROM fgn_condotta c, all_domains d
+				WHERE c.d_funzionam = d.valore_gis AND d.dominio_gis=''D_F_FUNZIONAM_COND''
+				AND d.valore_netsic = ''1''
+			) t WHERE t.idgis = ' || v_table || '.idgis	
+		);
+	';
+	
+	-- valorizzazione pressione di depurazione
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET depurazione = 1::BIT WHERE EXISTS(
+			SELECT * FROM (
+				select c.idgis 
+				FROM 
+					fgn_condotta c,
+					fgn_bacino b, ' || v_join_table || ' r
+				where b.sub_funzione = 3
+				and c.id_rete = r.idgis
+				and c.geom && b.geom 
+				and st_intersects(c.geom, b.geom)
+				and r.d_stato in (''ATT'',''FIP'')
+				and (r.d_ambito is null or r.d_ambito = ''AT3'')
+				and r.d_gestore = ''PUBLIACQUA''
+			) t WHERE t.idgis = ' || v_table || '.idgis		
+		);
+	';
+	
+	--aggiornamento campo idx_materiale ad X nel caso che il campo id_materiale sia 1
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET idx_materiale = ''X'' WHERE id_materiale=''1'';
+	';
+
+	-- Aggiornamento recapito (step 1)
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET recapito = t.codice_ato 
+		FROM (
+			SELECT fc.idgis, ft.codice_ato 
+			FROM fgn_condotta fc, fgn_trattamento ft
+			WHERE fc.sist_acq_dep = ft.business_id  
+		) t WHERE ' || v_table || '.recapito IS NULL AND t.idgis = ' || v_table || '.idgis
+		;
+	';
+	-- Aggiornamento recapito (step 2)
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET recapito = t.recapito_prossimale 
+		FROM (
+			SELECT fc.idgis, ft.recapito_prossimale 
+			FROM fgn_condotta fc, fgn_pnt_scarico ft
+			WHERE fc.sist_acq_dep = ft.business_id  
+		) t WHERE ' || v_table || '.recapito IS NULL AND t.idgis = ' || v_table || '.idgis
+		;
+	';
+	
+	RETURN TRUE;
+
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
+-- Populate data into the FOGNAT_TRONCHI table 
+-- (Ref. 6.1. FOGNAT_TRONCHI)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_fognat_tronchi();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_fognat_tronchi(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN populate_tronchi_fgn('FOGNAT_TRONCHI');
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
+-- Populate data into the COLLETT_TRONCHI table 
+-- (Ref. 6.2. COLLETT_TRONCHI)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_collett_tronchi();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_collett_tronchi(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN populate_tronchi_fgn('COLLETT_TRONCHI');
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
+-- Populate data into the FGN_LUNGHEZZA_RETE table 
+-- (Ref. 6.5. LUNGHEZZA RETE FOGNATURA)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_lung_rete_fgn();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_lung_rete_fgn(
+) RETURNS BOOLEAN AS $$
+BEGIN
+
+	DELETE FROM FGN_LUNGHEZZA_RETE;
+	
+	-- DISTRIBUZIONE
+	INSERT INTO FGN_LUNGHEZZA_RETE(
+		idgis,
+		codice_ato,
+		tipo_infr,
+		lunghezza,
+		lunghezza_dep
+	)
+	select 
+		idgis_rete, codice_ato, 'DISTRIBUZIONE', sum(lunghezza) lung, 
+		sum(
+			case when recapito IS NOT NULL 
+				or t.idgis_bac is not NULL
+			then lunghezza 
+			else 0 end
+		) lung_tlc 
+	from (
+		select 
+			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, 	  
+			case when 
+				recapito IS NOT NULL or bc.idgis is not NULL
+				then lunghezza 
+			else 0 end lung_tlc 
+		FROM
+		  FOGNAT_TRONCHI as ft
+		LEFT OUTER JOIN
+		  FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
+	) t 
+	GROUP BY t.codice_ato, t.idgis_rete;
+	
+	-- ADDUZIONE
+	INSERT INTO FGN_LUNGHEZZA_RETE(
+		idgis,
+		codice_ato,
+		tipo_infr,
+		lunghezza,
+		lunghezza_dep
+	)
+	select 
+		idgis_rete, codice_ato, 'ADDUZIONE', sum(lunghezza) lung, 
+		sum(
+			case when recapito IS NOT NULL 
+				or t.idgis_bac is not NULL
+			then lunghezza 
+			else 0 end
+		) lung_tlc 
+	from (
+		select 
+			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, 	  
+			case when 
+				recapito IS NOT NULL or bc.idgis is not NULL
+				then lunghezza 
+			else 0 end lung_tlc 
+		FROM
+		  COLLETT_TRONCHI as ft
+		LEFT OUTER JOIN
+		  FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
+	) t 
+	GROUP BY t.codice_ato, t.idgis_rete;
+	
+	RETURN TRUE;
+	
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
 --------------------------------------------------------------------
 -- Populate data into the XXX_POMPE tables 
 --  * POZZI_POMPE
