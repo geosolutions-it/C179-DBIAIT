@@ -40,5 +40,6 @@ window.addEventListener("load", function () {
 });
 
 function display_error_log(task_log){
-    $('#task-log').html(`<div class="text-danger">${unescape(task_log)}</div>`);
+    (task_log === "null") && $('#task-log').html("<div class='text-info'>This task has no logs</div>");
+    (task_log != "null") && $('#task-log').html(`<div class="text-danger">${unescape(task_log)}</div>`);
 }
