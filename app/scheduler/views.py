@@ -109,7 +109,7 @@ class ProcessView(LoginRequiredMixin, ListView):
     def get(self, request):
         try:
             process_id = int(request.GET.get(u"process_id"))
-        except ValueError:
+        except TypeError:
             process_id = None
         error = request.GET.get(u"error")
         bread_crumbs = {

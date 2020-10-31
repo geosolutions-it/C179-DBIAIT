@@ -1,5 +1,6 @@
 import os
 import uuid
+from pathlib import Path
 
 from app.scheduler.utils import (TaskStatus, default_storage,
                                  status_icon_mapper, style_class_mapper)
@@ -54,6 +55,11 @@ class Task(models.Model):
     @property
     def status_icon(self):
         return status_icon_mapper.get(self.status, u"")
+
+    @property
+    def task_log(self):
+        if os.path.exists(self.logfile):
+            return Path(self.logfile).read_text()
 
 
 class Process(models.Model):
