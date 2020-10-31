@@ -12,4 +12,4 @@ class ProcessSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = [u'id', u'user', u'start_date', u'end_date',
-                  u'status', u'style_class', u'status_icon']
+                  u'status', u'style_class', u'status_icon', u'task_log']
