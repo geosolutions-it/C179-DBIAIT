@@ -21,11 +21,11 @@ $$  LANGUAGE plpgsql
 ------------------------------------------------------------------
 -- Transform a Geometry from EPSG:25832 to EPSG:3003 using NTV2 nadgrids
 --SELECT ST_X(geom), ST_Y(geom) FROM(
---	SELECT DBIAIT_ANALYSIS.ST_TRANSFORM_RM40_ETRS89(
+--	SELECT ST_TRANSFORM_RM40_ETRS89(
 --		ST_SETSRID(ST_POINT(705438.9186,4830672.536), 25832)
 --	) geom
 --) t
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.ST_TRANSFORM_RM40_ETRS89(
+CREATE OR REPLACE FUNCTION public.ST_TRANSFORM_RM40_ETRS89(
 	v_geom GEOMETRY
 ) RETURNS GEOMETRY AS $$
 DECLARE 
@@ -41,7 +41,38 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public;
+--------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.GB_X(
+	v_geom GEOMETRY
+) RETURNS DOUBLE PRECISION AS $$
+BEGIN
+	IF UPPER(ST_GeometryType(v_geom)) = 'POINT' THEN
+		RETURN ST_X(ST_TRANSFORM_RM40_ETRS89(v_geom));
+	ELSE
+		RETURN ST_X(ST_CENTROID(ST_TRANSFORM_RM40_ETRS89(v_geom)));
+	END IF;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public;
+--------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.GB_Y(
+	v_geom GEOMETRY
+) RETURNS DOUBLE PRECISION AS $$
+BEGIN
+	IF UPPER(ST_GeometryType(v_geom)) = 'POINT' THEN
+		RETURN ST_Y(ST_TRANSFORM_RM40_ETRS89(v_geom));
+	ELSE
+		RETURN ST_Y(ST_CENTROID(ST_TRANSFORM_RM40_ETRS89(v_geom)));
+	END IF;
+	
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public;	
 --------------------------------------------------------------------
 -- Populate data into the POP_RES_LOC table using information 
 -- from LOCALITA ISTAT (2011) - (Ref. 2.3. LOCALITA ISTAT)
