@@ -181,3 +181,14 @@ class ExportDownloadView(LoginRequiredMixin, View):
         context = {u"error": f"Siamo spiacenti che l'archivio richiesto {task_id}.zip non sia presente",
                    u"bread_crumbs": {u"Error": u"#"}}
         return render(request, u"errors/error.html", context=context, status=status.HTTP_404_NOT_FOUND)
+
+from app.scheduler.tasks import ImportTask
+from django.contrib.auth import get_user_model
+
+
+class Asdf(View):
+
+    def get(self, requtest):
+        user = get_user_model().objects.first()
+        ImportTask.perform(ImportTask.pre_send(user, 'PBAP_20200203_test.gpkg'))
+        return redirect("dashboard-view")

@@ -2,12 +2,13 @@ from app.scheduler.views import (Configuration, Dashboard, Export,
                                  ExportDownloadView, Freeze, GetImportStatus,
                                  GetProcessStatusListAPIView, HistoricalImport,
                                  Import, ProcessView, QueueImportView,
-                                 QueueProcessView)
+                                 QueueProcessView, Asdf)
 from django.urls import include, path
 
 urlpatterns = [
     path(u"", Dashboard.as_view(), name=u'dashboard-view'),
     path(u"configuration/", Configuration.as_view(), name=u"configuration-view"),
+    path(u'asdf', Asdf.as_view()),
     path(u"import/", include([
         path(u"", Import.as_view(), name=u'import-view'),
         path(u"historical/", HistoricalImport.as_view(),

@@ -1,0 +1,8 @@
+{
+	"domains": "",
+	"featureclasses": [
+		"ACQ_CAPTAZIONE",
+		"ACQ_CAMICIA",
+		"ACQ_DISTRETTO"
+	]
+}
