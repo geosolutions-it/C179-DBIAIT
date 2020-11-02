@@ -1,12 +1,11 @@
 import os
 import uuid
-from pathlib import Path
 
 from app.scheduler.utils import (TaskStatus, default_storage,
                                  status_icon_mapper, style_class_mapper)
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db import connection, models
+from django.db import models
 
 
 class GeoPackage(models.Model):
@@ -55,3 +54,4 @@ class Task(models.Model):
     @property
     def status_icon(self):
         return status_icon_mapper.get(self.status, u"")
+
