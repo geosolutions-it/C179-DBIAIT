@@ -1,3 +1,5 @@
+from sympy import Symbol
+from sympy.parsing.sympy_parser import parse_expr
 
 
 class Domain:
@@ -141,6 +143,108 @@ class LstripTransformation(DirectTransformation):
 # ------------------------------------------------
 
 
+class ExpressionTransformation(DirectTransformation):
+
+    def __init__(self, value):
+        DirectTransformation.__init__(self, value)
+
+    def apply(self):
+        """
+        Apply the transformation
+        """
+        result = DirectTransformation.apply(self)
+        if result is not None and "expr" in self.args:
+            f = Symbol("_value_")
+            sympy_exp = parse_expr(self.args["expr"])
+            result = sympy_exp.evalf(subs={f: result})
+        return result
+# ------------------------------------------------
+
+
+class CaseTransformation(DirectTransformation):
+
+    def __init__(self, value):
+        DirectTransformation.__init__(self, value)
+
+    def sort_by_case(self, condition):
+        try:
+            cond = condition["case"].lower()
+            if cond == "when":
+                return 0
+            elif cond == "else":
+                return 1
+            else:
+                return 2
+        except:
+            return 3
+
+    @staticmethod
+    def evaluate(value1, op, value2, res):
+        if op == "=":
+            if value1 == value2:
+                return res
+        elif op == ">":
+            if value1 > value2:
+                return res
+        elif op == "<":
+            if value1 < value2:
+                return res
+        elif op == ">=":
+            if value1 >= value2:
+                return res
+        elif op == "<=":
+            if value1 <= value2:
+                return res
+        return None
+
+    def _transform(self, cond, result):
+        conditions = cond
+        conditions.sort(key=self.sort_by_case, reverse=False)
+        for cond in conditions:
+            l_cond = cond["case"].lower()
+            if l_cond == "when":
+                value = CaseTransformation.evaluate(result, cond["operator"], cond["value"], cond["result"])
+                if value is not None:
+                    result = value
+                    break
+            elif l_cond == "else":
+                result = cond["result"]
+                break
+        return result
+
+    def apply(self):
+        """
+        Apply the transformation
+        """
+        result = DirectTransformation.apply(self)
+        if result is not None and "cond" in self.args:
+            result = self._transform(self.args["cond"], result)
+        return result
+# ------------------------------------------------
+
+
+class IfTransformation(CaseTransformation):
+
+    def __init__(self, value):
+        self._value = value
+        CaseTransformation.__init__(self, value)
+
+    def apply(self):
+        """
+        Apply the transformation
+        """
+        result = DirectTransformation.apply(self)
+        if result is not None and "cond" in self.args:
+            cond = self.args["cond"]
+            conditions = [
+                {"case": "when", "operator": cond["operator"], "value": cond["value"], "result": cond["result"]},
+                {"case": "else", "result": cond["else"]}
+            ]
+            result = self._transform(conditions, result)
+        return result
+# ------------------------------------------------
+
+
 class TransformationFactory:
     @staticmethod
     def from_name(name, args):
@@ -156,7 +260,14 @@ class TransformationFactory:
             transformation = DomainTransformation(args)
         elif u_name == "LSTRIP":
             transformation = LstripTransformation(args)
+        elif u_name == "EXPR":
+            transformation = ExpressionTransformation(args)
+        elif u_name == "CASE":
+            transformation = CaseTransformation(args)
+        elif u_name == "IF":
+            transformation = IfTransformation(args)
         return transformation
+# ------------------------------------------------
 
 
 if __name__ == "__main__":
@@ -182,3 +293,30 @@ if __name__ == "__main__":
     row = {"code": "000123"}
     tr = TransformationFactory.from_name("LSTRIP", {"row": row, "field_name": "code", "char": "0"})
     print("lstrip is " + str(tr.apply()))
+
+    row = {"total": 1234.5}
+    tr = TransformationFactory.from_name("EXPR", {"row": row, "field_name": "total", "expr": "_value_*1000/365/3600/24"})
+    print("expression is " + str(tr.apply()))
+
+    row = {"id_materiale": "MUR"}
+    tr = TransformationFactory.from_name("CASE", {"row": row, "field_name": "id_materiale", "cond": [
+        {"case": "WHEN", "operator": "=", "value": "MUR", "result": 1},
+        {"case": "else", "result": 4},
+        {"case": "when", "operator": "=", "value": "CA",  "result": 2},
+        {"case": "when", "operator": "=", "value": "PIE", "result": 3}
+    ]})
+    print("Case is " + str(tr.apply()))
+
+    row = {"id_materiale": "MURO"}
+    tr = TransformationFactory.from_name("IF", {"row": row, "field_name": "id_materiale", "cond": {"operator": "=", "value": "MUR", "result": 1, "else": 2}})
+    print("If is " + str(tr.apply()))
+
+    row = {"diametro": 123.5}
+    tr = TransformationFactory.from_name("IF", {"row": row, "field_name": "diametro",
+                                                "cond": {"operator": ">", "value": 100, "result": 1, "else": 2}})
+    print("If (diametro-1) is " + str(tr.apply()))
+
+    row = {"diametro": 83.5}
+    tr = TransformationFactory.from_name("IF", {"row": row, "field_name": "diametro",
+                                                "cond": {"operator": ">", "value": 100, "result": 1, "else": 2}})
+    print("If (diametro-2) is " + str(tr.apply()))

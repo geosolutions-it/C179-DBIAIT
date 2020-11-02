@@ -23,8 +23,8 @@
 </div>
 <script>
   window.addEventListener("load", function () {
-    populate_table("{% url 'get-import-status-api-view' %}", "#import-status-table");
-    setInterval(function () { populate_table("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 10000);
+    ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table");
+    setInterval(function () { ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 10000);
   });
 </script>
 {% else %}
@@ -38,7 +38,7 @@
         {% endfor %}
       </select>
     </div>
-    <button type="submit" class="btn btn-primary mb-2 btn-block">AVVIA</button>
+    <button type="submit" class="btn btn-info mb-2 btn-block">AVVIA</button>
   </form>
 </div>
 {% endif %}
