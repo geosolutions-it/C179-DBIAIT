@@ -10,6 +10,7 @@ from app.scheduler.models import GeoPackage, Task
 from app.scheduler.utils import Schema, TaskType, TaskStatus
 
 from .base_task import BaseTask
+from .import_definitions.base_import import initQgis
 from .import_definitions.import_gpkg import GpkgImportDefinition
 from .import_definitions.import_csv import CsvImportDefinition
 
@@ -67,7 +68,7 @@ class ImportTask(BaseTask):
             geopackage=geopackage,
             type=cls.task_type,
             name=cls.name,
-            params={'kwargs': {'gpkg_path': str(gpkg_path.absolute())}}
+            params={"kwargs": {"gpkg_path": str(gpkg_path.absolute())}},
         )
         current_task.save()
 
@@ -86,28 +87,41 @@ class ImportTask(BaseTask):
             orm_task = Task.objects.get(pk=task_id)
         except ObjectDoesNotExist:
             print(
-                f'Task with ID {task_id} was not found! Manual removal had to appear '
-                f'between task scheduling and execution.'
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
             )
             raise
 
         # get *.gpkg file's feature classes based on the configuration file
         feature_classes = GpkgImportDefinition.get_feature_classes()
         total_feature_classes_number = len(feature_classes)
-        import_steps_number = math.ceil(total_feature_classes_number / self.max_tables_per_import_run)
+        import_steps_number = math.ceil(
+            total_feature_classes_number / self.max_tables_per_import_run
+        )
+
+        qgs, processing, postgis = initQgis()
 
         for step in range(import_steps_number):
 
             offset = step * self.max_tables_per_import_run
             limit = self.max_tables_per_import_run
             # Import of Feature Classes
-            gpkg_import = GpkgImportDefinition(gpkg_path=gpkg_path, offset=offset, limit=limit)
+            gpkg_import = GpkgImportDefinition(
+                gpkg_path=gpkg_path,
+                offset=offset,
+                limit=limit,
+                qgs=qgs,
+                processing=processing,
+                postgis=postgis,
+            )
             gpkg_import.run()
 
             orm_task.progress = math.floor(step * 100 / (import_steps_number + 1))
             orm_task.save()
 
-        csv_import = CsvImportDefinition()
+        csv_import = CsvImportDefinition(
+            qgs=qgs, processing=processing, postgis=postgis
+        )
         csv_import.run()
 
         orm_task.progress = 100

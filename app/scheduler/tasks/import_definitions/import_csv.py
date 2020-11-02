@@ -12,18 +12,21 @@ from .base_import import BaseImportDefinition
 
 
 class CsvImportDefinition(BaseImportDefinition):
-
-    def __init__(self, schema=Schema.ANALYSIS):
+    def __init__(self, schema=Schema.ANALYSIS, qgs=None, processing=None, postgis=None):
         super().__init__(schema=schema)
         self.columns = {
             "DOMINIO_GIS": 0,
             "VALORE_GIS": 1,
             "DESCRIZIONE_GIS": 2,
             "DOMINIO_NETSIC": 3,
-            "VALORE_NETSIC": 4
+            "VALORE_NETSIC": 4,
         }
         self.domains = {}
         self.db = None
+
+        self.qgs = qgs
+        self.processing = processing
+        self.postgis = postgis
 
     def check_columns(self, row):
         if len(row) == 5:
@@ -53,11 +56,11 @@ class CsvImportDefinition(BaseImportDefinition):
         Transform row into a tuple of elements in the correct order
         """
         values = (
-            self.quote_value(row[self.columns['DOMINIO_GIS']]),
-            self.quote_value(row[self.columns['VALORE_GIS']]),
-            self.quote_value(row[self.columns['DESCRIZIONE_GIS']]),
-            self.quote_value(row[self.columns['DOMINIO_NETSIC']]),
-            self.quote_value(row[self.columns['VALORE_NETSIC']]),
+            self.quote_value(row[self.columns["DOMINIO_GIS"]]),
+            self.quote_value(row[self.columns["VALORE_GIS"]]),
+            self.quote_value(row[self.columns["DESCRIZIONE_GIS"]]),
+            self.quote_value(row[self.columns["DOMINIO_NETSIC"]]),
+            self.quote_value(row[self.columns["VALORE_NETSIC"]]),
         )
         return values
 
@@ -68,10 +71,12 @@ class CsvImportDefinition(BaseImportDefinition):
         self.define_pg_connection()
         csv_path = pathlib.Path(settings.IMPORT_DOMAINS_FILE)
         if not csv_path.exists():
-            raise SchedulerException(f'Import configuration file {settings.IMPORT_DOMAINS_FILE} does not exist.')
+            raise SchedulerException(
+                f"Import configuration file {settings.IMPORT_DOMAINS_FILE} does not exist."
+            )
 
-        with open(csv_path, 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
+        with open(csv_path, "r") as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=",")
             line_count = 0
             for row in csv_reader:
                 if line_count == 0:
@@ -84,10 +89,10 @@ class CsvImportDefinition(BaseImportDefinition):
                         self.domains[table_name] = []
                     self.domains[table_name].append(row)
                     line_count += 1
-            print(f'Processed {line_count} lines.')
+            print(f"Processed {line_count} lines.")
 
-        self.db = self.postgis.GeoDB.from_name(self.database_config['DATABASE'])
-        self.db.empty_table('all_domains', self.database_config["SCHEMA"])
+        self.db = self.postgis.GeoDB.from_name(self.database_config["DATABASE"])
+        self.db.empty_table("all_domains", self.database_config["SCHEMA"])
         crs = self.db.con.cursor()
 
         try:
@@ -95,7 +100,12 @@ class CsvImportDefinition(BaseImportDefinition):
             for table in self.domains.keys():
                 for row in self.domains[table]:
                     values = self.row_to_values(row)
-                    self.db.insert_table_row('all_domains', values, self.database_config["SCHEMA"], cursor=crs)
+                    self.db.insert_table_row(
+                        "all_domains",
+                        values,
+                        self.database_config["SCHEMA"],
+                        cursor=crs,
+                    )
             self.db.con.commit()
         except Exception as e:
             self.db.con.rollback()

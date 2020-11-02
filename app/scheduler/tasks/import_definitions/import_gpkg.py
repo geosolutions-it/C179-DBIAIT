@@ -13,13 +13,25 @@ from .base_import import BaseImportDefinition
 
 
 class GpkgImportDefinition(BaseImportDefinition):
-
-    def __init__(self, gpkg_path, offset=0, limit=50, schema=Schema.ANALYSIS):
+    def __init__(
+        self,
+        gpkg_path,
+        offset=0,
+        limit=50,
+        schema=Schema.ANALYSIS,
+        qgs=None,
+        processing=None,
+        postgis=None,
+    ):
         super().__init__(schema=schema)
 
         self.gpkg_path = gpkg_path
         self.offset = offset
         self.limit = limit
+
+        self.qgs = qgs
+        self.processing = processing
+        self.postgis = postgis
 
     @staticmethod
     def get_feature_classes():
@@ -28,9 +40,11 @@ class GpkgImportDefinition(BaseImportDefinition):
         """
         config_file = pathlib.Path(settings.IMPORT_CONF_FILE)
         if not config_file.exists():
-            raise SchedulerException(f'Import configuration file {settings.IMPORT_CONF_FILE} does not exist.')
+            raise SchedulerException(
+                f"Import configuration file {settings.IMPORT_CONF_FILE} does not exist."
+            )
 
-        with open(config_file, 'r') as cfg:
+        with open(config_file, "r") as cfg:
             config = json.load(cfg)
         fc_list = config["featureclasses"]
         fc_list.sort()
@@ -68,23 +82,36 @@ class GpkgImportDefinition(BaseImportDefinition):
         result = None
         try:
             vlayer = self.get_gpkg_vector_layer(name)
-            print("importing layer (" + str(cont) + "): " + name + " => " + str(vlayer.featureCount()))
+            print(
+                "importing layer ("
+                + str(cont)
+                + "): "
+                + name
+                + " => "
+                + str(vlayer.featureCount())
+            )
             # Export in PostgreSQL
             alg_params = {
-                'CREATEINDEX': True,
-                'DATABASE': self.database_config['DATABASE'],
-                'DROP_STRING_LENGTH': False,
-                'ENCODING': 'UTF-8',
-                'FORCE_SINGLEPART': False,
-                'GEOMETRY_COLUMN': 'geom',
-                'INPUT': vlayer,
-                'LOWERCASE_NAMES': True,
-                'OVERWRITE': True,
-                'PRIMARY_KEY': None,
-                'SCHEMA': self.database_config['SCHEMA'],
-                'TABLENAME': name
+                "CREATEINDEX": True,
+                "DATABASE": self.database_config["DATABASE"],
+                "DROP_STRING_LENGTH": False,
+                "ENCODING": "UTF-8",
+                "FORCE_SINGLEPART": False,
+                "GEOMETRY_COLUMN": "geom",
+                "INPUT": vlayer,
+                "LOWERCASE_NAMES": True,
+                "OVERWRITE": True,
+                "PRIMARY_KEY": None,
+                "SCHEMA": self.database_config["SCHEMA"],
+                "TABLENAME": name,
             }
-            result = self.processing.run('qgis:importintopostgis', alg_params, context=self.context, feedback=feedback, is_child_algorithm=True)
+            result = self.processing.run(
+                "qgis:importintopostgis",
+                alg_params,
+                context=self.context,
+                feedback=feedback,
+                is_child_algorithm=True,
+            )
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -106,12 +133,12 @@ class GpkgImportDefinition(BaseImportDefinition):
         fbk = QgsProcessingFeedback()
         feedback = QgsProcessingMultiStepFeedback(self.limit, fbk)
         if n_step > 0:
-            prg_step = 100.0/n_step
-            for layername in to_load[self.offset:self.offset+self.limit]:
+            prg_step = 100.0 / n_step
+            for layername in to_load[self.offset : self.offset + self.limit]:
                 cont += 1
                 print(layername + ": " + str(cont))
                 self.import_into_postgis(layername.lower(), cont, feedback)
-                prg = cont/n_step
-                feedback.setCurrentStep(cont-self.offset)
+                prg = cont / n_step
+                feedback.setCurrentStep(cont - self.offset)
                 if feedback.isCanceled():
                     break

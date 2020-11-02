@@ -35,7 +35,7 @@ class ImportCsvTask(ImportTaskBase):
 
     def drop_table_if_exists(self, table):
         try:
-            self.db.delete_table(table, self.database_config["SCHEMA"])
+            self.db.delete_table(table, self.database["SCHEMA"])
         except Exception as e:
             pass
 
@@ -60,7 +60,7 @@ class ImportCsvTask(ImportTaskBase):
         Run the CSV import process
         """
         self.define_pg_connection()
-        csv_path = os.path.join(ImportTaskBase.config_file, 'domains.csv')
+        csv_path = os.path.join(ImportTaskBase.get_config_folder(), 'domains.csv')
         with open(csv_path) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
@@ -78,14 +78,14 @@ class ImportCsvTask(ImportTaskBase):
             print(f'Processed {line_count} lines.')
 
         self.db = self.postgis.GeoDB.from_name(ImportTaskBase.DB_CONNECTION_NAME())
-        self.db.empty_table('all_domains', self.database_config["SCHEMA"])
+        self.db.empty_table('all_domains', self.database["SCHEMA"])
         crs = self.db.con.cursor()
         try:
             # For each table
             for table in self.domains.keys():
                 for row in self.domains[table]:
                     values = self.row_to_values(row)
-                    self.db.insert_table_row('all_domains', values, self.database_config["SCHEMA"], cursor=crs)
+                    self.db.insert_table_row('all_domains', values, self.database["SCHEMA"], cursor=crs)
             self.db.con.commit()
         except Exception as e:
             self.db.con.rollback()

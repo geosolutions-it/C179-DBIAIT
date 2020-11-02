@@ -20,7 +20,7 @@ class ImportTask(ImportTaskBase):
         """
         #dirname = os.path.dirname(__file__)
         #config_file = os.path.join(dirname, "../../config/import.json")
-        config_file = os.path.join(ImportTaskBase.config_file, 'import.json')
+        config_file = os.path.join(ImportTaskBase.get_config_folder(), 'import.json')
         with open(config_file, 'r') as cfg:
             config = json.load(cfg)
         fc_list = config["featureclasses"]
@@ -95,7 +95,7 @@ class ImportTask(ImportTaskBase):
                 'LOWERCASE_NAMES': True,
                 'OVERWRITE': True,
                 'PRIMARY_KEY': None,
-                'SCHEMA': self.database_config['SCHEMA'],
+                'SCHEMA': self.database['SCHEMA'],
                 'TABLENAME': name
             }
             result = self.processing.run('qgis:importintopostgis', alg_params, context=self.context, feedback=feedback, is_child_algorithm=True)
@@ -110,7 +110,7 @@ class ImportTask(ImportTaskBase):
         """
         if self.gpkg_path is None:
             raise FileNotFoundError
-        if self.database_config is None:
+        if self.database is None:
             raise AttributeError
         self.define_pg_connection()
         to_load = self.get_feature_classes()
@@ -134,15 +134,15 @@ if __name__ == "__main__":
     offset = int(sys.argv[1])
     limit = int(sys.argv[2])
     task = ImportTask(config={
-        'QGIS_PATH': r'/home/biegan/Apps/qgis',
-        'GPKG_PATH': r'/home/biegan/PycharmProjects/C179-DBIAIT/tasks/tests/data/PBAP_20200203_test.gpkg',
+        'QGIS_PATH': r'C:\OSGeo4W64\apps\qgis',
+        'GPKG_PATH': r'C:\geo-solutions\repositories\C179-PUBLIACQUA\NETSIC\GPKG\PBAP_20200203.gpkg',
         'DATABASE': {
             'HOST': '127.0.0.1',
             'PORT': '5432',
-            'DATABASE': 'dbiait',
+            'DATABASE': 'pa',
             'SCHEMA': 'dbiait_analysis',
-            'USERNAME': 'biegan',
-            'PASSWORD': 'rev'
+            'USERNAME': 'postgres',
+            'PASSWORD': 'pc060574'
         }
     }, offset=offset, limit=limit)
     task.run()
