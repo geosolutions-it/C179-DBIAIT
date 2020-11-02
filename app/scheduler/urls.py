@@ -23,10 +23,10 @@ urlpatterns = [
     ])),
     path(u"process/", include([
         path(u"", ProcessView.as_view(), name=u'process-view'),
-        path(u"start/<int:process_id>", QueueProcessView.as_view(),
+        path(u"start/", QueueProcessView.as_view(),
              name=u'queue-process-view'),
         path(u"api/", include([
-            path(u"status/<int:process_id>", GetProcessStatusListAPIView.as_view(),
+            path(u"status/", GetProcessStatusListAPIView.as_view(),
                  name=u'get-process-status-api-view')
         ])),
     ])),

@@ -23,7 +23,7 @@ class Task(models.Model):
     schema = models.CharField(max_length=250)
     geopackage = models.ForeignKey(GeoPackage, on_delete=models.CASCADE, blank=True, null=True)
     type = models.CharField(max_length=50)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=300)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(
@@ -65,24 +65,24 @@ class Task(models.Model):
             return task_log
 
 
-class Process(models.Model):
-    name = models.CharField(max_length=250, blank=False)
-    algorithm = models.CharField(max_length=50, blank=False)
+# class Process(models.Model):
+#     name = models.CharField(max_length=250, blank=False)
+#     algorithm = models.CharField(max_length=50, blank=False)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
-class ProcessHistory(models.Model):
-    process = models.ForeignKey(Process, on_delete=models.CASCADE)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+# class ProcessHistory(models.Model):
+#     process = models.ForeignKey(Process, on_delete=models.CASCADE)
+#     task = models.ForeignKey(Task, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return f"process_id={self.process.pk}:task_id={self.task.pk}"
+#     def __str__(self):
+#         return f"process_id={self.process.pk}:task_id={self.task.pk}"
 
-    def run_process_algorith(self):
-        analysis_cursor = connection.cursor()
-        with analysis_cursor as cursor:
-            cursor.callproc(f"dbiait_analysis.{self.process.algorithm}")
-            result = cursor.fetchone()
-        return result
+#     def run_process_algorith(self):
+#         analysis_cursor = connection.cursor()
+#         with analysis_cursor as cursor:
+#             cursor.callproc(f"dbiait_analysis.{self.process.algorithm}")
+#             result = cursor.fetchone()
+#         return result
