@@ -83,6 +83,6 @@ class ProcessHistory(models.Model):
     def run_process_algorith(self):
         analysis_cursor = connection.cursor()
         with analysis_cursor as cursor:
-            cursor.callproc(f"dbiait_analysis.{self.process.algorithm}")
+            cursor.callproc(f"{settings.DATABASE_SCHEMAS[u'analysis']}.{self.process.algorithm}")
             result = cursor.fetchone()
         return result
