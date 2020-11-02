@@ -6,6 +6,8 @@ DBIAIT project for C179
 ## QGIS
 Version is 3.12.2 Bucaresti
 
+WARNING: Importing QGis forces the use of the default, global python interpreter.
+
 ## Python
 Version is 3.8.2
 
@@ -21,6 +23,10 @@ PYTHONPATH=%OSGEO4W_ROOT%\apps\qgis\python
 ## Linux
 export PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
 
+# Prerequisites
+
+1. Run SQL script from `database/install.sql` on the database
+
 # Scheduling system
 
 ## Starting the scheduler
@@ -31,7 +37,7 @@ docker run -d -p 15672:15672 -p 5672:5672 -p 5671:5671 --hostname my-rabbitmq ra
 ```
 2. in a terminal with environment variables exported run (and don't kill!):
 ``` shell
-python manage.py rundramatiq
+python manage.py global_interpreter_rundramatiq
 ```
 3. in a separate terminal run Django server
 ``` shell

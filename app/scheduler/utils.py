@@ -1,10 +1,13 @@
+from django.conf import settings
+
+
 def default_storage():
     return {"args": [], "kwargs": {}}
 
 
 class Schema:
-    ANALYSIS = "analysis"
-    FREEZE = "freeze"
+    ANALYSIS = settings.DATABASE_SCHEMAS.get('analysis')
+    FREEZE = settings.DATABASE_SCHEMAS.get('freeze')
 
 
 class TaskType:

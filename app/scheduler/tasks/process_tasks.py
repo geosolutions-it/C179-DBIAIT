@@ -41,7 +41,10 @@ class ProcessTask(BaseTask):
 
         colliding_tasks = Task.objects.filter(
             Q(status=TaskStatus.QUEUED) | Q(status=TaskStatus.RUNNING)
-        ).exclude((Q(schema=Schema.ANALYSIS) & Q(type=TaskType.PROCESS)) | (Q(schema=Schema.FREEZE) & Q(type=TaskType.EXPORT)))
+        ).exclude(
+            (Q(schema=Schema.ANALYSIS) & Q(type=TaskType.PROCESS))
+            | (Q(schema=Schema.FREEZE) & Q(type=TaskType.EXPORT))
+        )
 
         if len(colliding_tasks) > 0:
             raise exceptions.QueuingCriteriaViolated(
@@ -53,11 +56,10 @@ class ProcessTask(BaseTask):
             schema=cls.schema,
             type=cls.task_type,
             name=cls.name,
-            params={'kwargs': {}},
-            start_date=datetime.datetime.now()
+            params={"kwargs": {}},
+            start_date=datetime.datetime.now(),
         )
-        process = ProcessHistory.objects.create(
-            process=process, task=current_task)
+        process = ProcessHistory.objects.create(process=process, task=current_task)
 
         return current_task.pk
 

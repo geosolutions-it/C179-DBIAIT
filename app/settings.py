@@ -118,6 +118,14 @@ DATABASES = {
     }
 }
 
+# database schemas translation to actual schema names
+DATABASE_SCHEMAS = {
+    'analysis': 'dbiait_analysis',
+    'freeze': 'dbiait_freeze',
+}
+
+# database from DATABASES used by IMPORT, PROCESSING, EXPORT and FREEZE tasks
+TASKS_DATABASE = 'default'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -193,6 +201,14 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_auth_ldap.backend.LDAPBackend',
 )
+
+# QGis installation path
+QGIS_PATH = os.getenv("QGIS_PATH")
+
+# Directory from which geopackage, import configuration and domains.csv files are imported
+IMPORT_FOLDER = os.getenv("IMPORT_FOLDER", os.path.join(BASE_DIR, "import"))
+IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'config', "import.json"))
+IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
 
 # Directory from which export files are selected
 NFS_FOLDER = os.getenv("NFS_FOLDER")

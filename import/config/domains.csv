@@ -243,7 +243,7 @@ id_opera_stato,D_STATO,ATT,Attivo,1
 id_opera_stato,D_STATO,DIS,Dismesso,5
 id_opera_stato,D_STATO,FEI,Fermo impianto,4
 id_opera_stato,D_STATO,FIP,Fermo impianto parziale,2
-id_opera_stato,D_STATO,IAC,In acquisizione, 
+id_opera_stato,D_STATO,IAC,In acquisizione,
 id_opera_stato,D_STATO,ICO,In costruzione,3
 id_opera_stato,D_STATO,NAC,Non acquisito,6
 id_opera_stato,D_STATO,RES,Restituito,5
@@ -251,7 +251,7 @@ id_opera_stato,D_STATO,DEM,Demolito,5
 id_opera_stato,D_STATO,PIF,Parzialmente in Funzione,1
 id_opera_stato,D_STATO,IAA,In attesa di attivazione,3
 id_opera_stato,D_STATO,RIS,Fermo impianto per ristrutturazione,2
-id_opera_stato,D_STATO,IPR,in progetto, 
+id_opera_stato,D_STATO,IPR,in progetto,
 id_conserva,D_STATO_CONS,INS,Insufficiente,2
 id_conserva,D_STATO_CONS,SUF,Sufficiente,3
 id_conserva,D_STATO_CONS,BUO,Buono,4
@@ -325,7 +325,7 @@ id_linea_fango,D_TIPO_TRATT_FANGHI,SPE,"Spessimento, Dig.Aerobica, Essic. In Let
 ,D_T_ACQUA_IDR,POT,Acqua Potabile,
 ,D_T_ACQUA_IDR,ATR,Acqua Trattata,TRATTATA
 ,D_T_ACQUA_IDR,SCO,Sconosciuto,
-,D_T_SCORRIM,GRA,A Gravit…,S
+,D_T_SCORRIM,GRA,A Gravitï¿½,S
 ,D_T_SCORRIM,AUT,Autoclave,N
 ,D_T_SCORRIM,PRE,In pressione,N
 ,D_T_SCORRIM,PRM,Premente,N

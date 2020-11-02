@@ -93,7 +93,11 @@ class BaseTask(GenericActor):
             logfile.parent.mkdir(parents=True, exist_ok=True)
 
             with Tee(logfile, "a"):
-                self.execute(task.id, *task.params.get('args', []), **task.params.get('kwargs', {}))
+                self.execute(
+                    task.id,
+                    *task.params.get("args", []),
+                    **task.params.get("kwargs", {}),
+                )
 
         except Exception as exception:
             task.status = TaskStatus.FAILED
