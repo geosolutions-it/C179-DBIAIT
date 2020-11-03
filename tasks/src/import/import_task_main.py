@@ -4,12 +4,11 @@ import subprocess
 from import_task import ImportTask
 import _thread
 
-MAX_TABLES_PER_RUN = 50
+MAX_TABLES_PER_RUN = 200
 DIR_NAME = os.path.dirname(__file__)
 
 
-def import_gpkg(testo):
-    print("testo: " + testo)
+def import_gpkg():
     fc = ImportTask.get_feature_classes()
     tot_fc = len(fc)
     steps = math.ceil(tot_fc/MAX_TABLES_PER_RUN)

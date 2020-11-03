@@ -39,10 +39,17 @@ class ImportTaskBase(BaseTask):
         """
         qgis_path = self.qgis_path
         QgsApplication.setPrefixPath(qgis_path, True)
-        self.qgs = QgsApplication([], True)
-        self.qgs.initQgis()
+        #self.qgs = QgsApplication([], True)
+        #self.qgs.initQgis()
+        self.qgs = QgsApplication([], False)
+        QgsApplication.initQgis()
         sys.path.append(qgis_path + r'\python\plugins')
         #global processing
+        self.initProcessing()
+
+    def initProcessing(self):
+        if self.processing is not None:
+            del self.processing
         import processing
         from processing.core.Processing import Processing
         from processing.tools import postgis

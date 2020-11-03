@@ -449,6 +449,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi_acq(
 DECLARE
 	v_sub_funzione INTEGER := 0;
 	v_field VARCHAR(32);
+	v_column VARCHAR(200);
 	v_join_table VARCHAR(32);
 BEGIN
 
@@ -456,10 +457,17 @@ BEGIN
 		v_sub_funzione := 4;
 		v_field := 'pressione';
 		v_join_table := 'ACQ_RETE_DISTRIB';
+		v_column := '0::BIT';
 	ELSIF v_table = 'ADDUT_TRONCHI' THEN
 		v_sub_funzione := 1;
 		v_field := 'protezione_catodica';
 		v_join_table := 'ACQ_ADDUTTRICE';
+		v_column := '
+			CASE 
+				WHEN a.id_sist_prot_cat IS NULL THEN 0::BIT 
+				ELSE 1::BIT
+			END
+		';
 	else
 		return false;
 	--	RAISE EXCEPTION 'Table ' || v_table || ' is not supported'; 
@@ -514,7 +522,7 @@ BEGIN
 				ELSE ''B''
 			END idx_anno, 
 			a.d_tipo_rilievo,
-			0::BIT
+			' || v_column || '
 		FROM 
 			ACQ_CONDOTTA a,  
 			' || v_join_table || ' r
@@ -535,6 +543,10 @@ BEGIN
 		FROM ALL_DOMAINS d
 		WHERE d.valore_gis = COALESCE(' || v_table || '.id_materiale,''NULL'') AND d.dominio_gis = ''D_MATERIALE_IDR''
 	';
+	
+	EXECUTE '
+		UPDATE ' || v_table || ' SET idx_materiale = ''X'' WHERE id_materiale = ''1''
+	';
 
 	--D_STATO_CONS convertito in id_conserva
 	EXECUTE '
@@ -553,20 +565,22 @@ BEGIN
 	';
 	
 	-- valorizzazione rete con gestione delle pressioni
-	EXECUTE '
-		UPDATE ' || v_table || '
-		SET ' || v_field || ' = 1::BIT WHERE EXISTS(
-			SELECT * FROM (
-				SELECT a.idgis 
-				FROM 
-					acq_distretto d,
-					acq_condotta a
-				WHERE d_tipo = ''MIS'' 
-				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
-				GROUP by a.idgis having count(*)>0
-			) t WHERE t.idgis = ' || v_table || '.idgis		
-		);
-	';
+	IF v_sub_funzione = 4 THEN
+		EXECUTE '
+			UPDATE ' || v_table || '
+			SET ' || v_field || ' = 1::BIT WHERE EXISTS(
+				SELECT * FROM (
+					SELECT a.idgis 
+					FROM 
+						acq_distretto d,
+						acq_condotta a
+					WHERE d_tipo = ''MIS'' 
+					AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
+					GROUP by a.idgis having count(*)>0
+				) t WHERE t.idgis = ' || v_table || '.idgis		
+			);
+		';
+	END IF;
 	
 	-- Aggiornamento tipo telecontrollo
 	EXECUTE '

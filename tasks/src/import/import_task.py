@@ -75,6 +75,19 @@ class ImportTask(ImportTaskBase):
             layer = self._get_gpkg_vector_layer(name.upper())
         return layer
 
+    def get_gtype(self, vlayer):
+        gtype = vlayer.geometryType()
+        if gtype == 0:
+            # POINT
+            return 3
+        elif gtype == 1:
+            # LINESTRING
+            return 9
+        elif gtype == 2:
+            # LINESTRING
+            return 8
+        return None
+
     def import_into_postgis(self, name, cont, feedback):
         """
         Run the importintopostgis algorithm
@@ -84,6 +97,7 @@ class ImportTask(ImportTaskBase):
             vlayer = self.get_gpkg_vector_layer(name)
             print("importing layer (" + str(cont) + "): " + name + " => " + str(vlayer.featureCount()))
             # Export in PostgreSQL
+            """
             alg_params = {
                 'CREATEINDEX': True,
                 'DATABASE': ImportTaskBase.DB_CONNECTION_NAME(),
@@ -99,6 +113,54 @@ class ImportTask(ImportTaskBase):
                 'TABLENAME': name
             }
             result = self.processing.run('qgis:importintopostgis', alg_params, context=self.context, feedback=feedback, is_child_algorithm=True)
+            """
+            gtype = self.get_gtype(vlayer)
+            print("gtype: " + str(gtype))
+            # Esporta in PostgreSQL (connessioni disponibili)
+            alg_params = {
+                'ADDFIELDS': False,
+                'APPEND': False,
+                'A_SRS': None,
+                'CLIP': False,
+                'DATABASE': ImportTaskBase.DB_CONNECTION_NAME(),
+                'DIM': 0,
+                'GEOCOLUMN': 'geom',
+                'GT': '',
+                'GTYPE': gtype,
+                'INDEX': False,
+                'INPUT': vlayer,
+                'LAUNDER': False,
+                'OPTIONS': '',
+                'OVERWRITE': True,
+                'PK': '',
+                'PRECISION': True,
+                'PRIMARY_KEY': '',
+                'PROMOTETOMULTI': True,
+                'SCHEMA': self.database['SCHEMA'],
+                'SEGMENTIZE': '',
+                'SHAPE_ENCODING': '',
+                'SIMPLIFY': '',
+                'SKIPFAILURES': False,
+                'SPAT': None,
+                'S_SRS': None,
+                'TABLE': name,
+                'T_SRS': None,
+                'WHERE': ''
+            }
+            """
+            {ADDFIELDS: False, APPEND: False, A_SRS: QgsCoordinateReferenceSystem('EPSG:25832'), CLIP: False,
+             DATABASE: 'PA', DIM: 0, GEOCOLUMN: 'geom', GT: '', GTYPE: 9, INDEX: False,
+             INPUT: 'C:/geo-solutions/repositories/C179-PUBLIACQUA/NETSIC/GPKG/PBAP_20200203.gpkg|layername=acq_condotta',
+             LAUNDER: False, OPTIONS: '', OVERWRITE: True, PK: '', PRECISION: True, PRIMARY_KEY: '',
+             PROMOTETOMULTI: True, SCHEMA: 'dbiait_analysis', SEGMENTIZE: '', SHAPE_ENCODING: '', SIMPLIFY: '',
+             SKIPFAILURES: False, SPAT: None, S_SRS: None, TABLE: 'acq_condotta_x', T_SRS: None, WHERE: ''}
+            """
+
+            result = self.processing.run('gdal:importvectorintopostgisdatabaseavailableconnections', alg_params,
+                                         context=self.context, feedback=feedback, is_child_algorithm=True)
+
+            #self.initProcessing()
+            #print(dir(self.processing.Processing))
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -112,6 +174,7 @@ class ImportTask(ImportTaskBase):
             raise FileNotFoundError
         if self.database is None:
             raise AttributeError
+
         self.define_pg_connection()
         to_load = self.get_feature_classes()
         cont = self.offset
