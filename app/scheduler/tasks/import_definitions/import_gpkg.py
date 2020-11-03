@@ -92,26 +92,37 @@ class GpkgImportDefinition(BaseImportDefinition):
             )
             # Export in PostgreSQL
             alg_params = {
-                "CREATEINDEX": True,
-                "DATABASE": self.database_config["DATABASE"],
-                "DROP_STRING_LENGTH": False,
-                "ENCODING": "UTF-8",
-                "FORCE_SINGLEPART": False,
-                "GEOMETRY_COLUMN": "geom",
-                "INPUT": vlayer,
-                "LOWERCASE_NAMES": True,
-                "OVERWRITE": True,
-                "PRIMARY_KEY": None,
-                "SCHEMA": self.database_config["SCHEMA"],
-                "TABLENAME": name,
+                'ADDFIELDS': False,
+                'APPEND': False,
+                'A_SRS': None,
+                'CLIP': False,
+                'DATABASE': self.database_config["DATABASE"],
+                'DIM': 0,
+                'GEOCOLUMN': 'geom',
+                'GT': '',
+                'GTYPE': vlayer.geometryType(),
+                'INDEX': False,
+                'INPUT': vlayer,
+                'LAUNDER': False,
+                'OPTIONS': '',
+                'OVERWRITE': True,
+                'PK': '',
+                'PRECISION': True,
+                'PRIMARY_KEY': '',
+                'PROMOTETOMULTI': True,
+                'SCHEMA': self.database_config["SCHEMA"],
+                'SEGMENTIZE': '',
+                'SHAPE_ENCODING': '',
+                'SIMPLIFY': '',
+                'SKIPFAILURES': False,
+                'SPAT': None,
+                'S_SRS': None,
+                'TABLE': name,
+                'T_SRS': None,
+                'WHERE': ''
             }
-            result = self.processing.run(
-                "qgis:importintopostgis",
-                alg_params,
-                context=self.context,
-                feedback=feedback,
-                is_child_algorithm=True,
-            )
+            result = self.processing.run('gdal:importvectorintopostgisdatabaseavailableconnections', alg_params,
+                                         context=self.context, feedback=feedback, is_child_algorithm=True)
         except Exception as e:
             print(e)
             traceback.print_exc()
