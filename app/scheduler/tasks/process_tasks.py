@@ -69,7 +69,7 @@ class BaseProcessTask(BaseTask):
         return result
 
 
-class Process1(BaseProcessTask):
+class LocalitàIstat(BaseProcessTask):
     algorithm = u"populate_pop_res_loc"
     name = u"Località Istat"
 
@@ -78,7 +78,7 @@ class Process1(BaseProcessTask):
         pass
 
 
-class Process2(BaseProcessTask):
+class PercentualePopolazioneServitaPerLocalità(BaseProcessTask):
     algorithm = u"populate_distrib_loc_serv"
     name = u"Percentuale popolazione servita per località"
 
@@ -87,7 +87,7 @@ class Process2(BaseProcessTask):
         pass
 
 
-class Process3(BaseProcessTask):
+class PopolazioneResidenteIstatPerComune(BaseProcessTask):
     algorithm = u"populate_pop_res_comune"
     name = u"Popolazione residente Istat per comune"
 
@@ -98,7 +98,7 @@ class Process3(BaseProcessTask):
         )
 
 
-class Process4(BaseProcessTask):
+class PercentualePopolazioneServitaSullaRetePerComune(BaseProcessTask):
     algorithm = u"populate_distr_com_serv"
     name = u"Percentuale popolazione servita sulla rete per comune"
 
@@ -107,7 +107,7 @@ class Process4(BaseProcessTask):
         pass
 
 
-class Process5(BaseProcessTask):
+class ServizioUtenza(BaseProcessTask):
     algorithm = u"populate_utenza_servizio"
     name = u"Servizio utenza"
 
@@ -117,9 +117,9 @@ class Process5(BaseProcessTask):
 
 
 process_mapper = {
-    u"Località Istat": Process1,
-    u"Percentuale popolazione servita per località": Process2,
-    u"Popolazione residente Istat per comune": Process3,
-    u"Percentuale popolazione servita sulla rete per comune": Process4,
-    u"Servizio utenza": Process5
+    u"Località Istat": LocalitàIstat,
+    u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalità,
+    u"Popolazione residente Istat per comune": PopolazioneResidenteIstatPerComune,
+    u"Percentuale popolazione servita sulla rete per comune": PercentualePopolazioneServitaSullaRetePerComune,
+    u"Servizio utenza": ServizioUtenza
 }
