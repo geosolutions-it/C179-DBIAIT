@@ -32,9 +32,9 @@
   <form method="post" action="{% url 'queue-import-view' %}" class="mt-5">
     {% csrf_token %}
     <div class="form-group mt-5">
-      <select class="form-control form-control-lg">
+      <select name="gpkg-name" class="form-control form-control-lg">
         {% for file in geopackage_files %}
-        <option>{{ file }}</option>
+        <option value="{{ file }}">{{ file }}</option>
         {% endfor %}
       </select>
     </div>
