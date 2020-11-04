@@ -155,7 +155,7 @@ DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ABITANTI_TRATTATI;
 CREATE TABLE DBIAIT_ANALYSIS.ABITANTI_TRATTATI(
 	idgis	VARCHAR(32),
 	codice	VARCHAR(32),
-	denom	VARCHAR(32),
+	denom	VARCHAR(100),
 	vol_civ	double precision,
 	vol_ind	double precision,
 	anno	INTEGER,
