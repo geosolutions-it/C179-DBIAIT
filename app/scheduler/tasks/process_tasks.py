@@ -94,7 +94,7 @@ class PopolazioneResidenteIstatPerComune(BaseProcessTask):
     @classmethod
     def process_pre_send(cls):
         return Task.objects.filter(
-            Q(status=TaskStatus.QUEUED) | Q(status=TaskStatus.RUNNING), name__in=["populate_pop_res_loc", "POP_RES_LOC", "populate_distrib_loc_serv", "DISTRIB_LOC_SERV"],
+            Q(status=TaskStatus.QUEUED) | Q(status=TaskStatus.RUNNING), name__in=["populate_pop_res_loc", "populate_distrib_loc_serv"],
         )
 
 
