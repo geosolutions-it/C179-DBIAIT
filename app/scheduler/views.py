@@ -14,6 +14,7 @@ from django.views.generic import ListView
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from app.scheduler.tasks.process_tasks import process_mapper
+from app.scheduler.tasks.import_task import ImportTask
 
 
 class Dashboard(LoginRequiredMixin, View):
@@ -27,8 +28,8 @@ class Import(LoginRequiredMixin, ListView):
                                    TaskStatus.RUNNING, TaskStatus.QUEUED])
 
     def get_geopackage_files(self):
-        nfs_folder = settings.NFS_FOLDER
-        filenames = listdir(nfs_folder)
+        import_folder = settings.IMPORT_FOLDER
+        filenames = listdir(import_folder)
         return [filename for filename in filenames if filename.endswith('.gpkg')]
 
     def get_context_data(self, **kwargs):
@@ -66,7 +67,7 @@ class Configuration(LoginRequiredMixin, View):
         bread_crumbs = {
             'Configuration': reverse('configuration-view'),
         }
-        nfs_folder = settings.NFS_FOLDER
+        import_folder = settings.IMPORT_FOLDER
         database_user = settings.DATABASES[u'default'][u'USER']
         database_port = settings.DATABASES[u'default'][u'PORT']
         database_host = settings.DATABASES[u'default'][u'HOST']
@@ -76,7 +77,7 @@ class Configuration(LoginRequiredMixin, View):
             u'database_user': database_user,
             u'environment': environment,
             u'database_host': database_host,
-            u'nfs_folder': nfs_folder,
+            u'nfs_folder': import_folder,
             u'database_port': database_port
         }
         return render(request, 'configuration/base-configuration.html', context)
@@ -84,7 +85,12 @@ class Configuration(LoginRequiredMixin, View):
 
 class QueueImportView(LoginRequiredMixin, View):
     def post(self, request):
-        return redirect(reverse(u"import-view"))
+        gpkg_name = request.POST.get(u"gpkg-name")
+        try:
+            ImportTask.send(ImportTask.pre_send(requesting_user=request.user, gpkg_name=gpkg_name))
+            return redirect(reverse(u"import-view"))
+        except QueuingCriteriaViolated as e:
+            return redirect(reverse(u"import-view"))
 
 
 class Export(LoginRequiredMixin, ListView):
@@ -120,7 +126,6 @@ class ProcessView(LoginRequiredMixin, ListView):
             u"active_process": process_name,
             u"error": error
         }
-        print("hahha", process_name)
         return render(request, u"process/base-process.html", context)
 
 
