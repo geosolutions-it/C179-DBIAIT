@@ -296,7 +296,7 @@ BEGIN
 	--LOCALITA
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
-		SELECT s.impianto, s.id_ubic_contatore, l.loc2011 as id_localita_istat
+		SELECT s.impianto, s.id_ubic_contatore, l.loc2011 as codice
 		FROM acq_ubic_contatore c, utenza_sap s, localita l
 		WHERE c.id_impianto is not null AND l.geom && c.geom AND ST_INTERSECTS(l.geom, c.geom)
 		AND s.id_ubic_contatore=c.idgis';
@@ -304,7 +304,7 @@ BEGIN
 	-- ACQ_RETE_DISTRIB
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
-		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as codice
 		FROM acq_ubic_contatore c, utenza_sap s, acq_rete_distrib g
 		WHERE c.id_impianto is not null AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
@@ -313,7 +313,7 @@ BEGIN
 	-- FGN_RETE_RACC
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
-		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as codice
 		FROM acq_ubic_contatore c, utenza_sap s, fgn_rete_racc g
 		WHERE c.id_impianto is not null AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
@@ -322,7 +322,7 @@ BEGIN
 	-- FGN_BACINO + FGN_TRATTAMENTO/FGN_PNT_SCARICO
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
-		select s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		select s.impianto, s.id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore c, utenza_sap s, (
 			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
@@ -334,7 +334,7 @@ BEGIN
 		AND s.id_ubic_contatore=c.idgis';
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
-		select s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		select s.impianto, s.id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore c, utenza_sap s, (
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO 
 			from FGN_BACINO b, FGN_PNT_SCARICO t
@@ -445,6 +445,77 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_abitanti_trattati(
 ) RETURNS BOOLEAN AS $$
 BEGIN
+	
+	DELETE FROM ABITANTI_TRATTATI;
+	
+	
+	INSERT INTO ABITANTI_TRATTATI(codice,idgis,denom,vol_civ,vol_ind,anno,ae_civ,ae_ind,ae_tot,tipo)
+	--DEPURATORE
+	SELECT distinct b.codice, b.idgis, b.denom,0,0,0,0,0,0,'DEP'
+	FROM 
+		utenza_servizio us,
+		(select t.codice_ato as codice, t.idgis, t.denom  
+		FROM FGN_BACINO b, FGN_TRATTAMENTO t
+		WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
+		AND t.D_GESTORE='PUBLIACQUA' AND t.D_STATO='ATT' AND t.D_AMBITO='AT3'
+		) b
+	WHERE b.codice = us.ids_codice_orig_dep_sca
+	UNION ALL
+	--SCARICO
+	SELECT distinct b.codice, b.idgis, b.denom,0,0,0,0,0,0,'SCA'
+	FROM 
+		utenza_servizio us,
+		(select t.codice, t.idgis, t.denom  
+		from FGN_BACINO b, FGN_PNT_SCARICO t
+		WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
+		AND t.D_GESTORE='PUBLIACQUA' AND t.D_STATO='ATT' AND t.D_AMBITO='AT3'
+		) b
+	WHERE b.codice = us.ids_codice_orig_dep_sca;
+	
+	-- Volume industriale ------------------------------------
+	-- (SCA)
+	UPDATE ABITANTI_TRATTATI 
+	SET vol_ind = t.volume, anno = t.anno_rif
+	FROM (
+		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_fgn_ero) as volume
+		FROM utenza_servizio srv, utenza_sap sap
+		WHERE srv.impianto = sap.impianto and sap.cattariffa in ('APB_REFIND', 'APBLREFIND')
+		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
+	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='SCA';
+	-- (DEP)
+	UPDATE ABITANTI_TRATTATI 
+	SET vol_ind = t.volume, anno = t.anno_rif
+	FROM (
+		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_dep_ero) as volume
+		FROM utenza_servizio srv, utenza_sap sap
+		WHERE srv.impianto = sap.impianto and sap.cattariffa in ('APB_REFIND', 'APBLREFIND')
+		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
+	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='DEP';
+	---------------------------------------------------------
+	-- Volume civile ------------------------------------
+	-- (SCA)
+	UPDATE ABITANTI_TRATTATI 
+	SET vol_civ = t.volume, anno = t.anno_rif
+	FROM (
+		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_fgn_ero) as volume
+		FROM utenza_servizio srv, utenza_sap sap
+		WHERE srv.impianto = sap.impianto and sap.cattariffa NOT IN ('APB_REFIND', 'APBLREFIND')
+		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
+	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='SCA';
+	-- (DEP)
+	UPDATE ABITANTI_TRATTATI 
+	SET vol_civ = t.volume, anno = t.anno_rif
+	FROM (
+		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_dep_ero) as volume
+		FROM utenza_servizio srv, utenza_sap sap
+		WHERE srv.impianto = sap.impianto and sap.cattariffa NOT IN ('APB_REFIND', 'APBLREFIND')
+		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
+	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='DEP';
+	
+	
+	UPDATE ABITANTI_TRATTATI SET ae_civ = vol_civ*1000/365/200, ae_ind = vol_ind*1000/220/200;
+	UPDATE ABITANTI_TRATTATI SET ae_tot = ae_civ + ae_ind;
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
