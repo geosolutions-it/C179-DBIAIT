@@ -2,18 +2,18 @@ from os import fstat, listdir, path
 from urllib import parse
 
 from app.scheduler.exceptions import QueuingCriteriaViolated
-from app.scheduler.models import Process, ProcessHistory, Task, TaskStatus
+from app.scheduler.models import Task, TaskStatus
 from app.scheduler.serializers import ImportSerializer, ProcessSerializer
-from app.scheduler.tasks.process_tasks import ProcessTask
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.generic import ListView
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
+from app.scheduler.tasks.process_tasks import process_mapper
 
 
 class Dashboard(LoginRequiredMixin, View):
@@ -107,30 +107,20 @@ class Export(LoginRequiredMixin, ListView):
 
 class ProcessView(LoginRequiredMixin, ListView):
     def get(self, request):
-        try:
-            process_id = int(request.GET.get(u"process_id"))
-        except TypeError:
-            process_id = None
+        process_name = request.GET.get(u"process_name", next(iter(process_mapper)))
         error = request.GET.get(u"error")
         bread_crumbs = {
             u"Process": reverse(u"process-view"),
         }
-        process_queryset = Process.objects.all()
-        if process_id:
-            process_history_queryset = ProcessHistory.objects.filter(
-                process=int(process_id))
-        else:
-            process = process_queryset.first()
-            process_id = int(process.pk) if process else None
-            process_history_queryset = ProcessHistory.objects.filter(
-                process=process)
+
         context = {
             u"bread_crumbs": bread_crumbs,
-            u"process_queryset": process_queryset,
-            u"process_history_queryset": process_history_queryset.order_by(u"-task__start_date"),
-            u"process_id": process_id,
+            u"processes": process_mapper,
+            u"process_history_queryset": Task.objects.filter(name=process_name).order_by(u"-start_date"),
+            u"active_process": process_name,
             u"error": error
         }
+        print("hahha", process_name)
         return render(request, u"process/base-process.html", context)
 
 
@@ -139,23 +129,21 @@ class GetProcessStatusListAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        process_id = self.kwargs[u"process_id"]
-        process_history = ProcessHistory.objects.filter(
-            process_id=process_id).values_list('task__id', flat=True)
+        process_name = self.request.GET.get(u"process_name")
         queryset = Task.objects.filter(
-            type=u"PROCESS", id__in=process_history).order_by(u"-start_date")
+            type=u"PROCESS", name=process_name).order_by(u"-start_date")
         return queryset
 
 
-class QueueProcessView(LoginRequiredMixin, ListView):
-    def get(self, request, process_id):
-        process_object = get_object_or_404(Process, pk=process_id)
+class QueueProcessView(LoginRequiredMixin, View):
+    def post(self, request):
         try:
-            ProcessTask.send(ProcessTask.pre_send(
-                requesting_user=request.user, process=process_object))
-            return redirect(f"{reverse(u'process-view')}?process_id={process_id}")
+            process_name = self.request.POST.get(u"process_name")
+            process_method = process_mapper[process_name]
+            process_method.send(process_method.pre_send(requesting_user=request.user))
+            return redirect(f"{reverse(u'process-view')}?process_name={process_name}")
         except QueuingCriteriaViolated as e:
-            return redirect(f"{reverse(u'process-view')}?process_id={process_id}&error={parse.quote(str(e))}")
+            return redirect(f"{reverse(u'process-view')}?process_name={process_name}&error={parse.quote(str(e))}")
 
 
 class Freeze(LoginRequiredMixin, View):
