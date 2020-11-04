@@ -1023,6 +1023,36 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;	
 --------------------------------------------------------------------
+-- Populate data for shape acquedotto
+-- (Ref. 5.4. SHAPE ACQUEDOTTO)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_acq_shape();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_shape(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
+-- Populate data for shape fognatura
+-- (Ref. 6.4. SHAPE FOGNATURA)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_fgn_shape();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_fgn_shape(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
 -- Populate data into the XXX_POMPE tables 
 --  * POZZI_POMPE
 --  * POTAB_POMPE
