@@ -111,8 +111,8 @@
 
 <script>
   window.addEventListener("load", function () {
-    populate_table("{% url 'get-process-status-api-view' %}?process_name={{ active_process | urlencode }}", "#process-status-table");
-    setInterval(function () { populate_table("{% url 'get-process-status-api-view' %}?process_name={{ active_process | urlencode }}", "#process-status-table") }, 10000);
+    ajax_call("{% url 'get-process-status-api-view' %}?process_name={{ active_process | urlencode }}", "#process-status-table");
+    setInterval(function () { ajax_call("{% url 'get-process-status-api-view' %}?process_name={{ active_process | urlencode }}", "#process-status-table") }, 10000);
     $('#error-modal').modal('show');
   });
 </script>

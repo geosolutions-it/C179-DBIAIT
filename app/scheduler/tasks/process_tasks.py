@@ -116,10 +116,40 @@ class ServizioUtenza(BaseProcessTask):
         pass
 
 
+class AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto(BaseProcessTask):
+    algorithm = u"populate_abitanti_trattati"
+    name = u"Abitanti equivalenti trattati da depuratori o scarico diretto"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
+class ShapeFognatura(BaseProcessTask):
+    algorithm = u"populate_fgn_shape"
+    name = u"Shape Fognatura (FGN_SHAPE)"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
+class ShapeAcquedotto(BaseProcessTask):
+    algorithm = u"populate_acq_shape"
+    name = u"Shape Acquedotto (ACQ_SHAPE)"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
 process_mapper = {
     u"Località Istat": LocalitàIstat,
     u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalità,
     u"Popolazione residente Istat per comune": PopolazioneResidenteIstatPerComune,
     u"Percentuale popolazione servita sulla rete per comune": PercentualePopolazioneServitaSullaRetePerComune,
-    u"Servizio utenza": ServizioUtenza
+    u"Servizio utenza": ServizioUtenza,
+    u"Abitanti equivalenti trattati da depuratori o scarico diretto": AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto,
+    u"Shape Fognatura (FGN_SHAPE)": ShapeFognatura,
+    u"Shape Acquedotto (ACQ_SHAPE)": ShapeAcquedotto
 }
