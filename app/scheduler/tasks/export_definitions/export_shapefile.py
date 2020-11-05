@@ -53,6 +53,6 @@ class ShapeExporter:
         fields = vlayer.fields()
 
         attrs = [fields.indexFromName(field["name"]) for field in self.fields if fields.indexFromName(field["name"])]
-        result = QgsVectorFileWriter.writeAsVectorFormat(layer=vlayer, fileName=self.shape_file, fileEncoding="utf-8", driverName="ESRI Shapefile", attributes=attrs)
+        result = QgsVectorFileWriter.writeAsVectorFormat(layer=vlayer, fileName=filename, fileEncoding="utf-8", driverName="ESRI Shapefile", attributes=attrs)
         del vlayer
         print(result)
