@@ -96,13 +96,7 @@ class QueueImportView(LoginRequiredMixin, View):
 
 class Export(LoginRequiredMixin, ListView):
     template_name = u'export/base-export.html'
-
-    def get_queryset(self):
-        schema = self.request.GET.get(u"schema")
-        query_set = Task.objects.filter(type=U"EXPORT")
-        if schema:
-            query_set = query_set.filter(schema=schema)
-        return query_set.exclude(status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED])
+    queryset = Task.objects.filter(type=U"EXPORT")
 
     def post(self, request,  *args, **kwargs):
         export_schema = request.POST.get(u"export-schema")
@@ -110,6 +104,7 @@ class Export(LoginRequiredMixin, ListView):
             ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema))
             return  redirect(reverse(u"export-view"))
         except QueuingCriteriaViolated as e:
+            print("err")
             return  redirect(reverse(u"export-view"))
 
     def get_context_data(self, **kwargs):

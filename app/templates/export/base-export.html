@@ -30,17 +30,17 @@
       </tr>
     </thead>
     <tbody>
-      {% for import in object_list %}
+      {% for export in object_list %}
       <tr>
-        <td>{{ import.requesting_user }}</td>
-        <td>{{ import.geopackage }}</td>
-        <td>{{ import.end_date }}</td>
-        <td>{{ import.start_date }}</td>
+        <td>{{ export.requesting_user }}</td>
+        <td>{{ export.geopackage }}</td>
+        <td>{{ export.end_date }}</td>
+        <td>{{ export.start_date }}</td>
         <td>
           <i class="{{ import.status_icon }}"></i>
         </td>
         <td>
-          <a href="#" onclick="window.open('{% url 'export-download-view' task_id=import.pk %}', '_blank')" target="_blank">
+          <a href="#" onclick="window.open('{% url 'export-download-view' task_id=export.pk %}', '_blank')" target="_blank">
             <i class="fas fa-download"></i>
           </a>
         </td>
