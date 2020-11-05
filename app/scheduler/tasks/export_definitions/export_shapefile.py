@@ -49,11 +49,10 @@ class ShapeExporter:
         vlayer = QgsVectorLayer(uri.uri(), self.table, "postgres")
         print("Feature count: " + str(vlayer.featureCount()))
         print("Invalid Layer: " + str(vlayer.InvalidLayer))
-        filename = os.path.join(self.folder, self.table + ".shp")
+        filename = os.path.join(shapefile_folder, self.table + ".shp")
         fields = vlayer.fields()
 
         attrs = [fields.indexFromName(field["name"]) for field in self.fields if fields.indexFromName(field["name"])]
-        print("haha", attrs)
         result = QgsVectorFileWriter.writeAsVectorFormat(layer=vlayer, fileName=self.shape_file, fileEncoding="utf-8", driverName="ESRI Shapefile", attributes=attrs)
         del vlayer
         print(result)
