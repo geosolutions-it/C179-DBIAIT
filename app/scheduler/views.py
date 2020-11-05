@@ -15,6 +15,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from app.scheduler.tasks.process_tasks import process_mapper
 from app.scheduler.tasks.import_task import ImportTask
+from app.scheduler.tasks.export_task import ExportTask
 
 
 class Dashboard(LoginRequiredMixin, View):
@@ -98,16 +99,25 @@ class Export(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         schema = self.request.GET.get(u"schema")
-        query_set = Task.objects.filter(type='IMPORT')
+        query_set = Task.objects.filter(type=U"EXPORT")
         if schema:
             query_set = query_set.filter(schema=schema)
         return query_set.exclude(status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED])
+
+    def post(self, request,  *args, **kwargs):
+        export_schema = request.POST.get(u"export-schema")
+        try:
+            ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema))
+            return  redirect(reverse(u"export-view"))
+        except QueuingCriteriaViolated as e:
+            return  redirect(reverse(u"export-view"))
 
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name
         context = super(Export, self).get_context_data(**kwargs)
         context['bread_crumbs'] = {'Export': reverse('export-view')}
         context['current_url'] = current_url
+        context['schemas'] = settings.DATABASE_SCHEMAS
         return context
 
 

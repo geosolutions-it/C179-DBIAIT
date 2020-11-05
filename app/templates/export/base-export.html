@@ -2,13 +2,13 @@
 
 {% block content %}
 <div class="container">
-  <form method="get" class="form-inline">
+  <form method="POST" class="form-inline">
     {% csrf_token %}
     <div class="form-group mx-sm-3 mb-2">
       <label for="Ambiente" class="mx-sm-1">Ambiente: </label>
-      <select name="schema" class="form-control">
-        <option value="analysis">Analisi</option>
-        <option value="freeze">Storicizzazione</option>
+      <select name="export-schema" class="form-control">
+        <option value="{{ schemas.analysis }}">Analisi</option>
+        <option value="{{ schemas.freeze }}">Storicizzazione</option>
       </select>
     </div>
     <div class="form-group mb-2">
