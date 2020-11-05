@@ -1,8 +1,11 @@
+import json
+
 from django.contrib.auth import get_user_model
 from django.db.models import Q, ObjectDoesNotExist
 
 from app.scheduler import exceptions
 from app.scheduler.models import Task
+from app.scheduler.tasks.export_definitions.export_shapefile import ShapeExporter
 from app.scheduler.utils import Schema, TaskType, TaskStatus
 
 from .base_task import BaseTask
@@ -75,4 +78,8 @@ class ExportTask(BaseTask):
         """
         This function should contain the actual code exporting data
         """
-        pass
+        with open("/Applications/QGIS3.12.app/Contents/Resources/python/C179-DBIAIT/shapefile.json", "r") as f:
+            exports = json.load(f)
+        for export in exports:
+            exporter = ShapeExporter(task_id, export["source"]["table"], export["name"], export["folder"], export["source"]["fields"])
+            exporter.execute()
