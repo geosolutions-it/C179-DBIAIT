@@ -84,7 +84,7 @@ class ExportTask(BaseTask):
         for export in exports:
             if not export[u"skip"]:
                 kwargs = {
-                    u"task_id": 1525, 
+                    u"task_id": task_id, 
                     u"table" :export[u"source"][u"table"],
                     u"name":export[u"name"],
                     u"shape_file_folder":export[u"folder"],
