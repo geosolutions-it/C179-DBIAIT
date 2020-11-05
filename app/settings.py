@@ -214,4 +214,6 @@ IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDE
 NFS_FOLDER = os.getenv("NFS_FOLDER")
 
 # Directory in which generated exports are kept
-EXPORT_FOLDER = os.getenv("EXPORT_FOLDER")
+EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(BASE_DIR, "export"))
+EXPORT_CONF_FILE = os.getenv("EXPORT_CONF_FILE", os.path.join(EXPORT_FOLDER, 'config', "config.json"))
+EXPORT_XLS_SEED_FILE = os.getenv("EXPORT_XLS_SEED_FILE", os.path.join(EXPORT_FOLDER, 'config', "NETSIC_SEED.json"))
