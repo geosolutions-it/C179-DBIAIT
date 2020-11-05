@@ -15,7 +15,7 @@ class ShapeExporter:
             ShapeExporter.qgis = QgsApplication([], False)
             QgsApplication.initQgis()
 
-    def __init__(self, task_id: int, table: str, shape_file: str, shape_file_folder: str, fields: list, year=None):
+    def __init__(self, task_id: int, table: str, shape_file: str, shape_file_folder: str, fields: list, filter: str, year=None):
         self.folder = settings.TEMP_EXPORT_DIR
         self.year = year
         self.table = table
@@ -23,6 +23,7 @@ class ShapeExporter:
         self.fields = fields
         self.task_id = task_id
         self.shape_file_folder = shape_file_folder
+        self.filter = filter
 
     def execute(self):
         ShapeExporter.initQGis()
@@ -43,8 +44,8 @@ class ShapeExporter:
         geometrycol = u"geom"
 
         uri = QgsDataSourceUri()
-        uri.setConnection(database["host"], database["port"], database["database"], database["user"], database["password"])
-        uri.setDataSource(schema, self.table, geometrycol)
+        uri.setConnection(database["HOST"], str(database["PORT"]), database["NAME"], database["USER"], database["PASSWORD"])
+        uri.setDataSource(schema, self.table, geometrycol, aSql=self.filter)
 
         vlayer = QgsVectorLayer(uri.uri(), self.table, "postgres")
         print("Feature count: " + str(vlayer.featureCount()))

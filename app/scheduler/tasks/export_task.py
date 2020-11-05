@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Q, ObjectDoesNotExist
 
@@ -78,8 +79,19 @@ class ExportTask(BaseTask):
         """
         This function should contain the actual code exporting data
         """
-        with open("/Applications/QGIS3.12.app/Contents/Resources/python/C179-DBIAIT/shapefile.json", "r") as f:
+        with open(settings.SHAPEFILE_EXPORT_CONFIG, u"r") as f:
             exports = json.load(f)
         for export in exports:
-            exporter = ShapeExporter(task_id, export["source"]["table"], export["name"], export["folder"], export["source"]["fields"])
-            exporter.execute()
+            if not export[u"skip"]:
+                kwargs = {
+                    u"task_id": 1525, 
+                    u"table" :export[u"source"][u"table"],
+                    u"shape_file":export[u"name"],
+                    u"shape_file_folder":export[u"folder"],
+                    u"fields":export[u"source"][u"fields"],
+                    u"filter": export[u"source"][u"filter"],
+                }
+                exporter = ShapeExporter(**kwargs)
+                exporter.execute()
+            else:
+                print(f"skipped the export process {export[u'name']}")
