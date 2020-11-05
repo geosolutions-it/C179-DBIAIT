@@ -1,4 +1,17 @@
 --------------------------------------------------------------------
+-- Snap tolerance for the system to use in spatial queries
+-- Example:
+--  select dbiait_analysis.snap_tolerance()
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.snap_tolerance(
+) RETURNS DOUBLE PRECISION AS $$
+BEGIN
+    RETURN 0.01;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
 -- Etract pro-com part from the localita ISTAT (removing last 5 characters)
 -- Example:
 --  select dbiait_analysis.locistat_2_procom('3701520011')
@@ -722,26 +735,6 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;		
 --------------------------------------------------------------------
--- Populate data into the ACQ_COND_ALTRO table 
--- (Ref. 5.3. INFORMAZIONI SU CONDOTTE)
--- OUT: BOOLEAN
--- Example:
--- 	select DBIAIT_ANALYSIS.populate_info_condotte_acq();
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_info_condotte_acq(
-) RETURNS BOOLEAN AS $$
-BEGIN
-	DELETE FROM ACQ_COND_ALTRO;
-	INSERT INTO ACQ_COND_ALTRO(idgis)
-	SELECT idgis FROM distrib_tronchi
-	UNION ALL
-	SELECT idgis FROM addut_tronchi;
-	RETURN TRUE;	
-END;
-$$  LANGUAGE plpgsql
-    SECURITY DEFINER
-    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
---------------------------------------------------------------------
 -- Populate data into the ACQ_LUNGHEZZA_RETE table 
 -- (Ref. 5.5. LUNGHEZZA RETE ACQUEDOTTO)
 -- OUT: BOOLEAN
@@ -1088,6 +1081,162 @@ BEGIN
 	
 	RETURN TRUE;
 	
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
+-- determine number and length of allacci ACQ
+-- (Ref. 7.1. ACQUEDOTTO)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.determine_acq_allacci();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.determine_acq_allacci(
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_tol DOUBLE PRECISION := snap_tolerance();
+BEGIN
+
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ACQUEDOTTO';
+	DELETE FROM ACQ_COND_ALTRO;
+	DELETE FROM ACQ_ALLACCIO;
+
+	INSERT INTO ACQ_COND_ALTRO(
+		idgis, id_rete, codice_ato, tipo_infr, 
+		nr_allacci_sim, lu_allacci_sim,
+		nr_allacci_ril, lu_allacci_ril
+	)
+	SELECT idgis, id_rete, NULL, 
+			CASE 
+				WHEN sub_funzione = 4 THEN 'DISTRIBUZIONI'
+				WHEN sub_funzione = 1 THEN 'ADDUZIONI'
+				ELSE '?'
+			END tipo_infr, 
+		sum(nr_allacci), sum(lung_alla), 
+		sum(nr_allacci_ril), sum(lung_alla_ril)  
+	FROM (
+		-- 1) Realmente mappati
+		SELECT ac.idgis, ac.id_rete, ac.sub_funzione,
+			0 nr_allacci, 0 lung_alla, z.cnt nr_allacci_ril, z.leng lung_alla_ril 
+		FROM acq_condotta ac, 
+		(
+			SELECT id_condotta, count(0) cnt, sum(leng) leng 
+			FROM (
+				SELECT d.id_condotta, st_length(c.geom) leng 
+				FROM acq_derivazione d, acq_condotta c,
+				(
+					select distinct on(cc.idgis) cc.id_derivazione 
+					from acq_cass_cont cc, acq_ubic_contatore uc
+					where uc.ID_IMPIANTO is not null and uc.sorgente IS null
+					and uc.id_cass_cont = cc.idgis 
+				) cc
+				WHERE 
+					d.idgis = cc.id_derivazione 
+					and c.sub_funzione = 3
+					and c.geom&&st_buffer(d.geom, v_tol)
+					and st_intersects(c.geom, st_buffer(d.geom, v_tol))
+			) t GROUP BY t.id_condotta
+		) z
+		WHERE ac.idgis = z.id_condotta
+		AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null) 
+		AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL) 
+		AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null) 
+		AND (ac.D_GESTORE = 'PUBLIACQUA') 
+		AND ac.SUB_FUNZIONE in (1, 4)
+		UNION ALL	
+		-- 2) SIMULAZIONE ALLACCIO
+		SELECT ac.idgis, ac.id_rete, ac.sub_funzione,
+			z.cnt nr_allacci, z.leng lung_alla, 0 nr_allacci_ril, 0 lung_alla_ril
+		FROM acq_condotta ac,
+		(
+			SELECT d.id_condotta, count(0) cnt, sum(CASE WHEN st_length(l.geom)>50 THEN 50 ELSE st_length(l.geom) END) leng 
+			FROM acq_deriv_auto d, acq_link_deriv l,
+			(
+					select distinct on(cc.idgis) cc.idgis, cc.id_derivazione 
+					from acq_cass_cont_auto cc, acq_ubic_contatore uc
+					where uc.ID_IMPIANTO is not null and uc.sorgente IS null
+					and uc.id_cass_cont = cc.idgis 
+			) cc
+			WHERE 
+				d.idgis=cc.id_derivazione
+				and l.id_derivazione = d.idgis 
+				and l.id_cass_cont = cc.idgis
+			group by d.id_condotta
+		) z
+		WHERE ac.idgis = z.id_condotta		
+		AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null) 
+		AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL) 
+		AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null) 
+		AND (ac.D_GESTORE = 'PUBLIACQUA') 
+		AND ac.SUB_FUNZIONE in (1, 4)
+	) x GROUP BY idgis, id_rete, sub_funzione;
+	
+	--Aggiornamento codice ATO (su DISTRIBUZIONI)
+	UPDATE ACQ_COND_ALTRO
+	SET codice_ato = t.codice_ato
+	FROM ACQ_RETE_DISTRIB t
+	WHERE t.idgis = ACQ_COND_ALTRO.id_rete 
+	AND ACQ_COND_ALTRO.tipo_infr = 'DISTRIBUZIONI';
+	--Aggiornamento codice ATO (su ADDUZIONI)
+	UPDATE ACQ_COND_ALTRO
+	SET codice_ato = t.codice_ato
+	FROM ACQ_ADDUTTRICE t
+	WHERE t.idgis = ACQ_COND_ALTRO.id_rete 
+	AND ACQ_COND_ALTRO.tipo_infr = 'ADDUZIONI';
+	
+	--GROUP BY x ACQ_ALLACCIO
+	INSERT INTO ACQ_ALLACCIO(idgis, codice_ato, tipo_infr, nr_allacci, lung_alla, nr_allacci_ril, lung_alla_ril)
+	SELECT id_rete, codice_ato, tipo_infr, sum(nr_allacci_ril), sum(lu_allacci_ril)/1000, sum(nr_allacci_sim), sum(lu_allacci_sim)/1000 
+	FROM ACQ_COND_ALTRO 
+	WHERE id_rete is NOT NULL
+	GROUP BY id_rete, codice_ato, tipo_infr;
+
+	
+	-- --ANOMALIES (derivazioni che non intersecano le condotte indicate)
+	-- INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	-- SELECT idgis, 'ACQUEDOTTO', 'Derivazione che non interseca la condotta di rete indicata nella derivazione (per problemi di snap)' 
+	-- FROM acq_derivazione ad 
+	-- where EXISTS(
+	-- 	SELECT c.idgis 
+	-- 	from acq_condotta c
+	-- 	WHERE (c.D_AMBITO = 'AT3' OR c.D_AMBITO IS null) 
+	-- 	AND (c.D_STATO = 'ATT' OR c.D_STATO = 'FIP' OR c.D_STATO IS NULL) 
+	-- 	AND (c.SN_FITTIZIA = 'NO' OR c.SN_FITTIZIA IS null) 
+	-- 	AND (c.D_GESTORE = 'PUBLIACQUA') 
+	-- 	AND c.SUB_FUNZIONE in (1, 4)				
+	-- 	AND c.idgis=ad.id_condotta
+	-- )
+	-- AND NOT EXISTS(
+	-- 	SELECT d.idgis 
+	-- 	FROM acq_derivazione d, acq_condotta c
+	-- 	WHERE d.id_condotta = c.idgis
+	-- 	
+	-- 	AND (c.D_AMBITO = 'AT3' OR c.D_AMBITO IS null) 
+	-- 	AND (c.D_STATO = 'ATT' OR c.D_STATO = 'FIP' OR c.D_STATO IS NULL) 
+	-- 	AND (c.SN_FITTIZIA = 'NO' OR c.SN_FITTIZIA IS null) 
+	-- 	AND (c.D_GESTORE = 'PUBLIACQUA') 
+	-- 	AND c.SUB_FUNZIONE in (1, 4)
+	-- 			
+	-- 	AND c.geom&&ST_BUFFER(d.geom, v_tol)
+	-- 	AND st_intersects(c.geom,ST_BUFFER(d.geom, v_tol))
+	-- 	AND d.idgis=ad.idgis
+	-- );
+	-- 
+	-- INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	-- SELECT idgis, 'ACQUEDOTTO', 'Derivazione che interseca la condotta di rete ma non interseca alcuna condotta di allacciamento' 
+	-- FROM acq_derivazione ad 
+	-- WHERE NOT EXISTS(
+	-- 	SELECT d.idgis 
+	-- 	FROM acq_derivazione d, acq_condotta c
+	-- 	WHERE d.id_condotta = c.idgis
+	-- 	AND c.sub_funzione = 3
+	-- 	AND c.geom&&ST_BUFFER(d.geom, v_tol)
+	-- 	AND st_intersects(c.geom,ST_BUFFER(d.geom, v_tol))
+	-- 	AND d.idgis = ad.idgis
+	-- );
+
+	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
