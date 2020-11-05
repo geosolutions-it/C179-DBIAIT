@@ -86,7 +86,7 @@ class ExportTask(BaseTask):
                 kwargs = {
                     u"task_id": 1525, 
                     u"table" :export[u"source"][u"table"],
-                    u"process":export[u"name"],
+                    u"name":export[u"name"],
                     u"shape_file_folder":export[u"folder"],
                     u"fields":export[u"source"][u"fields"],
                     u"filter_query": export[u"source"][u"filter"],
@@ -95,4 +95,4 @@ class ExportTask(BaseTask):
                 exporter = ShapeExporter(**kwargs)
                 exporter.execute()
             else:
-                print(f"skipped the export process {export[u'name']}")
+                print(f"Skipped the export of [name={export[u'name']}] shapefile")

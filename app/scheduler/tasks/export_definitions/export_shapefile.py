@@ -16,11 +16,11 @@ class ShapeExporter:
             ShapeExporter.qgis = QgsApplication([], False)
             QgsApplication.initQgis()
 
-    def __init__(self, task_id: int, table: str, process: str, shape_file_folder: str, fields: list, filter_query: str, pre_process: str, year=None):
+    def __init__(self, task_id: int, table: str, name: str, shape_file_folder: str, fields: list, filter_query: str, pre_process: str, year=None):
         self.folder = settings.TEMP_EXPORT_DIR
         self.year = year
         self.table = table
-        self.process = process
+        self.name = name
         self.fields = fields
         self.task_id = task_id
         self.shape_file_folder = shape_file_folder
@@ -33,7 +33,7 @@ class ShapeExporter:
             cursor.callproc(
                 f"{settings.DATABASE_SCHEMAS[u'analysis']}.{self.pre_process}")
             result = cursor.fetchone()
-            print(f"[PROCESS={self.task_id}] PRE-PROCESS: {result}")
+            print(f"Export preprocess of [name={self.name}] returned:\n{result}")
 
     def execute(self):
         ShapeExporter.initQGis()
