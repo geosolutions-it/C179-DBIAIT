@@ -86,10 +86,11 @@ class ExportTask(BaseTask):
                 kwargs = {
                     u"task_id": 1525, 
                     u"table" :export[u"source"][u"table"],
-                    u"shape_file":export[u"name"],
+                    u"process":export[u"name"],
                     u"shape_file_folder":export[u"folder"],
                     u"fields":export[u"source"][u"fields"],
-                    u"filter": export[u"source"][u"filter"],
+                    u"filter_query": export[u"source"][u"filter"],
+                    u"pre_process": export[u"pre_process"],
                 }
                 exporter = ShapeExporter(**kwargs)
                 exporter.execute()
