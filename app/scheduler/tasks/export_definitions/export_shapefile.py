@@ -3,6 +3,8 @@ from qgis.core import QgsApplication, QgsVectorLayer, QgsDataSourceUri, QgsVecto
 from django.conf import settings
 from django.db import connection
 
+from app.scheduler.models import Task
+
 qgs = None
 database = settings.DATABASES["default"]
 
@@ -27,6 +29,9 @@ class ShapeExporter:
         self.filter = filter_query
         self.pre_process = pre_process
 
+        task = Task.objects.filter(id=task_id).first()
+        self.schema = task.schema if task else settings.DATABASE_SCHEMAS[u"analysis"]
+
     def export_preprocess(self):
         analysis_cursor = connection.cursor()
         with analysis_cursor as cursor:
@@ -46,7 +51,7 @@ class ShapeExporter:
         else:
             raise Exception(u"No temporaly export folder configuared")
 
-        schema = settings.DATABASE_SCHEMAS[u"analysis"]
+        schema = self.schema
         if self.year is not None:
             schema = settings.DATABASE_SCHEMAS[u"freeze"]
 
@@ -55,6 +60,7 @@ class ShapeExporter:
 
         uri = QgsDataSourceUri()
         uri.setConnection(database[u"HOST"], str(database[u"PORT"]), database[u"NAME"], database[u"USER"], database[u"PASSWORD"])
+
         uri.setDataSource(schema, self.table, u"geom", aSql=self.filter)
 
         vlayer = QgsVectorLayer(uri.uri(), self.table, "postgres")

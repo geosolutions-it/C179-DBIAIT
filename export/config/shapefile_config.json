@@ -14,7 +14,7 @@
             }
          ],
          "table":"localita",
-         "filter":"select * from localita"
+         "filter":"id < 100"
       }
    },
    {
@@ -32,7 +32,7 @@
             }
          ],
          "table":"localita",
-         "filter":"select * from localita"
+         "filter":"id < 100"
       }
    },
    {
