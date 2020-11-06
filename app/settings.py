@@ -214,7 +214,6 @@ IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDE
 NFS_FOLDER = os.getenv("NFS_FOLDER")
 
 # Directory in which generated exports are kept
-EXPORT_FOLDER = os.getenv("EXPORT_FOLDER")
-
-TEMP_EXPORT_DIR = os.path.join(BASE_DIR, u"tmp")
-SHAPEFILE_EXPORT_CONFIG = os.getenv(u"SHAPEFILE_EXPORT_CONFIG", os.path.join(BASE_DIR, u"export", u"config", u"shapefile_config.json"))
+EXPORT_FOLDER = os.getenv(u"EXPORT_FOLDER", os.path.join(BASE_DIR, u"export"))
+TEMP_EXPORT_DIR = os.getenv(u"TEMP_EXPORT_DIR", os.path.join(EXPORT_FOLDER, u"tmp"))
+SHAPEFILE_EXPORT_CONFIG = os.getenv(u"SHAPEFILE_EXPORT_CONFIG", os.path.join(EXPORT_FOLDER, u"config", u"shapefile_config.json"))
