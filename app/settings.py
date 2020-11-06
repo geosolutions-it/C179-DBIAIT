@@ -217,4 +217,4 @@ NFS_FOLDER = os.getenv("NFS_FOLDER")
 EXPORT_FOLDER = os.getenv("EXPORT_FOLDER")
 
 TEMP_EXPORT_DIR = os.path.join(BASE_DIR, u"tmp")
-SHAPEFILE_EXPORT_CONFIG = os.path.join(u"SHAPEFILE_EXPORT_CONFIG", os.path.join(TEMP_EXPORT_DIR, u"test_shape_file_config.json"))
+SHAPEFILE_EXPORT_CONFIG = os.getenv(u"SHAPEFILE_EXPORT_CONFIG", os.path.join(BASE_DIR, u"export", u"config", u"shapefile_config.json"))
