@@ -99,17 +99,22 @@ class ExportListView(LoginRequiredMixin, ListView):
     queryset = Task.objects.filter(type=U"EXPORT")
 
     def post(self, request,  *args, **kwargs):
+        """
+        Queue export task and return results of export status
+        """
         export_schema = request.POST.get(u"export-schema")
         self.object_list = self.get_queryset()
         context = self.get_context_data()
         try:
             ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema))
-            return render(request, ExportListView.template_name, context)
         except (QueuingCriteriaViolated, SchedulingParametersError) as e:
             context[u"error"] = str(e)
-            return render(request, ExportListView.template_name, context)
+        return render(request, ExportListView.template_name, context)
 
     def get_context_data(self, **kwargs):
+        """
+        Create export template context
+        """
         current_url = resolve(self.request.path_info).url_name
         context = super(ExportListView, self).get_context_data(**kwargs)
         context['bread_crumbs'] = {'Export': reverse('export-view')}
