@@ -7,67 +7,33 @@
          {
             "fields":[
                {
-                  "name":"<table_alias>.<field_name>",
-                  "alias":"<field_alias>"
+                  "name":"my_acq_diga.objectid",
+                  "alias":"my_object_id"
                }
             ],
             "table":{
-               "name":"<table_name>",
-               "alias":"<table_alias>"
+               "name":"acq_diga",
+               "alias":"my_acq_diga"
             },
             "join":[
                {
                   "type":"inner",
                   "table":{
-                     "name":"<table_name>",
-                     "alias":"<table_alias>"
+                     "name":"another_table",
+                     "alias":"my_second_table"
                   },
                   "on":[
-                     "<table_alias>.<field_name>",
-                     "<table_alias>.<field_name>"
+                     "my_acq_diga.id",
+                     "my_second_table.id"
                   ],
                   "cond":"="
                }
             ],
-            "filter":"<where filter condition>",
+            "filter":"WHERE and here we proceed to have another statements",
             "group_by":[
-               "<table_alias>.<field_name>"
+               "my_acq_diga.my_object_id"
             ],
-            "having":[
-               "<table_alias>.<field_name>"
-            ]
-         }
-      ],
-      "columns":[
-         {
-            "id":"800",
-            "field":"name",
-            "transformation":{
-               "func":"EXPR",
-               "params":{
-                  "p1":"asdf",
-                  "p2":"qwer"
-               }
-            },
-            "validations":[
-               {
-                  "func":"IF",
-                  "params":{
-                     "p1":"1234",
-                     "p2":"4321"
-                  }
-               }
-            ]
-         }
-      ]
-   },
-	{
-      "sheet":"fiumi",
-      "skip":false,
-      "pre_process":"what?",
-      "sources":[
-         {
-            "raw":"<custom sql statement>"
+            "having":"HAVING conditions"
          }
       ],
       "columns":[
