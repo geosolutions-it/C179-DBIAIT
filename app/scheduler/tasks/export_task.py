@@ -76,10 +76,7 @@ class ExportTask(BaseTask):
 
         return current_task.id
 
-    def execute(self, task_id: int, *args, **kwargs) -> None:
-        """
-        This function should contain the actual code exporting data
-        """
+    def export_shapefiles(self, task_id):
         with open(settings.SHAPEFILE_EXPORT_CONFIG, u"r") as f:
             exports = json.load(f)
 
@@ -100,3 +97,10 @@ class ExportTask(BaseTask):
                 exporter.execute()
             else:
                 print(f"Skipped the export of [name={export[u'name']}] shapefile")
+
+    def execute(self, task_id: int, *args, **kwargs) -> None:
+        """
+        This function should contain the actual code exporting data
+        """
+        self.export_shapefiles(task_id)
+
