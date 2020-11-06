@@ -1,7 +1,7 @@
 from os import fstat, listdir, path
 from urllib import parse
 
-from app.scheduler.exceptions import QueuingCriteriaViolated
+from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
 from app.scheduler.models import Task, TaskStatus
 from app.scheduler.serializers import ImportSerializer, ProcessSerializer
 from django.conf import settings
@@ -94,21 +94,24 @@ class QueueImportView(LoginRequiredMixin, View):
             return redirect(reverse(u"import-view"))
 
 
-class Export(LoginRequiredMixin, ListView):
+class ExportListView(LoginRequiredMixin, ListView):
     template_name = u'export/base-export.html'
     queryset = Task.objects.filter(type=U"EXPORT")
 
     def post(self, request,  *args, **kwargs):
         export_schema = request.POST.get(u"export-schema")
+        self.object_list = self.get_queryset()
+        context = self.get_context_data()
         try:
             ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema))
-            return  redirect(reverse(u"export-view"))
-        except QueuingCriteriaViolated as e:
-            return  redirect(reverse(u"export-view"))
+            return render(request, ExportListView.template_name, context)
+        except (QueuingCriteriaViolated, SchedulingParametersError) as e:
+            context[u"error"] = str(e)
+            return render(request, ExportListView.template_name, context)
 
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name
-        context = super(Export, self).get_context_data(**kwargs)
+        context = super(ExportListView, self).get_context_data(**kwargs)
         context['bread_crumbs'] = {'Export': reverse('export-view')}
         context['current_url'] = current_url
         context['schemas'] = settings.DATABASE_SCHEMAS
