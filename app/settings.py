@@ -56,7 +56,7 @@ INSTALLED_APPS = [
 DRAMATIQ_BROKER = {
     "BROKER": os.getenv('DRAMATIQ_BROKER', "dramatiq.brokers.rabbitmq.RabbitmqBroker"),
     "OPTIONS": {
-        "url": os.getenv('DRAMATIQ_BROKER_URL', "amqp://localhost:5672"),
+        "url": f"amqp://{os.getenv('DRAMATIQ_BROKER_URL', 'localhost')}:5672",
     },
     "MIDDLEWARE": [
         "dramatiq.middleware.Prometheus",
@@ -166,7 +166,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
-AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://127.0.0.1:10389")
+AUTH_LDAP_SERVER_URI = f"ldap://{os.getenv('LDAP_HOST', '127.0.0.1')}:10389"
 
 AUTH_LDAP_BIND_DN = os.getenv("LDAP_USERNAME", "uid=admin,ou=system")
 AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "secret")
@@ -199,7 +199,7 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'django_auth_ldap.backend.LDAPBackend',
+    # 'django_auth_ldap.backend.LDAPBackend',
 )
 
 # QGis installation path
@@ -214,4 +214,6 @@ IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDE
 NFS_FOLDER = os.getenv("NFS_FOLDER")
 
 # Directory in which generated exports are kept
-EXPORT_FOLDER = os.getenv("EXPORT_FOLDER")
+EXPORT_FOLDER = os.getenv(u"EXPORT_FOLDER", os.path.join(BASE_DIR, u"export"))
+TEMP_EXPORT_DIR = os.getenv(u"TEMP_EXPORT_DIR", os.path.join(EXPORT_FOLDER, u"tmp"))
+SHAPEFILE_EXPORT_CONFIG = os.getenv(u"SHAPEFILE_EXPORT_CONFIG", os.path.join(EXPORT_FOLDER, u"config", u"shapefile_config.json"))
