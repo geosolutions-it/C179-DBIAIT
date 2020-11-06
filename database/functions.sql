@@ -1113,8 +1113,8 @@ BEGIN
 				WHEN sub_funzione = 1 THEN 'ADDUZIONI'
 				ELSE '?'
 			END tipo_infr, 
-		sum(nr_allacci), sum(lung_alla), 
-		sum(nr_allacci_ril), sum(lung_alla_ril)  
+		sum(nr_allacci) nr_allacci_sim, sum(lung_alla) lu_allacci_sim, 
+		sum(nr_allacci_ril) nr_allacci_ril, sum(lung_alla_ril) lu_allacci_ril  
 	FROM (
 		-- 1) Realmente mappati
 		SELECT ac.idgis, ac.id_rete, ac.sub_funzione,
@@ -1186,7 +1186,7 @@ BEGIN
 	AND ACQ_COND_ALTRO.tipo_infr = 'ADDUZIONI';
 	
 	--GROUP BY x ACQ_ALLACCIO
-	INSERT INTO ACQ_ALLACCIO(idgis, codice_ato, tipo_infr, nr_allacci, lung_alla, nr_allacci_ril, lung_alla_ril)
+	INSERT INTO ACQ_ALLACCIO(idgis, codice_ato, tipo_infr, nr_allacci_ril, lung_alla_ril, nr_allacci, lung_alla)
 	SELECT id_rete, codice_ato, tipo_infr, sum(nr_allacci_ril), sum(lu_allacci_ril)/1000, sum(nr_allacci_sim), sum(lu_allacci_sim)/1000 
 	FROM ACQ_COND_ALTRO 
 	WHERE id_rete is NOT NULL
