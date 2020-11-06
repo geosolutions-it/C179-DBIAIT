@@ -1,5 +1,6 @@
 import os
 import json
+import shutil
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -103,4 +104,10 @@ class ExportTask(BaseTask):
         This function should contain the actual code exporting data
         """
         self.export_shapefiles(task_id)
+
+        # zip final output in export directory
+        task_export_folder = os.path.join(settings.TEMP_EXPORT_DIR, str(task_id))
+        export_file = os.path.join(settings.EXPORT_FOLDER, str(task_id))
+        results = os.path.exists(task_export_folder) and shutil.make_archive(export_file, u"zip", task_export_folder)
+        print(f"zip file creation returned {results}")
 
