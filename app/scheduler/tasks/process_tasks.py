@@ -43,7 +43,7 @@ class BaseProcessTask(BaseTask):
             )
 
         # check for conflicting processes
-        colliding_processes = cls.process_pre_send(colliding_tasks)
+        colliding_processes = cls.process_pre_send()
         if colliding_processes:
             raise exceptions.QueuingCriteriaViolated(
                 f"Following processes prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
