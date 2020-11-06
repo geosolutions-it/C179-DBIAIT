@@ -1,3 +1,4 @@
+import os
 import json
 
 from django.conf import settings
@@ -81,14 +82,17 @@ class ExportTask(BaseTask):
         """
         with open(settings.SHAPEFILE_EXPORT_CONFIG, u"r") as f:
             exports = json.load(f)
+
+        # create temporary export directory if it does not exist
+        not os.path.exists(settings.TEMP_EXPORT_DIR) and os.makedirs(settings.TEMP_EXPORT_DIR)
         for export in exports:
             if not export[u"skip"]:
                 kwargs = {
                     u"task_id": task_id, 
-                    u"table" :export[u"source"][u"table"],
-                    u"name":export[u"name"],
-                    u"shape_file_folder":export[u"folder"],
-                    u"fields":export[u"source"][u"fields"],
+                    u"table": export[u"source"][u"table"],
+                    u"name": export[u"name"],
+                    u"shape_file_folder": export[u"folder"],
+                    u"fields": export[u"source"][u"fields"],
                     u"filter_query": export[u"source"][u"filter"],
                     u"pre_process": export[u"pre_process"],
                 }
