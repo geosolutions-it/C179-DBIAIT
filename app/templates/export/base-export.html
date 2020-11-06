@@ -34,13 +34,13 @@
       <tr>
         <td>{{ export.requesting_user }}</td>
         <td>{{ export.geopackage }}</td>
-        <td>{{ export.end_date }}</td>
-        <td>{{ export.start_date }}</td>
+        <td>{{ export.end_date|default_if_none:"--/--/----" }}</td>
+        <td>{{ export.start_date|default_if_none:"--/--/----" }}</td>
         <td>
-          <i class="{{ import.status_icon }}"></i>
+          <i class="{{ export.status_icon }}"></i>
         </td>
         <td>
-          <a href="#" onclick="window.open('{% url 'export-download-view' task_id=export.pk %}', '_blank')" target="_blank">
+          <a href="{% url 'export-download-view' task_id=export.pk %}" target="_blank">
             <i class="fas fa-download"></i>
           </a>
         </td>
