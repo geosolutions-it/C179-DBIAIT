@@ -61,10 +61,7 @@ class ShapeExporter:
         uri = QgsDataSourceUri()
         uri.setConnection(database[u"HOST"], str(database[u"PORT"]), database[u"NAME"], database[u"USER"], database[u"PASSWORD"])
 
-        filter_condition = f" WHERE {self.filter}" if self.filter else u""
-        sql_filter_statment = f"SELECT * FROM {schema}.{self.table}{filter_condition};"
-        print(f"FILTER CONDITION: {sql_filter_statment}")
-        uri.setDataSource(schema, self.table, u"geom", aSql=sql_filter_statment)
+        uri.setDataSource(schema, self.table, u"geom", aSql=self.filter)
 
         vlayer = QgsVectorLayer(uri.uri(), self.table, "postgres")
         print("Feature count: " + str(vlayer.featureCount()))
