@@ -96,7 +96,7 @@ class QueueImportView(LoginRequiredMixin, View):
 
 class ExportListView(LoginRequiredMixin, ListView):
     template_name = u'export/base-export.html'
-    queryset = Task.objects.filter(type=U"EXPORT")
+    queryset = Task.objects.filter(type=U"EXPORT").order_by(u"-start_date")
 
     def post(self, request,  *args, **kwargs):
         """
