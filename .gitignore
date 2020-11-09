@@ -40,3 +40,6 @@ Dockerfile
 
 # Docker-compose
 docker-compose.yml
+
+# .env files
+.env
