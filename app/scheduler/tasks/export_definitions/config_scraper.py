@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class JoinType(Enum):
-    # class overriding pypika.enums.JoinType to extend it for SPATIAL join
+    # class overriding pypika.enums.JoinType toi extend it for SPATIAL join
     inner = ""
     left = "LEFT"
     right = "RIGHT"
@@ -90,7 +90,6 @@ export_config_schema = schema.Schema(
                         schema.Optional("filter"): schema.And(str, len),
                         schema.Optional("having"): schema.And(str, len),
                     },
-                    only_one=True,
                 )
             ],
             "columns": [

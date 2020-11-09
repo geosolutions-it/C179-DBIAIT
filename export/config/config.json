@@ -34,6 +34,9 @@
                "my_acq_diga.my_object_id"
             ],
             "having":"HAVING conditions"
+         },
+         {
+            "raw": "asdf"
          }
       ],
       "columns":[
