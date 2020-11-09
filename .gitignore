@@ -34,3 +34,9 @@ task_logs
 
 # zipped exports
 /export/*.zip*
+
+# Dockerfile
+Dockerfile
+
+# Docker-compose
+docker-compose.yml
