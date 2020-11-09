@@ -43,16 +43,21 @@
             "transformation":{
                "func":"EXPR",
                "params":{
-                  "p1":"asdf",
-                  "p2":"qwer"
+                  "field":"asdf",
+                  "expr":"_value_*1000/365/3600/2"
                }
             },
             "validations":[
                {
                   "func":"IF",
                   "params":{
-                     "p1":"1234",
-                     "p2":"4321"
+                     "field":"diametro",
+                     "cond": {
+                        "operator": ">",
+                        "value": 100,
+                        "result":1,
+                        "else": 2
+                     }
                   }
                }
             ]

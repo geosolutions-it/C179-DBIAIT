@@ -2,12 +2,13 @@ import json
 from enum import Enum
 import schema
 import logging
-import operator
 import re
 from pypika import Query, Table, Field
 
 from django.conf import settings
+from app.scheduler.tasks.export_definitions.transformations import TransformationFactory
 from app.scheduler.tasks.export_definitions.exceptions import ExportConfigError
+from app.scheduler.utils import COMPARISON_OPERATORS_MAPPING
 
 logger = logging.getLogger(__name__)
 
@@ -20,14 +21,6 @@ class JoinType(Enum):
     outer = "FULL OUTER"
     spatial = "SPATIAL"
 
-
-COMPARISON_OPERATORS_MAPPING = {
-    "=": operator.eq,
-    ">": operator.gt,
-    "<": operator.lt,
-    ">=": operator.ge,
-    "<=": operator.le,
-}
 
 JOIN_TYPES = [join_type.name.upper() for join_type in JoinType]
 SUPPORTED_TRANSFORMATIONS = [
@@ -130,7 +123,7 @@ class ExportConfig:
     def __init__(self):
         self.config = []
 
-        with open(settings.EXPORT_CONF_FILE, 'r') as ecf:
+        with open(settings.EXPORT_CONF_FILE, "r") as ecf:
             config = json.load(ecf)
 
         # validate export configuration schema
@@ -215,5 +208,24 @@ class ExportConfig:
 
             sheet.update({"sql_sources": sql_sources})
 
-            self.config.append(sheet)
+            columns = []
+            for column in sheet.pop('columns'):
+                # translate transformation into parametrized transformer instance
+                transformation = column.pop('transformation')
+                transformer = TransformationFactory.from_name(transformation['func'], transformation['params'])
+                column.update({'transformer': transformer})
 
+                # translate validations into parametrized validator instances
+                validators = []
+                for validation in column.pop('validations'):
+                    validator = TransformationFactory.from_name(validation['func'], validation['params'])
+                    validators.append({'validator': validator, 'warning': validation.get('warning', None)})
+
+                column.update({'validators': validators})
+                # update translated columns list
+                columns.append(column)
+
+            sheet.update({"columns": columns})
+
+            # store current sheet configuration
+            self.config.append(sheet)
