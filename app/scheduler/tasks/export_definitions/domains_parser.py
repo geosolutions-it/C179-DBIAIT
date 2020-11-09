@@ -30,8 +30,7 @@ class Domains:
                 self._data.update(
                     {
                         domain[0]: {
-                            row['valore_gis']: row['valore_netsic']
-                            for row in rows
+                            row["valore_gis"]: row["valore_netsic"] for row in rows
                         }
                     }
                 )

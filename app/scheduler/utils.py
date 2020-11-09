@@ -1,3 +1,4 @@
+import operator
 from django.conf import settings
 
 
@@ -24,6 +25,14 @@ class TaskStatus:
     SUCCESS = "SUCCESS"
 
 
+COMPARISON_OPERATORS_MAPPING = {
+    "=": operator.eq,
+    ">": operator.gt,
+    "<": operator.lt,
+    ">=": operator.ge,
+    "<=": operator.le,
+}
+
 style_class_mapper = {
     TaskStatus.QUEUED: u"table-primary",
     TaskStatus.FAILED: u"table-danger",
@@ -37,3 +46,14 @@ status_icon_mapper = {
     TaskStatus.RUNNING: u"fas fa-sync fa-spin text-primary",
     TaskStatus.SUCCESS: u"fas fa-check-circle text-success"
 }
+
+
+def dictfetchall(cursor):
+    """
+    Fetch all result rows of a raw SQL query from Django connection.cursor() as dicts
+    """
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]

@@ -24,7 +24,7 @@ class BaseTransformation:
 
 class ConstTransformation(BaseTransformation):
 
-    schema = schema.Schema({'value': object})
+    schema = schema.Schema({"value": object})
 
     def apply(self):
         return self.args.get("value", None)
@@ -35,12 +35,12 @@ class EmptyTransformation(BaseTransformation):
     schema = schema.Schema(None)
 
     def apply(self):
-        return ''
+        return ""
 
 
 class DirectTransformation(BaseTransformation):
 
-    schema = schema.Schema({'field_name': str})
+    schema = schema.Schema({"field_name": str})
 
     def apply(self, row: Dict):
         return row.get(self.args["field"], None)
@@ -48,7 +48,7 @@ class DirectTransformation(BaseTransformation):
 
 class DomainTransformation(BaseTransformation):
 
-    schema = schema.Schema({'field': str, 'domain_name': str})
+    schema = schema.Schema({"field": str, "domain_name": str})
 
     def apply(self, row: Dict, domains: Domains):
         field_value = row.get(self.args["field"], None)
@@ -57,7 +57,9 @@ class DomainTransformation(BaseTransformation):
 
 class LstripTransformation(BaseTransformation):
 
-    schema = schema.Schema({'field': str, 'char': schema.And(str, lambda char: len(char) == 1)})
+    schema = schema.Schema(
+        {"field": str, "char": schema.And(str, lambda char: len(char) == 1)}
+    )
 
     def apply(self, row: Dict):
         return str(row.get(self.args["field"], None)).lstrip(self.args["char"])
@@ -65,7 +67,7 @@ class LstripTransformation(BaseTransformation):
 
 class ExpressionTransformation(BaseTransformation):
 
-    schema = schema.Schema({'field': str, 'expr': str})
+    schema = schema.Schema({"field": str, "expr": str})
 
     def apply(self, row: Dict):
         result = row.get(self.args["field"], None)
@@ -79,7 +81,12 @@ class ExpressionTransformation(BaseTransformation):
 
 class CaseTransformation(BaseTransformation):
 
-    schema = schema.Schema({'field': str, 'cond': [{"case": str, "operator": str, "value": object, "result": object}]})
+    schema = schema.Schema(
+        {
+            "field": str,
+            "cond": [{"case": str, "operator": str, "value": object, "result": object}],
+        }
+    )
 
     @staticmethod
     def sort_by_case(condition):
@@ -112,14 +119,24 @@ class CaseTransformation(BaseTransformation):
 
 class IfTransformation(CaseTransformation):
 
-    schema = schema.Schema({'field': str, 'cond': {"operator": str, "value": object, "result": object, "else": object}})
+    schema = schema.Schema(
+        {
+            "field": str,
+            "cond": {
+                "operator": str,
+                "value": object,
+                "result": object,
+                "else": object,
+            },
+        }
+    )
 
     def apply(self, row):
         field_value = row.get(self.args["field"], None)
         cond = self.args["cond"]
         operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
 
-        return cond['result'] if operator(field_value, cond['value']) else cond['else']
+        return cond["result"] if operator(field_value, cond["value"]) else cond["else"]
 
 
 class TransformationFactory:

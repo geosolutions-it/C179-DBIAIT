@@ -209,19 +209,28 @@ class ExportConfig:
             sheet.update({"sql_sources": sql_sources})
 
             columns = []
-            for column in sheet.pop('columns'):
+            for column in sheet.pop("columns"):
                 # translate transformation into parametrized transformer instance
-                transformation = column.pop('transformation')
-                transformer = TransformationFactory.from_name(transformation['func'], transformation['params'])
-                column.update({'transformer': transformer})
+                transformation = column.pop("transformation")
+                transformer = TransformationFactory.from_name(
+                    transformation["func"], transformation["params"]
+                )
+                column.update({"transformer": transformer})
 
                 # translate validations into parametrized validator instances
                 validators = []
-                for validation in column.pop('validations'):
-                    validator = TransformationFactory.from_name(validation['func'], validation['params'])
-                    validators.append({'validator': validator, 'warning': validation.get('warning', None)})
+                for validation in column.pop("validations"):
+                    validator = TransformationFactory.from_name(
+                        validation["func"], validation["params"]
+                    )
+                    validators.append(
+                        {
+                            "validator": validator,
+                            "warning": validation.get("warning", None),
+                        }
+                    )
 
-                column.update({'validators': validators})
+                column.update({"validators": validators})
                 # update translated columns list
                 columns.append(column)
 
