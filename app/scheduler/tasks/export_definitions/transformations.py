@@ -1,9 +1,24 @@
 import schema
+
 from typing import Dict
 from sympy import Symbol
 from sympy.parsing.sympy_parser import parse_expr
-from .domains_parser import Domains
+
 from app.scheduler.utils import COMPARISON_OPERATORS_MAPPING
+
+from .domains_parser import Domains
+from .exceptions import ExportConfigError
+
+SUPPORTED_TRANSFORMATIONS = [
+    "EMPTY",
+    "CONST",
+    "DIRECT",
+    "DOMAIN",
+    "LSTRIP",
+    "EXPR",
+    "IF",
+    "CASE",
+]
 
 
 class BaseTransformation:
@@ -117,7 +132,7 @@ class CaseTransformation(BaseTransformation):
                 return cond["result"]
 
 
-class IfTransformation(CaseTransformation):
+class IfTransformation(BaseTransformation):
 
     schema = schema.Schema(
         {
@@ -140,10 +155,11 @@ class IfTransformation(CaseTransformation):
 
 
 class TransformationFactory:
+
     @staticmethod
     def from_name(name, params):
-        transformation = None
         u_name = name.upper()
+
         if u_name == "EMPTY":
             transformation = EmptyTransformation()
         elif u_name == "CONST":
@@ -160,4 +176,7 @@ class TransformationFactory:
             transformation = CaseTransformation(params)
         elif u_name == "IF":
             transformation = IfTransformation(params)
+        else:
+            raise ExportConfigError(f"Unknown transformation method '{name.upper()}'")
+
         return transformation

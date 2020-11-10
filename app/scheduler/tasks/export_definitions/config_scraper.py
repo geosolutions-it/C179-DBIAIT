@@ -1,15 +1,18 @@
+import re
 import json
-from enum import Enum
 import schema
 import logging
-import re
-from pypika import Query, Table, Field
+
+from enum import Enum
 from typing import List, Dict
+from pypika import Query, Table, Field
 
 from django.conf import settings
-from app.scheduler.tasks.export_definitions.transformations import TransformationFactory
-from app.scheduler.tasks.export_definitions.exceptions import ExportConfigError
 from app.scheduler.utils import COMPARISON_OPERATORS_MAPPING
+
+from .exceptions import ExportConfigError
+from .transformations import SUPPORTED_TRANSFORMATIONS, TransformationFactory
+from .validations import SUPPORTED_VALIDATIONS, ValidationFactory
 
 logger = logging.getLogger(__name__)
 
@@ -24,17 +27,6 @@ class JoinType(Enum):
 
 
 JOIN_TYPES = [join_type.name.upper() for join_type in JoinType]
-SUPPORTED_TRANSFORMATIONS = [
-    "EMPTY",
-    "CONST",
-    "DIRECT",
-    "DOMAIN",
-    "LSTRIP",
-    "EXPR",
-    "IF",
-    "CASE",
-]
-SUPPORTED_VALIDATIONS = ["IF"]
 
 
 def field_name_validator(field_name: str) -> bool:
@@ -133,7 +125,7 @@ class ExportConfig:
         for sheet in config:
             # parse SQL sources of a sheet
             sources = sheet.pop("sources")
-            sql_sources = self.parse_sources(sheet['sheet'], sources)
+            sql_sources = self.parse_sources(sheet["sheet"], sources)
             sheet.update({"sql_sources": sql_sources})
 
             # parse and update columns of a sheet
@@ -182,14 +174,13 @@ class ExportConfig:
                     for field in join_table_config["on"]:
                         table_name, field_name = field.split(".")
                         if table_name == join_table.get_table_name():
-                            join_on_fields.append(
-                                Field(field_name, table=join_table)
-                            )
+                            join_on_fields.append(Field(field_name, table=join_table))
                         elif table_name == table.get_table_name():
                             join_on_fields.append(Field(field_name, table=table))
                         else:
                             raise ExportConfigError(
-                                f'On field name "{field}" in sheet "{sheet_name}" does not recognize table "{table_name}".'
+                                f'On field name "{field}" in sheet "{sheet_name}" '
+                                f'does not recognize table "{table_name}".'
                             )
 
                     query = query.join(
@@ -237,7 +228,7 @@ class ExportConfig:
             # translate validations into parametrized validator instances
             validators = []
             for validation in column.pop("validations"):
-                validator = TransformationFactory.from_name(
+                validator = ValidationFactory.from_name(
                     validation["func"], validation["params"]
                 )
                 validators.append(
