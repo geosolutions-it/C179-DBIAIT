@@ -123,7 +123,7 @@ class ExportTask(BaseTask):
         export_directory = pathlib.Path(settings.EXPORT_FOLDER, str(orm_task.uuid))
         export_directory.mkdir(parents=True, exist_ok=True)
 
-        ExportXls(export_directory, orm_task, max_progress=100).run()
+        ExportXls(export_directory, orm_task, max_progress=90).run()
 
         self.export_shapefiles(task_id)
 
@@ -131,3 +131,6 @@ class ExportTask(BaseTask):
         export_file = os.path.join(settings.EXPORT_FOLDER, str(task_id))
         results = os.path.exists(export_directory) and shutil.make_archive(export_file, u"zip", export_directory)
         print(f"zip file creation returned {results}")
+
+        orm_task.progress = 100
+        orm_task.save()
