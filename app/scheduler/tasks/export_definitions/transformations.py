@@ -26,7 +26,7 @@ class ConstTransformation(BaseTransformation):
 
     schema = schema.Schema({"value": object})
 
-    def apply(self):
+    def apply(self, **kwargs):
         return self.args.get("value", None)
 
 
@@ -34,7 +34,7 @@ class EmptyTransformation(BaseTransformation):
 
     schema = schema.Schema(None)
 
-    def apply(self):
+    def apply(self, **kwargs):
         return ""
 
 
@@ -42,7 +42,7 @@ class DirectTransformation(BaseTransformation):
 
     schema = schema.Schema({"field_name": str})
 
-    def apply(self, row: Dict):
+    def apply(self, row: Dict, **kwargs):
         return row.get(self.args["field"], None)
 
 
@@ -61,7 +61,7 @@ class LstripTransformation(BaseTransformation):
         {"field": str, "char": schema.And(str, lambda char: len(char) == 1)}
     )
 
-    def apply(self, row: Dict):
+    def apply(self, row: Dict, **kwargs):
         return str(row.get(self.args["field"], None)).lstrip(self.args["char"])
 
 
@@ -69,7 +69,7 @@ class ExpressionTransformation(BaseTransformation):
 
     schema = schema.Schema({"field": str, "expr": str})
 
-    def apply(self, row: Dict):
+    def apply(self, row: Dict, **kwargs):
         result = row.get(self.args["field"], None)
         if result is not None:
             f = Symbol("_value_")
@@ -101,7 +101,7 @@ class CaseTransformation(BaseTransformation):
         except:
             return 3
 
-    def apply(self, row):
+    def apply(self, row: Dict, **kwargs):
         field_value = row.get(self.args["field"], None)
         conditions = self.args["cond"].sort(key=self.sort_by_case, reverse=False)
 
@@ -131,7 +131,7 @@ class IfTransformation(CaseTransformation):
         }
     )
 
-    def apply(self, row):
+    def apply(self, row: Dict, **kwargs):
         field_value = row.get(self.args["field"], None)
         cond = self.args["cond"]
         operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
