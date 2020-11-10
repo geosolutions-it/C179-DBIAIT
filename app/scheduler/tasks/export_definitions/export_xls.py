@@ -6,8 +6,8 @@ import openpyxl
 from datetime import datetime
 from openpyxl.utils import cell
 
-from django.db import connection
 from django.conf import settings
+from django.db import connection, ProgrammingError
 
 from .domains_parser import Domains
 from .config_scraper import ExportConfig
@@ -88,6 +88,25 @@ class ExportXls:
 
         for sheet in ExportConfig():
 
+            # execute pre_process for the sheet
+            pre_process = sheet.get('pre_process', None)
+            if pre_process is not None:
+                with connection.cursor() as cursor:
+                    try:
+                        cursor.callproc(f"{self.orm_task.schema}.{pre_process}")
+                    except Exception as e:
+                        logger.error(
+                            f"Procedure '{pre_process}' called by sheet '{sheet['sheet']}' FAILED with:\n"
+                            f"{type(e).__name__}: {e}.\n"
+                            f"Skipping '{sheet['sheet']}' sheet generation."
+                        )
+                        continue
+                    else:
+                        result = cursor.fetchone()
+                        logger.debug(
+                            f"Procedure '{pre_process}' called by sheet '{sheet['sheet']}' executed: {result}."
+                        )
+
             # set current sheet as active in the xls workbook
             try:
                 sheet_index = excel_wb.sheetnames.index(sheet["sheet"])
@@ -106,7 +125,7 @@ class ExportXls:
             for column_index in range(1, len(excel_ws[self.SEED_FILE_ID_ROW]) + 1):
                 column_letter = cell.get_column_letter(column_index)
                 coord_id_mapping.update(
-                    {excel_ws[f"{column_letter}{self.SEED_FILE_ID_ROW}"]: column_letter}
+                    {excel_ws[f"{column_letter}{self.SEED_FILE_ID_ROW}"].value: column_letter}
                 )
 
             # get the index of the first empty excel row
@@ -123,7 +142,16 @@ class ExportXls:
 
                 raw_data = []
                 for source in sql_sources:
-                    cursor.execute(source)
+                    try:
+                        cursor.execute(source)
+                    except ProgrammingError as e:
+                        logger.error(
+                            f"Fetching source for sheet '{sheet['sheet']}' failed with:\n"
+                            f"{type(e).__name__}: {e}.\n"
+                            f"Source: '{source}'."
+                        )
+                        continue
+
                     raw_data.extend(dictfetchall(cursor))
 
             for raw_data_row in raw_data:
@@ -155,7 +183,7 @@ class ExportXls:
                                 )
 
                 # insert sheet_row into excel
-                for column_id, value in sheet.items():
+                for column_id, value in sheet_row.items():
                     column_letter = coord_id_mapping.get(column_id)
                     if not column_letter:
                         logger.error(

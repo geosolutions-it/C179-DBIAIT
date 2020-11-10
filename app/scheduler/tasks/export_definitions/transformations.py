@@ -55,7 +55,7 @@ class EmptyTransformation(BaseTransformation):
 
 class DirectTransformation(BaseTransformation):
 
-    schema = schema.Schema({"field_name": str})
+    schema = schema.Schema({"field": str})
 
     def apply(self, row: Dict, **kwargs):
         return row.get(self.args["field"], None)

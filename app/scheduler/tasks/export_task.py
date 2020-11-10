@@ -93,5 +93,8 @@ class ExportTask(BaseTask):
             )
             raise
 
-        export_directory = pathlib.Path(settings.EXPORT_FOLDER, orm_task.uuid)
+        # create export directory
+        export_directory = pathlib.Path(settings.EXPORT_FOLDER, 'intermediate', str(orm_task.uuid))
+        export_directory.mkdir(parents=True, exist_ok=True)
+
         ExportXls(export_directory, orm_task, max_progress=100).run()

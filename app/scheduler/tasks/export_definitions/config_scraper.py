@@ -41,7 +41,7 @@ export_config_schema = schema.Schema(
         {
             "sheet": schema.And(str, len),
             "skip": bool,
-            "pre_process": schema.Optional(str),
+            schema.Optional("pre_process"): str,
             "sources": [
                 schema.Or(
                     {
@@ -77,9 +77,7 @@ export_config_schema = schema.Schema(
                                 ),
                             }
                         ],
-                        schema.Optional("group_by"): [
-                            schema.And(str, field_name_validator)
-                        ],
+                        schema.Optional("group_by"): [str],
                         schema.Optional("filter"): schema.And(str, len),
                         schema.Optional("having"): schema.And(str, len),
                     },
@@ -88,7 +86,6 @@ export_config_schema = schema.Schema(
             "columns": [
                 {
                     "id": schema.And(schema.Or(str, int), lambda v: len(str(v)) > 0),
-                    "field": schema.And(str, len),
                     "transformation": {
                         "func": schema.And(
                             str, lambda v: v.upper() in SUPPORTED_TRANSFORMATIONS
@@ -123,6 +120,10 @@ class ExportConfig:
 
         # parse export configuration
         for sheet in config:
+
+            if sheet['skip']:
+                continue
+
             # parse SQL sources of a sheet
             sources = sheet.pop("sources")
             sql_sources = self.parse_sources(sheet["sheet"], sources)
@@ -195,12 +196,11 @@ class ExportConfig:
                 for group_by_field in source.get("group_by", []):
                     query = query.groupby(
                         Field(
-                            group_by_field.split(".")[1],
-                            table=Table(group_by_field.split(".")[0]),
+                            group_by_field
                         )
                     )
 
-                query = query.select(fields)
+                query = query.select(*fields)
 
                 # add RAW statements provided by a user
                 for raw_statement in [
@@ -227,7 +227,7 @@ class ExportConfig:
 
             # translate validations into parametrized validator instances
             validators = []
-            for validation in column.pop("validations"):
+            for validation in column.pop("validations", []):
                 validator = ValidationFactory.from_name(
                     validation["func"], validation["params"]
                 )
