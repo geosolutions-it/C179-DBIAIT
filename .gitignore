@@ -6,6 +6,7 @@ target
 pip-log.txt
 MANIFEST
 dist
+.env
 .idea/
 .vscode/
 .pytest_cache/
