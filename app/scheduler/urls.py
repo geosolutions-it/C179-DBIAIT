@@ -1,4 +1,4 @@
-from app.scheduler.views import (Configuration, Dashboard, Export,
+from app.scheduler.views import (Configuration, Dashboard, ExportListView,
                                  ExportDownloadView, Freeze, GetImportStatus,
                                  GetProcessStatusListAPIView, HistoricalImport,
                                  Import, ProcessView, QueueImportView,
@@ -12,7 +12,7 @@ urlpatterns = [
         path(u"", Import.as_view(), name=u'import-view'),
         path(u"historical/", HistoricalImport.as_view(),
              name=u'historical-import-view'),
-        path(u"dump/", Export.as_view(), name=u'export-view'),
+        path(u"dump/", ExportListView.as_view(), name=u'export-view'),
         path(u"start/", QueueImportView.as_view(), name=u'queue-import-view'),
         path(u"download/<int:task_id>", ExportDownloadView.as_view(),
              name=u'export-download-view'),
@@ -23,10 +23,10 @@ urlpatterns = [
     ])),
     path(u"process/", include([
         path(u"", ProcessView.as_view(), name=u'process-view'),
-        path(u"start/<int:process_id>", QueueProcessView.as_view(),
+        path(u"start/", QueueProcessView.as_view(),
              name=u'queue-process-view'),
         path(u"api/", include([
-            path(u"status/<int:process_id>", GetProcessStatusListAPIView.as_view(),
+            path(u"status/", GetProcessStatusListAPIView.as_view(),
                  name=u'get-process-status-api-view')
         ])),
     ])),

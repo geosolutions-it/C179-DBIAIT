@@ -1,3 +1,6 @@
+import os
+import json
+import shutil
 import pathlib
 
 from django.conf import settings
@@ -6,6 +9,7 @@ from django.db.models import Q, ObjectDoesNotExist
 
 from app.scheduler import exceptions
 from app.scheduler.models import Task
+from app.scheduler.tasks.export_definitions.export_shapefile import ShapeExporter
 from app.scheduler.utils import Schema, TaskType, TaskStatus
 from app.scheduler.tasks.export_definitions.export_xls import ExportXls
 from app.scheduler.tasks.export_definitions.config_scraper import ExportConfig
@@ -79,6 +83,28 @@ class ExportTask(BaseTask):
 
         return current_task.id
 
+    def export_shapefiles(self, task_id):
+        with open(settings.SHAPEFILE_EXPORT_CONFIG, u"r") as f:
+            exports = json.load(f)
+
+        # create temporary export directory if it does not exist
+        not os.path.exists(settings.TEMP_EXPORT_DIR) and os.makedirs(settings.TEMP_EXPORT_DIR)
+        for export in exports:
+            if not export[u"skip"]:
+                kwargs = {
+                    u"task_id": task_id,
+                    u"table": export[u"source"][u"table"],
+                    u"name": export[u"name"],
+                    u"shape_file_folder": export[u"folder"],
+                    u"fields": export[u"source"][u"fields"],
+                    u"filter_query": export[u"source"][u"filter"],
+                    u"pre_process": export[u"pre_process"],
+                }
+                exporter = ShapeExporter(**kwargs)
+                exporter.execute()
+            else:
+                print(f"Skipped the export of [name={export[u'name']}] shapefile")
+
     def execute(self, task_id: int, *args, **kwargs) -> None:
         """
         Method executing data export.
@@ -98,3 +124,11 @@ class ExportTask(BaseTask):
         export_directory.mkdir(parents=True, exist_ok=True)
 
         ExportXls(export_directory, orm_task, max_progress=100).run()
+        self.export_shapefiles(task_id)
+
+        # zip final output in export directory
+        task_export_folder = os.path.join(settings.TEMP_EXPORT_DIR, str(task_id))
+        export_file = os.path.join(settings.EXPORT_FOLDER, str(task_id))
+        results = os.path.exists(task_export_folder) and shutil.make_archive(export_file, u"zip", task_export_folder)
+        print(f"zip file creation returned {results}")
+

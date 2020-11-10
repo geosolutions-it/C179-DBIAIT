@@ -6,18 +6,22 @@
     <div class="col-xs-6 col-md-4">
       <table class="table">
         <tbody>
-          {% for process in process_queryset %}
-          <tr class="info table-item {% if process.pk == process_id %}table-warning{% endif %}">
+          {% for process_name, process_class in processes.items %}
+          <tr class="info table-item {% if process_name == active_process %}table-warning{% endif %}">
             <td>
               <i class="fas fa-cog"></i>
             </td>
             <td>
-              <a href="{% url 'process-view' %}?process_id={{ process.pk }}">{{ process.name }}</a>
+              <a href="{% url 'process-view' %}?process_name={{ process_name | urlencode }}">{{ process_name }}</a>
             </td>
             <td>
-              <a href="{% url 'queue-process-view' process_id=process.pk %}">
-                <i class="fas fa-play"></i>
-              </a>
+              <form method="POST" action="{% url 'queue-process-view' %}">
+                {% csrf_token %}
+                <input name="process_name" type="hidden" value="{{ process_name }}" />
+                <button type="submit" class="btn btn-info">
+                  <i class="fas fa-play"></i>
+                </button>
+              </form>
             </td>
           </tr>
           {% endfor %}
@@ -37,12 +41,13 @@
         </thead>
         <tbody id="process-status-table">
           {% for process_history in process_history_queryset %}
-          <tr class="{{ process_history.task.style_class }}">
-            <td>{{ process_history.task.requesting_user }}</td>
-            <td>{{ process_history.task.start_date|default_if_none:"--/--/----" }}</td>
-            <td>{{ process_history.task.end_date|default_if_none:"--/--/----" }}</td>
+          <tr class="{{ process_history.style_class }}">
+            <td>{{ process_history.requesting_user }}</td>
+            <td>{{ process_history.start_date|default_if_none:"--/--/----" }}</td>
+            <td>{{ process_history.end_date|default_if_none:"--/--/----" }}</td>
+            <td class="text-lowercase">{{ process_history.status }}</td>
             <td>
-              <i class="{{ process_history.task.status_icon }}"></i>
+              <i class="{{ process_history.status_icon }}"></i>
             </td>
             <td class="text-lowercase">
               <a href="#">
@@ -106,10 +111,8 @@
 
 <script>
   window.addEventListener("load", function () {
-    {% if process_id %}
-    ajax_call("{% url 'get-process-status-api-view' process_id=process_id %}", "#process-status-table");
-    setInterval(function () { ajax_call("{% url 'get-process-status-api-view' process_id=process_id %}", "#process-status-table") }, 10000);
-    {% endif %}
+    ajax_call("{% url 'get-process-status-api-view' %}?process_name={{ active_process | urlencode }}", "#process-status-table");
+    setInterval(function () { ajax_call("{% url 'get-process-status-api-view' %}?process_name={{ active_process | urlencode }}", "#process-status-table") }, 10000);
     $('#error-modal').modal('show');
   });
 </script>

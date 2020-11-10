@@ -1,4 +1,17 @@
 --------------------------------------------------------------------
+-- Snap tolerance for the system to use in spatial queries
+-- Example:
+--  select dbiait_analysis.snap_tolerance()
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.snap_tolerance(
+) RETURNS DOUBLE PRECISION AS $$
+BEGIN
+    RETURN 0.01;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
 -- Etract pro-com part from the localita ISTAT (removing last 5 characters)
 -- Example:
 --  select dbiait_analysis.locistat_2_procom('3701520011')
@@ -296,7 +309,7 @@ BEGIN
 	--LOCALITA
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
-		SELECT s.impianto, s.id_ubic_contatore, l.loc2011 as id_localita_istat
+		SELECT s.impianto, s.id_ubic_contatore, l.loc2011 as codice
 		FROM acq_ubic_contatore c, utenza_sap s, localita l
 		WHERE c.id_impianto is not null AND l.geom && c.geom AND ST_INTERSECTS(l.geom, c.geom)
 		AND s.id_ubic_contatore=c.idgis';
@@ -304,7 +317,7 @@ BEGIN
 	-- ACQ_RETE_DISTRIB
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
-		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as codice
 		FROM acq_ubic_contatore c, utenza_sap s, acq_rete_distrib g
 		WHERE c.id_impianto is not null AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
@@ -313,7 +326,7 @@ BEGIN
 	-- FGN_RETE_RACC
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
-		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as codice
 		FROM acq_ubic_contatore c, utenza_sap s, fgn_rete_racc g
 		WHERE c.id_impianto is not null AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
@@ -322,7 +335,7 @@ BEGIN
 	-- FGN_BACINO + FGN_TRATTAMENTO/FGN_PNT_SCARICO
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
-		select s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		select s.impianto, s.id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore c, utenza_sap s, (
 			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
@@ -334,7 +347,7 @@ BEGIN
 		AND s.id_ubic_contatore=c.idgis';
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
-		select s.impianto, s.id_ubic_contatore, g.codice_ato as id_localita_istat
+		select s.impianto, s.id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore c, utenza_sap s, (
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO 
 			from FGN_BACINO b, FGN_PNT_SCARICO t
@@ -437,6 +450,92 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
+-- Populate data into the ABITANTI_TRATTATI table 
+-- (Ref. 4.3. ABITANTI EQUIVALENTI TRATTATI DA DEPURATORI O SCARICO DIRETTO)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_abitanti_trattati();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_abitanti_trattati(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	
+	DELETE FROM ABITANTI_TRATTATI;
+	
+	EXECUTE '
+	INSERT INTO ABITANTI_TRATTATI(codice,idgis,denom,vol_civ,vol_ind,anno,ae_civ,ae_ind,ae_tot,tipo)
+	--DEPURATORE
+	SELECT distinct b.codice, b.idgis, b.denom,0,0,0,0,0,0,''DEP''
+	FROM 
+		utenza_servizio us,
+		(select t.codice_ato as codice, t.idgis, t.denom  
+		FROM FGN_BACINO b, FGN_TRATTAMENTO t
+		WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
+		AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
+		) b
+	WHERE b.codice = us.ids_codice_orig_dep_sca
+	UNION ALL
+	--SCARICO
+	SELECT distinct b.codice, b.idgis, b.denom,0,0,0,0,0,0,''SCA''
+	FROM 
+		utenza_servizio us,
+		(select t.codice, t.idgis, t.denom  
+		from FGN_BACINO b, FGN_PNT_SCARICO t
+		WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
+		AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
+		) b
+	WHERE b.codice = us.ids_codice_orig_dep_sca;
+	';
+	-- Volume industriale ------------------------------------
+	-- (SCA)
+	UPDATE ABITANTI_TRATTATI 
+	SET vol_ind = t.volume, anno = t.anno_rif
+	FROM (
+		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_fgn_ero) as volume
+		FROM utenza_servizio srv, utenza_sap sap
+		WHERE srv.impianto = sap.impianto and sap.cattariffa in ('APB_REFIND', 'APBLREFIND')
+		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
+	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='SCA';
+	-- (DEP)
+	UPDATE ABITANTI_TRATTATI 
+	SET vol_ind = t.volume, anno = t.anno_rif
+	FROM (
+		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_dep_ero) as volume
+		FROM utenza_servizio srv, utenza_sap sap
+		WHERE srv.impianto = sap.impianto and sap.cattariffa in ('APB_REFIND', 'APBLREFIND')
+		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
+	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='DEP';
+	---------------------------------------------------------
+	-- Volume civile ------------------------------------
+	-- (SCA)
+	UPDATE ABITANTI_TRATTATI 
+	SET vol_civ = t.volume, anno = t.anno_rif
+	FROM (
+		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_fgn_ero) as volume
+		FROM utenza_servizio srv, utenza_sap sap
+		WHERE srv.impianto = sap.impianto and sap.cattariffa NOT IN ('APB_REFIND', 'APBLREFIND')
+		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
+	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='SCA';
+	-- (DEP)
+	UPDATE ABITANTI_TRATTATI 
+	SET vol_civ = t.volume, anno = t.anno_rif
+	FROM (
+		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_dep_ero) as volume
+		FROM utenza_servizio srv, utenza_sap sap
+		WHERE srv.impianto = sap.impianto and sap.cattariffa NOT IN ('APB_REFIND', 'APBLREFIND')
+		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
+	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='DEP';
+	
+	
+	UPDATE ABITANTI_TRATTATI SET ae_civ = vol_civ*1000/365/200, ae_ind = vol_ind*1000/220/200;
+	UPDATE ABITANTI_TRATTATI SET ae_tot = ae_civ + ae_ind;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
 -- Populate data into the DISTRIB_TRONCHI/ADDUT_TRONCHI table 
 -- (Ref. 5.1/5.2. Tronchi)
 -- OUT: BOOLEAN
@@ -449,6 +548,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi_acq(
 DECLARE
 	v_sub_funzione INTEGER := 0;
 	v_field VARCHAR(32);
+	v_column VARCHAR(200);
 	v_join_table VARCHAR(32);
 BEGIN
 
@@ -456,10 +556,17 @@ BEGIN
 		v_sub_funzione := 4;
 		v_field := 'pressione';
 		v_join_table := 'ACQ_RETE_DISTRIB';
+		v_column := '0::BIT';
 	ELSIF v_table = 'ADDUT_TRONCHI' THEN
 		v_sub_funzione := 1;
 		v_field := 'protezione_catodica';
 		v_join_table := 'ACQ_ADDUTTRICE';
+		v_column := '
+			CASE 
+				WHEN a.id_sist_prot_cat IS NULL THEN 0::BIT 
+				ELSE 1::BIT
+			END
+		';
 	else
 		return false;
 	--	RAISE EXCEPTION 'Table ' || v_table || ' is not supported'; 
@@ -514,7 +621,7 @@ BEGIN
 				ELSE ''B''
 			END idx_anno, 
 			a.d_tipo_rilievo,
-			0::BIT
+			' || v_column || '
 		FROM 
 			ACQ_CONDOTTA a,  
 			' || v_join_table || ' r
@@ -535,6 +642,10 @@ BEGIN
 		FROM ALL_DOMAINS d
 		WHERE d.valore_gis = COALESCE(' || v_table || '.id_materiale,''NULL'') AND d.dominio_gis = ''D_MATERIALE_IDR''
 	';
+	
+	EXECUTE '
+		UPDATE ' || v_table || ' SET idx_materiale = ''X'' WHERE id_materiale = ''1''
+	';
 
 	--D_STATO_CONS convertito in id_conserva
 	EXECUTE '
@@ -553,20 +664,22 @@ BEGIN
 	';
 	
 	-- valorizzazione rete con gestione delle pressioni
-	EXECUTE '
-		UPDATE ' || v_table || '
-		SET ' || v_field || ' = 1::BIT WHERE EXISTS(
-			SELECT * FROM (
-				SELECT a.idgis 
-				FROM 
-					acq_distretto d,
-					acq_condotta a
-				WHERE d_tipo = ''MIS'' 
-				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
-				GROUP by a.idgis having count(*)>0
-			) t WHERE t.idgis = ' || v_table || '.idgis		
-		);
-	';
+	IF v_sub_funzione = 4 THEN
+		EXECUTE '
+			UPDATE ' || v_table || '
+			SET ' || v_field || ' = 1::BIT WHERE EXISTS(
+				SELECT * FROM (
+					SELECT a.idgis 
+					FROM 
+						acq_distretto d,
+						acq_condotta a
+					WHERE d_tipo = ''MIS'' 
+					AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
+					GROUP by a.idgis having count(*)>0
+				) t WHERE t.idgis = ' || v_table || '.idgis		
+			);
+		';
+	END IF;
 	
 	-- Aggiornamento tipo telecontrollo
 	EXECUTE '
@@ -621,26 +734,6 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;		
---------------------------------------------------------------------
--- Populate data into the ACQ_COND_ALTRO table 
--- (Ref. 5.3. INFORMAZIONI SU CONDOTTE)
--- OUT: BOOLEAN
--- Example:
--- 	select DBIAIT_ANALYSIS.populate_info_condotte_acq();
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_info_condotte_acq(
-) RETURNS BOOLEAN AS $$
-BEGIN
-	DELETE FROM ACQ_COND_ALTRO;
-	INSERT INTO ACQ_COND_ALTRO(idgis)
-	SELECT idgis FROM distrib_tronchi
-	UNION ALL
-	SELECT idgis FROM addut_tronchi;
-	RETURN TRUE;	
-END;
-$$  LANGUAGE plpgsql
-    SECURITY DEFINER
-    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
 --------------------------------------------------------------------
 -- Populate data into the ACQ_LUNGHEZZA_RETE table 
 -- (Ref. 5.5. LUNGHEZZA RETE ACQUEDOTTO)
@@ -993,6 +1086,192 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
+-- determine number and length of allacci ACQ
+-- (Ref. 7.1. ACQUEDOTTO)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.determine_acq_allacci();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.determine_acq_allacci(
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_tol DOUBLE PRECISION := snap_tolerance();
+BEGIN
+
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ACQUEDOTTO';
+	DELETE FROM ACQ_COND_ALTRO;
+	DELETE FROM ACQ_ALLACCIO;
+
+	INSERT INTO ACQ_COND_ALTRO(
+		idgis, id_rete, codice_ato, tipo_infr, 
+		nr_allacci_sim, lu_allacci_sim,
+		nr_allacci_ril, lu_allacci_ril
+	)
+	SELECT idgis, id_rete, NULL, 
+			CASE 
+				WHEN sub_funzione = 4 THEN 'DISTRIBUZIONI'
+				WHEN sub_funzione = 1 THEN 'ADDUZIONI'
+				ELSE '?'
+			END tipo_infr, 
+		sum(nr_allacci), sum(lung_alla), 
+		sum(nr_allacci_ril), sum(lung_alla_ril)  
+	FROM (
+		-- 1) Realmente mappati
+		SELECT ac.idgis, ac.id_rete, ac.sub_funzione,
+			0 nr_allacci, 0 lung_alla, z.cnt nr_allacci_ril, z.leng lung_alla_ril 
+		FROM acq_condotta ac, 
+		(
+			SELECT id_condotta, count(0) cnt, sum(leng) leng 
+			FROM (
+				SELECT d.id_condotta, st_length(c.geom) leng 
+				FROM acq_derivazione d, acq_condotta c,
+				(
+					select distinct on(cc.idgis) cc.id_derivazione 
+					from acq_cass_cont cc, acq_ubic_contatore uc
+					where uc.ID_IMPIANTO is not null and uc.sorgente IS null
+					and uc.id_cass_cont = cc.idgis 
+				) cc
+				WHERE 
+					d.idgis = cc.id_derivazione 
+					and c.sub_funzione = 3
+					and c.geom&&st_buffer(d.geom, v_tol)
+					and st_intersects(c.geom, st_buffer(d.geom, v_tol))
+			) t GROUP BY t.id_condotta
+		) z
+		WHERE ac.idgis = z.id_condotta
+		AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null) 
+		AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL) 
+		AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null) 
+		AND (ac.D_GESTORE = 'PUBLIACQUA') 
+		AND ac.SUB_FUNZIONE in (1, 4)
+		UNION ALL	
+		-- 2) SIMULAZIONE ALLACCIO
+		SELECT ac.idgis, ac.id_rete, ac.sub_funzione,
+			z.cnt nr_allacci, z.leng lung_alla, 0 nr_allacci_ril, 0 lung_alla_ril
+		FROM acq_condotta ac,
+		(
+			SELECT d.id_condotta, count(0) cnt, sum(CASE WHEN st_length(l.geom)>50 THEN 50 ELSE st_length(l.geom) END) leng 
+			FROM acq_deriv_auto d, acq_link_deriv l,
+			(
+					select distinct on(cc.idgis) cc.idgis, cc.id_derivazione 
+					from acq_cass_cont_auto cc, acq_ubic_contatore uc
+					where uc.ID_IMPIANTO is not null and uc.sorgente IS null
+					and uc.id_cass_cont = cc.idgis 
+			) cc
+			WHERE 
+				d.idgis=cc.id_derivazione
+				and l.id_derivazione = d.idgis 
+				and l.id_cass_cont = cc.idgis
+			group by d.id_condotta
+		) z
+		WHERE ac.idgis = z.id_condotta		
+		AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null) 
+		AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL) 
+		AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null) 
+		AND (ac.D_GESTORE = 'PUBLIACQUA') 
+		AND ac.SUB_FUNZIONE in (1, 4)
+	) x GROUP BY idgis, id_rete, sub_funzione;
+	
+	--Aggiornamento codice ATO (su DISTRIBUZIONI)
+	UPDATE ACQ_COND_ALTRO
+	SET codice_ato = t.codice_ato
+	FROM ACQ_RETE_DISTRIB t
+	WHERE t.idgis = ACQ_COND_ALTRO.id_rete 
+	AND ACQ_COND_ALTRO.tipo_infr = 'DISTRIBUZIONI';
+	--Aggiornamento codice ATO (su ADDUZIONI)
+	UPDATE ACQ_COND_ALTRO
+	SET codice_ato = t.codice_ato
+	FROM ACQ_ADDUTTRICE t
+	WHERE t.idgis = ACQ_COND_ALTRO.id_rete 
+	AND ACQ_COND_ALTRO.tipo_infr = 'ADDUZIONI';
+	
+	--GROUP BY x ACQ_ALLACCIO
+	INSERT INTO ACQ_ALLACCIO(idgis, codice_ato, tipo_infr, nr_allacci, lung_alla, nr_allacci_ril, lung_alla_ril)
+	SELECT id_rete, codice_ato, tipo_infr, sum(nr_allacci_ril), sum(lu_allacci_ril)/1000, sum(nr_allacci_sim), sum(lu_allacci_sim)/1000 
+	FROM ACQ_COND_ALTRO 
+	WHERE id_rete is NOT NULL
+	GROUP BY id_rete, codice_ato, tipo_infr;
+
+	
+	-- --ANOMALIES (derivazioni che non intersecano le condotte indicate)
+	-- INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	-- SELECT idgis, 'ACQUEDOTTO', 'Derivazione che non interseca la condotta di rete indicata nella derivazione (per problemi di snap)' 
+	-- FROM acq_derivazione ad 
+	-- where EXISTS(
+	-- 	SELECT c.idgis 
+	-- 	from acq_condotta c
+	-- 	WHERE (c.D_AMBITO = 'AT3' OR c.D_AMBITO IS null) 
+	-- 	AND (c.D_STATO = 'ATT' OR c.D_STATO = 'FIP' OR c.D_STATO IS NULL) 
+	-- 	AND (c.SN_FITTIZIA = 'NO' OR c.SN_FITTIZIA IS null) 
+	-- 	AND (c.D_GESTORE = 'PUBLIACQUA') 
+	-- 	AND c.SUB_FUNZIONE in (1, 4)				
+	-- 	AND c.idgis=ad.id_condotta
+	-- )
+	-- AND NOT EXISTS(
+	-- 	SELECT d.idgis 
+	-- 	FROM acq_derivazione d, acq_condotta c
+	-- 	WHERE d.id_condotta = c.idgis
+	-- 	
+	-- 	AND (c.D_AMBITO = 'AT3' OR c.D_AMBITO IS null) 
+	-- 	AND (c.D_STATO = 'ATT' OR c.D_STATO = 'FIP' OR c.D_STATO IS NULL) 
+	-- 	AND (c.SN_FITTIZIA = 'NO' OR c.SN_FITTIZIA IS null) 
+	-- 	AND (c.D_GESTORE = 'PUBLIACQUA') 
+	-- 	AND c.SUB_FUNZIONE in (1, 4)
+	-- 			
+	-- 	AND c.geom&&ST_BUFFER(d.geom, v_tol)
+	-- 	AND st_intersects(c.geom,ST_BUFFER(d.geom, v_tol))
+	-- 	AND d.idgis=ad.idgis
+	-- );
+	-- 
+	-- INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	-- SELECT idgis, 'ACQUEDOTTO', 'Derivazione che interseca la condotta di rete ma non interseca alcuna condotta di allacciamento' 
+	-- FROM acq_derivazione ad 
+	-- WHERE NOT EXISTS(
+	-- 	SELECT d.idgis 
+	-- 	FROM acq_derivazione d, acq_condotta c
+	-- 	WHERE d.id_condotta = c.idgis
+	-- 	AND c.sub_funzione = 3
+	-- 	AND c.geom&&ST_BUFFER(d.geom, v_tol)
+	-- 	AND st_intersects(c.geom,ST_BUFFER(d.geom, v_tol))
+	-- 	AND d.idgis = ad.idgis
+	-- );
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
+-- Populate data for shape acquedotto
+-- (Ref. 5.4. SHAPE ACQUEDOTTO)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_acq_shape();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_shape(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;	
+--------------------------------------------------------------------
+-- Populate data for shape fognatura
+-- (Ref. 6.4. SHAPE FOGNATURA)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_fgn_shape();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_fgn_shape(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- Populate data into the XXX_POMPE tables 
 --  * POZZI_POMPE

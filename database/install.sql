@@ -155,13 +155,14 @@ DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ABITANTI_TRATTATI;
 CREATE TABLE DBIAIT_ANALYSIS.ABITANTI_TRATTATI(
 	idgis	VARCHAR(32),
 	codice	VARCHAR(32),
-	denom	VARCHAR(32),
+	denom	VARCHAR(100),
 	vol_civ	double precision,
 	vol_ind	double precision,
 	anno	INTEGER,
 	ae_civ	double precision,
 	ae_ind	double precision,	
-	ae_tot	double precision
+	ae_tot	double precision,
+	tipo 	VARCHAR(3)
 );
 
 --
@@ -210,6 +211,9 @@ SELECT AddGeometryColumn ('dbiait_analysis','addut_tronchi','geom', 25832, 'MULT
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_COND_ALTRO;
 CREATE TABLE DBIAIT_ANALYSIS.ACQ_COND_ALTRO(
 	idgis			VARCHAR(32),
+	id_rete			VARCHAR(32),
+	codice_ato		VARCHAR(32),
+	tipo_infr		VARCHAR(100),
 	pr_min			double precision,
 	pr_avg			double precision,
 	pr_max			double precision,

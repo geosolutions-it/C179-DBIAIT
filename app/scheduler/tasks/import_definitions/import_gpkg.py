@@ -75,6 +75,22 @@ class GpkgImportDefinition(BaseImportDefinition):
             layer = self._get_gpkg_vector_layer(name.upper())
         return layer
 
+    def get_gtype(self, layer):
+        """
+        Return the geometry type of the layer decoded for the processing tool
+        """
+        gtype = layer.geometryType()
+        if gtype == 0:
+            # POINT
+            return 3
+        elif gtype == 1:
+            # LINESTRING
+            return 9
+        elif gtype == 2:
+            # LINESTRING
+            return 8
+        return None
+
     def import_into_postgis(self, name, cont, feedback):
         """
         Run the importintopostgis algorithm
@@ -91,6 +107,7 @@ class GpkgImportDefinition(BaseImportDefinition):
                 + str(vlayer.featureCount())
             )
             # Export in PostgreSQL
+            gtype = self.get_gtype(vlayer)
             alg_params = {
                 'ADDFIELDS': False,
                 'APPEND': False,
@@ -100,7 +117,7 @@ class GpkgImportDefinition(BaseImportDefinition):
                 'DIM': 0,
                 'GEOCOLUMN': 'geom',
                 'GT': '',
-                'GTYPE': vlayer.geometryType(),
+                'GTYPE': gtype,
                 'INDEX': False,
                 'INPUT': vlayer,
                 'LAUNDER': False,
