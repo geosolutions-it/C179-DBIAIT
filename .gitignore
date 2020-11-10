@@ -28,3 +28,18 @@ dist
 
 # django_dramatiq task logs
 task_logs
+
+# temporary export directory
+/export/tmp
+
+# zipped exports
+/export/*.zip*
+
+# Dockerfile
+Dockerfile
+
+# Docker-compose
+docker-compose.yml
+
+# .env files
+.env
