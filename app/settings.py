@@ -216,6 +216,8 @@ NFS_FOLDER = os.getenv("NFS_FOLDER")
 # Directory in which generated exports are kept
 EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(BASE_DIR, "export"))
 EXPORT_CONF_FILE = os.getenv("EXPORT_CONF_FILE", os.path.join(EXPORT_FOLDER, 'config', "config.json"))
-EXPORT_XLS_SEED_FILE = os.getenv("EXPORT_XLS_SEED_FILE", os.path.join(EXPORT_FOLDER, 'config', "NETSIC_SEED.xlsx"))
+SHAPEFILE_EXPORT_CONFIG = os.getenv(
+    u"SHAPEFILE_EXPORT_CONFIG", os.path.join(EXPORT_FOLDER, u"config", u"shapefile_config.json")
+)
 TEMP_EXPORT_DIR = os.getenv(u"TEMP_EXPORT_DIR", os.path.join(EXPORT_FOLDER, u"tmp"))
-SHAPEFILE_EXPORT_CONFIG = os.getenv(u"SHAPEFILE_EXPORT_CONFIG", os.path.join(EXPORT_FOLDER, u"config", u"shapefile_config.json"))
+EXPORT_XLS_SEED_FILE = os.getenv("EXPORT_XLS_SEED_FILE", os.path.join(EXPORT_FOLDER, 'config', "NETSIC_SEED.xlsx"))
