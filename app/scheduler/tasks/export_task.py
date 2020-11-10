@@ -1,6 +1,7 @@
 import os
 import json
 import shutil
+import pathlib
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -10,6 +11,8 @@ from app.scheduler import exceptions
 from app.scheduler.models import Task
 from app.scheduler.tasks.export_definitions.export_shapefile import ShapeExporter
 from app.scheduler.utils import Schema, TaskType, TaskStatus
+from app.scheduler.tasks.export_definitions.export_xls import ExportXls
+from app.scheduler.tasks.export_definitions.config_scraper import ExportConfig
 
 from .base_task import BaseTask
 
@@ -54,6 +57,9 @@ class ExportTask(BaseTask):
                 f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
             )
 
+        # 1a. validate export configuration
+        ExportConfig()
+
         # 2. create Task ORM model instance for this task execution
         try:
             # get the latest imported package
@@ -86,7 +92,7 @@ class ExportTask(BaseTask):
         for export in exports:
             if not export[u"skip"]:
                 kwargs = {
-                    u"task_id": task_id, 
+                    u"task_id": task_id,
                     u"table": export[u"source"][u"table"],
                     u"name": export[u"name"],
                     u"shape_file_folder": export[u"folder"],
@@ -101,13 +107,30 @@ class ExportTask(BaseTask):
 
     def execute(self, task_id: int, *args, **kwargs) -> None:
         """
-        This function should contain the actual code exporting data
+        Method executing data export.
         """
+
+        try:
+            orm_task = Task.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
+            )
+            raise
+
+        # create export directory
+        export_directory = pathlib.Path(settings.EXPORT_FOLDER, str(orm_task.uuid))
+        export_directory.mkdir(parents=True, exist_ok=True)
+
+        ExportXls(export_directory, orm_task, max_progress=90).run()
+
         self.export_shapefiles(task_id)
 
         # zip final output in export directory
-        task_export_folder = os.path.join(settings.TEMP_EXPORT_DIR, str(task_id))
         export_file = os.path.join(settings.EXPORT_FOLDER, str(task_id))
-        results = os.path.exists(task_export_folder) and shutil.make_archive(export_file, u"zip", task_export_folder)
+        results = os.path.exists(export_directory) and shutil.make_archive(export_file, u"zip", export_directory)
         print(f"zip file creation returned {results}")
 
+        orm_task.progress = 100
+        orm_task.save()
