@@ -1,0 +1,56 @@
+[
+   {
+      "name":"export1",
+      "skip":false,
+      "folder":"export1",
+      "pre_process":"populate_pop_res_loc",
+      "source":{
+         "fields":[
+            {
+               "name":"altitudine"
+            },
+            {
+               "name":"denominazi"
+            }
+         ],
+         "table":"localita",
+         "filter":"id < 100"
+      }
+   },
+   {
+      "name":"export2",
+      "skip":false,
+      "folder":"export2",
+      "pre_process":"populate_pop_res_loc",
+      "source":{
+         "fields":[
+            {
+               "name":"altitudine"
+            },
+            {
+               "name":"denominazi"
+            }
+         ],
+         "table":"localita",
+         "filter":"id < 100"
+      }
+   },
+   {
+      "name":"export3",
+      "skip":true,
+      "folder":"export3",
+      "pre_process":null,
+      "source":{
+         "fields":[
+            {
+               "name":"altitudine"
+            },
+            {
+               "name":"denominazi"
+            }
+         ],
+         "table":"localita",
+         "filter":null
+      }
+   }
+]
