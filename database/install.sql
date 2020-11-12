@@ -282,14 +282,14 @@ CREATE TABLE DBIAIT_ANALYSIS.FOGNAT_TRONCHI(
 	id_conservazione 		VARCHAR(5),  
 	DIAMETRO 				VARCHAR(50),  
 	ANNO 					INTEGER, 
-	id_refluo_trasportato 	VARCHAR(5),  
+	funziona_gravita 		BIT(1), 
 	LUNGHEZZA 				double precision,  
 	idx_MATERIALE 			VARCHAR(5), 
 	idx_DIAMETRO 			VARCHAR(5),  
 	idx_ANNO 				VARCHAR(5),  
 	idx_LUNGHEZZA 			VARCHAR(5),  
-	funziona_gravita 		BIT(1), 
 	depurazione 			BIT(1),  
+	id_refluo_trasportato 	VARCHAR(5), 
 	note 					VARCHAR(255) 
 );
 SELECT AddGeometryColumn ('dbiait_analysis','fognat_tronchi','geom', 25832, 'MULTILINESTRING',2);
@@ -340,8 +340,8 @@ DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_SHAPE;
 CREATE TABLE DBIAIT_ANALYSIS.FGN_SHAPE(
 	ids_codice	VARCHAR(32),
 	comune_nom	VARCHAR(100),
-	id_comune	INTEGER,
-	ids_codi_1	VARCHAR(16),
+	id_comune_  INTEGER,
+	ids_codi_1	VARCHAR(32),
 	id_materia	INTEGER,
 	idx_materi	VARCHAR(2),
 	sezione		VARCHAR(32),
@@ -353,7 +353,7 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_SHAPE(
 	idx_lunghe	VARCHAR(2),
 	id_conserv	INTEGER,
 	TIPO_RETE 	VARCHAR(100),
-	id_refluo	INTEGER,
+	id_refluo_	INTEGER,
 	FUNZIONA_G 	VARCHAR(1),
 	recapito 	VARCHAR(100),
 	COPERTURA 	VARCHAR(100),
@@ -367,7 +367,7 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_SHAPE(
 	RIPARAZI_1 	INTEGER, 
 	ID_OPERA_S 	VARCHAR(2)
 );
-SELECT AddGeometryColumn ('dbiait_analysis','fgn_shape','geom', 25832, 'LINESTRING',2);
+SELECT AddGeometryColumn ('dbiait_analysis','fgn_shape','geom', 25832, 'MULTILINESTRING',2);
 
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE;
