@@ -108,6 +108,7 @@ class ImportTask(BaseTask):
             # Import of Feature Classes
             gpkg_import = GpkgImportDefinition(
                 gpkg_path=gpkg_path,
+                orm_task=orm_task,
                 offset=offset,
                 limit=limit,
                 qgs=qgs,

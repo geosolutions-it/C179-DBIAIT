@@ -9,6 +9,7 @@ from django.conf import settings
 
 from app.scheduler.utils import Schema
 from app.scheduler.exceptions import SchedulerException
+from app.scheduler.models import Task, ImportedLayer
 from .base_import import BaseImportDefinition
 
 
@@ -16,6 +17,7 @@ class GpkgImportDefinition(BaseImportDefinition):
     def __init__(
         self,
         gpkg_path,
+        orm_task: Task,
         offset=0,
         limit=50,
         schema=Schema.ANALYSIS,
@@ -26,6 +28,7 @@ class GpkgImportDefinition(BaseImportDefinition):
         super().__init__(schema=schema)
 
         self.gpkg_path = gpkg_path
+        self.orm_task = orm_task
         self.offset = offset
         self.limit = limit
 
@@ -166,6 +169,7 @@ class GpkgImportDefinition(BaseImportDefinition):
                 cont += 1
                 print(layername + ": " + str(cont))
                 self.import_into_postgis(layername.lower(), cont, feedback)
+                ImportedLayer.objects.create(task=self.orm_task, layer_name=layername.lower())
                 prg = cont / n_step
                 feedback.setCurrentStep(cont - self.offset)
                 if feedback.isCanceled():
