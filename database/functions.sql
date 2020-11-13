@@ -1785,7 +1785,7 @@ BEGIN
 	--(allacci, allacci_industriali, lunghezza_allaci, riparazioni_allacci, riparazioni_rete)
 	UPDATE FGN_SHAPE
 	SET 
-		allacci = coalesce(nr_allacci_c,0) + coalesce(nr_allacci_c_ril,0),
+		allacci    = coalesce(nr_allacci_c,0) + coalesce(nr_allacci_c_ril,0),
 		allacci_in = coalesce(nr_allacci_i,0) + coalesce(nr_allacci_i_ril,0),
 		lunghezza_ = coalesce(lu_allacci_c,0) + coalesce(lu_allacci_c_ril,0) + coalesce(lu_allacci_i,0) + coalesce(lu_allacci_i_ril,0),
 		RIPARAZION = c.rip_alla,
