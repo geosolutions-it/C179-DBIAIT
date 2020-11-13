@@ -4,12 +4,12 @@ DBIAIT project for C179
 # Python QGIS environment
 
 ## QGIS
-Version is 3.12.2 Bucaresti
+Version is 3.16.0 Hannover
 
 WARNING: Importing QGis forces the use of the default, global python interpreter.
 
 ## Python
-Version is 3.8.2
+Version is 3.6.9
 
 ## Windows
 PYTHONUNBUFFERED=1;
