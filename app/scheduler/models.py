@@ -2,6 +2,7 @@ import os
 import uuid
 import datetime
 from pathlib import Path
+from postgres_copy import CopyManager
 
 from app.scheduler.utils import (
     TaskStatus,
@@ -75,3 +76,23 @@ class ImportedLayer(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     import_date = models.DateTimeField(default=datetime.datetime.now)
     layer_name = models.CharField(max_length=250, null=False)
+
+
+class AllDomains(models.Model):
+    """
+    "all_domains" table model used for a quick *.csv data loading
+
+    The table will be searched for in schemas defined by 'default' database's OPTION "-c search_path".
+    It should always point at ANALYSIS schema (directly after 'PUBLIC' schema), for proper data loading.
+    """
+
+    dominio_gis = models.CharField(max_length=50, null=False)
+    valore_gis = models.CharField(max_length=100, null=False)
+    descrizione_gis = models.CharField(max_length=255, null=True)
+    dominio_netsic = models.CharField(max_length=50, null=True)
+    valore_netsic = models.CharField(max_length=100, null=True)
+    objects = CopyManager()
+
+    class Meta:
+        managed = False
+        db_table = "all_domains"

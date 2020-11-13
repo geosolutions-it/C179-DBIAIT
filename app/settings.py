@@ -107,21 +107,25 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+# database schemas translation to actual schema names
+DATABASE_SCHEMAS = {
+    'analysis': 'dbiait_analysis',
+    'freeze': 'dbiait_freeze',
+}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('DATABASE_NAME', 'dbiait'),
+        'OPTIONS': {
+            # extend searched schemas to enable all_domains table loading into analysis schema
+            'options': f'-c search_path=public,{DATABASE_SCHEMAS["analysis"]}'
+        },
         'USER': os.getenv('DATABASE_USER', 'postgres'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
         'HOST': os.getenv('DATABASE_HOST', 'localhost'),
         'PORT': os.getenv('DATABASE_PORT', 5432),
     }
-}
-
-# database schemas translation to actual schema names
-DATABASE_SCHEMAS = {
-    'analysis': 'dbiait_analysis',
-    'freeze': 'dbiait_freeze',
 }
 
 # database from DATABASES used by IMPORT, PROCESSING, EXPORT and FREEZE tasks

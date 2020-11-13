@@ -120,10 +120,7 @@ class ImportTask(BaseTask):
             orm_task.progress = math.floor(step * 100 / (import_steps_number + 1))
             orm_task.save()
 
-        csv_import = CsvImportDefinition(
-            qgs=qgs, processing=processing, postgis=postgis
-        )
-        csv_import.run()
+        CsvImportDefinition.run()
 
         orm_task.progress = 100
         orm_task.save()
