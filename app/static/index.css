@@ -123,3 +123,7 @@ a:hover {
     height: 150px;
     background-image: linear-gradient( rgb(255 255 255 / 0%), rgb(255 255 255 / 5%) ,rgb(255 255 255 / 10%), rgb(255 255 255 / 15%), rgb(255 255 255 / 25%), rgb(255 255 255 / 35%), rgb(255 255 255 / 45%), rgb(255 255 255 / 55%), rgb(255 255 255 / 65%), rgb(255 255 255 / 75%), rgb(255 255 255 / 85%), rgb(255 255 255 / 95%), rgb(255 255 255 / 100%));
 }
+
+#dashboard-container{
+    margin: auto;
+}

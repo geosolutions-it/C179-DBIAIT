@@ -202,6 +202,7 @@ CREATE TABLE DBIAIT_ANALYSIS.ADDUT_TRONCHI(
 	idx_diametro		VARCHAR(5),
 	idx_anno			VARCHAR(5),
 	idx_lunghezza		VARCHAR(5),
+	pressione			BIT(1),
 	protezione_catodica	BIT(1),
 	note				VARCHAR(255)
 );
@@ -230,25 +231,25 @@ DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_SHAPE;
 CREATE TABLE DBIAIT_ANALYSIS.ACQ_SHAPE(
 	ids_codice	VARCHAR(32),
 	comune_nom	VARCHAR(100),
-	id_comune	INTEGER,
-	ids_codi_1	VARCHAR(16),
-	id_materia	INTEGER,
-	idx_materi	VARCHAR(2),
+	id_comune_	INTEGER,
+	ids_codi_1	VARCHAR(32),
+	id_materia	VARCHAR(4),
+	idx_materi	VARCHAR(4),
 	diametro	INTEGER,
-	idx_diamet	VARCHAR(2),
+	idx_diamet	VARCHAR(4),
 	anno		INTEGER,
-	idx_anno	VARCHAR(2),
+	idx_anno	VARCHAR(4),
 	lunghez_1	double precision,
-	idx_lunghe	VARCHAR(2),
-	id_conserv	INTEGER,
+	idx_lunghe	VARCHAR(4),
+	id_conserv	VARCHAR(4),
 	TIPO_RETE 	VARCHAR(100),
 	TIPO_ACQUA 	VARCHAR(100),
 	FUNZIONA_G 	VARCHAR(1),
 	COPERTURA 	VARCHAR(100),
 	PROFONDITA 	double precision,
-	IDX_PROFON 	VARCHAR(2), 
+	IDX_PROFON 	VARCHAR(4), 
 	GESTIONE_P 	BIT(1), 
-	ID_TIPO_TE 	VARCHAR(2), 
+	ID_TIPO_TE 	VARCHAR(4), 
 	PRESS_MED_ 	double precision, 
 	PROTEZIONE 	BIT(1), 
 	ALLACCI 	INTEGER, 
@@ -256,7 +257,7 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_SHAPE(
 	RIPARAZION 	INTEGER, 
 	RIPARAZI_1 	INTEGER, 
 	UTENZE_MIS 	INTEGER, 
-	ID_OPERA_S 	VARCHAR(2)
+	ID_OPERA_S 	VARCHAR(4)
 );
 SELECT AddGeometryColumn ('dbiait_analysis','acq_shape','geom', 25832, 'MULTILINESTRING',2);
 
@@ -281,14 +282,14 @@ CREATE TABLE DBIAIT_ANALYSIS.FOGNAT_TRONCHI(
 	id_conservazione 		VARCHAR(5),  
 	DIAMETRO 				VARCHAR(50),  
 	ANNO 					INTEGER, 
-	id_refluo_trasportato 	VARCHAR(5),  
+	funziona_gravita 		BIT(1), 
 	LUNGHEZZA 				double precision,  
 	idx_MATERIALE 			VARCHAR(5), 
 	idx_DIAMETRO 			VARCHAR(5),  
 	idx_ANNO 				VARCHAR(5),  
 	idx_LUNGHEZZA 			VARCHAR(5),  
-	funziona_gravita 		BIT(1), 
 	depurazione 			BIT(1),  
+	id_refluo_trasportato 	VARCHAR(5), 
 	note 					VARCHAR(255) 
 );
 SELECT AddGeometryColumn ('dbiait_analysis','fognat_tronchi','geom', 25832, 'MULTILINESTRING',2);
@@ -318,9 +319,20 @@ SELECT AddGeometryColumn ('dbiait_analysis','collett_tronchi','geom', 25832, 'MU
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_COND_ALTRO;
 CREATE TABLE DBIAIT_ANALYSIS.FGN_COND_ALTRO(
-	idgis		VARCHAR(32),
-	rip_rete 	double precision,  
-	rip_alla 	double precision
+	idgis				VARCHAR(32),
+	id_rete				VARCHAR(32),
+	codice_ato			VARCHAR(32),
+	tipo_infr			VARCHAR(100),
+	rip_rete 			double precision,  
+	rip_alla 			double precision,
+	lu_allacci_c		double precision,
+	lu_allacci_c_ril	double precision,
+	lu_allacci_i		double precision,
+	lu_allacci_i_ril	double precision,
+	nr_allacci_c		INTEGER,
+	nr_allacci_c_ril	INTEGER,
+	nr_allacci_i		INTEGER,
+	nr_allacci_i_ril	INTEGER
 );
 
 --
@@ -328,8 +340,8 @@ DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_SHAPE;
 CREATE TABLE DBIAIT_ANALYSIS.FGN_SHAPE(
 	ids_codice	VARCHAR(32),
 	comune_nom	VARCHAR(100),
-	id_comune	INTEGER,
-	ids_codi_1	VARCHAR(16),
+	id_comune_  INTEGER,
+	ids_codi_1	VARCHAR(32),
 	id_materia	INTEGER,
 	idx_materi	VARCHAR(2),
 	sezione		VARCHAR(32),
@@ -341,7 +353,7 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_SHAPE(
 	idx_lunghe	VARCHAR(2),
 	id_conserv	INTEGER,
 	TIPO_RETE 	VARCHAR(100),
-	id_refluo	INTEGER,
+	id_refluo_	INTEGER,
 	FUNZIONA_G 	VARCHAR(1),
 	recapito 	VARCHAR(100),
 	COPERTURA 	VARCHAR(100),
@@ -355,7 +367,7 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_SHAPE(
 	RIPARAZI_1 	INTEGER, 
 	ID_OPERA_S 	VARCHAR(2)
 );
-SELECT AddGeometryColumn ('dbiait_analysis','fgn_shape','geom', 25832, 'LINESTRING',2);
+SELECT AddGeometryColumn ('dbiait_analysis','fgn_shape','geom', 25832, 'MULTILINESTRING',2);
 
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE;
@@ -382,13 +394,13 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_ALLACCIO(
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_ALLACCIO;
 CREATE TABLE DBIAIT_ANALYSIS.FGN_ALLACCIO(
-	idgis			VARCHAR(32),
-	codice_ato		VARCHAR(32),
-	tipo_infr		VARCHAR(100),
-	nr_allacci_c 	INTEGER,
-	lung_alla_c		double precision,
-	nr_allacci_i 	INTEGER,
-	lung_alla_i		double precision,
+	idgis				VARCHAR(32),
+	codice_ato			VARCHAR(32),
+	tipo_infr			VARCHAR(100),
+	nr_allacci_c 		INTEGER,
+	lung_alla_c			double precision,
+	nr_allacci_i 		INTEGER,
+	lung_alla_i			double precision,
 	nr_allacci_c_ril 	INTEGER,
 	lung_alla_c_ril		double precision,
 	nr_allacci_i_ril 	INTEGER,
@@ -416,6 +428,14 @@ CREATE TABLE DBIAIT_ANALYSIS.A_REL_PROD_CONT(
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_REL_PROD_IMM;
 CREATE TABLE DBIAIT_ANALYSIS.FGN_REL_PROD_IMM(
+	id_produttivo		VARCHAR(32),
+	id_immissione		VARCHAR(32),
+	id_sist_fogn		VARCHAR(32)
+);
+
+--
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.A_FGN_REL_PROD_IMM;
+CREATE TABLE DBIAIT_ANALYSIS.A_FGN_REL_PROD_IMM(
 	id_produttivo		VARCHAR(32),
 	id_immissione		VARCHAR(32),
 	id_sist_fogn		VARCHAR(32)
