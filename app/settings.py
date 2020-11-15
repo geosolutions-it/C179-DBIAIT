@@ -69,7 +69,7 @@ DRAMATIQ_BROKER = {
     ]
 }
 
-DRAMATIQ_TASKS_DATABASE = "default"
+DRAMATIQ_TASKS_DATABASE = "system"
 
 LOGIN_URL = 'auth/'
 
@@ -109,27 +109,52 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 # database schemas translation to actual schema names
 DATABASE_SCHEMAS = {
+    'system': 'dbiait_system',
     'analysis': 'dbiait_analysis',
     'freeze': 'dbiait_freeze',
 }
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DATABASE_NAME', 'dbiait'),
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path=public,{DATABASE_SCHEMAS["analysis"]}'
-        },
-        'USER': os.getenv('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
-        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
-        'PORT': os.getenv('DATABASE_PORT', 5432),
+            'options': f'-c search_path={DATABASE_SCHEMAS["system"]}'
+        }
+    },
+    'system': {
+        'OPTIONS': {
+            # extend searched schemas to enable all_domains table loading into analysis schema
+            'options': f'-c search_path={DATABASE_SCHEMAS["system"]}'
+        }
+    },
+    'analysis': {
+        'OPTIONS': {
+            # extend searched schemas to enable all_domains table loading into analysis schema
+            'options': f'-c search_path={DATABASE_SCHEMAS["analysis"]}'
+        }
+    },
+    'freeze': {
+        'OPTIONS': {
+            # extend searched schemas to enable all_domains table loading into analysis schema
+            'options': f'-c search_path={DATABASE_SCHEMAS["freeze"]}'
+        }
     }
 }
+for db_key in DATABASES:
+    DB = DATABASES[db_key]
+    DB['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
+    DB['NAME'] = os.getenv('DATABASE_NAME', 'dbiait')
+    DB['USER'] = os.getenv('DATABASE_USER', 'postgres')
+    DB['PASSWORD'] = os.getenv('DATABASE_PASSWORD', '')
+    DB['HOST'] = os.getenv('DATABASE_HOST', 'localhost')
+    DB['PORT'] = os.getenv('DATABASE_PORT', 5432)
+
+
+DATABASE_ROUTERS = ['app.scheduler.system_router.SystemRouter', 'app.scheduler.analysis_router.AnalysisRouter']
+
 
 # database from DATABASES used by IMPORT, PROCESSING, EXPORT and FREEZE tasks
-TASKS_DATABASE = 'default'
+TASKS_DATABASE = 'system'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -225,3 +250,15 @@ SHAPEFILE_EXPORT_CONFIG = os.getenv(
 )
 TEMP_EXPORT_DIR = os.getenv(u"TEMP_EXPORT_DIR", os.path.join(EXPORT_FOLDER, u"tmp"))
 EXPORT_XLS_SEED_FILE = os.getenv("EXPORT_XLS_SEED_FILE", os.path.join(EXPORT_FOLDER, 'config', "NETSIC_SEED.xlsx"))
+
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
+    'django.contrib.auth.hashers.CryptPasswordHasher',
+)
+

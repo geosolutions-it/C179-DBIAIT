@@ -9,7 +9,7 @@ from app.scheduler import exceptions
 from app.scheduler.models import GeoPackage, Task
 from app.scheduler.utils import Schema, TaskType, TaskStatus
 
-from .base_task import BaseTask
+from .base_task import BaseTask, trace_it
 from .import_definitions.base_import import initQgis
 from .import_definitions.import_gpkg import GpkgImportDefinition
 from .import_definitions.import_csv import CsvImportDefinition
@@ -58,10 +58,12 @@ class ImportTask(BaseTask):
                 f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
             )
 
-        # 2. create Task ORM model instance for this task execution
-        geopackage = GeoPackage(name=gpkg_path.name)
-        geopackage.save()
+        # 2. get or create GeoPackage ORM model instance for this task execution
+        geopackage, created = GeoPackage.objects.get_or_create(name=gpkg_path.name)
+        if created:
+            geopackage.save()
 
+        # 3. create Task ORM model instance for this task execution
         current_task = Task(
             requesting_user=requesting_user,
             schema=cls.schema,
@@ -74,6 +76,7 @@ class ImportTask(BaseTask):
 
         return current_task.id
 
+    @trace_it
     def execute(self, task_id: int, *args, gpkg_path: str = None, **kwargs) -> None:
         """
         This function executes the logic of the Import Task.

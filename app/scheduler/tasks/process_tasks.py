@@ -61,15 +61,17 @@ class BaseProcessTask(BaseTask):
         return current_task.pk
 
     def execute(self, task_id: int, *args, gpkg_path: str = None, **kwargs) -> None:
+        print(f"PROCESSING {self.name}...")
         analysis_cursor = connection.cursor()
         with analysis_cursor as cursor:
             cursor.callproc(
                 f"{settings.DATABASE_SCHEMAS[u'analysis']}.{self.algorithm}")
             result = cursor.fetchone()
+        print(f"procedure {settings.DATABASE_SCHEMAS[u'analysis']}.{self.algorithm} => { result }")
         return result
 
 
-class LocalitàIstat(BaseProcessTask):
+class LocalitaIstat(BaseProcessTask):
     algorithm = u"populate_pop_res_loc"
     name = u"Località Istat"
 
@@ -78,7 +80,7 @@ class LocalitàIstat(BaseProcessTask):
         pass
 
 
-class PercentualePopolazioneServitaPerLocalità(BaseProcessTask):
+class PercentualePopolazioneServitaPerLocalita(BaseProcessTask):
     algorithm = u"populate_distrib_loc_serv"
     name = u"Percentuale popolazione servita per località"
 
@@ -144,12 +146,12 @@ class ShapeAcquedotto(BaseProcessTask):
 
 
 process_mapper = {
-    u"Località Istat": LocalitàIstat,
-    u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalità,
+    u"Località Istat": LocalitaIstat,
+    u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalita,
     u"Popolazione residente Istat per comune": PopolazioneResidenteIstatPerComune,
     u"Percentuale popolazione servita sulla rete per comune": PercentualePopolazioneServitaSullaRetePerComune,
     u"Servizio utenza": ServizioUtenza,
-    u"Abitanti equivalenti trattati da depuratori o scarico diretto": AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto,
-    u"Shape Fognatura (FGN_SHAPE)": ShapeFognatura,
-    u"Shape Acquedotto (ACQ_SHAPE)": ShapeAcquedotto
+    u"Abitanti equivalenti trattati da depuratori o scarico diretto": AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto
 }
+#u"Shape Fognatura (FGN_SHAPE)": ShapeFognatura,
+#u"Shape Acquedotto (ACQ_SHAPE)": ShapeAcquedotto

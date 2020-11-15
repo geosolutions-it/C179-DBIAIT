@@ -15,7 +15,7 @@ from django.contrib.auth import get_user_model
 
 
 class GeoPackage(models.Model):
-    name = models.CharField(max_length=50, blank=False)
+    name = models.CharField(max_length=50, blank=False, unique=True)
 
     def __str__(self):
         return self.name
@@ -68,7 +68,7 @@ class Task(models.Model):
             task_log = Path(self.logfile).read_text()
             if task_log == "(True,)\n":
                 return "Task completed successfully"
-            return task_log
+            return task_log.replace("\n", "<br/>").replace("(True,)", "SUCCESS").replace("(False,)", "FAILED")
 
 
 class AllDomains(models.Model):

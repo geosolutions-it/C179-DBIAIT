@@ -8,21 +8,19 @@
       <tr>
         <th>Iniziato alle</th>
         <th>Completato alle</th>
-        <th>Iniziato da</th>
-        <th>file elaborato</th>
-        <th>stato di completamento</th>
-        <th></th>
+        <th>Avviato da</th>
+        <th>GPKG elaborato</th>
+        <th style="text-align:center;">Stato</th>
       </tr>
     </thead>
     <tbody>
       {% for import in object_list %}
       <tr>
-        <td>{{ import.end_date }}</td>
-        <td>{{ import.start_date }}</td>
+        <td>{{ import.end_date | date:"d/m/Y - H:i:s" }}</td>
+        <td>{{ import.start_date | date:"d/m/Y - H:i:s" }}</td>
         <td>{{ import.requesting_user }}</td>
-        <td>{{ import.name }}</td>
-        <td class="text-lowercase">{{ import.status }}</td>
-        <td>
+        <td>{{ import.geopackage }}</td>
+        <td style="text-align:center;">
           <i class="{% get_status_icon import.status %}"></i>
         </td>
       </tr>

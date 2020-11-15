@@ -10,6 +10,22 @@ from app.scheduler.models import Task, TaskStatus
 from app.scheduler.logging import Tee
 
 
+def time_it(message):
+    print("-" * 80)
+    now = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+    print(f"[{now}] - {message}")
+    print("-" * 80)
+
+
+def trace_it(func):
+    def inner(*args, **kwargs):
+        time_it("Task STARTED")
+        result = func(*args, **kwargs)
+        time_it("Task COMPLETED")
+        return result
+    return inner
+
+
 class BaseTask(GenericActor):
     """
     Abstract Dramatiq Task definition class.
