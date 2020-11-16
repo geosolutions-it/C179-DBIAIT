@@ -11,6 +11,7 @@ from app.scheduler.utils import Schema
 from app.scheduler.exceptions import SchedulerException
 from app.scheduler.models import Task, ImportedLayer
 from .base_import import BaseImportDefinition
+import datetime
 
 
 class GpkgImportDefinition(BaseImportDefinition):
@@ -165,11 +166,23 @@ class GpkgImportDefinition(BaseImportDefinition):
         feedback = QgsProcessingMultiStepFeedback(self.limit, fbk)
         if n_step > 0:
             prg_step = 100.0 / n_step
-            for layername in to_load[self.offset : self.offset + self.limit]:
+            for layername in to_load[self.offset: self.offset + self.limit]:
                 cont += 1
                 print(layername + ": " + str(cont))
-                self.import_into_postgis(layername.lower(), cont, feedback)
-                ImportedLayer.objects.create(task=self.orm_task, layer_name=layername.lower())
+                start_date = datetime.datetime.now()
+                end_date = None
+                try:
+                    self.import_into_postgis(layername.lower(), cont, feedback)
+                    end_date = datetime.datetime.now()
+                except Exception as e:
+                    print(layername + ": " + str(e))
+                finally:
+                    ImportedLayer.objects.create(
+                        task=self.orm_task,
+                        layer_name=layername.lower(),
+                        import_start_timestamp=start_date,
+                        import_end_timestamp=end_date
+                    )
                 prg = cont / n_step
                 feedback.setCurrentStep(cont - self.offset)
                 if feedback.isCanceled():
