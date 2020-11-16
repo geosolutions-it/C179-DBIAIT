@@ -1,5 +1,6 @@
 import os
 import uuid
+import datetime
 from pathlib import Path
 from postgres_copy import CopyManager
 
@@ -9,9 +10,9 @@ from app.scheduler.utils import (
     status_icon_mapper,
     style_class_mapper,
 )
-from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import models
 
 
 class GeoPackage(models.Model):
@@ -69,6 +70,12 @@ class Task(models.Model):
             if task_log == "(True,)\n":
                 return "Task completed successfully"
             return task_log
+
+
+class ImportedLayer(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    import_date = models.DateTimeField(default=datetime.datetime.now)
+    layer_name = models.CharField(max_length=250, null=False)
 
 
 class AllDomains(models.Model):
