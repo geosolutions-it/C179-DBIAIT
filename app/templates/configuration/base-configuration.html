@@ -15,7 +15,11 @@
         </tr>
         <tr>
           <td>GeoPackage:</td>
-          <td><span class="badge badge-secondary">PBAP_20201012_205830.gpkg</span> <span class="badge badge-secondary">PBAP_20201011_205830.gpkg</span> <span class="badge badge-secondary">PBAP_20201010_205830.gpkg</span></td>
+          <td>
+             {% for gpkg in geopackages %}
+            <span class="badge badge-secondary">{{ gpkg }}</span>
+            {% endfor %}
+          </td>
         </tr>
         <tr>
           <td>DATABASE HOST:</td>

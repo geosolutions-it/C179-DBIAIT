@@ -1,4 +1,5 @@
 # import QGis API
+import sys
 from qgis.core import *
 from qgis.analysis import QgsNativeAlgorithms
 
@@ -55,6 +56,8 @@ def initQgis():
     QgsApplication.setPrefixPath(settings.QGIS_PATH, True)
     qgs = QgsApplication([], True)
     qgs.initQgis()
+    #sys.path.append('C:\\OSGeo4W64\\apps\\qgis\\python\\plugins')
+
     import processing
     from processing.core.Processing import Processing
     from processing.tools import postgis
@@ -62,6 +65,6 @@ def initQgis():
     Processing.initialize()
     QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
     processing = processing
-    postgis = postgis
+    postgis = None
 
     return qgs, processing, postgis

@@ -127,3 +127,18 @@ a:hover {
 #dashboard-container{
     margin: auto;
 }
+
+.icon-status {
+    font-size: 20px;
+}
+
+.icon-forbidden {
+    opacity:0.5;
+    color:red;
+    cursor:not-allowed;
+}
+
+.dbiait-strecthed-link{
+    display:block;
+    width:100%;
+}

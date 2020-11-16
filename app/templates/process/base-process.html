@@ -12,7 +12,9 @@
               <i class="fas fa-cog"></i>
             </td>
             <td>
-              <a href="{% url 'process-view' %}?process_name={{ process_name | urlencode }}">{{ process_name }}</a>
+              <a href="{% url 'process-view' %}?process_name={{ process_name | urlencode }}"
+                 class="dbiait-strecthed-link">{{ process_name }}
+              </a>
             </td>
             <td>
               <form method="POST" action="{% url 'queue-process-view' %}">
@@ -89,7 +91,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Error Log</h5>
+        <h5 class="modal-title">Log</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

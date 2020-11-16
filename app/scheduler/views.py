@@ -26,9 +26,10 @@ class Dashboard(LoginRequiredMixin, View):
 class Import(LoginRequiredMixin, ListView):
     template_name = u'import/active-import.html'
     queryset = Task.objects.filter(type='IMPORT', status__in=[
-                                   TaskStatus.RUNNING, TaskStatus.QUEUED])
+                                   TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
 
-    def get_geopackage_files(self):
+    @staticmethod
+    def get_geopackage_files():
         import_folder = settings.IMPORT_FOLDER
         filenames = listdir(import_folder)
         return [filename for filename in filenames if filename.endswith('.gpkg')]
@@ -44,7 +45,7 @@ class Import(LoginRequiredMixin, ListView):
 
 
 class GetImportStatus(generics.ListAPIView):
-    queryset = Task.objects.filter(type='IMPORT')
+    queryset = Task.objects.filter(type='IMPORT').order_by('-id')[:1]
     serializer_class = ImportSerializer
     permission_classes = [IsAuthenticated]
 
@@ -52,7 +53,7 @@ class GetImportStatus(generics.ListAPIView):
 class HistoricalImport(LoginRequiredMixin, ListView):
     template_name = u'import/historical-import.html'
     queryset = Task.objects.filter(type='IMPORT').exclude(
-        status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED])
+        status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
 
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name
@@ -69,9 +70,9 @@ class Configuration(LoginRequiredMixin, View):
             'Configuration': reverse('configuration-view'),
         }
         import_folder = settings.IMPORT_FOLDER
-        database_user = settings.DATABASES[u'default'][u'USER']
-        database_port = settings.DATABASES[u'default'][u'PORT']
-        database_host = settings.DATABASES[u'default'][u'HOST']
+        database_user = settings.DATABASES[u'system'][u'USER']
+        database_port = settings.DATABASES[u'system'][u'PORT']
+        database_host = settings.DATABASES[u'system'][u'HOST']
         environment = u'SVILUPPO' if settings.DEBUG else u'PRODUZIONE'
         context = {
             u'bread_crumbs': bread_crumbs,
@@ -79,7 +80,8 @@ class Configuration(LoginRequiredMixin, View):
             u'environment': environment,
             u'database_host': database_host,
             u'nfs_folder': import_folder,
-            u'database_port': database_port
+            u'database_port': database_port,
+            u'geopackages': Import.get_geopackage_files()
         }
         return render(request, 'configuration/base-configuration.html', context)
 
