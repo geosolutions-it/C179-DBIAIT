@@ -74,7 +74,8 @@ class Task(models.Model):
 
 class ImportedLayer(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    import_date = models.DateTimeField(default=datetime.datetime.now)
+    import_start_timestamp = models.DateTimeField(default=datetime.datetime.now)
+    import_end_timestamp = models.DateTimeField(null=True)
     layer_name = models.CharField(max_length=250, null=False)
 
 
