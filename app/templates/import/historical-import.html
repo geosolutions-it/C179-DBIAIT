@@ -3,7 +3,8 @@
 
 {% block import_content %}
 <div class="container">
-  <table class="table">
+  <br>
+  <table class="table display" id="history-import-table">
     <thead>
       <tr>
         <th>Iniziato alle</th>
@@ -51,4 +52,16 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(document).ready(function() {
+    $('#history-import-table').DataTable( {
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
+        },
+        "order": [[ 0, "desc" ]]
+    } );
+} );
+</script>
+
 {% endblock %}
