@@ -31,7 +31,7 @@
       </table>
     </div>
     <div class="col-xs-12 col-md-8">
-      <table class="table">
+      <table class="table" id="processing-table">
         <thead>
           <tr>
             <th>Utente</th>
@@ -107,5 +107,13 @@
     setInterval(function () { ajax_call("{% url 'get-process-status-api-view' %}?process_name={{ active_process | urlencode }}", "#process-status-table") }, 10000);
     $('#error-modal').modal('show');
   });
+  $(document).ready(function() {
+    $('#processing-table').DataTable( {
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
+        },
+        "order": [[ 1, "desc" ]]
+    } );
+} );
 </script>
 {% endblock %}
