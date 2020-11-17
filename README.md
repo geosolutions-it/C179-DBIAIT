@@ -25,7 +25,11 @@ export PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/li
 
 # Prerequisites
 
-1. Run SQL script from `database/install.sql` on the database
+1. Install Postgres 10.6 with PostGis 3.0.1
+2. Run SQL script from `database/install.sql` on the database
+3. Install application requirements.
+
+note: if some errors occurs with windows installation of the `python-ldap`, please install the library via whl file and then re-run the installation of the dependencies
 
 # Scheduling system
 
