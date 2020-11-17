@@ -6,12 +6,11 @@ import traceback
 from qgis.core import *
 
 from django.conf import settings
-
+from django.utils import timezone
 from app.scheduler.utils import Schema
 from app.scheduler.exceptions import SchedulerException
 from app.scheduler.models import Task, ImportedLayer
 from .base_import import BaseImportDefinition
-import datetime
 
 
 class GpkgImportDefinition(BaseImportDefinition):
@@ -169,11 +168,11 @@ class GpkgImportDefinition(BaseImportDefinition):
             for layername in to_load[self.offset: self.offset + self.limit]:
                 cont += 1
                 print(layername + ": " + str(cont))
-                start_date = datetime.datetime.now()
+                start_date = timezone.now()
                 end_date = None
                 try:
                     self.import_into_postgis(layername.lower(), cont, feedback)
-                    end_date = datetime.datetime.now()
+                    end_date = timezone.now()
                 except Exception as e:
                     print(layername + ": " + str(e))
                 finally:
