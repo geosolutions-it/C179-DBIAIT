@@ -22,7 +22,7 @@
         <td>{{ import.requesting_user }}</td>
         <td>{{ import.geopackage }}</td>
         <td style="text-align:center;">
-          <a href="#" onclick="display_error_log('{{import.task_log}}', '{{import.status}}')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="{% get_status_icon import.status %}"></i></a>
+          <a href="#" onclick="display_error_log('{{import.task_log|escapejs}}', '{{import.status}}')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="{% get_status_icon import.status %}"></i></a>
         </td>
       </tr>
       {% endfor %}
