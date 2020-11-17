@@ -38,7 +38,6 @@
             <th>Data Inizio</th>
             <th>Data Fine</th>
             <th>Esito</th>
-            <th>Info</th>
           </tr>
         </thead>
         <tbody id="process-status-table">
@@ -47,17 +46,8 @@
             <td>{{ process_history.requesting_user }}</td>
             <td>{{ process_history.start_date|default_if_none:"--/--/----" }}</td>
             <td>{{ process_history.end_date|default_if_none:"--/--/----" }}</td>
-            <td class="text-lowercase">{{ process_history.status }}</td>
-            <td>
-              <i class="{{ process_history.status_icon }}"></i>
-            </td>
             <td class="text-lowercase">
-              <a href="#">
-                <span class="badge badge-light text-info">
-                  <i class="fas fa-info-circle"></i>
-                  {{ process_history.task.status }}
-                </span>
-              </a>
+              <a href="#"><i class="{{ process_history.status_icon }}"></i></a>
             </td>
           </tr>
           {% endfor %}
