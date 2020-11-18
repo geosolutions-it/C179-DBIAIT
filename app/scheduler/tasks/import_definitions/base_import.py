@@ -60,7 +60,6 @@ def initQgis():
 
     import processing
     from processing.core.Processing import Processing
-    from processing.tools import postgis
 
     Processing.initialize()
     QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
