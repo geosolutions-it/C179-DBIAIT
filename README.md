@@ -43,12 +43,12 @@ to configure the DBIAIT application in terms of import/export options and geopac
 **IMPORT_FOLDER**: folder containing geopackages and the subfolder **config**
 with the configuration files for the import process:
 - domains.csv
-- import.json
+- layers.json
 
 **EXPORT_FOLDER**: folder containing the subfolder **config**
 with the configuration files for the export process:
-- config.json
-- shapefile_config.json
+- xls.json
+- shp.json
 - NETSIC_SEED.xlsx
 
 **TEMP_EXPORT_DIR**: folder containing temporary data and folders created by each export process 
@@ -57,12 +57,12 @@ with the configuration files for the export process:
 └───import
 |   └───config
 |   |   |   domains.csv
-|   |   |   import.json
+|   |   |   layers.json
 |   |   *.gpkg
 └───export
 |   └───config
-|   |   |   config.json
-|   |   |   shapefile_config.json
+|   |   |   xls.json
+|   |   |   shp.json
 |   |   |   NETSIC_SEED.xlsx
 ```
 
