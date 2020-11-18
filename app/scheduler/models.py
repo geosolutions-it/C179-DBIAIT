@@ -77,6 +77,7 @@ class ImportedLayer(models.Model):
     import_start_timestamp = models.DateTimeField(default=datetime.datetime.now)
     import_end_timestamp = models.DateTimeField(null=True)
     layer_name = models.CharField(max_length=250, null=False)
+    status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
 
 
 class AllDomains(models.Model):

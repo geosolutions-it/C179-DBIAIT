@@ -7,7 +7,7 @@ from qgis.core import *
 
 from django.conf import settings
 
-from app.scheduler.utils import Schema
+from app.scheduler.utils import Schema, TaskStatus
 from app.scheduler.exceptions import SchedulerException
 from app.scheduler.models import Task, ImportedLayer
 from .base_import import BaseImportDefinition
@@ -100,6 +100,9 @@ class GpkgImportDefinition(BaseImportDefinition):
         Run the importintopostgis algorithm
         """
         result = None
+        vlayer = self.get_gpkg_vector_layer(name)
+        if vlayer is None:
+            raise AttributeError("vlayer is None")
         try:
             vlayer = self.get_gpkg_vector_layer(name)
             print(
@@ -171,17 +174,21 @@ class GpkgImportDefinition(BaseImportDefinition):
                 print(layername + ": " + str(cont))
                 start_date = datetime.datetime.now()
                 end_date = None
+                task_status = TaskStatus.RUNNING
                 try:
                     self.import_into_postgis(layername.lower(), cont, feedback)
-                    end_date = datetime.datetime.now()
+                    task_status = TaskStatus.SUCCESS
                 except Exception as e:
                     print(layername + ": " + str(e))
+                    task_status = TaskStatus.FAILED
                 finally:
+                    end_date = datetime.datetime.now()
                     ImportedLayer.objects.create(
                         task=self.orm_task,
                         layer_name=layername.lower(),
                         import_start_timestamp=start_date,
-                        import_end_timestamp=end_date
+                        import_end_timestamp=end_date,
+                        status=task_status
                     )
                 prg = cont / n_step
                 feedback.setCurrentStep(cont - self.offset)
