@@ -21,11 +21,26 @@
       </tr>
     </tbody>
   </table>
+  <table>
+     <tbody id="test-import-table">
+      <tr>
+        <td colspan="3" class="text-center">
+          <small class="text-secondary">Attendere...</small>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 <script>
   window.addEventListener("load", function () {
     ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table");
     setInterval(function () { ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 1000);
+  });
+</script>
+<script>
+  window.addEventListener("load", function () {
+    ajax_call("{% url 'get-single-import-status-api-view' %}", "#test-import-table");
+    setInterval(function () { ajax_call("{% url 'get-single-import-status-api-view' %}", "#test-import-table") }, 1000);
   });
 </script>
 {% else %}
