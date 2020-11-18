@@ -8,6 +8,7 @@
     <thead>
       <tr>
         <th>Processi</th>
+        <th>Avanzamento</th>
         <th>Stato</th>
         <th></th>
       </tr>
@@ -24,7 +25,7 @@
 <script>
   window.addEventListener("load", function () {
     ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table");
-    setInterval(function () { ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 10000);
+    setInterval(function () { ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 1000);
   });
 </script>
 {% else %}

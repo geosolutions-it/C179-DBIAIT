@@ -2,6 +2,7 @@ import pathlib
 import datetime
 import traceback
 
+from django.utils import timezone
 from dramatiq import GenericActor
 
 from django.db.models import ObjectDoesNotExist
@@ -98,7 +99,7 @@ class BaseTask(GenericActor):
             print(f"Task with provided ID does not exist: {task_id}")
             raise
 
-        task.start_date = datetime.datetime.now()
+        task.start_date = timezone.now()
         task.status = TaskStatus.RUNNING
         task.save()
 
@@ -131,8 +132,10 @@ class BaseTask(GenericActor):
             except:
                 pass
         else:
-            task.status = TaskStatus.SUCCESS
+            task.status = TaskStatus.SUCCESS  # Todo does not raise exception if the single task is failing
+            task.progress = 100
             task.save()
         finally:
-            task.end_date = datetime.datetime.now()
+            task.progress = 100
+            task.end_date = timezone.now()
             task.save()
