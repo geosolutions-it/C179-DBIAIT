@@ -21,7 +21,13 @@
       </tr>
     </tbody>
   </table>
-  <table>
+  <table class="table">
+    <tr>
+        <th>Layer</th>
+        <th>Inizio</th>
+        <th>Fine</th>
+        <th>Status</th>
+      </tr>
      <tbody id="test-import-table">
       <tr>
         <td colspan="3" class="text-center">
@@ -34,13 +40,18 @@
 <script>
   window.addEventListener("load", function () {
     ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table");
-    setInterval(function () { ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 1000);
+    setInterval(function () { ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 5000);
   });
 </script>
 <script>
   window.addEventListener("load", function () {
-    ajax_call("{% url 'get-single-import-status-api-view' %}", "#test-import-table");
-    setInterval(function () { ajax_call("{% url 'get-single-import-status-api-view' %}", "#test-import-table") }, 1000);
+    var taskId = $("#import-status-table #task_uuid").text();
+    var url = "{% url 'get-single-import-status-api-view' %}" + "?task_id=";
+    setInterval(function () {
+      var taskId = $("#import-status-table #task_uuid").text();
+      ajax_call(url + taskId, "#test-import-table")
+      }, 1000
+    );
   });
 </script>
 {% else %}

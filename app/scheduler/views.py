@@ -50,10 +50,17 @@ class GetImportStatus(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class GetImportedLayer(generics.ListAPIView):
-    queryset = ImportedLayer.objects.order_by('-id')[:10]
+class GetImportedLayer(generics.RetrieveAPIView):
     serializer_class = ImportedLayerSerializer
     permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        """
+        Return only the ImportLayer related to a specific uuid
+        """
+        print(request.query_params)
+        task_id = request.GET['task_id']
+        return ImportedLayer.objects.filter(task__uuid=task_id).order_by('-id')
 
 
 class HistoricalImport(LoginRequiredMixin, ListView):

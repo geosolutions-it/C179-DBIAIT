@@ -19,7 +19,7 @@ urlpatterns = [
         path(u"api/", include([
             path("status", GetImportStatus.as_view(),
                  name=u'get-import-status-api-view'),
-            path("status-single-task", GetImportedLayer.as_view(),
+            path("status-single-task/", GetImportedLayer.as_view(),
                  name=u'get-single-import-status-api-view')
         ])),
     ])),

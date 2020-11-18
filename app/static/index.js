@@ -4,7 +4,7 @@ const table_function_mapper = {
         if (response) {
             table.empty();
             response.forEach(function (data) {
-                table.append(`<tr class="${data.style_class}"><td>${data.uuid}</td><td><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: ${data.progress}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">${data.progress}%</div></div></td><td class="text-lowercase">${data.status}</td><td><i class="${data.status_icon}"></i></td></tr>`);
+                table.append(`<tr class="${data.style_class}"><td id='task_uuid'>${data.uuid}</td><td><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: ${data.progress}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">${data.progress}%</div></div></td><td class="text-lowercase">${data.status}</td><td><i class="${data.status_icon}"></i></td></tr>`);
             });
         }
     },
