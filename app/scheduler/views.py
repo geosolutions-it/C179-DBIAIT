@@ -2,8 +2,8 @@ from os import fstat, listdir, path
 from urllib import parse
 
 from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
-from app.scheduler.models import Task, TaskStatus
-from app.scheduler.serializers import ImportSerializer, ProcessSerializer
+from app.scheduler.models import Task, TaskStatus, ImportedLayer
+from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
@@ -47,6 +47,12 @@ class Import(LoginRequiredMixin, ListView):
 class GetImportStatus(generics.ListAPIView):
     queryset = Task.objects.filter(type='IMPORT').order_by('-id')[:1]
     serializer_class = ImportSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class GetImportedLayer(generics.ListAPIView):
+    queryset = ImportedLayer.objects.order_by('-id')[:10]
+    serializer_class = ImportedLayerSerializer
     permission_classes = [IsAuthenticated]
 
 
