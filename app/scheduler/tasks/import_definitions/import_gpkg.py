@@ -6,13 +6,8 @@ import traceback
 from qgis.core import *
 
 from django.conf import settings
-<<<<<<< HEAD
-
 from app.scheduler.utils import Schema, TaskStatus
-=======
 from django.utils import timezone
-from app.scheduler.utils import Schema
->>>>>>> 04ba73e9f8e5b16cea9b558ee3e7d7d70571c307
 from app.scheduler.exceptions import SchedulerException
 from app.scheduler.models import Task, ImportedLayer
 from .base_import import BaseImportDefinition
