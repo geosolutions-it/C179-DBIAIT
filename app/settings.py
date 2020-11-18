@@ -234,16 +234,16 @@ AUTHENTICATION_BACKENDS = (
 # QGis installation path
 QGIS_PATH = os.getenv("QGIS_PATH")
 
+# Directory from which export files are selected
+FTP_FOLDER = os.getenv("FTP_FOLDER", BASE_DIR)
+
 # Directory from which geopackage, import configuration and domains.csv files are imported
-IMPORT_FOLDER = os.getenv("IMPORT_FOLDER", os.path.join(BASE_DIR, "import"))
+IMPORT_FOLDER = os.getenv("IMPORT_FOLDER", os.path.join(FTP_FOLDER, "import"))
 IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'config', "import.json"))
 IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
 
-# Directory from which export files are selected
-NFS_FOLDER = os.getenv("NFS_FOLDER")
-
 # Directory in which generated exports are kept
-EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(BASE_DIR, "export"))
+EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(FTP_FOLDER, "export"))
 EXPORT_CONF_FILE = os.getenv("EXPORT_CONF_FILE", os.path.join(EXPORT_FOLDER, 'config', "config.json"))
 SHAPEFILE_EXPORT_CONFIG = os.getenv(
     u"SHAPEFILE_EXPORT_CONFIG", os.path.join(EXPORT_FOLDER, u"config", u"shapefile_config.json")
