@@ -8,6 +8,15 @@ const table_function_mapper = {
             });
         }
     },
+    "#test-import-table": function (response) {
+        const table = $("#test-import-table");
+        if (response) {
+            table.empty();
+            response.forEach(function (data) {
+                table.append(`<tr><td>${data.layer_name}</td><td>${data.import_start_timestamp}</td><td>${data.import_end_timestamp}</td><td>${data.status}</td></tr>`);
+            });
+        }
+    },
     "#process-status-table": function (response) {
         const table = $("#process-status-table");
         if (response) {
