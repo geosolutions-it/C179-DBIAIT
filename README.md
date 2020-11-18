@@ -32,6 +32,56 @@ export PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/li
 
 note: if some errors occurs with windows installation of the `python-ldap`, please install the library via whl file and then re-run the installation of the dependencies
 
+# System variables
+
+## Application configuration 
+This section contains information about the folder used by the authorized users (via FTP)
+to configure the DBIAIT application in terms of import/export options and geopackages
+
+**FTP_FOLDER**: folder representing the root of the FTP for the users
+
+**IMPORT_FOLDER**: folder containing geopackages and the subfolder **config**
+with the configuration files for the import process:
+- domains.csv
+- import.json
+
+**EXPORT_FOLDER**: folder containing the subfolder **config**
+with the configuration files for the export process:
+- config.json
+- shapefile_config.json
+- NETSIC_SEED.xlsx
+
+**TEMP_EXPORT_DIR**: folder containing temporary data and folders created by each export process 
+```
+/srv/ftp
+└───import
+|   └───config
+|   |   |   domains.csv
+|   |   |   import.json
+|   |   *.gpkg
+└───export
+|   └───config
+|   |   |   config.json
+|   |   |   shapefile_config.json
+|   |   |   NETSIC_SEED.xlsx
+```
+
+## QGIS
+
+**QGIS_PATH**: path to the QGIS application
+
+## Database
+
+**DATABASE_HOST**: PostgreSQL host
+
+**DATABASE_PORT**: PostgreSQL port (default is 5432)
+
+**DATABASE_NAME**: name of the database
+
+**DATABASE_USER**: username to connect to the database
+
+**DATABASE_PASSWORD**: password to connect to the database
+
 # Scheduling system
 
 ## Starting the scheduler
