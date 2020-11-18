@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('scheduler', '0012_remove_importedlayer_status'),
+        ('scheduler', '0007_auto_20201116_1711'),
     ]
 
     operations = [
