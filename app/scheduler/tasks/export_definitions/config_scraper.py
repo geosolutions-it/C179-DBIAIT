@@ -167,7 +167,7 @@ class ExportConfig:
                 # parse tables to join
                 for join_table_config in source.get("join", []):
                     join_table = Table(join_table_config["table"]["name"]).as_(
-                        join_table_config["table"].get("alias", "name")
+                        join_table_config["table"].get("alias", join_table_config["table"]["name"])
                     )
 
                     # parse fields to join the table on
@@ -180,7 +180,7 @@ class ExportConfig:
                             join_on_fields.append(Field(field_name, table=table))
                         else:
                             raise ExportConfigError(
-                                f'On field name "{field}" in sheet "{sheet_name}" '
+                                f'ON field name "{field}" in sheet "{sheet_name}" '
                                 f'does not recognize table "{table_name}".'
                             )
 
