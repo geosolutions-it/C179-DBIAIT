@@ -77,7 +77,8 @@
                   ],
                   "cond":"="
                }
-            ]
+            ],
+            "filter": "WHERE acq_potabiliz.d_gestore = 'PUBLIACQUA' AND acq_potabiliz.d_ambito IN ('AT3', NULL) AND acq_potabiliz.d_stato NOT IN ('IPR', 'IAC')"
          },
          {
             "fields":[
