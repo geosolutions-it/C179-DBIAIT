@@ -2,11 +2,12 @@ import pathlib
 import datetime
 import traceback
 
+from django.utils import timezone
 from dramatiq import GenericActor
 
 from django.db.models import ObjectDoesNotExist
 
-from app.scheduler.models import Task, TaskStatus
+from app.scheduler.models import Task, TaskStatus, ImportedLayer
 from app.scheduler.logging import Tee
 
 
@@ -98,7 +99,7 @@ class BaseTask(GenericActor):
             print(f"Task with provided ID does not exist: {task_id}")
             raise
 
-        task.start_date = datetime.datetime.now()
+        task.start_date = timezone.now()
         task.status = TaskStatus.RUNNING
         task.save()
 
@@ -132,7 +133,20 @@ class BaseTask(GenericActor):
                 pass
         else:
             task.status = TaskStatus.SUCCESS
+            task.progress = 100
             task.save()
         finally:
-            task.end_date = datetime.datetime.now()
+            '''
+            Final check of the ImportedLayer.
+            If at least 1 import process is failed, the whole task is considered unsuccessful
+            '''
+            import_layer = ImportedLayer.objects.filter(task_id__id=task.id)
+            if len(import_layer) > 0:
+                imported_results = all(list(map(lambda x: x.status == 'SUCCESS', import_layer)))
+            else:
+                imported_results = False
+
+            task.status = TaskStatus.SUCCESS if imported_results else TaskStatus.FAILED
+            task.progress = 100
+            task.end_date = timezone.now()
             task.save()

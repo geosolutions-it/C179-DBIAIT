@@ -2,11 +2,11 @@ from os import fstat, listdir, path
 from urllib import parse
 
 from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
-from app.scheduler.models import Task, TaskStatus
-from app.scheduler.serializers import ImportSerializer, ProcessSerializer
+from app.scheduler.models import Task, TaskStatus, ImportedLayer
+from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse
 from django.views import View
@@ -48,6 +48,19 @@ class GetImportStatus(generics.ListAPIView):
     queryset = Task.objects.filter(type='IMPORT').order_by('-id')[:1]
     serializer_class = ImportSerializer
     permission_classes = [IsAuthenticated]
+
+
+class GetImportedLayer(generics.RetrieveAPIView):
+    serializer_class = ImportedLayerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        """
+        Return only the ImportLayer related to a specific uuid
+        """
+        task_id = request.query_params['task_id']
+        response = [layer.to_dict() for layer in ImportedLayer.objects.filter(task__uuid=task_id).order_by('-id')]
+        return JsonResponse(response, safe=False)
 
 
 class HistoricalImport(LoginRequiredMixin, ListView):

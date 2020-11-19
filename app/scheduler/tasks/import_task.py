@@ -125,7 +125,7 @@ class ImportTask(BaseTask):
 
         CsvImportDefinition.run()
 
-        orm_task.progress = 100
+        setattr(orm_task, 'progress', 100)
         orm_task.save()
 
         print(f"Finished IMPORT execution of package from: {gpkg_path}")
