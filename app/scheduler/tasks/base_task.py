@@ -132,7 +132,7 @@ class BaseTask(GenericActor):
             except:
                 pass
         else:
-            task.status = TaskStatus.SUCCESS  # Todo does not raise exception if the single task is failing
+            task.status = TaskStatus.SUCCESS
             task.progress = 100
             task.save()
         finally:
