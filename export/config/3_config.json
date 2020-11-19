@@ -57,7 +57,9 @@
                {"name":"acq_potabiliz.a_anno_costr"},
                {"name":"acq_potabiliz.a_vol_gg_tratt"},
                {"name":"acq_potabiliz.a_vol_anno_tratt"},
-               {"name":"acq_potabiliz.data_agg"}
+               {"name":"acq_potabiliz.data_agg"},
+               {"name":"acq_potabiliz.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+               {"name":"acq_potabiliz.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
             ],
             "table":{
                "name":"acq_auth_potab"
@@ -117,6 +119,9 @@
          {"id":"98500", "transformation":{"func":"DIRECT", "params":{"field":"acq_auth_potab.sn_strum_mis_port_out"}}},
          {"id":"98600", "transformation":{"func":"DIRECT", "params":{"field":"acq_auth_potab.vol_uscita"}}},
 
+         {"id":"31100", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
+         {"id":"31200", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+
          {"id":"31700", "transformation":{"func":"DOMAIN", "params":{"field":"acq_potabiliz.d_tipo_trattam", "domain_name": "D_T_TRATTAM_POTAB"}}},
          {"id":"32020", "transformation":{"func":"DOMAIN", "params":{"field":"acq_auth_potab.d_stato_cons_civ", "domain_name": "D_STATO_CONS"}}},
          {"id":"32040", "transformation":{"func":"DOMAIN", "params":{"field":"acq_auth_potab.d_stato_cons_elmec", "domain_name": "D_STATO_CONS"}}},
@@ -131,7 +136,11 @@
          {"id":"35800", "transformation":{"func":"DOMAIN", "params":{"field":"acq_potabiliz.a_vol_gg_tratt", "domain_name": "D_T_RILIEVO"}}},
          {"id":"35900", "transformation":{"func":"DOMAIN", "params":{"field":"acq_potabiliz.a_vol_anno_tratt", "domain_name": "D_T_RILIEVO"}}},
          {"id":"98700", "transformation":{"func":"DOMAIN", "params":{"field":"acq_auth_potab.a_vol_uscita", "domain_name": "D_T_RILIEVO"}}},
-         {"id":"35720", "transformation":{"func":"DOMAIN", "params":{"field":"acq_auth_potab.a_anno_ristr_elmec", "domain_name": "D_T_RILIEVO"}}}
+         {"id":"35720", "transformation":{"func":"DOMAIN", "params":{"field":"acq_auth_potab.a_anno_ristr_elmec", "domain_name": "D_T_RILIEVO"}}},
+
+         {"id":"31300", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
+
+         {"id":"31600", "transformation":{"func":"LSTRIP", "params":{"field":"acq_potabiliz.cod_comune", "char": "0"}}}
       ]
    }
 ]

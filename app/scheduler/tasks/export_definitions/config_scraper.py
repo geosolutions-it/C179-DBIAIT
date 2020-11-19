@@ -13,6 +13,7 @@ from app.scheduler.utils import COMPARISON_OPERATORS_MAPPING
 from .exceptions import ExportConfigError
 from .transformations import SUPPORTED_TRANSFORMATIONS, TransformationFactory
 from .validations import SUPPORTED_VALIDATIONS, ValidationFactory
+from .sql_functions import SUPPORTED_SQL_FUNCTIONS, SQL_FUNCTION_MAPPING
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +57,9 @@ export_config_schema = schema.Schema(
                             {
                                 "name": schema.And(str, field_name_validator),
                                 schema.Optional("alias"): schema.And(str, len),
+                                schema.Optional("function"): schema.And(
+                                    str, lambda f: f.upper() in SUPPORTED_SQL_FUNCTIONS
+                                ),
                             }
                         ],
                         schema.Optional("join"): [
@@ -155,13 +159,24 @@ class ExportConfig:
                 table = Table(source["table"]["name"]).as_(
                     source["table"].get("alias", source["table"]["name"])
                 )
-                fields = [
-                    Field(
-                        field["name"].split(".")[1],
-                        table=Table(field["name"].split(".")[0]),
-                    ).as_(field.get("alias", field["name"]))
-                    for field in source["fields"]
-                ]
+
+                fields = []
+                for field in source["fields"]:
+                    function = field.get("function", None)
+
+                    if function is None:
+                        fields.append(Field(
+                            field["name"].split(".")[1],
+                            table=Table(field["name"].split(".")[0]),
+                        ).as_(field.get("alias", field["name"])))
+
+                    else:
+                        f = Field(
+                            field["name"].split(".")[1],
+                            table=Table(field["name"].split(".")[0]),
+                        )
+                        fields.append(SQL_FUNCTION_MAPPING[function](f).as_(field.get("alias", field["name"])))
+
                 query = Query.from_(table)
 
                 # parse tables to join
