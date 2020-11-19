@@ -79,6 +79,15 @@ class ImportedLayer(models.Model):
     layer_name = models.CharField(max_length=250, null=False)
     status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
 
+    def to_dict(self):
+        return {
+            "task": str(self.task.uuid),
+            "import_start_timestamp": str(self.import_start_timestamp),
+            "import_end_timestamp": str(self.import_end_timestamp),
+            "layer_name": self.layer_name,
+            "status": self.status
+        }
+
 
 class AllDomains(models.Model):
     """
