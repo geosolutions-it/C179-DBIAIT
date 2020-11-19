@@ -35,17 +35,17 @@ class Command(BaseCommand):
     @staticmethod
     def aggregate_by_sheet(output):
         result = OrderedDict()
-        for field, sheet in output:
+        for field, sheet, cid in output:
             if sheet in result:
                 if "none.none" in field or " .none" in field or " . " in field:
                     pass
                 else:
-                    result[sheet].append(field)
+                    result[sheet].append((cid, field))
             else:
                 if "none.none" in field or " .none" in field or " . " in field:
                     result[sheet] = []
                 else:
-                    result[sheet] = [field]
+                    result[sheet] = [(cid, field)]
         return [{"sheet": k, "fields": v} for k, v in result.items()]
 
     @staticmethod
@@ -54,8 +54,13 @@ class Command(BaseCommand):
             sheet_name = item[0].value
             field_name = ws[f"E{index}"].value
             table_name = ws[f"F{index}"].value
+            column_id = ws[f"D{index}"].value
             output.append(
-                (f"{table_name}.{field_name}".lower(), sheet_name.lower().capitalize())
+                (
+                    f"{table_name}.{field_name}".lower(),
+                    sheet_name.lower().capitalize(),
+                    str(int(column_id)),
+                )
             )
         wb.close()
         return output
@@ -64,16 +69,24 @@ class Command(BaseCommand):
         output_path = os.path.dirname(os.path.abspath(__file__))
         for configuration in aggregation:
             filename = f'{output_path}/conversion_output/{configuration["sheet"]}'
-            with open(filename, "w+") as file:
+            with open(f"{filename}.json", "w+") as file:
                 output = self.__output_structure()
                 output["sheet"] = configuration["sheet"]
                 output["sources"][0]["fields"] = [
-                    {"name": x, "alias": x.split(".")[1]}
+                    {"name": x[1], "alias": x[1].split(".")[1]}
                     for x in configuration["fields"]
                 ]
-                print(output)
+                output["columns"] = [
+                    {
+                        "id": x[0],
+                        "transformation": {
+                            "func": "",
+                            "params": {"field": x[1].split(".")[1]},
+                        },
+                    }
+                    for x in configuration["fields"]
+                ]
                 file.write(json.dumps([output], indent=4))
-        return "xx"
 
     @staticmethod
     def __output_structure():
