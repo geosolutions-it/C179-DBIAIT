@@ -82,18 +82,21 @@ class Configuration(LoginRequiredMixin, View):
         bread_crumbs = {
             'Configuration': reverse('configuration-view'),
         }
-        import_folder = settings.IMPORT_FOLDER
-        database_user = settings.DATABASES[u'system'][u'USER']
-        database_port = settings.DATABASES[u'system'][u'PORT']
+        ftp_folder = settings.FTP_FOLDER
         database_host = settings.DATABASES[u'system'][u'HOST']
+        database_port = settings.DATABASES[u'system'][u'PORT']
+        database_name = settings.DATABASES[u'system'][u'NAME']
+        database_user = settings.DATABASES[u'system'][u'USER']
+
         environment = u'SVILUPPO' if settings.DEBUG else u'PRODUZIONE'
         context = {
             u'bread_crumbs': bread_crumbs,
-            u'database_user': database_user,
             u'environment': environment,
             u'database_host': database_host,
-            u'nfs_folder': import_folder,
             u'database_port': database_port,
+            u'database_name': database_name,
+            u'database_user': database_user,
+            u'ftp_folder': ftp_folder,
             u'geopackages': Import.get_geopackage_files()
         }
         return render(request, 'configuration/base-configuration.html', context)
