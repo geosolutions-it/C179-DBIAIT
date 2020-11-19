@@ -6,7 +6,7 @@ from app.scheduler.models import Task, TaskStatus, ImportedLayer
 from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse
 from django.views import View
@@ -58,9 +58,9 @@ class GetImportedLayer(generics.RetrieveAPIView):
         """
         Return only the ImportLayer related to a specific uuid
         """
-        print(request.query_params)
-        task_id = request.GET['task_id']
-        return ImportedLayer.objects.filter(task__uuid=task_id).order_by('-id')
+        task_id = request.query_params['task_id']
+        response = [layer.to_dict() for layer in ImportedLayer.objects.filter(task__uuid=task_id).order_by('-id')]
+        return JsonResponse(response, safe=False)
 
 
 class HistoricalImport(LoginRequiredMixin, ListView):
