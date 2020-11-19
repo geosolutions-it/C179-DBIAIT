@@ -21,7 +21,7 @@
       </tr>
     </tbody>
   </table>
-  <table class="table" id="layer-table">
+  <table class="table table-sm">
     <thead>
       <tr>
           <th>Layer</th>
@@ -32,9 +32,12 @@
     </thead>
      <tbody id="test-import-table">
       <tr>
-        <td colspan="3" class="text-center">
+        <td class="text-center">
           <small class="text-secondary">Attendere...</small>
         </td>
+        <td></td>
+        <td></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -54,16 +57,6 @@
       }, 5000
     );
   });
-</script>
-
-<script>
-  $(document).ready(function() {
-    $('#layer-table').DataTable( {
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
-        }
-    } );
-} );
 </script>
 {% else %}
 <div class="container mt-5">

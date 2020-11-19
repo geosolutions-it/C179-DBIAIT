@@ -7,7 +7,7 @@ from dramatiq import GenericActor
 
 from django.db.models import ObjectDoesNotExist
 
-from app.scheduler.models import Task, TaskStatus
+from app.scheduler.models import Task, TaskStatus, ImportedLayer
 from app.scheduler.logging import Tee
 
 
@@ -136,6 +136,17 @@ class BaseTask(GenericActor):
             task.progress = 100
             task.save()
         finally:
+            '''
+            Final check of the ImportedLayer.
+            If at least 1 import process is failed, the whole task is considered unsuccessful
+            '''
+            import_layer = ImportedLayer.objects.filter(task_id__id=task.id)
+            if len(import_layer) > 0:
+                imported_results = all(list(map(lambda x: x.status == 'SUCCESS', import_layer)))
+            else:
+                imported_results = False
+
+            task.status = TaskStatus.SUCCESS if imported_results else TaskStatus.FAILED
             task.progress = 100
             task.end_date = timezone.now()
             task.save()
