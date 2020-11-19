@@ -21,13 +21,15 @@
       </tr>
     </tbody>
   </table>
-  <table class="table">
-    <tr>
-        <th>Layer</th>
-        <th>Inizio</th>
-        <th>Fine</th>
-        <th>Status</th>
-      </tr>
+  <table class="table" id="layer-table">
+    <thead>
+      <tr>
+          <th>Layer</th>
+          <th>Inizio</th>
+          <th>Fine</th>
+          <th>Status</th>
+        </tr>
+    </thead>
      <tbody id="test-import-table">
       <tr>
         <td colspan="3" class="text-center">
@@ -45,14 +47,23 @@
 </script>
 <script>
   window.addEventListener("load", function () {
-    var taskId = $("#import-status-table #task_uuid").text();
-    var url = "{% url 'get-single-import-status-api-view' %}" + "?task_id=";
     setInterval(function () {
+      var url = "{% url 'get-single-import-status-api-view' %}" + "?task_id=";
       var taskId = $("#import-status-table #task_uuid").text();
       ajax_call(url + taskId, "#test-import-table")
-      }, 1000
+      }, 5000
     );
   });
+</script>
+
+<script>
+  $(document).ready(function() {
+    $('#layer-table').DataTable( {
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
+        }
+    } );
+} );
 </script>
 {% else %}
 <div class="container mt-5">
