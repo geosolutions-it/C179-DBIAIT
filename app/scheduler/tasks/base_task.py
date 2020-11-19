@@ -143,10 +143,8 @@ class BaseTask(GenericActor):
             import_layer = ImportedLayer.objects.filter(task_id__id=task.id)
             if len(import_layer) > 0:
                 imported_results = all(list(map(lambda x: x.status == 'SUCCESS', import_layer)))
-            else:
-                imported_results = False
+                task.status = TaskStatus.SUCCESS if imported_results else TaskStatus.FAILED
 
-            task.status = TaskStatus.SUCCESS if imported_results else TaskStatus.FAILED
             task.progress = 100
             task.end_date = timezone.now()
             task.save()
