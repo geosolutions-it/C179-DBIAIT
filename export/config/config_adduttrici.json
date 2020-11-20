@@ -33,7 +33,7 @@
                         "cond": "="
                     }
                 ],
-                "filter": "WHERE acq_adduttrice.d_gestore = 'PUBLIACQUA' AND acq_adduttrice.d_ambito IN ('ATO3', NULL) AND d_stato NOT IN ('IPR','IAC')"
+                "filter": "WHERE acq_adduttrice.d_gestore = 'PUBLIACQUA' AND acq_adduttrice.d_ambito IN ('ATO3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
             },
           {
                 "fields": [
@@ -65,12 +65,11 @@
                         "cond": "="
                     }
                 ],
-                "filter": "WHERE a_acq_adduttrice.d_gestore = 'PUBLIACQUA' AND a_acq_adduttrice.d_ambito IN ('ATO3', NULL) AND d_stato NOT IN ('IPR','IAC')"
+                "filter": "WHERE a_acq_adduttrice.d_gestore = 'PUBLIACQUA' AND a_acq_adduttrice.d_ambito IN ('ATO3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
             }
         ],
         "columns": [
             { "id": "39200", "transformation": {  "func": "EMPTY",  "params": {   "field": null  } }},
-
 
             { "id": "39400", "transformation": {  "func": "DIRECT",  "params": {   "field": "codice_ato" } }},
             { "id": "39500", "transformation": {  "func": "DIRECT",  "params": {   "field": "denom" } }},
