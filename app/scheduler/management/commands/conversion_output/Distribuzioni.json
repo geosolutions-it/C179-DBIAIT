@@ -1,0 +1,258 @@
+[
+    {
+        "sheet": "Distribuzioni",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    {
+                        "name": "acq_rete_distrib.codice_ato",
+                        "alias": "codice_ato"
+                    },
+                    {
+                        "name": "acq_rete_distrib.denom",
+                        "alias": "denom"
+                    },
+                    {
+                        "name": "acq_rete_distrib.vol_immesso",
+                        "alias": "vol_immesso"
+                    },
+                    {
+                        "name": "acq_rete_distrib.vol_imm_terzi",
+                        "alias": "vol_imm_terzi"
+                    },
+                    {
+                        "name": "acq_rete_distrib.vol_ceduto",
+                        "alias": "vol_ceduto"
+                    },
+                    {
+                        "name": "acq_rete_distrib.d_stato",
+                        "alias": "d_stato"
+                    },
+                    {
+                        "name": "acq_rete_distrib.a_vol_immesso",
+                        "alias": "a_vol_immesso"
+                    },
+                    {
+                        "name": "acq_rete_distrib.a_vol_imm_terzi",
+                        "alias": "a_vol_imm_terzi"
+                    },
+                    {
+                        "name": "acq_rete_distrib.a_vol_ceduto",
+                        "alias": "a_vol_ceduto"
+                    },
+                    {
+                        "name": "acq_rete_distrib.data_agg",
+                        "alias": "data_agg"
+                    },
+                    {
+                        "name": "acq_auth_rete_dist.sn_ili",
+                        "alias": "sn_ili"
+                    },
+                    {
+                        "name": "acq_auth_rete_dist.a_ili",
+                        "alias": "a_ili"
+                    },
+                    {
+                        "name": "acq_auth_rete_dist.pres_es_max",
+                        "alias": "pres_es_max"
+                    },
+                    {
+                        "name": "acq_auth_rete_dist.a_pres_es_max",
+                        "alias": "a_pres_es_max"
+                    },
+                    {
+                        "name": "acq_auth_rete_dist.pres_es_min",
+                        "alias": "pres_es_min"
+                    },
+                    {
+                        "name": "acq_auth_rete_dist.a_pres_es_min",
+                        "alias": "a_pres_es_min"
+                    }
+                ],
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            },
+            {
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            }
+        ],
+        "columns": [
+            {
+                "id": "53500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "codice_ato"
+                    }
+                }
+            },
+            {
+                "id": "53600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "denom"
+                    }
+                }
+            },
+            {
+                "id": "54500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "vol_immesso"
+                    }
+                }
+            },
+            {
+                "id": "54800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "vol_imm_terzi"
+                    }
+                }
+            },
+            {
+                "id": "54900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "vol_ceduto"
+                    }
+                }
+            },
+            {
+                "id": "55300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato"
+                    }
+                }
+            },
+            {
+                "id": "55500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_vol_immesso"
+                    }
+                }
+            },
+            {
+                "id": "55800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_vol_imm_terzi"
+                    }
+                }
+            },
+            {
+                "id": "55900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_vol_ceduto"
+                    }
+                }
+            },
+            {
+                "id": "56000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "data_agg"
+                    }
+                }
+            },
+            {
+                "id": "99200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_ili"
+                    }
+                }
+            },
+            {
+                "id": "99300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_ili"
+                    }
+                }
+            },
+            {
+                "id": "99600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "pres_es_max"
+                    }
+                }
+            },
+            {
+                "id": "99700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_pres_es_max"
+                    }
+                }
+            },
+            {
+                "id": "100000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "pres_es_min"
+                    }
+                }
+            },
+            {
+                "id": "100100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_pres_es_min"
+                    }
+                }
+            }
+        ]
+    }
+]

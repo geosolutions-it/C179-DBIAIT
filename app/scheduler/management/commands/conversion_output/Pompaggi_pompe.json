@@ -1,0 +1,219 @@
+[
+    {
+        "sheet": "Pompaggi_pompe",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    {
+                        "name": "ext_rel_pompa.codice_ato",
+                        "alias": "codice_ato"
+                    },
+                    {
+                        "name": "ext_rel_pompa.d_stato_cons",
+                        "alias": "d_stato_cons"
+                    },
+                    {
+                        "name": "ext_rel_pompa.anno_instal",
+                        "alias": "anno_instal"
+                    },
+                    {
+                        "name": "ext_rel_pompa.anno_ristr",
+                        "alias": "anno_ristr"
+                    },
+                    {
+                        "name": "ext_rel_pompa.potenza",
+                        "alias": "potenza"
+                    },
+                    {
+                        "name": "ext_rel_pompa.portata",
+                        "alias": "portata"
+                    },
+                    {
+                        "name": "ext_rel_pompa.prevalenza",
+                        "alias": "prevalenza"
+                    },
+                    {
+                        "name": "ext_rel_pompa.sn_riserva",
+                        "alias": "sn_riserva"
+                    },
+                    {
+                        "name": "ext_rel_pompa.a_anno_instal",
+                        "alias": "a_anno_instal"
+                    },
+                    {
+                        "name": "ext_rel_pompa.a_anno_ristr",
+                        "alias": "a_anno_ristr"
+                    },
+                    {
+                        "name": "ext_rel_pompa.a_potenza",
+                        "alias": "a_potenza"
+                    },
+                    {
+                        "name": "ext_rel_pompa.a_portata",
+                        "alias": "a_portata"
+                    },
+                    {
+                        "name": "ext_rel_pompa.a_prevalenza",
+                        "alias": "a_prevalenza"
+                    }
+                ],
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            },
+            {
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            }
+        ],
+        "columns": [
+            {
+                "id": "50500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "codice_ato"
+                    }
+                }
+            },
+            {
+                "id": "50700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato_cons"
+                    }
+                }
+            },
+            {
+                "id": "50800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_instal"
+                    }
+                }
+            },
+            {
+                "id": "50900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_ristr"
+                    }
+                }
+            },
+            {
+                "id": "51000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "potenza"
+                    }
+                }
+            },
+            {
+                "id": "51100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "portata"
+                    }
+                }
+            },
+            {
+                "id": "51200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "prevalenza"
+                    }
+                }
+            },
+            {
+                "id": "51300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_riserva"
+                    }
+                }
+            },
+            {
+                "id": "51400",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_anno_instal"
+                    }
+                }
+            },
+            {
+                "id": "51500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_anno_ristr"
+                    }
+                }
+            },
+            {
+                "id": "51600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_potenza"
+                    }
+                }
+            },
+            {
+                "id": "51700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_portata"
+                    }
+                }
+            },
+            {
+                "id": "51800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_prevalenza"
+                    }
+                }
+            }
+        ]
+    }
+]

@@ -1,0 +1,323 @@
+[
+    {
+        "sheet": "Accumuli",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    {
+                        "name": "acq_accumulo.codice_ato",
+                        "alias": "codice_ato"
+                    },
+                    {
+                        "name": "acq_accumulo.denom",
+                        "alias": "denom"
+                    },
+                    {
+                        "name": "acq_accumulo.quota",
+                        "alias": "quota"
+                    },
+                    {
+                        "name": "acq_accumulo.anno_costr",
+                        "alias": "anno_costr"
+                    },
+                    {
+                        "name": "acq_accumulo.anno_ristr",
+                        "alias": "anno_ristr"
+                    },
+                    {
+                        "name": "acq_accumulo.d_stato_cons",
+                        "alias": "d_stato_cons"
+                    },
+                    {
+                        "name": "acq_accumulo.d_ubicazione",
+                        "alias": "d_ubicazione"
+                    },
+                    {
+                        "name": "acq_accumulo.d_materiale",
+                        "alias": "d_materiale"
+                    },
+                    {
+                        "name": "acq_accumulo.volume",
+                        "alias": "volume"
+                    },
+                    {
+                        "name": "acq_accumulo.quota_fondo",
+                        "alias": "quota_fondo"
+                    },
+                    {
+                        "name": "acq_auth_accum.d_telecont",
+                        "alias": "d_telecont"
+                    },
+                    {
+                        "name": "acq_auth_accum.sn_strum_mis_liv",
+                        "alias": "sn_strum_mis_liv"
+                    },
+                    {
+                        "name": "acq_auth_accum.sn_strum_mis_port",
+                        "alias": "sn_strum_mis_port"
+                    },
+                    {
+                        "name": "acq_auth_accum.d_tipo_cloraz",
+                        "alias": "d_tipo_cloraz"
+                    },
+                    {
+                        "name": "acq_auth_accum.anno_instal_clor",
+                        "alias": "anno_instal_clor"
+                    },
+                    {
+                        "name": "acq_auth_accum.anno_ristr_clor",
+                        "alias": "anno_ristr_clor"
+                    },
+                    {
+                        "name": "acq_accumulo.d_stato",
+                        "alias": "d_stato"
+                    },
+                    {
+                        "name": "acq_accumulo.a_anno_costr",
+                        "alias": "a_anno_costr"
+                    },
+                    {
+                        "name": "acq_accumulo.a_anno_ristr",
+                        "alias": "a_anno_ristr"
+                    },
+                    {
+                        "name": "acq_accumulo.a_volume",
+                        "alias": "a_volume"
+                    },
+                    {
+                        "name": "acq_accumulo.data_agg",
+                        "alias": "data_agg"
+                    }
+                ],
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            },
+            {
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            }
+        ],
+        "columns": [
+            {
+                "id": "43700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "codice_ato"
+                    }
+                }
+            },
+            {
+                "id": "43800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "denom"
+                    }
+                }
+            },
+            {
+                "id": "44200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "quota"
+                    }
+                }
+            },
+            {
+                "id": "44500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_costr"
+                    }
+                }
+            },
+            {
+                "id": "44600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_ristr"
+                    }
+                }
+            },
+            {
+                "id": "44700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato_cons"
+                    }
+                }
+            },
+            {
+                "id": "44800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_ubicazione"
+                    }
+                }
+            },
+            {
+                "id": "44900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_materiale"
+                    }
+                }
+            },
+            {
+                "id": "45000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "volume"
+                    }
+                }
+            },
+            {
+                "id": "45100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "quota_fondo"
+                    }
+                }
+            },
+            {
+                "id": "45200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_telecont"
+                    }
+                }
+            },
+            {
+                "id": "45300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_strum_mis_liv"
+                    }
+                }
+            },
+            {
+                "id": "45400",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_strum_mis_port"
+                    }
+                }
+            },
+            {
+                "id": "45500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_tipo_cloraz"
+                    }
+                }
+            },
+            {
+                "id": "45600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_instal_clor"
+                    }
+                }
+            },
+            {
+                "id": "45700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_ristr_clor"
+                    }
+                }
+            },
+            {
+                "id": "45800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato"
+                    }
+                }
+            },
+            {
+                "id": "45900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_anno_costr"
+                    }
+                }
+            },
+            {
+                "id": "46000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_anno_ristr"
+                    }
+                }
+            },
+            {
+                "id": "46100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_volume"
+                    }
+                }
+            },
+            {
+                "id": "46200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "data_agg"
+                    }
+                }
+            }
+        ]
+    }
+]
