@@ -91,7 +91,7 @@ class ExpressionTransformation(BaseTransformation):
             sympy_exp = parse_expr(self.args["expr"])
             result = sympy_exp.evalf(subs={f: result})
 
-        return result
+        return float(result)
 
 
 class CaseTransformation(BaseTransformation):

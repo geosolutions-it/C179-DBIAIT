@@ -166,7 +166,7 @@ class ExportXls:
                     except Exception as e:
                         logger.error(
                             f"Error occurred during transformation of column with "
-                            f"ID '{column['id']}' in sheet '{sheet['sheet']}:\n"
+                            f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
                             f"{type(e).__name__}: {e}.\n"
                         )
                         transformed_value = None
@@ -200,7 +200,14 @@ class ExportXls:
                         )
                         continue
 
-                    excel_ws[f"{column_letter}{first_empty_row}"] = value
+                    try:
+                        excel_ws[f"{column_letter}{first_empty_row}"] = value
+                    except Exception as e:
+                        logger.error(
+                            f"Error occurred during inserting value to the column with "
+                            f"ID '{column_id}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
+                            f"{type(e).__name__}: {e}.\n"
+                        )
 
                 first_empty_row += 1
 
