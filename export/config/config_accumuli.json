@@ -39,13 +39,13 @@
                             "name": "acq_accumulo"
                         },
                         "on": [
-                            "acq_auth_accum.id_potabiliz",
+                            "acq_auth_accum.id_accumulo",
                             "acq_accumulo.idgis"
                         ],
                         "cond": "="
                     }
                 ],
-                "filter": "WHERE d_gestore = 'PUBLIACQUA' AND (d_ambito ='ATO3' or d_ambito is Null) and (d_stato NOT IN ('IPR','IAC'))"
+                "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND acq_accumulo.d_ambito IN ('ATO3', NULL) AND d_stato NOT IN ('IPR','IAC')"
             },
             {
                 "fields": [
@@ -88,7 +88,7 @@
                         "cond": "="
                     }
                 ],
-                "filter": "WHERE d_gestore = 'PUBLIACQUA' AND (d_ambito ='ATO3' or d_ambito is Null) and (d_stato NOT IN ('IPR','IAC'))"
+                "filter": "WHERE a_acq_accumulo.d_gestore = 'PUBLIACQUA' AND a_acq_accumulo.d_ambito IN ('ATO3', NULL) AND d_stato NOT IN ('IPR','IAC')"
             }
         ],
         "columns": [

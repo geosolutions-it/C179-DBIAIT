@@ -1,0 +1,43 @@
+[
+    {
+        "sheet": "Depurato_pompe",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    {"name": "ext_rel_pompa.codice_ato","alias": "codice_ato"},
+                    {"name": "ext_rel_pompa.d_stato_cons","alias": "d_stato_cons"},
+                    {"name": "ext_rel_pompa.anno_instal","alias": "anno_instal"},
+                    {"name": "ext_rel_pompa.anno_ristr","alias": "anno_ristr"},
+                    {"name": "ext_rel_pompa.potenza","alias": "potenza"},
+                    {"name": "ext_rel_pompa.portata","alias": "portata"},
+                    {"name": "ext_rel_pompa.prevalenza","alias": "prevalenza"},
+                    {"name": "ext_rel_pompa.sn_riserva","alias": "sn_riserva"},
+                    {"name": "ext_rel_pompa.a_anno_instal","alias": "a_anno_instal"},
+                    {"name": "ext_rel_pompa.a_anno_ristr","alias": "a_anno_ristr"},
+                    {"name": "ext_rel_pompa.a_potenza","alias": "a_potenza"},
+                    {"name": "ext_rel_pompa.a_portata","alias": "a_portata"},
+                    {"name": "ext_rel_pompa.a_prevalenza","alias": "a_prevalenza"}
+                ],
+                "table": {
+                    "name": "ext_rel_pompa"
+                }
+            }
+        ],
+        "columns": [
+            {"id": "81000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
+            {"id": "81200","transformation": { "func": "DIRECT", "params": { "field": "d_stato_cons" }}},
+            {"id": "81300","transformation": { "func": "DIRECT", "params": { "field": "anno_instal" }}},
+            {"id": "81400","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}},
+            {"id": "81500","transformation": { "func": "DIRECT", "params": { "field": "potenza" }}},
+            {"id": "81600","transformation": { "func": "DIRECT", "params": { "field": "portata" }}},
+            {"id": "81700","transformation": { "func": "DIRECT", "params": { "field": "prevalenza" }}},
+            {"id": "81800","transformation": { "func": "DIRECT", "params": { "field": "sn_riserva" }}},
+            {"id": "81900","transformation": { "func": "DIRECT", "params": { "field": "a_anno_instal" }}},
+            {"id": "82000","transformation": { "func": "DIRECT", "params": { "field": "a_anno_ristr" }}},
+            {"id": "82100","transformation": { "func": "DIRECT", "params": { "field": "a_potenza" }}},
+            {"id": "82200","transformation": { "func": "DIRECT", "params": { "field": "a_portata" }}},
+            {"id": "82300","transformation": { "func": "DIRECT", "params": { "field": "a_prevalenza" }}}
+        ]
+    }
+]
