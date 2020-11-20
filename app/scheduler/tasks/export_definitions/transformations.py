@@ -99,7 +99,13 @@ class CaseTransformation(BaseTransformation):
     schema = schema.Schema(
         {
             "field": str,
-            "cond": [{"case": str, "operator": str, "value": object, "result": object}],
+            "cond": [
+                schema.Or(
+                    {"case": str, "operator": str, "value": object, "result": object},
+                    {"case": str, "result": object},
+                    only_one=False
+                )
+            ],
         }
     )
 
@@ -118,7 +124,8 @@ class CaseTransformation(BaseTransformation):
 
     def apply(self, row: Dict, **kwargs):
         field_value = row.get(self.args["field"], None)
-        conditions = self.args["cond"].sort(key=self.sort_by_case, reverse=False)
+        conditions = self.args["cond"]
+        conditions.sort(key=self.sort_by_case, reverse=False)
 
         for cond in conditions:
             l_cond = cond["case"].lower()
