@@ -20,8 +20,8 @@
                     { "name": "acq_accumulo.a_anno_ristr", "alias": "a_anno_ristr"},
                     { "name": "acq_accumulo.a_volume", "alias": "a_volume"},
                     { "name": "acq_accumulo.data_agg", "alias": "data_agg"},
-                    { "name":"acq_accumulo.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-                    { "name":"acq_accumulo.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                    { "name": "acq_accumulo.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                    { "name": "acq_accumulo.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                     { "name": "acq_auth_accum.d_telecont", "alias": "d_telecont"},
                     { "name": "acq_auth_accum.sn_strum_mis_liv", "alias": "sn_strum_mis_liv"},
                     { "name": "acq_auth_accum.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
@@ -45,7 +45,7 @@
                         "cond": "="
                     }
                 ],
-                "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND acq_accumulo.d_ambito IN ('ATO3', NULL) AND d_stato NOT IN ('IPR','IAC')"
+                "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND acq_accumulo.d_ambito IN ('ATO3', NULL) AND acq_accumulo.d_stato NOT IN ('IPR','IAC')"
             },
             {
                 "fields": [
@@ -88,39 +88,83 @@
                         "cond": "="
                     }
                 ],
-                "filter": "WHERE a_acq_accumulo.d_gestore = 'PUBLIACQUA' AND a_acq_accumulo.d_ambito IN ('ATO3', NULL) AND d_stato NOT IN ('IPR','IAC')"
+                "filter": "WHERE a_acq_accumulo.d_gestore = 'PUBLIACQUA' AND a_acq_accumulo.d_ambito IN ('ATO3', NULL) AND a_acq_accumulo.d_stato NOT IN ('IPR','IAC')"
             }
         ],
         "columns": [
-            {"id": "43500","trangit checkout mastersformation": {"func": "EMPTY", "params": null}},
+            {"id": "43500","tranformation": {"func": "EMPTY", "params": null}},
+            
+            {"id": "44400","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
 
             {"id": "43700","transformation": {"func": "DIRECT", "params": {"field": "codice_ato"}}},
             {"id": "43800","transformation": {"func": "DIRECT", "params": {"field": "denom"}}},
-            {"id": "44500","transformation": {"func": "DIRECT", "params": {"field": "anno_costr"}}},
-            {"id": "44600","transformation": {"func": "DIRECT", "params": {"field": "anno_ristr"}}},
+            {"id": "44500","transformation": {"func": "DIRECT", "params": {"field": "anno_costr"}}, "validations": [
+                {
+                    "funct": "IF",
+                    "params": {
+                        "anno_constr": "<=REF_YEAR",
+                        "anno_constr": "==9999"
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: anno successivo a quello di competenza netsic"
+                }
+            ]},
+            {"id": "44600","transformation": {"func": "DIRECT", "params": {"field": "anno_ristr"}}, "validations": [
+                {
+                    "funct": "IF",
+                    "params": {
+                        "anno_constr": "<=REF_YEAR",
+                        "anno_constr": "==9800"
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: anno successivo a quello di competenza netsic"
+                }
+            ]},
             {"id": "45000","transformation": {"func": "DIRECT", "params": {"field": "volume"}}},
-            {"id": "44200","transformation": {"func": "DIRECT", "params": {"field": "quota"}}},
-            {"id": "45100","transformation": {"func": "DIRECT", "params": {"field": "quota_fondo"}}},
+            {"id": "44200","transformation": {"func": "DIRECT", "params": {"field": "quota"}}, "validations": [{
+                "func": "IF",
+                "params": {
+                    "quota": "==0",
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is 0"
+                }
+            }]},
+            {"id": "45100","transformation": {"func": "DIRECT", "params": {"field": "quota_fondo"}}, "validations": [{
+                "func": "IF",
+                "params": {
+                    "quota": "==0",
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is 0"
+                }
+            }]},
             {"id": "45300","transformation": {"func": "DIRECT", "params": {"field": "sn_strum_mis_liv"}}},
             {"id": "45400","transformation": {"func": "DIRECT", "params": {"field": "sn_strum_mis_port"}}},
-            {"id": "45600","transformation": {"func": "DIRECT", "params": {"field": "anno_instal_clor"}}},
+            {"id": "45600","transformation": {"func": "DIRECT", "params": {"field": "anno_instal_clor"}}, "validations": [{
+                "func": "IF",
+                "params": {
+                    "anno_instal_clor": "==1",
+                    "anno_constr": "<=REF_YEAR",
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is 0"
+                }
+            }]},
             {"id": "45700","transformation": {"func": "DIRECT", "params": {"field": "anno_ristr_clor"}}},
             {"id": "46200","transformation": {"func": "DIRECT", "params": {"field": "data_agg"}}}
+            {"id": "43900","transformation": {"func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
+            {"id": "44000","transformation": {"func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
 
+            {"id": "44700", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }}},
 
-            {"id": "44700","transformation": {"func": "DOMAIN", "params": {"field": "d_stato_cons", "domain_name": "D_STATO_CONS"}}},
             {"id": "44800","transformation": {"func": "DOMAIN", "params": {"field": "d_ubicazione", "domain_name": "D_UBICAZ_OPERA"}}},
             {"id": "44900","transformation": {"func": "DOMAIN", "params": {"field": "d_materiale", "domain_name": "D_MATERIALE"}}},
             {"id": "45200","transformation": {"func": "DOMAIN", "params": {"field": "d_telecont", "domain_name": "D_TELECONT"}}},
             {"id": "45500","transformation": {"func": "DOMAIN", "params": {"field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
             {"id": "45800","transformation": {"func": "DOMAIN", "params": {"field": "d_stato", "domain_name": "D_STATO"}}},
             {"id": "45900","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_costr", "domain_name": "D_T_RILIEVO"}}},
-            {"id": "46000","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_ristr", "domain_name": "D_T_RILIEVO"}}},
+            {"id": "46000","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_ristr", "domain_name": "D_T_RILIEVO"}}, "validations": [{
+                "func": "IF",
+                "params": {
+                    "a_anno_ristr": ">=2002",
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is 0"
+                }
+            }]},
             {"id": "46100","transformation": {"func": "DOMAIN", "params": {"field": "a_volume", "domain_name": "D_T_RILIEVO"}}},
 
-
-            {"id": "43900","transformation": {"func": "GB_COORD", "params": {"field": "transformed_x_geom"}}},
-            {"id": "44000","transformation": {"func": "GB_COORD", "params": {"field": "transformed_y_geom"}}},
 
 
             {"id": "44100","transformation": {"func": "CONST", "params": {"value": "3003"}}},
