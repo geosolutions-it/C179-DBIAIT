@@ -69,23 +69,41 @@
             }
         ],
         "columns": [
-            { "id": "39200", "transformation": {  "func": "EMPTY",  "params": {   "field": null  } }},
+            { "id": "39200", "transformation": { "func": "EMPTY",  "params": {   "field": null  } }},
 
-            { "id": "39400", "transformation": {  "func": "DIRECT",  "params": {   "field": "codice_ato" } }},
-            { "id": "39500", "transformation": {  "func": "DIRECT",  "params": {   "field": "denom" } }},
-            { "id": "39600", "transformation": {  "func": "DIRECT",  "params": {   "field": "portata_media" } }},
-            { "id": "39900", "transformation": {  "func": "DIRECT",  "params": {   "field": "sn_strum_mis_port" } }},
-            { "id": "40100", "transformation": {  "func": "DIRECT",  "params": {   "field": "anno_instal_clor" } }},
-            { "id": "40200", "transformation": {  "func": "DIRECT",  "params": {   "field": "anno_ristr_clor" } }},
+            { "id": "40500", "transformation": { "func": "CONST",  "value": "B" }},
+            { "id": "98900", "transformation": { "func": "CONST",  "value": "B" }},
 
+            { "id": "39400", "transformation": { "func": "DIRECT",  "params": { "field": "codice_ato" } }},
+            { "id": "39500", "transformation": { "func": "DIRECT",  "params": { "field": "denom" } }},
+            { "id": "39600", "transformation": { "func": "DIRECT",  "params": { "field": "portata_media" } }},
+            { "id": "39900", "transformation": { "func": "DIRECT",  "params": { "field": "sn_strum_mis_port" } }},
+            { "id": "40100", "transformation": { "func": "DIRECT",  "params": { "field": "anno_instal_clor" } }},
+            { "id": "40200", "transformation": { "func": "DIRECT",  "params": { "field": "anno_ristr_clor" } }},
+            { "id": "40600", "transformation": { "func": "DIRECT",  "params": { "field": "data_agg" } }},
+            { "id": "99000", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" }}}
+            { "id": "99000", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" }}},
 
-            { "id": "40000", "transformation": {  "func": "DOMAIN",  "params": {   "field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ" } }},
-            { "id": "40300", "transformation": {  "func": "DOMAIN",  "params": {   "field": "d_stato", "domain_name": "D_STATO" } }},
-            { "id": "40400", "transformation": {  "func": "DOMAIN",  "params": {   "field": "a_portata_media", "domain_name": "D_T_RILIEVO" } }},
+            
+            { "id": "40000", "transformation": { "func": "DOMAIN",  "params": { "field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ" } }},
+            { "id": "40300", "transformation": { "func": "DOMAIN",  "params": { "field": "d_stato", "domain_name": "D_STATO" } }},
+            { "id": "40400", "transformation": { "func": "DOMAIN",  "params": { "field": "a_portata_media", "domain_name": "D_T_RILIEVO" } }},
 
+            
 
-            { "id": "40600", "transformation": {  "func": "DIRECT",  "params": {   "field": "data_agg" } }},
-            { "id": "99000", "transformation": {  "func": "DIRECT",  "params": {   "field": "nr_rip" }}}
+            {"id": "39800", "transformation":{
+                    "func": "IF",
+                    "params": {
+                        "field": "98800", 
+                        "cond": {
+                            "operator": "<>",
+                            "value": 0,
+                            "result": 2,
+                            "else": 1
+                        }
+                    }
+                }
+            }
         ]
     }
 ]

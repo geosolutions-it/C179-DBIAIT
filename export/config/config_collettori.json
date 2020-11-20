@@ -72,7 +72,16 @@
             { "id": "68100", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } } },
             { "id": "68200", "transformation": { "func": "DIRECT", "params": { "field": "denom" } } },
             { "id": "68500", "transformation": { "func": "DIRECT", "params": { "field": "vol_idraulici" } } },
-            { "id": "68600", "transformation": { "func": "DIRECT", "params": { "field": "sn_scar_sup" } } },
+            { "id": "68600", "transformation": { "func": "DIRECT", "params": { "field": "sn_scar_sup" } }, "validations": [
+                {
+                    "funct": "IF",
+                    "params": {
+                        "102000": "=1",
+                        "68600": "=0",
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Valore diverso da 0"
+                }
+            ]},
             { "id": "68700", "transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena" } } },
             { "id": "68900", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" } } },
             { "id": "69300", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } } },
