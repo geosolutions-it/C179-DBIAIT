@@ -1,0 +1,129 @@
+[
+    {
+        "sheet": "Accumuli",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    { "name": "acq_accumulo.codice_ato", "alias": "codice_ato" },
+                    { "name": "acq_accumulo.denom", "alias": "denom"},
+                    { "name": "acq_accumulo.quota", "alias": "quota"},
+                    { "name": "acq_accumulo.anno_costr", "alias": "anno_costr"},
+                    { "name": "acq_accumulo.anno_ristr", "alias": "anno_ristr"},
+                    { "name": "acq_accumulo.d_stato_cons", "alias": "d_stato_cons"},
+                    { "name": "acq_accumulo.d_ubicazione", "alias": "d_ubicazione"},
+                    { "name": "acq_accumulo.d_materiale", "alias": "d_materiale"},
+                    { "name": "acq_accumulo.volume", "alias": "volume"},
+                    { "name": "acq_accumulo.quota_fondo", "alias": "quota_fondo"},
+                    { "name": "acq_accumulo.d_stato", "alias": "d_stato"},
+                    { "name": "acq_accumulo.a_anno_costr", "alias": "a_anno_costr"},
+                    { "name": "acq_accumulo.a_anno_ristr", "alias": "a_anno_ristr"},
+                    { "name": "acq_accumulo.a_volume", "alias": "a_volume"},
+                    { "name": "acq_accumulo.data_agg", "alias": "data_agg"},
+                    { "name":"acq_accumulo.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                    { "name":"acq_accumulo.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                    { "name": "acq_auth_accum.d_telecont", "alias": "d_telecont"},
+                    { "name": "acq_auth_accum.sn_strum_mis_liv", "alias": "sn_strum_mis_liv"},
+                    { "name": "acq_auth_accum.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
+                    { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
+                    { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
+                    { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
+                ],
+                "table": {
+                    "name": "acq_auth_accum"
+                },
+                "join": [
+                    {
+                        "type": "inner",
+                        "table": {
+                            "name": "acq_accumulo"
+                        },
+                        "on": [
+                            "acq_auth_accum.id_potabiliz",
+                            "acq_accumulo.idgis"
+                        ],
+                        "cond": "="
+                    }
+                ],
+                "filter": "WHERE d_gestore = 'PUBLIACQUA' AND (d_ambito ='ATO3' or d_ambito is Null) and (d_stato NOT IN ('IPR','IAC'))"
+            },
+            {
+                "fields": [
+                    { "name": "a_acq_accumulo.codice_ato", "alias": "codice_ato" },
+                    { "name": "a_acq_accumulo.denom", "alias": "denom"},
+                    { "name": "a_acq_accumulo.quota", "alias": "quota"},
+                    { "name": "a_acq_accumulo.anno_costr", "alias": "anno_costr"},
+                    { "name": "a_acq_accumulo.anno_ristr", "alias": "anno_ristr"},
+                    { "name": "a_acq_accumulo.d_stato_cons", "alias": "d_stato_cons"},
+                    { "name": "a_acq_accumulo.d_ubicazione", "alias": "d_ubicazione"},
+                    { "name": "a_acq_accumulo.d_materiale", "alias": "d_materiale"},
+                    { "name": "a_acq_accumulo.volume", "alias": "volume"},
+                    { "name": "a_acq_accumulo.quota_fondo", "alias": "quota_fondo"},
+                    { "name": "a_acq_accumulo.d_stato", "alias": "d_stato"},
+                    { "name": "a_acq_accumulo.a_anno_costr", "alias": "a_anno_costr"},
+                    { "name": "a_acq_accumulo.a_anno_ristr", "alias": "a_anno_ristr"},
+                    { "name": "a_acq_accumulo.a_volume", "alias": "a_volume"},
+                    { "name": "a_acq_accumulo.data_agg", "alias": "data_agg"},
+                    { "name": "a_acq_accumulo.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                    { "name": "a_acq_accumulo.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                    { "name": "acq_auth_accum.d_telecont", "alias": "d_telecont"},
+                    { "name": "acq_auth_accum.sn_strum_mis_liv", "alias": "sn_strum_mis_liv"},
+                    { "name": "acq_auth_accum.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
+                    { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
+                    { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
+                    { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},],
+                "table": {
+                    "name": "acq_auth_accum"
+                },
+                "join": [
+                    {
+                        "type": "inner",
+                        "table": {
+                            "name": "a_acq_accumulo"
+                        },
+                        "on": [
+                            "acq_auth_accum.id_potabiliz",
+                            "a_acq_accumulo.idgis"
+                        ],
+                        "cond": "="
+                    }
+                ],
+                "filter": "WHERE d_gestore = 'PUBLIACQUA' AND (d_ambito ='ATO3' or d_ambito is Null) and (d_stato NOT IN ('IPR','IAC'))"
+            }
+        ],
+        "columns": [
+            {"id": "43500","trangit checkout mastersformation": {"func": "EMPTY", "params": null}},
+
+            {"id": "43700","transformation": {"func": "DIRECT", "params": {"field": "codice_ato"}}},
+            {"id": "43800","transformation": {"func": "DIRECT", "params": {"field": "denom"}}},
+            {"id": "44500","transformation": {"func": "DIRECT", "params": {"field": "anno_costr"}}},
+            {"id": "44600","transformation": {"func": "DIRECT", "params": {"field": "anno_ristr"}}},
+            {"id": "45000","transformation": {"func": "DIRECT", "params": {"field": "volume"}}},
+            {"id": "44200","transformation": {"func": "DIRECT", "params": {"field": "quota"}}},
+            {"id": "45100","transformation": {"func": "DIRECT", "params": {"field": "quota_fondo"}}},
+            {"id": "45300","transformation": {"func": "DIRECT", "params": {"field": "sn_strum_mis_liv"}}},
+            {"id": "45400","transformation": {"func": "DIRECT", "params": {"field": "sn_strum_mis_port"}}},
+            {"id": "45600","transformation": {"func": "DIRECT", "params": {"field": "anno_instal_clor"}}},
+            {"id": "45700","transformation": {"func": "DIRECT", "params": {"field": "anno_ristr_clor"}}},
+            {"id": "46200","transformation": {"func": "DIRECT", "params": {"field": "data_agg"}}}
+
+
+            {"id": "44700","transformation": {"func": "DOMAIN", "params": {"field": "d_stato_cons", "domain_name": "D_STATO_CONS"}}},
+            {"id": "44800","transformation": {"func": "DOMAIN", "params": {"field": "d_ubicazione", "domain_name": "D_UBICAZ_OPERA"}}},
+            {"id": "44900","transformation": {"func": "DOMAIN", "params": {"field": "d_materiale", "domain_name": "D_MATERIALE"}}},
+            {"id": "45200","transformation": {"func": "DOMAIN", "params": {"field": "d_telecont", "domain_name": "D_TELECONT"}}},
+            {"id": "45500","transformation": {"func": "DOMAIN", "params": {"field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
+            {"id": "45800","transformation": {"func": "DOMAIN", "params": {"field": "d_stato", "domain_name": "D_STATO"}}},
+            {"id": "45900","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_costr", "domain_name": "D_T_RILIEVO"}}},
+            {"id": "46000","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_ristr", "domain_name": "D_T_RILIEVO"}}},
+            {"id": "46100","transformation": {"func": "DOMAIN", "params": {"field": "a_volume", "domain_name": "D_T_RILIEVO"}}},
+
+
+            {"id": "43900","transformation": {"func": "GB_COORD", "params": {"field": "transformed_x_geom"}}},
+            {"id": "44000","transformation": {"func": "GB_COORD", "params": {"field": "transformed_y_geom"}}},
+
+
+            {"id": "44100","transformation": {"func": "CONST", "params": {"value": "3003"}}},
+        ]
+    }
+]
