@@ -1,0 +1,323 @@
+[
+    {
+        "sheet": "Scaricatori",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    {
+                        "name": "fgn_sfioro.codice_ato",
+                        "alias": "codice_ato"
+                    },
+                    {
+                        "name": "fgn_sfioro.denom",
+                        "alias": "denom"
+                    },
+                    {
+                        "name": "fgn_auth_sfioro.quota_terr_man",
+                        "alias": "quota_terr_man"
+                    },
+                    {
+                        "name": "fgn_sfioro.d_tipo_scolm",
+                        "alias": "d_tipo_scolm"
+                    },
+                    {
+                        "name": "fgn_sfioro.anno_costr",
+                        "alias": "anno_costr"
+                    },
+                    {
+                        "name": "fgn_sfioro.anno_ristr",
+                        "alias": "anno_ristr"
+                    },
+                    {
+                        "name": "fgn_sfioro.d_materiale",
+                        "alias": "d_materiale"
+                    },
+                    {
+                        "name": "fgn_sfioro.n_ae",
+                        "alias": "n_ae"
+                    },
+                    {
+                        "name": "fgn_auth_sfioro.larg_uti_poz_scol",
+                        "alias": "larg_uti_poz_scol"
+                    },
+                    {
+                        "name": "fgn_auth_sfioro.lung_uti_poz_scol",
+                        "alias": "lung_uti_poz_scol"
+                    },
+                    {
+                        "name": "fgn_sfioro.rapporto_diluiz",
+                        "alias": "rapporto_diluiz"
+                    },
+                    {
+                        "name": "fgn_auth_sfioro.sn_strum_mis_port",
+                        "alias": "sn_strum_mis_port"
+                    },
+                    {
+                        "name": "fgn_auth_sfioro.tipo_recapito",
+                        "alias": "tipo_recapito"
+                    },
+                    {
+                        "name": "fgn_auth_sfioro.bacino_recet",
+                        "alias": "bacino_recet"
+                    },
+                    {
+                        "name": "fgn_sfioro.d_stato_cons",
+                        "alias": "d_stato_cons"
+                    },
+                    {
+                        "name": "fgn_auth_sfioro.d_telecont",
+                        "alias": "d_telecont"
+                    },
+                    {
+                        "name": "fgn_sfioro.d_stato",
+                        "alias": "d_stato"
+                    },
+                    {
+                        "name": "fgn_sfioro.a_anno_costr",
+                        "alias": "a_anno_costr"
+                    },
+                    {
+                        "name": "fgn_sfioro.a_anno_ristr",
+                        "alias": "a_anno_ristr"
+                    },
+                    {
+                        "name": "fgn_sfioro.data_agg",
+                        "alias": "data_agg"
+                    },
+                    {
+                        "name": "fgn_sfioro.d_classif",
+                        "alias": "d_classif"
+                    }
+                ],
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            },
+            {
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            }
+        ],
+        "columns": [
+            {
+                "id": "82800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "codice_ato"
+                    }
+                }
+            },
+            {
+                "id": "82900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "denom"
+                    }
+                }
+            },
+            {
+                "id": "83300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "quota_terr_man"
+                    }
+                }
+            },
+            {
+                "id": "83600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_tipo_scolm"
+                    }
+                }
+            },
+            {
+                "id": "83700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_costr"
+                    }
+                }
+            },
+            {
+                "id": "83800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_ristr"
+                    }
+                }
+            },
+            {
+                "id": "83900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_materiale"
+                    }
+                }
+            },
+            {
+                "id": "84000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "n_ae"
+                    }
+                }
+            },
+            {
+                "id": "84100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "larg_uti_poz_scol"
+                    }
+                }
+            },
+            {
+                "id": "84200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "lung_uti_poz_scol"
+                    }
+                }
+            },
+            {
+                "id": "84300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "rapporto_diluiz"
+                    }
+                }
+            },
+            {
+                "id": "84400",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_strum_mis_port"
+                    }
+                }
+            },
+            {
+                "id": "84500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "tipo_recapito"
+                    }
+                }
+            },
+            {
+                "id": "84600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "bacino_recet"
+                    }
+                }
+            },
+            {
+                "id": "84700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato_cons"
+                    }
+                }
+            },
+            {
+                "id": "84800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_telecont"
+                    }
+                }
+            },
+            {
+                "id": "84900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato"
+                    }
+                }
+            },
+            {
+                "id": "85000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_anno_costr"
+                    }
+                }
+            },
+            {
+                "id": "85100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_anno_ristr"
+                    }
+                }
+            },
+            {
+                "id": "85300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "data_agg"
+                    }
+                }
+            },
+            {
+                "id": "102500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_classif"
+                    }
+                }
+            }
+        ]
+    }
+]
