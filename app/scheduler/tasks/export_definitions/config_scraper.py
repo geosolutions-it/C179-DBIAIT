@@ -4,6 +4,7 @@ import schema
 import logging
 
 from enum import Enum
+from pathlib import Path
 from typing import List, Dict
 from pypika import Query, Table, Field
 
@@ -38,77 +39,75 @@ def field_name_validator(field_name: str) -> bool:
 
 
 export_config_schema = schema.Schema(
-    [
-        {
-            "sheet": schema.And(str, len),
-            "skip": bool,
-            schema.Optional("pre_process"): str,
-            "sources": [
-                schema.Or(
-                    {
-                        "raw": schema.And(str, len),
-                    },
-                    {
-                        "table": {
-                            "name": schema.And(str, len),
-                            schema.Optional("alias"): schema.And(str, len),
-                        },
-                        "fields": [
-                            {
-                                "name": schema.And(str, field_name_validator),
-                                schema.Optional("alias"): schema.And(str, len),
-                                schema.Optional("function"): schema.And(
-                                    str, lambda f: f.upper() in SUPPORTED_SQL_FUNCTIONS
-                                ),
-                            }
-                        ],
-                        schema.Optional("join"): [
-                            {
-                                "type": schema.And(
-                                    str, lambda t: t.upper() in JOIN_TYPES
-                                ),
-                                "table": {
-                                    "name": schema.And(str, len),
-                                    schema.Optional("alias"): schema.And(str, len),
-                                },
-                                "on": schema.And(
-                                    [schema.And(str, field_name_validator)],
-                                    lambda l: len(l) == 2,
-                                ),
-                                "cond": schema.And(
-                                    str,
-                                    lambda v: v in COMPARISON_OPERATORS_MAPPING.keys(),
-                                ),
-                            }
-                        ],
-                        schema.Optional("group_by"): [str],
-                        schema.Optional("filter"): schema.And(str, len),
-                        schema.Optional("having"): schema.And(str, len),
-                    },
-                )
-            ],
-            "columns": [
+    {
+        "sheet": schema.And(str, len),
+        "skip": bool,
+        schema.Optional("pre_process"): str,
+        "sources": [
+            schema.Or(
                 {
-                    "id": schema.And(schema.Or(str, int), lambda v: len(str(v)) > 0),
-                    "transformation": {
-                        "func": schema.And(
-                            str, lambda v: v.upper() in SUPPORTED_TRANSFORMATIONS
-                        ),
-                        schema.Optional("params"): {str: object},
+                    "raw": schema.And(str, len),
+                },
+                {
+                    "table": {
+                        "name": schema.And(str, len),
+                        schema.Optional("alias"): schema.And(str, len),
                     },
-                    schema.Optional("validations"): [
+                    "fields": [
                         {
-                            "func": schema.And(
-                                str, lambda v: v.upper() in SUPPORTED_VALIDATIONS
+                            "name": schema.And(str, field_name_validator),
+                            schema.Optional("alias"): schema.And(str, len),
+                            schema.Optional("function"): schema.And(
+                                str, lambda f: f.upper() in SUPPORTED_SQL_FUNCTIONS
                             ),
-                            schema.Optional("params"): {str: object},
-                            schema.Optional("warning"): str,
                         }
                     ],
-                }
-            ],
-        },
-    ]
+                    schema.Optional("join"): [
+                        {
+                            "type": schema.And(
+                                str, lambda t: t.upper() in JOIN_TYPES
+                            ),
+                            "table": {
+                                "name": schema.And(str, len),
+                                schema.Optional("alias"): schema.And(str, len),
+                            },
+                            "on": schema.And(
+                                [schema.And(str, field_name_validator)],
+                                lambda l: len(l) == 2,
+                            ),
+                            "cond": schema.And(
+                                str,
+                                lambda v: v in COMPARISON_OPERATORS_MAPPING.keys(),
+                            ),
+                        }
+                    ],
+                    schema.Optional("group_by"): [str],
+                    schema.Optional("filter"): schema.And(str, len),
+                    schema.Optional("having"): schema.And(str, len),
+                },
+            )
+        ],
+        "columns": [
+            {
+                "id": schema.And(schema.Or(str, int), lambda v: len(str(v)) > 0),
+                "transformation": {
+                    "func": schema.And(
+                        str, lambda v: v.upper() in SUPPORTED_TRANSFORMATIONS
+                    ),
+                    schema.Optional("params"): {str: object},
+                },
+                schema.Optional("validations"): [
+                    {
+                        "func": schema.And(
+                            str, lambda v: v.upper() in SUPPORTED_VALIDATIONS
+                        ),
+                        schema.Optional("params"): {str: object},
+                        schema.Optional("warning"): str,
+                    }
+                ],
+            }
+        ],
+    }
 )
 
 
@@ -119,11 +118,33 @@ class ExportConfig:
         with open(settings.EXPORT_CONF_FILE, "r") as ecf:
             config = json.load(ecf)
 
-        # validate export configuration schema
-        export_config_schema.validate(config)
+        sheets_config_files = config.get('xls_sheet_configs', None)
+
+        if sheets_config_files is None:
+            raise ExportConfigError('Export configuration file for export does not define "xls_sheet_configs" key.')
 
         # parse export configuration
-        for sheet in config:
+        for sheet_config_file in sheets_config_files:
+
+            sheet_config_path = Path(sheet_config_file)
+
+            if not sheet_config_path.is_absolute():
+                sheet_config_path = Path(Path(settings.EXPORT_CONF_FILE).parent, sheet_config_path)
+
+            if not sheet_config_path.exists():
+                raise ExportConfigError(f'Sheet configuration file "{sheet_config_path}" does not exist.')
+
+            try:
+                with open(sheet_config_path, 'r') as scp:
+                    sheet = json.load(scp)
+            except Exception as e:
+                raise ExportConfigError(
+                    f'Error occurred while parsing sheet config "{sheet_config_path}":\n'
+                    f'{type(e).__name__}: {e}'
+                )
+
+            # validate export configuration schema
+            export_config_schema.validate(sheet)
 
             if sheet['skip']:
                 continue
