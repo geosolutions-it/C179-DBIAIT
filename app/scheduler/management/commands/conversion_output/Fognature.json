@@ -1,0 +1,180 @@
+[
+    {
+        "sheet": "Fognature",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    {
+                        "name": "fgn_rete_racc.codice_ato",
+                        "alias": "codice_ato"
+                    },
+                    {
+                        "name": "fgn_rete_racc.denom",
+                        "alias": "denom"
+                    },
+                    {
+                        "name": "fgn_auth_rete_racc.n_scar_piena",
+                        "alias": "n_scar_piena"
+                    },
+                    {
+                        "name": "fgn_auth_rete_racc.episodi_allag",
+                        "alias": "episodi_allag"
+                    },
+                    {
+                        "name": "fgn_auth_rete_racc.sn_strum_mis_port",
+                        "alias": "sn_strum_mis_port"
+                    },
+                    {
+                        "name": "fgn_auth_rete_racc.d_telecont",
+                        "alias": "d_telecont"
+                    },
+                    {
+                        "name": "fgn_rete_racc.d_stato",
+                        "alias": "d_stato"
+                    },
+                    {
+                        "name": "fgn_rete_racc.data_agg",
+                        "alias": "data_agg"
+                    },
+                    {
+                        "name": "fgn_auth_rete_racc.nr_rip",
+                        "alias": "nr_rip"
+                    },
+                    {
+                        "name": "fgn_auth_rete_racc.nr_rip_allac",
+                        "alias": "nr_rip_allac"
+                    }
+                ],
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            },
+            {
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            }
+        ],
+        "columns": [
+            {
+                "id": "59500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "codice_ato"
+                    }
+                }
+            },
+            {
+                "id": "59600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "denom"
+                    }
+                }
+            },
+            {
+                "id": "60000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "n_scar_piena"
+                    }
+                }
+            },
+            {
+                "id": "60100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "episodi_allag"
+                    }
+                }
+            },
+            {
+                "id": "60300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_strum_mis_port"
+                    }
+                }
+            },
+            {
+                "id": "60400",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_telecont"
+                    }
+                }
+            },
+            {
+                "id": "60500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato"
+                    }
+                }
+            },
+            {
+                "id": "60900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "data_agg"
+                    }
+                }
+            },
+            {
+                "id": "101400",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "nr_rip"
+                    }
+                }
+            },
+            {
+                "id": "101600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "nr_rip_allac"
+                    }
+                }
+            }
+        ]
+    }
+]
