@@ -193,8 +193,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = [os.path.join(BASE_DIR, 'app', 'static_root')]
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app')]
+STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, "static_root"))
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
 AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://127.0.0.1:10389")
 
