@@ -17,21 +17,25 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        db_cursor, db_conn = self.__create_db_connection()
         file_available = os.listdir(options["folder_path"][0])
         for csv_file in file_available:
+            db_cursor, db_conn = self.__create_db_connection()
             try:
                 with open(f'{options["folder_path"][0]}\\{csv_file}') as f:
                     next(f)  # needed for skip the headers
-                    db_cursor.copy_from(file=f, table=f"dbiait_analysis.{csv_file.lower().replace('.csv', '')}", sep=";")
-                    db_conn.commit()
+                    table_name = f"dbiait_analysis.{csv_file.lower().replace('.csv', '')}"
+                    db_cursor.execute(f"TRUNCATE table {table_name};")
+                    db_cursor.copy_from(file=f, table=table_name, sep=";", null="")
+                    self.stdout.write(f"Import {table_name} DONE")
+
             except Exception as e:
-                self.stdout.write(f"Error during CSV upload for file {csv_file}, Log: {e}")
+                self.stdout.write(f"ERROR: during CSV upload for file {csv_file}, Log: {e}")
             finally:
+                db_conn.commit()
                 db_cursor.close()
                 db_conn.close()
 
-            self.stdout.write("File successfully loaded")
+        self.stdout.write("Import completed, please check the console for errors")
 
     @staticmethod
     def __create_db_connection():
