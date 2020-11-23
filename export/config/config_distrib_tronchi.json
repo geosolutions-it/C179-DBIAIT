@@ -1,0 +1,65 @@
+[
+    {
+        "sheet": "Distrib_tronchi",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    { "name": "distrib_tronchi.codice_ato", "alias": "codice_ato"},
+                    { "name": "distrib_tronchi.idgis", "alias": "idgis"},
+                    { "name": "distrib_tronchi.idgis_rete", "alias": "idgis_rete"},
+                    { "name": "distrib_tronchi.id_tipo_telecon", "alias": "id_tipo_telecon"},
+                    { "name": "distrib_tronchi.id_materiale", "alias": "id_materiale"},
+                    { "name": "distrib_tronchi.id_conservazione", "alias": "id_conservazione"},
+                    { "name": "distrib_tronchi.diametro", "alias": "diametro"},
+                    { "name": "distrib_tronchi.anno", "alias": "anno"},
+                    { "name": "distrib_tronchi.lunghezza", "alias": "lunghezza"},
+                    { "name": "distrib_tronchi.idx_materiale", "alias": "idx_materiale"},
+                    { "name": "distrib_tronchi.idx_diametro", "alias": "idx_diametro"},
+                    { "name": "distrib_tronchi.idx_anno", "alias": "idx_anno"},
+                    { "name": "distrib_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
+                    { "name": "distrib_tronchi.pressione", "alias": "pressione"},
+                    { "name": "distrib_tronchi.note", "alias": "note"},
+                    { "name": "distrib_tronchi.geom", "alias": "geom"}
+                ],
+                "table": {
+                    "name": "distrib_tronchi"
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            },
+            {
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            }
+        ],
+        "columns": []
+    }
+]
