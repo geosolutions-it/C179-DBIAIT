@@ -201,7 +201,27 @@
                 ],
                 "filter": "WHERE a_fgn_trattamento.d_gestore = 'PUBLIACQUA' AND a_fgn_trattamento.d_ambito IN ('ATO3', NULL) AND a_fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
             },
-
+            {
+                "fields": [
+                    { "name": "localita.denominazi", "alias": "denominazione" }
+                ],
+                "table": {
+                    "name": "fgn_trattamento"
+                },
+                "join": [
+                    {
+                        "type": "spatial",
+                        "table": {
+                            "name": "localita"
+                        },
+                        "on": [
+                            "fgn_trattamento.shape",
+                            "localita.shape"
+                        ],
+                        "cond": "="
+                    }
+                ]
+            }
         ],
         "columns": [
             {"id": "71600", "transformation": {"func": "EMPTY", "params": null }},
@@ -262,7 +282,7 @@
             {"id": "78900", "transformation": {"func": "DIRECT", "params": { "field": "sn_lagunaggio" }}},
             {"id": "80100", "transformation": {"func": "DIRECT", "params": { "field": "data_agg" }}},
             {"id": "102300", "transformation": {"func": "DIRECT", "params": { "field": "sn_strum_mis_port_in" }}},
-            {"id": "102400", "transformation": {"func": "DIRECT", "params": { "field": "sn_strum_mis_port_out" }}}
+            {"id": "102400", "transformation": {"func": "DIRECT", "params": { "field": "sn_strum_mis_port_out" }}},
 
             
             {"id": "72000", "transformation": {"func": "GB_COORD", "params": { "field": "transformed_x_geom"}}},
@@ -290,7 +310,7 @@
             {"id": "79600", "transformation": {"func": "DOMAIN", "params": { "field": "a_carico_civ_att", "domain_name": "D_AFFIDABILITA" }}},
             {"id": "79700", "transformation": {"func": "DOMAIN", "params": { "field": "a_conc_co2_ing", "domain_name": "D_AFFIDABILITA" }}},
             {"id": "79800", "transformation": {"func": "DOMAIN", "params": { "field": "a_conc_co2_usc", "domain_name": "D_AFFIDABILITA" }}},
-            {"id": "79900", "transformation": {"func": "DOMAIN", "params": { "field": "a_vol_att_tratt", "domain_name": "D_AFFIDABILITA" }}},
+            {"id": "79900", "transformation": {"func": "DOMAIN", "params": { "field": "a_vol_att_tratt", "domain_name": "D_AFFIDABILITA" }}}
 
         ]
     }

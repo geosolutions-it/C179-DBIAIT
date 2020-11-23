@@ -27,7 +27,7 @@
                     { "name": "acq_auth_accum.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
                     { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                     { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
-                    { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
+                    { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"}
                 ],
                 "table": {
                     "name": "acq_auth_accum"
@@ -71,7 +71,7 @@
                     { "name": "acq_auth_accum.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
                     { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                     { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
-                    { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},],
+                    { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"}],
                 "table": {
                     "name": "acq_auth_accum"
                 },
@@ -110,7 +110,7 @@
                         "cond": "="
                     }
                 ]
-            },
+            }
         ],
         "columns": [
             {"id": "43500","tranformation": {"func": "EMPTY", "params": null}},
@@ -187,13 +187,13 @@
                        "field": "anno_instal_clor",
                        "cond": [
                             {"case": "WHEN", "operator": "=", "value": "1", "result": "9800"},
-                            {"case": "WHEN", "operator": ">", "value": "REF_YEAR", "result": false},
+                            {"case": "WHEN", "operator": ">", "value": "REF_YEAR", "result": false}
                         ]
                     }
                 }
             ]},
             {"id": "45700","transformation": {"func": "DIRECT", "params": {"field": "anno_ristr_clor"}}},
-            {"id": "46200","transformation": {"func": "DIRECT", "params": {"field": "data_agg"}}}
+            {"id": "46200","transformation": {"func": "DIRECT", "params": {"field": "data_agg"}}},
             {"id": "43900","transformation": {"func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
             {"id": "44000","transformation": {"func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
 
@@ -218,7 +218,7 @@
                        "field": "a_anno_costr",
                        "cond": [
                             {"case": "WHEN", "operator": "=", "value": "9999", "result": "X"},
-                            {"case": "WHEN", "operator": ">", "value": "2002", "result": "A"},
+                            {"case": "WHEN", "operator": ">", "value": "2002", "result": "A"}
                         ]
                     }
                 }

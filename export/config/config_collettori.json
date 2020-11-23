@@ -64,7 +64,7 @@
                     }
                 ],
                 "filter": "WHERE a_fgn_collettore.d_gestore = 'PUBLIACQUA' AND a_fgn_collettore.d_ambito IN ('ATO3', NULL) AND a_fgn_collettore.d_stato NOT IN ('IPR','IAC')"
-            },
+            }
         ],
         "columns": [
             { "id": "67900", "transformation": { "func": "EMPTY", "params": null } },
@@ -77,7 +77,7 @@
                     "funct": "IF",
                     "params": {
                         "102000": "=1",
-                        "68600": "=0",
+                        "68600": "=0"
                     },
                     "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Valore diverso da 0"
                 }
@@ -92,8 +92,21 @@
             
             { "id": "69200", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_idra", "domain_name": "D_T_RILIEVO" } } },
 
-            { "id": "69100", "transformation": { "func": "CONST", "params": { "value": "B" } } }
+            { "id": "69100", "transformation": { "func": "CONST", "params": { "value": "B" } } },
 
+            {"id": "68400", "transformation":{
+                    "func": "IF",
+                    "params": {
+                        "field": "68400",
+                        "cond": {
+                            "operator": "=",
+                            "value": "mista",
+                            "result": "mista",
+                            "else": "nero"
+                        }
+                    }
+                }
+            }
         ]
     }
 ]

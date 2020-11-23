@@ -89,7 +89,6 @@
             { "id": "40300", "transformation": { "func": "DOMAIN",  "params": { "field": "d_stato", "domain_name": "D_STATO" } }},
             { "id": "40400", "transformation": { "func": "DOMAIN",  "params": { "field": "a_portata_media", "domain_name": "D_T_RILIEVO" } }},
 
-            
 
             {"id": "39800", "transformation":{
                     "func": "IF",

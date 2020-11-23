@@ -76,7 +76,7 @@
                     }
                 ],
                 "filter": "WHERE a_acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND a_acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND a_acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
-            },
+            }
         ],
         "columns": [
             { "id": "53300", "transformation": { "func": "EMPTY", "params": null }},
@@ -105,9 +105,9 @@
             { "id": "55700", "transformation": { "func": "CONST", "params": { "value": "A" }} },
             { "id": "99500", "transformation": { "func": "CONST", "params": { "value": "B" }} },
 
-            {"id":"83900", "transformation":
-                { 
-                    "func": "IF", 
+            {"id":"55200", "transformation":
+                {
+                    "func": "IF",
                     "params": {
                         "field": "99400",
                         "cond": {
@@ -118,7 +118,7 @@
                         }
                     }
                 }
-            },
+            }
         ]
     }
 ]
