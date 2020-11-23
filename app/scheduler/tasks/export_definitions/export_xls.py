@@ -125,7 +125,7 @@ class ExportXls:
             for column_index in range(1, len(excel_ws[self.SEED_FILE_ID_ROW]) + 1):
                 column_letter = cell.get_column_letter(column_index)
                 coord_id_mapping.update(
-                    {excel_ws[f"{column_letter}{self.SEED_FILE_ID_ROW}"].value: column_letter}
+                    {str(excel_ws[f"{column_letter}{self.SEED_FILE_ID_ROW}"].value).strip(): column_letter}
                 )
 
             # get the index of the first empty excel row
@@ -159,15 +159,24 @@ class ExportXls:
                 sheet_row = {}
 
                 for column in sheet["columns"]:
-                    transformed_value = column["transformer"].apply(
-                        row=raw_data_row, domains=all_domains
-                    )
+                    try:
+                        transformed_value = column["transformer"].apply(
+                            row=raw_data_row, domains=all_domains
+                        )
+                    except Exception as e:
+                        logger.error(
+                            f"Error occurred during transformation of column with "
+                            f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
+                            f"{type(e).__name__}: {e}.\n"
+                        )
+                        transformed_value = None
+
                     sheet_row.update({column["id"]: transformed_value})
 
                     for validator in column.get("validators", []):
                         if not validator["validator"].validate(transformed_value):
                             message = validator.get("warning", "")
-                            column_letter = coord_id_mapping.get(column["id"], None)
+                            column_letter = coord_id_mapping.get(str(column["id"]), None)
 
                             if message:
                                 message = (
@@ -184,14 +193,21 @@ class ExportXls:
 
                 # insert sheet_row into excel
                 for column_id, value in sheet_row.items():
-                    column_letter = coord_id_mapping.get(column_id)
+                    column_letter = coord_id_mapping.get(str(column_id))
                     if not column_letter:
                         logger.error(
                             f"No column with ID '{column_id}' found in '{sheet['sheet']}' sheet."
                         )
                         continue
 
-                    excel_ws[f"{column_letter}{first_empty_row}"] = value
+                    try:
+                        excel_ws[f"{column_letter}{first_empty_row}"] = value
+                    except Exception as e:
+                        logger.error(
+                            f"Error occurred during inserting value to the column with "
+                            f"ID '{column_id}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
+                            f"{type(e).__name__}: {e}.\n"
+                        )
 
                 first_empty_row += 1
 

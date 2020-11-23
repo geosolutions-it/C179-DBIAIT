@@ -244,8 +244,8 @@ IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'co
 IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
 
 # Directory in which generated exports are kept
-EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(FTP_FOLDER, "export"))
-EXPORT_CONF_FILE = os.getenv("EXPORT_CONF_FILE", os.path.join(EXPORT_FOLDER, 'config', "xls.json"))
+EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(BASE_DIR, "export"))
+EXPORT_CONF_FILE = os.getenv("EXPORT_CONF_FILE", os.path.join(EXPORT_FOLDER, 'config', "xls_config.json"))
 SHAPEFILE_EXPORT_CONFIG = os.getenv(
     u"SHAPEFILE_EXPORT_CONFIG", os.path.join(EXPORT_FOLDER, u"config", u"shp.json")
 )
