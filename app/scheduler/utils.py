@@ -9,6 +9,7 @@ def default_storage():
 class Schema:
     ANALYSIS = settings.DATABASE_SCHEMAS.get('analysis')
     FREEZE = settings.DATABASE_SCHEMAS.get('freeze')
+    SYSTEM = settings.DATABASE_SCHEMAS.get('system')
 
 
 class TaskType:
@@ -41,10 +42,10 @@ style_class_mapper = {
 }
 
 status_icon_mapper = {
-    TaskStatus.QUEUED: u"fas fa-circle text-warning",
-    TaskStatus.FAILED: u"fas fa-times-circle text-danger",
-    TaskStatus.RUNNING: u"fas fa-sync fa-spin text-primary",
-    TaskStatus.SUCCESS: u"fas fa-check-circle text-success"
+    TaskStatus.QUEUED: u"fas fa-circle text-warning icon-status",
+    TaskStatus.FAILED: u"fas fa-times-circle text-danger icon-status",
+    TaskStatus.RUNNING: u"fas fa-sync fa-spin text-primary icon-status",
+    TaskStatus.SUCCESS: u"fas fa-check-circle text-success icon-status"
 }
 
 

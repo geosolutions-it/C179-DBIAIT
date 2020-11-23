@@ -1,0 +1,180 @@
+[
+    {
+        "sheet": "Collettori",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    {
+                        "name": "fgn_collettore.codice_ato",
+                        "alias": "codice_ato"
+                    },
+                    {
+                        "name": "fgn_collettore.denom",
+                        "alias": "denom"
+                    },
+                    {
+                        "name": "fgn_auth_collet.vol_idraulici",
+                        "alias": "vol_idraulici"
+                    },
+                    {
+                        "name": "fgn_auth_collet.sn_scar_sup",
+                        "alias": "sn_scar_sup"
+                    },
+                    {
+                        "name": "fgn_auth_collet.n_scar_piena",
+                        "alias": "n_scar_piena"
+                    },
+                    {
+                        "name": "fgn_auth_collet.d_telecont",
+                        "alias": "d_telecont"
+                    },
+                    {
+                        "name": "fgn_auth_collet.sn_strum_mis_port",
+                        "alias": "sn_strum_mis_port"
+                    },
+                    {
+                        "name": "fgn_collettore.d_stato",
+                        "alias": "d_stato"
+                    },
+                    {
+                        "name": "fgn_auth_collet.a_vol_idra",
+                        "alias": "a_vol_idra"
+                    },
+                    {
+                        "name": "fgn_collettore.data_agg",
+                        "alias": "data_agg"
+                    }
+                ],
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            },
+            {
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            }
+        ],
+        "columns": [
+            {
+                "id": "68100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "codice_ato"
+                    }
+                }
+            },
+            {
+                "id": "68200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "denom"
+                    }
+                }
+            },
+            {
+                "id": "68500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "vol_idraulici"
+                    }
+                }
+            },
+            {
+                "id": "68600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_scar_sup"
+                    }
+                }
+            },
+            {
+                "id": "68700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "n_scar_piena"
+                    }
+                }
+            },
+            {
+                "id": "68800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_telecont"
+                    }
+                }
+            },
+            {
+                "id": "68900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_strum_mis_port"
+                    }
+                }
+            },
+            {
+                "id": "69000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato"
+                    }
+                }
+            },
+            {
+                "id": "69200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_vol_idra"
+                    }
+                }
+            },
+            {
+                "id": "69300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "data_agg"
+                    }
+                }
+            }
+        ]
+    }
+]

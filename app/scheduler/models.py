@@ -1,5 +1,6 @@
 import os
 import uuid
+import datetime
 from pathlib import Path
 from postgres_copy import CopyManager
 
@@ -9,13 +10,13 @@ from app.scheduler.utils import (
     status_icon_mapper,
     style_class_mapper,
 )
-from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import models
 
 
 class GeoPackage(models.Model):
-    name = models.CharField(max_length=50, blank=False)
+    name = models.CharField(max_length=50, blank=False, unique=True)
 
     def __str__(self):
         return self.name
@@ -68,7 +69,24 @@ class Task(models.Model):
             task_log = Path(self.logfile).read_text()
             if task_log == "(True,)\n":
                 return "Task completed successfully"
-            return task_log
+            return task_log.replace("\n", "<br/>").replace("(True,)", "SUCCESS").replace("(False,)", "FAILED")
+
+
+class ImportedLayer(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    import_start_timestamp = models.DateTimeField(default=datetime.datetime.now)
+    import_end_timestamp = models.DateTimeField(null=True)
+    layer_name = models.CharField(max_length=250, null=False)
+    status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
+
+    def to_dict(self):
+        return {
+            "task": str(self.task.uuid),
+            "import_start_timestamp": str(self.import_start_timestamp),
+            "import_end_timestamp": str(self.import_end_timestamp),
+            "layer_name": self.layer_name,
+            "status": self.status
+        }
 
 
 class AllDomains(models.Model):

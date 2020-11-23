@@ -2,11 +2,11 @@ from os import fstat, listdir, path
 from urllib import parse
 
 from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
-from app.scheduler.models import Task, TaskStatus
-from app.scheduler.serializers import ImportSerializer, ProcessSerializer
+from app.scheduler.models import Task, TaskStatus, ImportedLayer
+from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse
 from django.views import View
@@ -26,9 +26,10 @@ class Dashboard(LoginRequiredMixin, View):
 class Import(LoginRequiredMixin, ListView):
     template_name = u'import/active-import.html'
     queryset = Task.objects.filter(type='IMPORT', status__in=[
-                                   TaskStatus.RUNNING, TaskStatus.QUEUED])
+                                   TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
 
-    def get_geopackage_files(self):
+    @staticmethod
+    def get_geopackage_files():
         import_folder = settings.IMPORT_FOLDER
         filenames = listdir(import_folder)
         return [filename for filename in filenames if filename.endswith('.gpkg')]
@@ -44,15 +45,28 @@ class Import(LoginRequiredMixin, ListView):
 
 
 class GetImportStatus(generics.ListAPIView):
-    queryset = Task.objects.filter(type='IMPORT')
+    queryset = Task.objects.filter(type='IMPORT').order_by('-id')[:1]
     serializer_class = ImportSerializer
     permission_classes = [IsAuthenticated]
+
+
+class GetImportedLayer(generics.RetrieveAPIView):
+    serializer_class = ImportedLayerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        """
+        Return only the ImportLayer related to a specific uuid
+        """
+        task_id = request.query_params['task_id']
+        response = [layer.to_dict() for layer in ImportedLayer.objects.filter(task__uuid=task_id).order_by('-id')]
+        return JsonResponse(response, safe=False)
 
 
 class HistoricalImport(LoginRequiredMixin, ListView):
     template_name = u'import/historical-import.html'
     queryset = Task.objects.filter(type='IMPORT').exclude(
-        status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED])
+        status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
 
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name
@@ -68,18 +82,22 @@ class Configuration(LoginRequiredMixin, View):
         bread_crumbs = {
             'Configuration': reverse('configuration-view'),
         }
-        import_folder = settings.IMPORT_FOLDER
-        database_user = settings.DATABASES[u'default'][u'USER']
-        database_port = settings.DATABASES[u'default'][u'PORT']
-        database_host = settings.DATABASES[u'default'][u'HOST']
+        ftp_folder = settings.FTP_FOLDER
+        database_host = settings.DATABASES[u'system'][u'HOST']
+        database_port = settings.DATABASES[u'system'][u'PORT']
+        database_name = settings.DATABASES[u'system'][u'NAME']
+        database_user = settings.DATABASES[u'system'][u'USER']
+
         environment = u'SVILUPPO' if settings.DEBUG else u'PRODUZIONE'
         context = {
             u'bread_crumbs': bread_crumbs,
-            u'database_user': database_user,
             u'environment': environment,
             u'database_host': database_host,
-            u'nfs_folder': import_folder,
-            u'database_port': database_port
+            u'database_port': database_port,
+            u'database_name': database_name,
+            u'database_user': database_user,
+            u'ftp_folder': ftp_folder,
+            u'geopackages': Import.get_geopackage_files()
         }
         return render(request, 'configuration/base-configuration.html', context)
 

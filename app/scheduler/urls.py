@@ -2,7 +2,7 @@ from app.scheduler.views import (Configuration, Dashboard, ExportListView,
                                  ExportDownloadView, Freeze, GetImportStatus,
                                  GetProcessStatusListAPIView, HistoricalImport,
                                  Import, ProcessView, QueueImportView,
-                                 QueueProcessView)
+                                 QueueProcessView, GetImportedLayer)
 from django.urls import include, path
 
 urlpatterns = [
@@ -18,7 +18,9 @@ urlpatterns = [
              name=u'export-download-view'),
         path(u"api/", include([
             path("status", GetImportStatus.as_view(),
-                 name=u'get-import-status-api-view')
+                 name=u'get-import-status-api-view'),
+            path("status-single-task/", GetImportedLayer.as_view(),
+                 name=u'get-single-import-status-api-view')
         ])),
     ])),
     path(u"process/", include([

@@ -69,7 +69,7 @@ DRAMATIQ_BROKER = {
     ]
 }
 
-DRAMATIQ_TASKS_DATABASE = "default"
+DRAMATIQ_TASKS_DATABASE = "system"
 
 LOGIN_URL = 'auth/'
 
@@ -109,27 +109,52 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 # database schemas translation to actual schema names
 DATABASE_SCHEMAS = {
+    'system': 'dbiait_system',
     'analysis': 'dbiait_analysis',
     'freeze': 'dbiait_freeze',
 }
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DATABASE_NAME', 'dbiait'),
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path=public,{DATABASE_SCHEMAS["analysis"]}'
-        },
-        'USER': os.getenv('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
-        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
-        'PORT': os.getenv('DATABASE_PORT', 5432),
+            'options': f'-c search_path={DATABASE_SCHEMAS["system"]}'
+        }
+    },
+    'system': {
+        'OPTIONS': {
+            # extend searched schemas to enable all_domains table loading into analysis schema
+            'options': f'-c search_path={DATABASE_SCHEMAS["system"]}'
+        }
+    },
+    'analysis': {
+        'OPTIONS': {
+            # extend searched schemas to enable all_domains table loading into analysis schema
+            'options': f'-c search_path={DATABASE_SCHEMAS["analysis"]}'
+        }
+    },
+    'freeze': {
+        'OPTIONS': {
+            # extend searched schemas to enable all_domains table loading into analysis schema
+            'options': f'-c search_path={DATABASE_SCHEMAS["freeze"]}'
+        }
     }
 }
+for db_key in DATABASES:
+    DB = DATABASES[db_key]
+    DB['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
+    DB['NAME'] = os.getenv('DATABASE_NAME', 'dbiait')
+    DB['USER'] = os.getenv('DATABASE_USER', 'postgres')
+    DB['PASSWORD'] = os.getenv('DATABASE_PASSWORD', '')
+    DB['HOST'] = os.getenv('DATABASE_HOST', 'localhost')
+    DB['PORT'] = os.getenv('DATABASE_PORT', 5432)
+
+
+DATABASE_ROUTERS = ['app.scheduler.system_router.SystemRouter', 'app.scheduler.analysis_router.AnalysisRouter']
+
 
 # database from DATABASES used by IMPORT, PROCESSING, EXPORT and FREEZE tasks
-TASKS_DATABASE = 'default'
+TASKS_DATABASE = 'system'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -168,6 +193,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, "static_root"))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
 AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://127.0.0.1:10389")
@@ -209,19 +235,31 @@ AUTHENTICATION_BACKENDS = (
 # QGis installation path
 QGIS_PATH = os.getenv("QGIS_PATH")
 
-# Directory from which geopackage, import configuration and domains.csv files are imported
-IMPORT_FOLDER = os.getenv("IMPORT_FOLDER", os.path.join(BASE_DIR, "import"))
-IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'config', "import.json"))
-IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
-
 # Directory from which export files are selected
-NFS_FOLDER = os.getenv("NFS_FOLDER")
+FTP_FOLDER = os.getenv("FTP_FOLDER", BASE_DIR)
+
+# Directory from which geopackage, import configuration and domains.csv files are imported
+IMPORT_FOLDER = os.getenv("IMPORT_FOLDER", os.path.join(FTP_FOLDER, "import"))
+IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'config', "layers.json"))
+IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
 
 # Directory in which generated exports are kept
 EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(BASE_DIR, "export"))
 EXPORT_CONF_FILE = os.getenv("EXPORT_CONF_FILE", os.path.join(EXPORT_FOLDER, 'config', "xls_config.json"))
 SHAPEFILE_EXPORT_CONFIG = os.getenv(
-    u"SHAPEFILE_EXPORT_CONFIG", os.path.join(EXPORT_FOLDER, u"config", u"shapefile_config.json")
+    u"SHAPEFILE_EXPORT_CONFIG", os.path.join(EXPORT_FOLDER, u"config", u"shp.json")
 )
 TEMP_EXPORT_DIR = os.getenv(u"TEMP_EXPORT_DIR", os.path.join(EXPORT_FOLDER, u"tmp"))
 EXPORT_XLS_SEED_FILE = os.getenv("EXPORT_XLS_SEED_FILE", os.path.join(EXPORT_FOLDER, 'config', "NETSIC_SEED.xlsx"))
+
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
+    'django.contrib.auth.hashers.CryptPasswordHasher',
+)
+

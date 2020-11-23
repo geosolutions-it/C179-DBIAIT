@@ -159,7 +159,7 @@ BEGIN
 				FROM POP_RES_LOC
 				GROUP BY pro_com
 			) l
-			WHERE p.pro_com=l.pro_com
+			WHERE p.pro_com = l.pro_com
 			AND  p.pop_res - l.popres  <> 0
 		) d
 		WHERE l.pro_com = d.pro_com
@@ -196,7 +196,14 @@ BEGIN
 		codice_ato, 
 		id_localita_istat, 
 		--sum(popres), 
-		sum(perc)
+		CASE 
+			WHEN sum(perc)<0 THEN
+				0
+			WHEN sum(perc)>100 THEN
+				100
+			else
+				sum(perc)
+		END
 	FROM (
 		SELECT codice_ato, loc2011 as id_localita_istat, popres, 100*ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc 
 		FROM ACQ_RETE_DISTRIB r, LOCALITA l
@@ -238,7 +245,8 @@ BEGIN
 		SELECT t.pro_com, sum(t.ab_srv_loc) as ab_srv_com 
 		FROM(
 			SELECT 
-				locistat_2_procom(loc_serv.id_localita_istat) as pro_com, 
+				--locistat_2_procom(loc_serv.id_localita_istat) as pro_com,
+				loc_pop.pro_com,	
 				loc_serv.perc_popsrv*loc_pop.popres/100 as ab_srv_loc 
 			FROM 
 			DISTRIB_LOC_SERV loc_serv,

@@ -8,6 +8,7 @@
     <thead>
       <tr>
         <th>Processi</th>
+        <th>Avanzamento</th>
         <th>Stato</th>
         <th></th>
       </tr>
@@ -15,8 +16,28 @@
     <tbody id="import-status-table">
       <tr>
         <td colspan="3" class="text-center">
-          <small class="text-secondary">please wait..</small>
+          <small class="text-secondary">Attendere...</small>
         </td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="table table-sm">
+    <thead>
+      <tr>
+          <th>Layer</th>
+          <th>Inizio</th>
+          <th>Fine</th>
+          <th>Status</th>
+        </tr>
+    </thead>
+     <tbody id="test-import-table">
+      <tr>
+        <td class="text-center">
+          <small class="text-secondary">Attendere...</small>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -24,7 +45,17 @@
 <script>
   window.addEventListener("load", function () {
     ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table");
-    setInterval(function () { ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 10000);
+    setInterval(function () { ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 5000);
+  });
+</script>
+<script>
+  window.addEventListener("load", function () {
+    setInterval(function () {
+      var url = "{% url 'get-single-import-status-api-view' %}" + "?task_id=";
+      var taskId = $("#import-status-table #task_uuid").text();
+      ajax_call(url + taskId, "#test-import-table")
+      }, 5000
+    );
   });
 </script>
 {% else %}

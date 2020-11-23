@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
+<div class="container">
   <div class="row">
     <div class="col-xs-6 col-md-4">
       <table class="table">
@@ -12,7 +12,9 @@
               <i class="fas fa-cog"></i>
             </td>
             <td>
-              <a href="{% url 'process-view' %}?process_name={{ process_name | urlencode }}">{{ process_name }}</a>
+              <a href="{% url 'process-view' %}?process_name={{ process_name | urlencode }}"
+                 class="dbiait-strecthed-link">{{ process_name }}
+              </a>
             </td>
             <td>
               <form method="POST" action="{% url 'queue-process-view' %}">
@@ -29,14 +31,13 @@
       </table>
     </div>
     <div class="col-xs-12 col-md-8">
-      <table class="table">
+      <table class="table" id="processing-table">
         <thead>
           <tr>
             <th>Utente</th>
             <th>Data Inizio</th>
             <th>Data Fine</th>
             <th>Esito</th>
-            <th>Info</th>
           </tr>
         </thead>
         <tbody id="process-status-table">
@@ -45,17 +46,8 @@
             <td>{{ process_history.requesting_user }}</td>
             <td>{{ process_history.start_date|default_if_none:"--/--/----" }}</td>
             <td>{{ process_history.end_date|default_if_none:"--/--/----" }}</td>
-            <td class="text-lowercase">{{ process_history.status }}</td>
-            <td>
-              <i class="{{ process_history.status_icon }}"></i>
-            </td>
             <td class="text-lowercase">
-              <a href="#">
-                <span class="badge badge-light text-info">
-                  <i class="fas fa-info-circle"></i>
-                  {{ process_history.task.status }}
-                </span>
-              </a>
+              <a href="#"><i class="{{ process_history.status_icon }}"></i></a>
             </td>
           </tr>
           {% endfor %}
@@ -89,7 +81,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Error Log</h5>
+        <h5 class="modal-title">Log</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -115,5 +107,13 @@
     setInterval(function () { ajax_call("{% url 'get-process-status-api-view' %}?process_name={{ active_process | urlencode }}", "#process-status-table") }, 10000);
     $('#error-modal').modal('show');
   });
+  $(document).ready(function() {
+    $('#processing-table').DataTable( {
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
+        },
+        "order": [[ 1, "desc" ]]
+    } );
+} );
 </script>
 {% endblock %}

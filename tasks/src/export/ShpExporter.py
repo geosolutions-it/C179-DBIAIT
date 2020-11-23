@@ -12,6 +12,11 @@ class ShpExporter:
         if ShpExporter.qgis is None:
             ShpExporter.qgis = QgsApplication([], False)
             QgsApplication.initQgis()
+            import sys
+            #sys.path.append('C:\\OSGeo4W64\\apps\\qgis\\python\\plugins')
+            import processing
+            from processing.core.Processing import Processing
+
 
     def __init__(self, folder, year=None):
         self.folder = folder
@@ -61,5 +66,5 @@ class ShpExporter:
 
 
 if __name__ == "__main__":
-    exporter = ShpExporter("c:\\temp")
+    exporter = ShpExporter("c:\\temp\\aaa")
     exporter.execute()

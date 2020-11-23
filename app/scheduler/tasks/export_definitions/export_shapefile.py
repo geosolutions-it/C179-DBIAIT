@@ -6,7 +6,7 @@ from django.db import connection
 from app.scheduler.models import Task
 
 qgs = None
-database = settings.DATABASES["default"]
+database = settings.DATABASES["analysis"]
 
 
 class ShapeExporter:

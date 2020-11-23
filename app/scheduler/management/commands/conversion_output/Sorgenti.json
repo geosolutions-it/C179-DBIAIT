@@ -1,0 +1,505 @@
+[
+    {
+        "sheet": "Sorgenti",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    {
+                        "name": "acq_captazione.codice_ato",
+                        "alias": "codice_ato"
+                    },
+                    {
+                        "name": "acq_captazione.denom",
+                        "alias": "denom"
+                    },
+                    {
+                        "name": "acq_captazione.quota",
+                        "alias": "quota"
+                    },
+                    {
+                        "name": "acq_capt_conces.estremi_conces",
+                        "alias": "estremi_conces"
+                    },
+                    {
+                        "name": "acq_capt_conces.port_potab",
+                        "alias": "port_potab"
+                    },
+                    {
+                        "name": "acq_capt_conces.port_industr",
+                        "alias": "port_industr"
+                    },
+                    {
+                        "name": "acq_capt_conces.port_irrig",
+                        "alias": "port_irrig"
+                    },
+                    {
+                        "name": "acq_capt_conces.port_idroel",
+                        "alias": "port_idroel"
+                    },
+                    {
+                        "name": "acq_auth_capt.port_altro",
+                        "alias": "port_altro"
+                    },
+                    {
+                        "name": "acq_captazione.anno_costr",
+                        "alias": "anno_costr"
+                    },
+                    {
+                        "name": "acq_captazione.anno_ristr",
+                        "alias": "anno_ristr"
+                    },
+                    {
+                        "name": "acq_captazione.d_stato_cons",
+                        "alias": "d_stato_cons"
+                    },
+                    {
+                        "name": "acq_auth_capt.d_utilizzo",
+                        "alias": "d_utilizzo"
+                    },
+                    {
+                        "name": "acq_auth_capt.utilizzo_annuo",
+                        "alias": "utilizzo_annuo"
+                    },
+                    {
+                        "name": "acq_auth_capt.sn_cunic_presa",
+                        "alias": "sn_cunic_presa"
+                    },
+                    {
+                        "name": "acq_auth_capt.sn_vasca_capt",
+                        "alias": "sn_vasca_capt"
+                    },
+                    {
+                        "name": "acq_auth_capt.sn_vasca_mis",
+                        "alias": "sn_vasca_mis"
+                    },
+                    {
+                        "name": "acq_auth_capt.sn_vasca_car",
+                        "alias": "sn_vasca_car"
+                    },
+                    {
+                        "name": "acq_captazione.volume_medio_prel",
+                        "alias": "volume_medio_prel"
+                    },
+                    {
+                        "name": "acq_capt_conces.port_uti_max",
+                        "alias": "port_uti_max"
+                    },
+                    {
+                        "name": "acq_capt_conces.port_uti_min",
+                        "alias": "port_uti_min"
+                    },
+                    {
+                        "name": "acq_auth_capt.d_telecont",
+                        "alias": "d_telecont"
+                    },
+                    {
+                        "name": "acq_auth_capt.sn_strum_mis_port",
+                        "alias": "sn_strum_mis_port"
+                    },
+                    {
+                        "name": "acq_auth_capt.d_tipo_cloraz",
+                        "alias": "d_tipo_cloraz"
+                    },
+                    {
+                        "name": "acq_auth_capt.anno_instal_clor",
+                        "alias": "anno_instal_clor"
+                    },
+                    {
+                        "name": "acq_auth_capt.anno_ristr_clor",
+                        "alias": "anno_ristr_clor"
+                    },
+                    {
+                        "name": "acq_auth_capt.sn_epis_inq",
+                        "alias": "sn_epis_inq"
+                    },
+                    {
+                        "name": "acq_captazione.d_stato",
+                        "alias": "d_stato"
+                    },
+                    {
+                        "name": "acq_captazione.a_anno_costr",
+                        "alias": "a_anno_costr"
+                    },
+                    {
+                        "name": "acq_captazione.a_anno_ristr",
+                        "alias": "a_anno_ristr"
+                    },
+                    {
+                        "name": "acq_captazione.a_volume",
+                        "alias": "a_volume"
+                    },
+                    {
+                        "name": "acq_capt_conces.a_port_es",
+                        "alias": "a_port_es"
+                    },
+                    {
+                        "name": "acq_capt_conces.a_port_uti_max",
+                        "alias": "a_port_uti_max"
+                    },
+                    {
+                        "name": "acq_capt_conces.a_port_uti_min",
+                        "alias": "a_port_uti_min"
+                    },
+                    {
+                        "name": "acq_captazione.data_agg",
+                        "alias": "data_agg"
+                    }
+                ],
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            },
+            {
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            }
+        ],
+        "columns": [
+            {
+                "id": "23700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "codice_ato"
+                    }
+                }
+            },
+            {
+                "id": "23800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "denom"
+                    }
+                }
+            },
+            {
+                "id": "24200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "quota"
+                    }
+                }
+            },
+            {
+                "id": "24500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "estremi_conces"
+                    }
+                }
+            },
+            {
+                "id": "24600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "port_potab"
+                    }
+                }
+            },
+            {
+                "id": "24700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "port_industr"
+                    }
+                }
+            },
+            {
+                "id": "24800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "port_irrig"
+                    }
+                }
+            },
+            {
+                "id": "24900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "port_idroel"
+                    }
+                }
+            },
+            {
+                "id": "25000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "port_altro"
+                    }
+                }
+            },
+            {
+                "id": "25100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_costr"
+                    }
+                }
+            },
+            {
+                "id": "25200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_ristr"
+                    }
+                }
+            },
+            {
+                "id": "25300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato_cons"
+                    }
+                }
+            },
+            {
+                "id": "25400",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_utilizzo"
+                    }
+                }
+            },
+            {
+                "id": "25500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "utilizzo_annuo"
+                    }
+                }
+            },
+            {
+                "id": "25600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_cunic_presa"
+                    }
+                }
+            },
+            {
+                "id": "25700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_vasca_capt"
+                    }
+                }
+            },
+            {
+                "id": "25800",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_vasca_mis"
+                    }
+                }
+            },
+            {
+                "id": "25900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_vasca_car"
+                    }
+                }
+            },
+            {
+                "id": "26000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "volume_medio_prel"
+                    }
+                }
+            },
+            {
+                "id": "26300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "port_uti_max"
+                    }
+                }
+            },
+            {
+                "id": "26400",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "port_uti_min"
+                    }
+                }
+            },
+            {
+                "id": "26500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_telecont"
+                    }
+                }
+            },
+            {
+                "id": "26600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_strum_mis_port"
+                    }
+                }
+            },
+            {
+                "id": "27000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_tipo_cloraz"
+                    }
+                }
+            },
+            {
+                "id": "27100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_instal_clor"
+                    }
+                }
+            },
+            {
+                "id": "27200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "anno_ristr_clor"
+                    }
+                }
+            },
+            {
+                "id": "27300",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "sn_epis_inq"
+                    }
+                }
+            },
+            {
+                "id": "27400",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "d_stato"
+                    }
+                }
+            },
+            {
+                "id": "27500",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_anno_costr"
+                    }
+                }
+            },
+            {
+                "id": "27600",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_anno_ristr"
+                    }
+                }
+            },
+            {
+                "id": "27700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_volume"
+                    }
+                }
+            },
+            {
+                "id": "27900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_port_es"
+                    }
+                }
+            },
+            {
+                "id": "28000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_port_uti_max"
+                    }
+                }
+            },
+            {
+                "id": "28100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "a_port_uti_min"
+                    }
+                }
+            },
+            {
+                "id": "28200",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "data_agg"
+                    }
+                }
+            }
+        ]
+    }
+]

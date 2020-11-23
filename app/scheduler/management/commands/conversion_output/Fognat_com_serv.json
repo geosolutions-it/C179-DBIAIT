@@ -1,0 +1,102 @@
+[
+    {
+        "sheet": "Fognat_com_serv",
+        "skip": true,
+        "sources": [
+            {
+                "fields": [
+                    {
+                        "name": "fognat_com_serv.none",
+                        "alias": "none"
+                    },
+                    {
+                        "name": "fognat_com_serv.none",
+                        "alias": "none"
+                    },
+                    {
+                        "name": "fognat_com_serv.none",
+                        "alias": "none"
+                    },
+                    {
+                        "name": "fognat_com_serv.none",
+                        "alias": "none"
+                    }
+                ],
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            },
+            {
+                "table": {
+                    "name": ""
+                },
+                "join": [
+                    {
+                        "type": "",
+                        "table": {
+                            "name": ""
+                        },
+                        "on": [
+                            "",
+                            ""
+                        ],
+                        "cond": ""
+                    }
+                ],
+                "filter": ""
+            }
+        ],
+        "columns": [
+            {
+                "id": "62700",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "none"
+                    }
+                }
+            },
+            {
+                "id": "62900",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "none"
+                    }
+                }
+            },
+            {
+                "id": "63000",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "none"
+                    }
+                }
+            },
+            {
+                "id": "63100",
+                "transformation": {
+                    "func": "",
+                    "params": {
+                        "field": "none"
+                    }
+                }
+            }
+        ]
+    }
+]

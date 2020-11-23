@@ -24,4 +24,5 @@ class CsvImportDefinition(BaseImportDefinition):
                 "valore_netsic": "Valore NETSIC",
             },
         )
-        print(f"Processed {inserted_row_count} lines.")
+        print(f"CSV => ALL_DOMAINS: {settings.IMPORT_DOMAINS_FILE} ")
+        print(f"CSV => ALL_DOMAINS: Processed {inserted_row_count} lines.")
