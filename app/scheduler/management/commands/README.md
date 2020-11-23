@@ -24,6 +24,8 @@ t_pw = "password"  # database password
 ```
 #### Step 6
 Run the import processing with this command (note: you must be in the django environment)
+
+IMPORTANT: by default, the process is in WRITE/TRUNCATE
 ```python 
 command: 
 python manange.py import_csv_in_postgres "ABSOLUTE\Path\Of\The\Folder\Of\The\CSVs"
