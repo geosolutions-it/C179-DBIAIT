@@ -102,7 +102,7 @@ class ImportTask(BaseTask):
             total_feature_classes_number / self.max_tables_per_import_run
         )
 
-        qgs, processing, postgis = initQgis()
+        qgs, processing, GdalUtils, isWindows = initQgis()
 
         for step in range(import_steps_number):
 
@@ -116,7 +116,8 @@ class ImportTask(BaseTask):
                 limit=limit,
                 qgs=qgs,
                 processing=processing,
-                postgis=postgis,
+                GdalUtils=GdalUtils,
+                isWindows=isWindows
             )
             gpkg_import.run()
 
