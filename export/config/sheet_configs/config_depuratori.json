@@ -1,6 +1,6 @@
 {
     "sheet": "Depuratori",
-    "skip": true,
+    "skip": false,
     "sources": [
         {
             "fields": [

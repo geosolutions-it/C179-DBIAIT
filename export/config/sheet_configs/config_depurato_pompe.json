@@ -1,6 +1,6 @@
 {
     "sheet": "Depurato_pompe",
-    "skip": true,
+    "skip": false,
     "sources": [
         {
             "fields": [

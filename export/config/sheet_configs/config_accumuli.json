@@ -70,7 +70,8 @@
                 { "name": "acq_auth_accum.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
-                { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"}],
+                { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"}
+            ],
             "table": {
                 "name": "acq_auth_accum"
             },
@@ -81,7 +82,7 @@
                         "name": "a_acq_accumulo"
                     },
                     "on": [
-                        "acq_auth_accum.id_potabiliz",
+                        "acq_auth_accum.id_accumulo",
                         "a_acq_accumulo.idgis"
                     ],
                     "cond": "="

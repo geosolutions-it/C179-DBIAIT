@@ -1,6 +1,6 @@
 {
     "sheet": "Distribuzioni",
-    "skip": true,
+    "skip": false,
     "sources": [
         {
             "fields": [

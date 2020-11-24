@@ -1,6 +1,6 @@
 {
     "sheet": "Adduttrici",
-    "skip": true,
+    "skip": false,
     "sources": [
         {
             "fields": [

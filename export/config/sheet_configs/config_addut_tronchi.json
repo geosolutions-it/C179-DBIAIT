@@ -65,8 +65,8 @@
                     "cond": {
                         "operator": "<>",
                         "value": "",
-                        "result": 1,
-                        "else": 0
+                        "result": "1",
+                        "else":" 0"
                     }
                 }
             }},
@@ -78,7 +78,8 @@
                     "cond": {
                         "operator": "=",
                         "value": "",
-                        "result": 9999
+                        "result": 9999,
+                        "else": null
                     }
                 }
             }},

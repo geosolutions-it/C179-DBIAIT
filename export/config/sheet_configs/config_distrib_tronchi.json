@@ -1,6 +1,6 @@
 {
     "sheet": "Distrib_tronchi",
-    "skip": true,
+    "skip": false,
     "sources": [
         {
             "fields": [
@@ -64,7 +64,8 @@
                     "cond": {
                         "operator": "=",
                         "value": "",
-                        "result": 9999
+                        "result": 9999,
+                        "else": "data_esercizio"
                     }
                 }
             }},
