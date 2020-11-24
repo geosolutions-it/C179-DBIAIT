@@ -9,9 +9,9 @@ class AnalysisRouter:
     db_key = 'analysis'
 
     def _check_name(self, name):
-        if name.lower() == "all_domains":
-            return True
-        return False
+        if name.startswith("auth_") or name.startswith("django_") or name.startswith("scheduler_"):
+            return False
+        return True
 
     def db_for_read(self, model, **hints):
         """
