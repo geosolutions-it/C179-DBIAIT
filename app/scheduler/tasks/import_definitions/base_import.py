@@ -1,5 +1,6 @@
 # import QGis API
 import sys
+import os
 from qgis.core import *
 from qgis.analysis import QgsNativeAlgorithms
 
@@ -53,18 +54,29 @@ def initQgis():
 
     :returns: (qgs, processing, postgis)
     """
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
     QgsApplication.setPrefixPath(settings.QGIS_PATH, True)
-    qgs = QgsApplication([], True)
+    """
+    provider_registry = QgsProviderRegistry.instance()
+    res = True
+    if provider_registry.providerMetadata('postgres') is None:
+        metadata = QgsProviderMetadata("postgres", "postgres")
+        res = provider_registry.registerProvider(metadata)
+    print("QgsProviderMetadata(postgres), loaded => " + str(res))
+    """
+    qgs = QgsApplication([], False)
     qgs.initQgis()
 
-    sys.path.append('C:\\OSGeo4W64\\apps\\qgis\\python\\plugins')
+    #sys.path.append('C:\\OSGeo4W64\\apps\\qgis\\python\\plugins')
 
     import processing
     from processing.core.Processing import Processing
+    from processing.algs.gdal.GdalUtils import GdalUtils
+    from processing.tools.system import isWindows
 
     Processing.initialize()
     QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
     processing = processing
     postgis = None
 
-    return qgs, processing, postgis
+    return qgs, processing, GdalUtils, isWindows
