@@ -1,124 +1,121 @@
-[
-    {
-        "sheet": "Distribuzioni",
-        "skip": true,
-        "sources": [
-            {
-                "fields": [
-                    { "name": "acq_rete_distrib.codice_ato", "alias": "codice_ato"},
-                    { "name": "acq_rete_distrib.denom", "alias": "denom"},
-                    { "name": "acq_rete_distrib.vol_immesso", "alias": "vol_immesso"},
-                    { "name": "acq_rete_distrib.vol_imm_terzi", "alias": "vol_imm_terzi"},
-                    { "name": "acq_rete_distrib.vol_ceduto", "alias": "vol_ceduto"},
-                    { "name": "acq_rete_distrib.d_stato", "alias": "d_stato"},
-                    { "name": "acq_rete_distrib.a_vol_immesso", "alias": "a_vol_immesso"},
-                    { "name": "acq_rete_distrib.a_vol_imm_terzi", "alias": "a_vol_imm_terzi"},
-                    { "name": "acq_rete_distrib.a_vol_ceduto", "alias": "a_vol_ceduto"},
-                    { "name": "acq_rete_distrib.data_agg", "alias": "data_agg"},
-                    { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili"},
-                    { "name": "acq_auth_rete_dist.a_ili", "alias": "a_ili"},
-                    { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
-                    { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
-                    { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
-                    { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"}
-                ],
-                "table": {
-                    "name": "acq_auth_rete_dist"
-                },
-                "join": [
-                    {
-                        "type": "inner",
-                        "table": {
-                            "name": "acq_rete_distrib"
-                        },
-                        "on": [
-                            "acq_auth_rete_dist.id_collettore",
-                            "acq_rete_distrib.idgis"
-                        ],
-                        "cond": "="
-                    }
-                ],
-                "filter": "WHERE acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
+{
+    "sheet": "Distribuzioni",
+    "skip": true,
+    "sources": [
+        {
+            "fields": [
+                { "name": "acq_rete_distrib.codice_ato", "alias": "codice_ato"},
+                { "name": "acq_rete_distrib.denom", "alias": "denom"},
+                { "name": "acq_rete_distrib.vol_immesso", "alias": "vol_immesso"},
+                { "name": "acq_rete_distrib.vol_imm_terzi", "alias": "vol_imm_terzi"},
+                { "name": "acq_rete_distrib.vol_ceduto", "alias": "vol_ceduto"},
+                { "name": "acq_rete_distrib.d_stato", "alias": "d_stato"},
+                { "name": "acq_rete_distrib.a_vol_immesso", "alias": "a_vol_immesso"},
+                { "name": "acq_rete_distrib.a_vol_imm_terzi", "alias": "a_vol_imm_terzi"},
+                { "name": "acq_rete_distrib.a_vol_ceduto", "alias": "a_vol_ceduto"},
+                { "name": "acq_rete_distrib.data_agg", "alias": "data_agg"},
+                { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili"},
+                { "name": "acq_auth_rete_dist.a_ili", "alias": "a_ili"},
+                { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
+                { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
+                { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
+                { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"}
+            ],
+            "table": {
+                "name": "acq_auth_rete_dist"
             },
-            {
-                "fields": [
-                    { "name": "a_acq_rete_distrib.codice_ato", "alias": "codice_ato"},
-                    { "name": "a_acq_rete_distrib.denom", "alias": "denom"},
-                    { "name": "a_acq_rete_distrib.vol_immesso", "alias": "vol_immesso"},
-                    { "name": "a_acq_rete_distrib.vol_imm_terzi", "alias": "vol_imm_terzi"},
-                    { "name": "a_acq_rete_distrib.vol_ceduto", "alias": "vol_ceduto"},
-                    { "name": "a_acq_rete_distrib.d_stato", "alias": "d_stato"},
-                    { "name": "a_acq_rete_distrib.a_vol_immesso", "alias": "a_vol_immesso"},
-                    { "name": "a_acq_rete_distrib.a_vol_imm_terzi", "alias": "a_vol_imm_terzi"},
-                    { "name": "a_acq_rete_distrib.a_vol_ceduto", "alias": "a_vol_ceduto"},
-                    { "name": "a_acq_rete_distrib.data_agg", "alias": "data_agg"},
-                    { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili"},
-                    { "name": "acq_auth_rete_dist.a_ili", "alias": "a_ili"},
-                    { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
-                    { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
-                    { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
-                    { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"}
-                ],
-                "table": {
-                    "name": "acq_auth_rete_dist"
-                },
-                "join": [
-                    {
-                        "type": "inner",
-                        "table": {
-                            "name": "a_acq_rete_distrib"
-                        },
-                        "on": [
-                            "acq_auth_rete_dist.id_collettore",
-                            "a_acq_rete_distrib.idgis"
-                        ],
-                        "cond": "="
-                    }
-                ],
-                "filter": "WHERE a_acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND a_acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND a_acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
-            }
-        ],
-        "columns": [
-            { "id": "53300", "transformation": { "func": "EMPTY", "params": null }},
-
-            { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } }},
-            { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom" } }},
-            { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_immesso" } }},
-            { "id": "54800", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm_terzi" } }},
-            { "id": "54900", "transformation": { "func": "DIRECT", "params": { "field": "vol_ceduto" } }},
-            { "id": "56000", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } }},
-            { "id": "99200", "transformation": { "func": "DIRECT", "params": { "field": "sn_ili" } }},
-            { "id": "99600", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_max" } }},
-            { "id": "100000", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_min" } }},
-
-
-            { "id": "55300", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } }},
-            { "id": "55500", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_immesso", "domain_name": "D_AFFIDABILITA" } }},
-            { "id": "55800", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_imm_terzi", "domain_name": "D_AFFIDABILITA" } }},
-            { "id": "55900", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_ceduto", "domain_name": "D_AFFIDABILITA" } }},
-            { "id": "99300", "transformation": { "func": "DOMAIN", "params": { "field": "a_ili", "domain_name": "D_AFFIDABILITA" } }},
-            { "id": "99700", "transformation": { "func": "DOMAIN", "params": { "field": "a_pres_es_max", "domain_name": "D_AFFIDABILITA" } }},
-            { "id": "100100", "transformation": { "func": "DOMAIN", "params": { "field": "a_pres_es_min", "domain_name": "D_AFFIDABILITA" } }},
-
-            { "id": "55400", "transformation": { "func": "CONST", "params": { "value": "B" }} },
-            { "id": "55600", "transformation": { "func": "CONST", "params": { "value": "C" }} },
-            { "id": "55700", "transformation": { "func": "CONST", "params": { "value": "A" }} },
-            { "id": "99500", "transformation": { "func": "CONST", "params": { "value": "B" }} },
-
-            {"id":"55200", "transformation":
+            "join": [
                 {
-                    "func": "IF",
-                    "params": {
-                        "field": "99400",
-                        "cond": {
-                            "operator": "<>",
-                            "value": 0,
-                            "result": 2,
-                            "else": 1
-                        }
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_rete_distrib"
+                    },
+                    "on": [
+                        "acq_auth_rete_dist.id_collettore",
+                        "acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
+        },
+        {
+            "fields": [
+                { "name": "a_acq_rete_distrib.codice_ato", "alias": "codice_ato"},
+                { "name": "a_acq_rete_distrib.denom", "alias": "denom"},
+                { "name": "a_acq_rete_distrib.vol_immesso", "alias": "vol_immesso"},
+                { "name": "a_acq_rete_distrib.vol_imm_terzi", "alias": "vol_imm_terzi"},
+                { "name": "a_acq_rete_distrib.vol_ceduto", "alias": "vol_ceduto"},
+                { "name": "a_acq_rete_distrib.d_stato", "alias": "d_stato"},
+                { "name": "a_acq_rete_distrib.a_vol_immesso", "alias": "a_vol_immesso"},
+                { "name": "a_acq_rete_distrib.a_vol_imm_terzi", "alias": "a_vol_imm_terzi"},
+                { "name": "a_acq_rete_distrib.a_vol_ceduto", "alias": "a_vol_ceduto"},
+                { "name": "a_acq_rete_distrib.data_agg", "alias": "data_agg"},
+                { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili"},
+                { "name": "acq_auth_rete_dist.a_ili", "alias": "a_ili"},
+                { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
+                { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
+                { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
+                { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"}
+            ],
+            "table": {
+                "name": "acq_auth_rete_dist"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "a_acq_rete_distrib"
+                    },
+                    "on": [
+                        "acq_auth_rete_dist.id_collettore",
+                        "a_acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE a_acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND a_acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND a_acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
+        }
+    ],
+    "columns": [
+        { "id": "53300", "transformation": { "func": "EMPTY", "params": {"field":  null} }},
+
+        { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } }},
+        { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom" } }},
+        { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_immesso" } }},
+        { "id": "54800", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm_terzi" } }},
+        { "id": "54900", "transformation": { "func": "DIRECT", "params": { "field": "vol_ceduto" } }},
+        { "id": "56000", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } }},
+        { "id": "99200", "transformation": { "func": "DIRECT", "params": { "field": "sn_ili" } }},
+        { "id": "99600", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_max" } }},
+        { "id": "100000", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_min" } }},
+
+        { "id": "55300", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } }},
+        { "id": "55500", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_immesso", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "55800", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_imm_terzi", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "55900", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_ceduto", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "99300", "transformation": { "func": "DOMAIN", "params": { "field": "a_ili", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "99700", "transformation": { "func": "DOMAIN", "params": { "field": "a_pres_es_max", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "100100", "transformation": { "func": "DOMAIN", "params": { "field": "a_pres_es_min", "domain_name": "D_AFFIDABILITA" } }},
+
+        { "id": "55400", "transformation": { "func": "CONST", "params": { "value": "B" }} },
+        { "id": "55600", "transformation": { "func": "CONST", "params": { "value": "C" }} },
+        { "id": "55700", "transformation": { "func": "CONST", "params": { "value": "A" }} },
+        { "id": "99500", "transformation": { "func": "CONST", "params": { "value": "B" }} },
+
+        {"id":"55200", "transformation":
+            {
+                "func": "IF",
+                "params": {
+                    "field": "99400",
+                    "cond": {
+                        "operator": "<>",
+                        "value": 0,
+                        "result": 2,
+                        "else": 1
                     }
                 }
             }
-        ]
-    }
-]
+        }
+    ]
+}
