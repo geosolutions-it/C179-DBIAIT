@@ -1,6 +1,6 @@
 {
     "sheet": "Distribuzioni",
-    "skip": false,
+    "skip": true,
     "sources": [
         {
             "fields": [
@@ -31,13 +31,13 @@
                         "name": "acq_rete_distrib"
                     },
                     "on": [
-                        "acq_auth_rete_dist.id_collettore",
+                        "acq_auth_rete_dist.id_rete_distrib",
                         "acq_rete_distrib.idgis"
                     ],
                     "cond": "="
                 }
             ],
-            "filter": "WHERE acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
+            "filter": "WHERE acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND acq_rete_distrib.d_ambito IN ('AT3', NULL) AND acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
         },
         {
             "fields": [
@@ -68,7 +68,7 @@
                         "name": "a_acq_rete_distrib"
                     },
                     "on": [
-                        "acq_auth_rete_dist.id_collettore",
+                        "acq_auth_rete_dist.id_rete_distrib",
                         "a_acq_rete_distrib.idgis"
                     ],
                     "cond": "="

@@ -1,6 +1,6 @@
 {
     "sheet": "Accumuli",
-    "skip": false,
+    "skip": true,
     "sources": [
         {
             "fields": [
@@ -137,13 +137,11 @@
         {"id": "44800","transformation": {"func": "DOMAIN", "params": {"field": "d_ubicazione", "domain_name": "D_UBICAZ_OPERA"}}},
         {"id": "44900","transformation": {"func": "DOMAIN", "params": {"field": "d_materiale", "domain_name": "D_MATERIALE"}}},
         {"id": "45200","transformation": {"func": "DOMAIN", "params": {"field": "d_telecont", "domain_name": "D_TELECONT"}}},
-        {"id": "45500","transformation": {"func": "DOMAIN", "params": {"field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}, "validations": [
-
-        ]},
+        {"id": "45500","transformation": {"func": "DOMAIN", "params": {"field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
 
         {"id": "45800","transformation": {"func": "DOMAIN", "params": {"field": "d_stato", "domain_name": "D_STATO"}}},
         {"id": "45900","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_costr", "domain_name": "D_T_RILIEVO"}}},
-        {"id": "46000","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_ristr", "domain_name": "D_T_RILIEVO"}}},
+        {"id": "46000","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}},
         {"id": "46100","transformation": {"func": "DOMAIN", "params": {"field": "a_volume", "domain_name": "D_T_RILIEVO"}}}
     ]
 }

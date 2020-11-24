@@ -31,7 +31,7 @@
                     "cond": "="
                 }
             ],
-            "filter": "WHERE fgn_collettore.d_gestore = 'PUBLIACQUA' AND fgn_collettore.d_ambito IN ('ATO3', NULL) AND fgn_collettore.d_stato NOT IN ('IPR','IAC')"
+            "filter": "WHERE fgn_collettore.d_gestore = 'PUBLIACQUA' AND fgn_collettore.d_ambito IN ('AT3', NULL) AND fgn_collettore.d_stato NOT IN ('IPR','IAC')"
         },
         {
             "fields": [
@@ -62,7 +62,7 @@
                     "cond": "="
                 }
             ],
-            "filter": "WHERE a_fgn_collettore.d_gestore = 'PUBLIACQUA' AND a_fgn_collettore.d_ambito IN ('ATO3', NULL) AND a_fgn_collettore.d_stato NOT IN ('IPR','IAC')"
+            "filter": "WHERE a_fgn_collettore.d_gestore = 'PUBLIACQUA' AND a_fgn_collettore.d_ambito IN ('AT3', NULL) AND a_fgn_collettore.d_stato NOT IN ('IPR','IAC')"
         }
     ],
     "columns": [
