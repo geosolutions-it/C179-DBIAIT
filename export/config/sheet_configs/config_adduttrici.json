@@ -26,13 +26,13 @@
                         "name": "acq_adduttrice"
                     },
                     "on": [
-                        "acq_auth_adduttr.id_addutrice",
+                        "acq_auth_adduttr.id_adduttrice",
                         "acq_adduttrice.idgis"
                     ],
                     "cond": "="
                 }
             ],
-            "filter": "WHERE acq_adduttrice.d_gestore = 'PUBLIACQUA' AND acq_adduttrice.d_ambito IN ('ATO3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
+            "filter": "WHERE acq_adduttrice.d_gestore = 'PUBLIACQUA' AND acq_adduttrice.d_ambito IN ('AT3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
         },
       {
             "fields": [
@@ -58,13 +58,13 @@
                         "name": "a_acq_adduttrice"
                     },
                     "on": [
-                        "acq_auth_adduttr.id_addutrice",
+                        "acq_auth_adduttr.id_adduttrice",
                         "a_acq_adduttrice.idgis"
                     ],
                     "cond": "="
                 }
             ],
-            "filter": "WHERE a_acq_adduttrice.d_gestore = 'PUBLIACQUA' AND a_acq_adduttrice.d_ambito IN ('ATO3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
+            "filter": "WHERE a_acq_adduttrice.d_gestore = 'PUBLIACQUA' AND a_acq_adduttrice.d_ambito IN ('AT3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
         }
     ],
     "columns": [
