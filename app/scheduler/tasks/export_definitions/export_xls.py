@@ -7,13 +7,13 @@ from datetime import datetime
 from openpyxl.utils import cell
 
 from django.conf import settings
-from django.db import connection, ProgrammingError
+from django.db import connection, connections, ProgrammingError
 
 from .domains_parser import Domains
 from .config_scraper import ExportConfig
 
 from app.scheduler.models import Task
-from app.scheduler.utils import dictfetchall
+from app.scheduler.utils import dictfetchall, translate_schema_to_db_alias
 
 
 class ExportXls:
@@ -131,7 +131,7 @@ class ExportXls:
             # get the index of the first empty excel row
             first_empty_row = max(len(col) for col in excel_ws.iter_cols()) + 1
 
-            with connection.cursor() as cursor:
+            with connections[translate_schema_to_db_alias(self.orm_task.schema)].cursor() as cursor:
                 sql_sources = sheet["sql_sources"]
 
                 if not sql_sources:
