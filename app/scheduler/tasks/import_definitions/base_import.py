@@ -77,6 +77,5 @@ def initQgis():
     Processing.initialize()
     QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
     processing = processing
-    postgis = None
 
     return qgs, processing, GdalUtils, isWindows
