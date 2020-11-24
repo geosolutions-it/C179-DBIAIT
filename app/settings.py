@@ -118,25 +118,25 @@ DATABASES = {
     'default': {
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path={DATABASE_SCHEMAS["system"]}'
+            'options': f'-c search_path={DATABASE_SCHEMAS["system"]},public'
         }
     },
     'system': {
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path={DATABASE_SCHEMAS["system"]}'
+            'options': f'-c search_path={DATABASE_SCHEMAS["system"]},public'
         }
     },
     'analysis': {
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path={DATABASE_SCHEMAS["analysis"]}'
+            'options': f'-c search_path={DATABASE_SCHEMAS["analysis"]},public'
         }
     },
     'freeze': {
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path={DATABASE_SCHEMAS["freeze"]}'
+            'options': f'-c search_path={DATABASE_SCHEMAS["freeze"]},public'
         }
     }
 }

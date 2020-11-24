@@ -1,6 +1,8 @@
 import operator
 from django.conf import settings
 
+from .exceptions import SchedulingParametersError
+
 
 def default_storage():
     return {"args": [], "kwargs": {}}
@@ -58,3 +60,18 @@ def dictfetchall(cursor):
         dict(zip(columns, row))
         for row in cursor.fetchall()
     ]
+
+
+def translate_schema_to_db_alias(schema: str):
+    """
+    Function returning db_alias based on the selected schema. Used for managing database connections
+    in multiple schema environment.
+    """
+    db_aliases = [key for key, value in settings.DATABASE_SCHEMAS.items() if value == schema]
+
+    if len(db_aliases) != 1:
+        raise SchedulingParametersError(
+            f'Error while translating schema "{schema}" to db_alias from settings.DATABASE_SCHEMAS'
+        )
+
+    return db_aliases[0]
