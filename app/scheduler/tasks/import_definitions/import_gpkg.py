@@ -23,7 +23,8 @@ class GpkgImportDefinition(BaseImportDefinition):
         schema=Schema.ANALYSIS,
         qgs=None,
         processing=None,
-        postgis=None,
+        GdalUtils=None,
+        isWindows=None
     ):
         super().__init__(schema=schema)
 
@@ -34,7 +35,8 @@ class GpkgImportDefinition(BaseImportDefinition):
 
         self.qgs = qgs
         self.processing = processing
-        self.postgis = postgis
+        self.GdalUtils = GdalUtils
+        self.isWindows = isWindows
 
     @staticmethod
     def get_feature_classes():
@@ -94,6 +96,41 @@ class GpkgImportDefinition(BaseImportDefinition):
             return 8
         return None
 
+    def create_gdal_commands(self, layer_name, gtype):
+        ogr_exe = "ogr2ogr"
+        if self.isWindows():
+            ogr_exe += ".exe"
+
+        db_host = self.database_config["HOST"]
+        db_port = self.database_config["PORT"]
+        db_name = self.database_config["DATABASE"]
+        db_schema = self.database_config["SCHEMA"]
+        db_user = self.database_config["USERNAME"]
+        db_password = self.database_config["PASSWORD"]
+
+        options = '-progress '
+        options += '--config PG_USE_COPY YES '
+        options += '-f PostgreSQL PG:" dbname=\'%s\' host=%s port=%s user=\'%s\' password=\'%s\' active_schema=%s " ' \
+                   % (db_name, db_host, db_port, db_user, db_password, db_schema)
+        options += '-lco DIM=2 '
+        options += self.gpkg_path + ' ' + layer_name + ' '
+        options += '-overwrite '
+        options += '-lco GEOMETRY_NAME=geom '
+        options += '-nln ' + db_schema + '.' + layer_name + ' '
+        if gtype != 3:
+            options += '-nlt PROMOTE_TO_MULTI'
+        commands = [ogr_exe, options]
+        return commands
+
+    def execute_command(self, commands, feedback):
+        try:
+            self.GdalUtils.runGdal(commands, feedback)
+            print(self.GdalUtils.consoleOutput)
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+
+
     def import_into_postgis(self, name, cont, feedback):
         """
         Run the importintopostgis algorithm
@@ -114,6 +151,7 @@ class GpkgImportDefinition(BaseImportDefinition):
             )
             # Export in PostgreSQL
             gtype = self.get_gtype(vlayer)
+            """
             alg_params = {
                 'ADDFIELDS': False,
                 'APPEND': False,
@@ -146,6 +184,10 @@ class GpkgImportDefinition(BaseImportDefinition):
             }
             result = self.processing.run('gdal:importvectorintopostgisdatabaseavailableconnections', alg_params,
                                          context=self.context, feedback=feedback, is_child_algorithm=True)
+            """
+            commands = self.create_gdal_commands(name, gtype)
+            self.execute_command(commands, feedback)
+
         except Exception as e:
             print(e)
             traceback.print_exc()

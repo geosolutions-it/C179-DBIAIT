@@ -69,10 +69,11 @@ def initQgis():
 
     import processing
     from processing.core.Processing import Processing
+    from processing.algs.gdal.GdalUtils import GdalUtils
+    from processing.tools.system import isWindows
 
     Processing.initialize()
     QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
     processing = processing
-    postgis = None
 
-    return qgs, processing, postgis
+    return qgs, processing, GdalUtils, isWindows
