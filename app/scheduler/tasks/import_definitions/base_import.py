@@ -56,12 +56,14 @@ def initQgis():
     """
     os.environ["QT_QPA_PLATFORM"] = "offscreen"
     QgsApplication.setPrefixPath(settings.QGIS_PATH, True)
+    """
     provider_registry = QgsProviderRegistry.instance()
     res = True
     if provider_registry.providerMetadata('postgres') is None:
         metadata = QgsProviderMetadata("postgres", "postgres")
         res = provider_registry.registerProvider(metadata)
     print("QgsProviderMetadata(postgres), loaded => " + str(res))
+    """
     qgs = QgsApplication([], False)
     qgs.initQgis()
 
