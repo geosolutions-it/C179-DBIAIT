@@ -1,6 +1,6 @@
 {
     "sheet": "Accumuli",
-    "skip": true,
+    "skip": false,
     "sources": [
         {
             "fields": [
@@ -140,8 +140,8 @@
         {"id": "45500","transformation": {"func": "DOMAIN", "params": {"field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
 
         {"id": "45800","transformation": {"func": "DOMAIN", "params": {"field": "d_stato", "domain_name": "D_STATO"}}},
-        {"id": "45900","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_costr", "domain_name": "D_T_RILIEVO"}}},
+        {"id": "45900","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_costr", "domain_name": "D_AFFIDABILITA"}}},
         {"id": "46000","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}},
-        {"id": "46100","transformation": {"func": "DOMAIN", "params": {"field": "a_volume", "domain_name": "D_T_RILIEVO"}}}
+        {"id": "46100","transformation": {"func": "DOMAIN", "params": {"field": "a_volume", "domain_name": "D_AFFIDABILITA"}}}
     ]
 }

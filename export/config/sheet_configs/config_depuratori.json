@@ -93,7 +93,7 @@
                         "name": "fgn_trattamento"
                     },
                     "on": [
-                        "fgn_auth_trattam.id_collettore",
+                        "fgn_auth_trattam.id_trattamento",
                         "fgn_trattamento.idgis"
                     ],
                     "cond": "="
@@ -192,7 +192,7 @@
                         "name": "a_fgn_trattamento"
                     },
                     "on": [
-                        "fgn_auth_trattam.id_collettore",
+                        "fgn_auth_trattam.id_trattamento",
                         "a_fgn_trattamento.idgis"
                     ],
                     "cond": "="
@@ -284,7 +284,7 @@
         {"id": "72000", "transformation": {"func": "DIRECT", "params": { "field": "transformed_x_geom"}}},
         {"id": "72100", "transformation": {"func": "DIRECT", "params": { "field": "transformed_y_geom"}}},
 
-        {"id": "72500", "transformation": {"func": "LSTRIP", "params": { "field": "cod_comune", "char": 0 }}},
+        {"id": "72500", "transformation": {"func": "LSTRIP", "params": { "field": "cod_comune", "char": "0" }}},
 
 
         {"id": "72600", "transformation": {"func": "DOMAIN", "params": { "field": "d_corpo_ricet", "domain_name": "D_CORPO_RICET" }}},

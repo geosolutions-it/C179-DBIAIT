@@ -7,18 +7,18 @@
                 {"name": "collett_tronchi.codice_ato", "alias": "codice_ato"},
                 {"name": "collett_tronchi.idgis", "alias": "idgis"},
                 {"name": "collett_tronchi.idgis_rete", "alias": "idgis_rete"},
-                {"name": "collett_tronchi.id_tipo_telecon", "alias": "id_tipo_telecon"},
+                {"name": "collett_tronchi.recapito", "alias": "recapito"},
                 {"name": "collett_tronchi.id_materiale", "alias": "id_materiale"},
                 {"name": "collett_tronchi.id_conservazione", "alias": "id_conservazione"},
                 {"name": "collett_tronchi.diametro", "alias": "diametro"},
                 {"name": "collett_tronchi.anno", "alias": "anno"},
+                {"name": "collett_tronchi.funziona_gravita", "alias": "funziona_gravita"},
                 {"name": "collett_tronchi.lunghezza", "alias": "lunghezza"},
                 {"name": "collett_tronchi.idx_materiale", "alias": "idx_materiale"},
                 {"name": "collett_tronchi.idx_diametro", "alias": "idx_diametro"},
                 {"name": "collett_tronchi.idx_anno", "alias": "idx_anno"},
                 {"name": "collett_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
-                {"name": "collett_tronchi.pressione", "alias": "pressione"},
-                {"name": "collett_tronchi.protezione_catodica", "alias": "protezione_catodica"},
+                {"name": "collett_tronchi.depurazione", "alias": "depurazione"},
                 {"name": "collett_tronchi.note", "alias": "note"},
                 {"name": "collett_tronchi.geom", "alias": "geom"}
             ],
@@ -28,9 +28,7 @@
         },
         {
             "fields": [
-                { "name": "fgn_condotta.codice_ato", "alias": "codice_ato"},
-                {"name":  "fgn_collettore.id_sist_prot_cat", "alias": "id_sist_prot_cat"},
-                {"name":  "fgn_collettore.data_esercizio", "alias": "data_esercizio"}
+                { "name": "fgn_condotta.codice_ato", "alias": "codice_ato"}
             ],
             "table": {
                 "name": "fgn_condotta"
@@ -48,13 +46,21 @@
                     "cond": "="
                 }
             ]
+        },
+       {
+            "fields": [
+                {"name":  "acq_condotta.data_esercizio", "alias": "data_esercizio"}
+            ],
+            "table": {
+                "name": "acq_condotta"
+            }
         }
     ],
      "columns": [
         {"id": "69800", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
 
         {"id": "69900", "transformation": {"func": "DOMAIN", "params": { "field": "d_materiale", "domain_name": "D_MATERIALE_IDR" }}},
-        {"id": "70000", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "id_conserva" }}},
+        {"id": "70000", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }}},
 
         {"id": "70100", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }}},
 

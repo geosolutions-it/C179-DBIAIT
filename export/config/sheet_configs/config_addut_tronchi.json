@@ -54,7 +54,7 @@
         {"id": "41100", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
 
         {"id": "41200", "transformation": {"func": "DOMAIN", "params": { "field": "d_materiale", "domain_name": "D_MATERIALE_IDR" }}},
-        {"id": "41300", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "id_conserva" }}},
+        {"id": "41300", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }}},
 
         {"id": "41400", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }}},
 
@@ -78,8 +78,8 @@
                     "cond": {
                         "operator": "=",
                         "value": "",
-                        "result": 9999,
-                        "else": null
+                        "result": "9999",
+                        "else": "null"
                     }
                 }
             }},

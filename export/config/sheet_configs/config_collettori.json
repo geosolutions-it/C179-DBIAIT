@@ -75,10 +75,10 @@
         { "id": "69300", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } } },
 
 
-        { "id": "68800", "transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_T_RILIEVO" } } },
+        { "id": "68800", "transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_AFFIDABILITA" } } },
         { "id": "69000", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } } },
 
-        { "id": "69200", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_idra", "domain_name": "D_T_RILIEVO" } } },
+        { "id": "69200", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_idra", "domain_name": "D_AFFIDABILITA" } } },
 
         { "id": "69100", "transformation": { "func": "CONST", "params": { "value": "B" } } },
 
