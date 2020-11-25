@@ -181,6 +181,27 @@
         },
         {
             "fields": [
+                { "name": "localita.denominazi", "alias": "denominazi" }
+            ],
+            "table": {
+                "name": "a_acq_captazione"
+            },
+            "join": [
+                {
+                    "type": "spatial",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "a_acq_captazione.shape",
+                        "localita.shape"
+                    ],
+                    "cond": "="
+                }
+            ]
+        },
+        {
+            "fields": [
                 {
                     "name": "fiumi_inpotab.ids_codice_potab",
                     "alias": "ids_codice_potab"
