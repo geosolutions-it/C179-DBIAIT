@@ -40,7 +40,6 @@ class IfValidation(BaseValidation):
 
 
 class ValidationFactory:
-
     @staticmethod
     def from_name(name, params):
         u_name = name.upper()

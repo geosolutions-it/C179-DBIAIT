@@ -45,13 +45,17 @@ with the configuration files for the import process:
 - domains.csv
 - layers.json
 
-**EXPORT_FOLDER**: folder containing the subfolder **config**
-with the configuration files for the export process:
+**EXPORT_FOLDER**: folder containing generated *.zip archives
+
+**EXPORT_CONF_DIR**: (default: `EXPORT_FOLDER/config`) folder containing configuration subdirectories for the 'Analysis' and 'Freeze' schemas export.
+Configuration for 'Analysis' schema is taken from `EXPORT_CONF_DIR/current/` directory and configurations for 'Freeze'
+schemas are taken from `EXPORT_CONF_DIR/<year>/` directories.
+Each configuration subdirectory needs to define the following:
 - xls.json
 - shp.json
 - NETSIC_SEED.xlsx
+- sheet_configs
 
-**TEMP_EXPORT_DIR**: folder containing temporary data and folders created by each export process 
 ```
 /srv/ftp
 └───import
@@ -61,9 +65,19 @@ with the configuration files for the export process:
 |   |   *.gpkg
 └───export
 |   └───config
-|   |   |   xls.json
-|   |   |   shp.json
-|   |   |   NETSIC_SEED.xlsx
+|   |   └───current
+|   |   |   └───sheet_configs
+|   |   |   |   |   <sheet_1_config>.json
+|   |   |   |   |   ...
+|   |   |   |   |   <sheet_n_config>.json
+|   |   |   |   xls.json
+|   |   |   |   shp.json
+|   |   |   |   NETSIC_SEED.xlsx
+# not yet supported, prepared for FREEZE
+|   |   └───<year>
+|   |   |   |   xls.json
+|   |   |   |   shp.json
+|   |   |   |   NETSIC_SEED.xlsx
 ```
 
 ## QGIS
@@ -146,36 +160,50 @@ ExportTask.send(ExportTask.pre_send(user))
 
 **Warning**: Production trigger should never execute export synchronously!
 
-## *.xlsx file export
+## Export configuration
 
-### *.xlsx export file configuration
+To start the export process, it is required to set the EXPORT_CONF_DIR environment variable, which points
+at a directory meeting criteria of Application configuration.
 
-To export excel file it is required to set the configuration file, which defines sources and transformations,
-which should be applied to fetched data.
-To point at a certain file EXPORT_CONF_FILE environment variable should be set.
-By default EXPORT_CONF_FILE points at `export/config/xls_config.json` from the main project directory.
+For 'analysis' schema export configuration is taken from `current` subdirectory of EXPORT_CONF_DIR, and
+for 'freeze' schema export is taken from `<year>` subdirectory, depending on export's year setting.
 
-EXPORT_CONF_FILE should contain a single object, with a `xls_sheet_configs` key containing a list of paths to the configs of *.xlsx sheets.
-Paths may be eiter absolute, or relative to the EXPORT_CONF_FILE. 
+**Note**: In the production environment `<year>` directories should not be updated manually - they will
+be copied from `current` when the freeze task is executed, to ensure consistency between stored historical
+data and it's export configuration. 
 
-Example EXPORT_CONF_FILE contents:
-``` json
-{
-   "xls_sheet_configs": [
-      "sheet_configs/config_sollev_pompe.json",
-      "sheet_configs/config_potabilizzatori.json",
-      "sheet_configs/config_sorgenti.json",
-      "sheet_configs/config_pozzi.json",
-      "sheet_configs/config_sollevamenti.json",
-      "sheet_configs/config_scaricatori.json",
-      "sheet_configs/config_pozzi_pompe.json"
-   ]
-}
-```
+- `xls.json` the file defining the sheet configurations list, as a relative path ot the `xls.json` file
 
-Sheet config files should consist of **a single object**, with keys defined by the project documentation (see [documentation](https://docs.google.com/document/d/1votggD0JSr9v_pUVgbsAYOc1z_orJTHSEG1hO-TUB5k/edit#))
+    Example `xls.json` contents:
+    ``` json
+    {
+       "xls_sheet_configs": [
+          "sheet_configs/config_sollev_pompe.json",
+          "sheet_configs/config_potabilizzatori.json",
+          "sheet_configs/config_sorgenti.json",
+          "sheet_configs/config_pozzi.json",
+          "sheet_configs/config_sollevamenti.json",
+          "sheet_configs/config_scaricatori.json",
+          "sheet_configs/config_pozzi_pompe.json"
+       ]
+    }
+    ```
 
-### validating config file
+- `sheet_configs` directory (or similar, provided in `xls.json` file) containing sheet configuration
+files for each Excel sheet. Sheet config files should consist of **a single object**, with keys defined
+by the project documentation
+(see [documentation](https://docs.google.com/document/d/1votggD0JSr9v_pUVgbsAYOc1z_orJTHSEG1hO-TUB5k/edit#)).
+
+- `NETSIC_SEED.xlsx` seed Excel file to be used as a template for the export process, containing
+defined sheets and their headers
+
+- `shp.json` shapefile configuration file
+
+ 
+
+## Validating config file
+
+### Validating *.xls config file
 To validate the configuration file along with all sheet configs, in django environment, one can use the following script:
 ``` python
 from app.scheduler.tasks.export_definitions.config_scraper import ExportConfig
