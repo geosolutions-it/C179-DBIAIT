@@ -1,0 +1,18 @@
+{
+   "sheet":"Fognat_loc_serv",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"fognat_com_serv.codice_opera", "alias":"codice_opera"},
+            {"name":"fognat_com_serv.id_localita_istat", "alias":"id_localita_istat"},
+            {"name":"fognat_com_serv.perc_popsrv", "alias":"perc_popsrv"},
+            {"name":"fognat_com_serv.perc_popdep", "alias":"perc_popdep"}
+         ],
+         "table":{
+            "name":"fognat_loc_serv"
+         }
+      }
+   ],
+   "columns":[]
+}
