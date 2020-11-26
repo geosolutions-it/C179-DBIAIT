@@ -103,7 +103,7 @@ class CaseTransformation(BaseTransformation):
                 schema.Or(
                     {"case": str, "operator": str, "value": object, "result": object},
                     {"case": str, "result": object},
-                    only_one=False
+                    only_one=False,
                 )
             ],
         }
@@ -162,7 +162,6 @@ class IfTransformation(BaseTransformation):
 
 
 class TransformationFactory:
-
     @staticmethod
     def from_name(name, params):
         u_name = name.upper()

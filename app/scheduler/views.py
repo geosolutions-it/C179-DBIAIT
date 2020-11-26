@@ -192,7 +192,7 @@ class Freeze(LoginRequiredMixin, View):
 
 class ExportDownloadView(LoginRequiredMixin, View):
     def get(self, request, task_id: int):
-        file_path = path.join(settings.EXPORT_FOLDER, f"{task_id}.zip")
+        file_path = path.join(settings.EXPORT_FOLDER, f"task_{task_id}.zip")
         if path.exists(file_path) and Task.objects.filter(id=task_id).exists():
             with open(file_path, u"rb") as file_obj:
                 response = HttpResponse(

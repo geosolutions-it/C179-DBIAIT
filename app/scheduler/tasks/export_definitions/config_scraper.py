@@ -64,9 +64,7 @@ export_config_schema = schema.Schema(
                     ],
                     schema.Optional("join"): [
                         {
-                            "type": schema.And(
-                                str, lambda t: t.upper() in JOIN_TYPES
-                            ),
+                            "type": schema.And(str, lambda t: t.upper() in JOIN_TYPES),
                             "table": {
                                 "name": schema.And(str, len),
                                 schema.Optional("alias"): schema.And(str, len),
@@ -115,38 +113,48 @@ class ExportConfig:
     def __init__(self):
         self.config = []
 
-        with open(settings.EXPORT_CONF_FILE, "r") as ecf:
+        with open(settings.EXPORT_CONF_FILE.substitute(), "r") as ecf:
             config = json.load(ecf)
 
-        sheets_config_files = config.get('xls_sheet_configs', None)
+        sheets_config_files = config.get("xls_sheet_configs", None)
 
         if sheets_config_files is None:
-            raise ExportConfigError('Export configuration file for export does not define "xls_sheet_configs" key.')
+            raise ExportConfigError(
+                'Export configuration file for export does not define "xls_sheet_configs" key.'
+            )
 
         # parse export configuration
         for sheet_config_file in sheets_config_files:
 
             sheet_config_path = Path(sheet_config_file)
 
-            if not sheet_config_path.is_absolute():
-                sheet_config_path = Path(Path(settings.EXPORT_CONF_FILE).parent, sheet_config_path)
+            if sheet_config_path.is_absolute():
+                raise ExportConfigError(
+                    f'Sheet config path may not be absolute: {sheet_config_path}.'
+                )
+            else:
+                sheet_config_path = Path(
+                    Path(settings.EXPORT_CONF_FILE.substitute()).parent, sheet_config_path
+                )
 
             if not sheet_config_path.exists():
-                raise ExportConfigError(f'Sheet configuration file "{sheet_config_path}" does not exist.')
+                raise ExportConfigError(
+                    f'Sheet configuration file "{sheet_config_path}" does not exist.'
+                )
 
             try:
-                with open(sheet_config_path, 'r') as scp:
+                with open(sheet_config_path, "r") as scp:
                     sheet = json.load(scp)
             except Exception as e:
                 raise ExportConfigError(
                     f'Error occurred while parsing sheet config "{sheet_config_path}":\n'
-                    f'{type(e).__name__}: {e}'
+                    f"{type(e).__name__}: {e}"
                 )
 
             # validate export configuration schema
             export_config_schema.validate(sheet)
 
-            if sheet['skip']:
+            if sheet["skip"]:
                 continue
 
             # parse SQL sources of a sheet
@@ -186,24 +194,32 @@ class ExportConfig:
                     function = field.get("function", None)
 
                     if function is None:
-                        fields.append(Field(
-                            field["name"].split(".")[1],
-                            table=Table(field["name"].split(".")[0]),
-                        ).as_(field.get("alias", field["name"])))
+                        fields.append(
+                            Field(
+                                field["name"].split(".")[1],
+                                table=Table(field["name"].split(".")[0]),
+                            ).as_(field.get("alias", field["name"]))
+                        )
 
                     else:
                         f = Field(
                             field["name"].split(".")[1],
                             table=Table(field["name"].split(".")[0]),
                         )
-                        fields.append(SQL_FUNCTION_MAPPING[function](f).as_(field.get("alias", field["name"])))
+                        fields.append(
+                            SQL_FUNCTION_MAPPING[function](f).as_(
+                                field.get("alias", field["name"])
+                            )
+                        )
 
                 query = Query.from_(table)
 
                 # parse tables to join
                 for join_table_config in source.get("join", []):
                     join_table = Table(join_table_config["table"]["name"]).as_(
-                        join_table_config["table"].get("alias", join_table_config["table"]["name"])
+                        join_table_config["table"].get(
+                            "alias", join_table_config["table"]["name"]
+                        )
                     )
 
                     # parse fields to join the table on
@@ -230,11 +246,7 @@ class ExportConfig:
 
                 # parse GROUP BY parameters
                 for group_by_field in source.get("group_by", []):
-                    query = query.groupby(
-                        Field(
-                            group_by_field
-                        )
-                    )
+                    query = query.groupby(Field(group_by_field))
 
                 query = query.select(*fields)
 

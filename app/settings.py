@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import ast
 import ldap
+
+from app.utils import TemplateWithDefaults
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -245,12 +247,19 @@ IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDE
 
 # Directory in which generated exports are kept
 EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(BASE_DIR, "export"))
-EXPORT_CONF_FILE = os.getenv("EXPORT_CONF_FILE", os.path.join(EXPORT_FOLDER, 'config', "xls_config.json"))
-SHAPEFILE_EXPORT_CONFIG = os.getenv(
-    u"SHAPEFILE_EXPORT_CONFIG", os.path.join(EXPORT_FOLDER, u"config", u"shp.json")
+
+EXPORT_CONF_DIR = os.getenv("EXPORT_CONF_DIR", os.path.join(EXPORT_FOLDER, 'config'))
+
+# TEMPLATE strings prepared for storing FREEZE configuration
+EXPORT_CONF_FILE = TemplateWithDefaults(
+    os.path.join(EXPORT_CONF_DIR, "$year", "xls.json"), defaults={'year': 'current'}
 )
-TEMP_EXPORT_DIR = os.getenv(u"TEMP_EXPORT_DIR", os.path.join(EXPORT_FOLDER, u"tmp"))
-EXPORT_XLS_SEED_FILE = os.getenv("EXPORT_XLS_SEED_FILE", os.path.join(EXPORT_FOLDER, 'config', "NETSIC_SEED.xlsx"))
+SHAPEFILE_EXPORT_CONFIG = TemplateWithDefaults(
+    os.path.join(EXPORT_CONF_DIR, "$year", "shp.json"), defaults={'year': 'current'}
+)
+EXPORT_XLS_SEED_FILE = TemplateWithDefaults(
+    os.path.join(EXPORT_CONF_DIR, "$year", "NETSIC_SEED.xlsx"), defaults={'year': 'current'}
+)
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
