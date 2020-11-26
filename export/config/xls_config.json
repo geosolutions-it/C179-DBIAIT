@@ -13,6 +13,15 @@
       "sheet_configs/config_pozzi.json",
       "sheet_configs/config_pozzi_pompe.json",
       "sheet_configs/config_scaricatori.json",
+      "sheet_configs/config_fiumi.json",
+      "sheet_configs/config_fognat_com_serv.json",
+      "sheet_configs/config_fognat_loc_serv.json",
+      "sheet_configs/config_fognature.json",
+      "sheet_configs/config_laghi.json",
+      "sheet_configs/config_pompaggi.json",
+      "sheet_configs/config_pompaggi_pompe.json",
+      "sheet_configs/config_potab_pompe.json",
+      "sheet_configs/config_fognat_tronchi.json"
       "sheet_configs/config_sollev_pompe.json",
       "sheet_configs/config_sollevamenti.json",
       "sheet_configs/config_sorgenti.json"

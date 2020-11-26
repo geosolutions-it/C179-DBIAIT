@@ -1,0 +1,277 @@
+{
+    "sheet": "Laghi",
+    "skip": false,
+    "sources": [
+        {
+            "fields": [
+                {"name": "acq_captazione.codice_ato","alias": "codice_ato"},
+                {"name": "acq_captazione.denom","alias": "denom"},
+                {"name": "acq_captazione.quota","alias": "quota"},
+                {"name": "acq_auth_capt.bacino","alias": "bacino"},
+                {"name": "acq_captazione.corso_acqua","alias": "corso_acqua"},
+                {"name": "acq_auth_capt.d_classific","alias": "d_classific"},
+                {"name": "acq_capt_conces.estremi_conces","alias": "estremi_conces"},
+                {"name": "acq_capt_conces.port_potab","alias": "port_potab"},
+                {"name": "acq_capt_conces.port_industr","alias": "port_industr"},
+                {"name": "acq_capt_conces.port_irrig","alias": "port_irrig"},
+                {"name": "acq_capt_conces.port_idroel","alias": "port_idroel"},
+                {"name": "acq_auth_capt.port_altro","alias": "port_altro"},
+                {"name": "acq_captazione.anno_costr","alias": "anno_costr"},
+                {"name": "acq_captazione.anno_ristr","alias": "anno_ristr"},
+                {"name": "acq_captazione.d_stato_cons","alias": "d_stato_cons"},
+                {"name": "acq_auth_capt.d_utilizzo","alias": "d_utilizzo"},
+                {"name": "acq_auth_capt.utilizzo_annuo","alias": "utilizzo_annuo"},
+                {"name": "acq_auth_capt.area_bac_affer","alias": "area_bac_affer"},
+                {"name": "acq_captazione.volume_medio_prel","alias": "volume_medio_prel"},
+                {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
+                {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
+                {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
+                {"name": "acq_captazione.volume_invaso","alias": "volume_invaso"},
+                {"name": "acq_captazione.altezza_diga","alias": "altezza_diga"},
+                {"name": "acq_auth_capt.sn_inv_norm_coll","alias": "sn_inv_norm_coll"},
+                {"name": "acq_auth_capt.d_telecont","alias": "d_telecont"},
+                {"name": "acq_auth_capt.sn_strum_mis_port","alias": "sn_strum_mis_port"},
+                {"name": "acq_auth_capt.d_tipo_cloraz","alias": "d_tipo_cloraz"},
+                {"name": "acq_captazione.cod_comune", "alias":"cod_comune"},
+                {"name": "acq_auth_capt.anno_instal_clor","alias": "anno_instal_clor"},
+                {"name": "acq_auth_capt.anno_ristr_clor","alias": "anno_ristr_clor"},
+                {"name": "acq_captazione.d_stato","alias": "d_stato"},
+                {"name": "acq_auth_capt.a_area_bac_affer","alias": "a_area_bac_affer"},
+                {"name": "acq_captazione.a_anno_costr","alias": "a_anno_costr"},
+                {"name": "acq_captazione.a_anno_ristr","alias": "a_anno_ristr"},
+                {"name": "acq_captazione.a_volume","alias": "a_volume"},
+                {"name": "acq_capt_conces.a_port_es","alias": "a_port_es"},
+                {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
+                {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
+                {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+                {"name": "acq_captazione.data_agg","alias": "data_agg"},
+                {"name": "acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                {"name": "acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            ],
+            "table": {
+                "name": "acq_captazione"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_auth_capt"
+                    },
+                    "on": [
+                        "acq_captazione.idgis",
+                        "acq_auth_capt.id_captazione"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_capt_conces"
+                    },
+                    "on": [
+                        "acq_captazione.idgis",
+                        "acq_capt_conces.id_captazione"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.d_stato NOT IN ('IPR', 'IAC')"
+        },
+        {
+            "fields": [
+                {"name": "a_acq_captazione.codice_ato","alias": "codice_ato"},
+                {"name": "a_acq_captazione.denom","alias": "denom"},
+                {"name": "a_acq_captazione.quota","alias": "quota"},
+                {"name": "acq_auth_capt.bacino","alias": "bacino"},
+                {"name": "a_acq_captazione.corso_acqua","alias": "corso_acqua"},
+                {"name": "acq_auth_capt.d_classific","alias": "d_classific"},
+                {"name": "acq_capt_conces.estremi_conces","alias": "estremi_conces"},
+                {"name": "acq_capt_conces.port_potab","alias": "port_potab"},
+                {"name": "acq_capt_conces.port_industr","alias": "port_industr"},
+                {"name": "acq_capt_conces.port_irrig","alias": "port_irrig"},
+                {"name": "acq_capt_conces.port_idroel","alias": "port_idroel"},
+                {"name": "acq_auth_capt.port_altro","alias": "port_altro"},
+                {"name": "a_acq_captazione.anno_costr","alias": "anno_costr"},
+                {"name": "a_acq_captazione.anno_ristr","alias": "anno_ristr"},
+                {"name": "a_acq_captazione.d_stato_cons","alias": "d_stato_cons"},
+                {"name": "acq_auth_capt.d_utilizzo","alias": "d_utilizzo"},
+                {"name": "acq_auth_capt.utilizzo_annuo","alias": "utilizzo_annuo"},
+                {"name": "acq_auth_capt.area_bac_affer","alias": "area_bac_affer"},
+                {"name": "a_acq_captazione.volume_medio_prel","alias": "volume_medio_prel"},
+                {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
+                {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
+                {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
+                {"name": "a_acq_captazione.volume_invaso","alias": "volume_invaso"},
+                {"name": "a_acq_captazione.altezza_diga","alias": "altezza_diga"},
+                {"name": "acq_auth_capt.sn_inv_norm_coll","alias": "sn_inv_norm_coll"},
+                {"name": "acq_auth_capt.d_telecont","alias": "d_telecont"},
+                {"name": "acq_auth_capt.sn_strum_mis_port","alias": "sn_strum_mis_port"},
+                {"name": "acq_auth_capt.d_tipo_cloraz","alias": "d_tipo_cloraz"},
+                {"name": "acq_auth_capt.anno_instal_clor","alias": "anno_instal_clor"},
+                {"name": "acq_auth_capt.anno_ristr_clor","alias": "anno_ristr_clor"},
+                {"name": "a_acq_captazione.d_stato","alias": "d_stato"},
+                {"name": "acq_auth_capt.a_area_bac_affer","alias": "a_area_bac_affer"},
+                {"name": "a_acq_captazione.a_anno_costr","alias": "a_anno_costr"},
+                {"name": "a_acq_captazione.a_anno_ristr","alias": "a_anno_ristr"},
+                {"name": "a_acq_captazione.a_volume","alias": "a_volume"},
+                {"name": "acq_capt_conces.a_port_es","alias": "a_port_es"},
+                {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
+                {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
+                {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+                {"name": "a_acq_captazione.data_agg","alias": "data_agg"},
+                {"name": "a_acq_captazione.cod_comune", "alias":"cod_comune"},
+                {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            ],
+            "table": {
+                "name": "a_acq_captazione"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_auth_capt"
+                    },
+                    "on": [
+                        "a_acq_captazione.idgis",
+                        "acq_auth_capt.id_captazione"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_capt_conces"
+                    },
+                    "on": [
+                        "a_acq_captazione.idgis",
+                        "acq_capt_conces.id_captazione"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC')"
+        },
+        {
+            "fields": [
+                { "name": "localita.denominazi", "alias": "denominazi" }
+            ],
+            "table": {
+                "name": "acq_captazione"
+            },
+            "join": [
+                {
+                    "type": "spatial",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "acq_captazione.shape",
+                        "localita.shape"
+                    ],
+                    "cond": "="
+                }
+            ]
+        },
+        {
+            "fields": [
+                { "name": "localita.denominazi", "alias": "denominazi" }
+            ],
+            "table": {
+                "name": "a_acq_captazione"
+            },
+            "join": [
+                {
+                    "type": "spatial",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "a_acq_captazione.shape",
+                        "localita.shape"
+                    ],
+                    "cond": "="
+                }
+            ]
+        },
+        {
+            "fields": [
+                {
+                    "name": "laghi_inpotab.ids_codice_potab",
+                    "alias": "ids_codice_potab"
+                }
+            ],
+            "table": {
+                "name": "laghi_inpotab"
+            }
+        }
+    ],
+    "columns": [
+        {"id": "8400","transformation": { "func": "CONST", "params": {"value": "3003"}}},
+        {"id": "11400","transformation": { "func": "CONST", "params": {"value": "0"}}},
+        {"id": "11500","transformation": { "func": "CONST", "params": {"value": "1"}}},
+        {"id": "11600","transformation": { "func": "CONST", "params": {"value": "0"}}},
+
+        {"id": "8700","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
+
+        {"id": "8000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
+        {"id": "8100","transformation": { "func": "DIRECT", "params": { "field": "denom" }}},
+        {"id": "8200","transformation": { "func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
+        {"id": "8300","transformation": { "func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
+        {"id": "8500","transformation": { "func": "DIRECT", "params": { "field": "quota" }}},
+        {"id": "8800","transformation": { "func": "DIRECT", "params": { "field": "bacino" }}},
+        {"id": "8900","transformation": { "func": "DIRECT", "params": { "field": "corso_acqua" }}},
+        {"id": "9100","transformation": { "func": "DIRECT", "params": { "field": "estremi_conces" }}},
+        {"id": "9200","transformation": { "func": "DIRECT", "params": { "field": "port_potab" }}},
+        {"id": "9300","transformation": { "func": "DIRECT", "params": { "field": "port_industr" }}},
+        {"id": "9400","transformation": { "func": "DIRECT", "params": { "field": "port_irrig" }}},
+        {"id": "9500","transformation": { "func": "DIRECT", "params": { "field": "port_idroel" }}},
+        {"id": "9600","transformation": { "func": "DIRECT", "params": { "field": "port_altro" }}},
+        {"id": "9700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr" }}},
+        {"id": "9800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}},
+        {"id": "10100","transformation": { "func": "DIRECT", "params": { "field": "utilizzo_annuo" }}},
+        {"id": "10200","transformation": { "func": "DIRECT", "params": { "field": "area_bac_affer" }}},
+        {"id": "10300","transformation": { "func": "DIRECT", "params": { "field": "volume_medio_prel" }}},
+        {"id": "10600","transformation": { "func": "DIRECT", "params": { "field": "port_uti_max" }}},
+        {"id": "10700","transformation": { "func": "DIRECT", "params": { "field": "port_uti_min" }}},
+        {"id": "10800","transformation": { "func": "DIRECT", "params": { "field": "port_deriv" }}},
+        {"id": "10900","transformation": { "func": "DIRECT", "params": { "field": "volume_invaso" }}},
+        {"id": "11000","transformation": { "func": "DIRECT", "params": { "field": "altezza_diga" }}},
+        {"id": "11100","transformation": { "func": "DIRECT", "params": { "field": "sn_inv_norm_coll" }}},
+        {"id": "11300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" }}},
+        {"id": "10400","transformation": { "func": "DIRECT", "params": { "field": "denominazi" }}},
+        {"id": "11800","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor" }}},
+        {"id": "11900","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor" }}},
+        {"id": "13000","transformation": { "func": "DIRECT", "params": { "field": "data_agg" }}},
+
+        {"id": "10500","transformation": { "func": "EXPR", "params": { "field": "volume_medio_prel" ,"expr": "_value_*1000/365/3600/24"}}},
+
+        {"id": "9000","transformation": { "func": "DOMAIN", "params": { "field": "d_classific", "domain_name": "D_CLASSIFIC" }}},
+        {"id": "9900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }}},
+        {"id": "10000","transformation": { "func": "DOMAIN", "params": { "field": "d_utilizzo", "domain_name": "D_UTILIZZO_OPERA" }}},
+        {"id": "11200","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" }}},
+        {"id": "11700","transformation": { "func": "DOMAIN", "params": { "field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ" }}},
+        {"id": "12000","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" }}},
+        {"id": "12100","transformation": { "func": "DOMAIN", "params": { "field": "a_area_bac_affer", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "12200","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_costr", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "12300","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "12400","transformation": { "func": "DOMAIN", "params": { "field": "a_volume", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "12600","transformation": { "func": "DOMAIN", "params": { "field": "a_port_es", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "12700","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_max", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "12800","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_min", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "12900","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id":"12500", "transformation":{
+            "func": "IF",
+            "params": {
+                "field": "denominazi",
+                "cond": {
+                        "operator": "=",
+                        "value": "0",
+                        "result": "A",
+                        "else": "12500"
+                    }
+                }
+            }
+        }
+    ]
+}

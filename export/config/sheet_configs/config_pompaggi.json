@@ -1,0 +1,155 @@
+{
+    "sheet": "Pompaggi",
+    "skip": false,
+    "sources": [
+        {
+            "fields": [
+                {"name": "acq_pompaggio.codice_ato","alias": "codice_ato"},
+                {"name": "acq_pompaggio.denom","alias": "denom"},
+                {"name": "acq_pompaggio.quota","alias": "quota"},
+                {"name": "acq_pompaggio.anno_costr","alias": "anno_costr"},
+                {"name": "acq_auth_pompag.anno_ristr_civ","alias": "anno_ristr_civ"},
+                {"name": "acq_auth_pompag.d_stato_cons_civ","alias": "d_stato_cons_civ"},
+                {"name": "acq_auth_pompag.anno_ristr_elmec","alias": "anno_ristr_elmec"},
+                {"name": "acq_auth_pompag.d_stato_cons_elmec","alias": "d_stato_cons_elmec"},
+                {"name": "acq_auth_pompag.d_telecont","alias": "d_telecont"},
+                {"name": "acq_auth_pompag.sn_strum_mis_pres","alias": "sn_strum_mis_pres"},
+                {"name": "acq_auth_pompag.sn_strum_mis_port","alias": "sn_strum_mis_port"},
+                {"name": "acq_pompaggio.d_stato","alias": "d_stato"},
+                {"name": "acq_pompaggio.cod_comune", "alias":"cod_comune"},
+                {"name": "acq_pompaggio.a_anno_costr","alias": "a_anno_costr"},
+                {"name": "acq_auth_pompag.a_anno_ristr_civ","alias": "a_anno_ristr_civ"},
+                {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "a_anno_ristr_elmec"},
+                {"name": "acq_pompaggio.data_agg","alias": "data_agg"},
+                {"name": "acq_pompaggio.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                {"name": "acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            ],
+            "table": {
+                "name": "acq_pompaggio"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_auth_pompag"
+                    },
+                    "on": [
+                        "acq_auth_pompag.id_pompaggio",
+                        "acq_pompaggio.idgis"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE acq_pompaggio.d_gestore = 'PUBLIACQUA' AND acq_pompaggio.d_ambito IN ('AT3', NULL) AND acq_pompaggio.d_stato NOT IN ('IPR', 'IAC')"
+        },
+        {
+            "fields": [
+                {"name": "a_acq_pompaggio.codice_ato","alias": "codice_ato"},
+                {"name": "a_acq_pompaggio.denom","alias": "denom"},
+                {"name": "a_acq_pompaggio.quota","alias": "quota"},
+                {"name": "a_acq_pompaggio.anno_costr","alias": "anno_costr"},
+                {"name": "acq_auth_pompag.anno_ristr_civ","alias": "anno_ristr_civ"},
+                {"name": "acq_auth_pompag.d_stato_cons_civ","alias": "d_stato_cons_civ"},
+                {"name": "acq_auth_pompag.anno_ristr_elmec","alias": "anno_ristr_elmec"},
+                {"name": "acq_auth_pompag.d_stato_cons_elmec","alias": "d_stato_cons_elmec"},
+                {"name": "acq_auth_pompag.d_telecont","alias": "d_telecont"},
+                {"name": "a_acq_pompaggio.cod_comune", "alias":"cod_comune"},
+                {"name": "acq_auth_pompag.sn_strum_mis_pres","alias": "sn_strum_mis_pres"},
+                {"name": "acq_auth_pompag.sn_strum_mis_port","alias": "sn_strum_mis_port"},
+                {"name": "a_acq_pompaggio.d_stato","alias": "d_stato"},
+                {"name": "a_acq_pompaggio.a_anno_costr","alias": "a_anno_costr"},
+                {"name": "acq_auth_pompag.a_anno_ristr_civ","alias": "a_anno_ristr_civ"},
+                {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "a_anno_ristr_elmec"},
+                {"name": "a_acq_pompaggio.data_agg","alias": "data_agg"},
+                {"name": "a_acq_pompaggio.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                {"name": "a_acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            ],
+            "table": {
+                "name": "a_acq_pompaggio"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_auth_pompag"
+                    },
+                    "on": [
+                        "acq_auth_pompag.id_pompaggio",
+                        "a_acq_pompaggio.idgis"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE a_acq_pompaggio.d_gestore = 'PUBLIACQUA' AND a_acq_pompaggio.d_ambito IN ('AT3', NULL) AND a_acq_pompaggio.d_stato NOT IN ('IPR', 'IAC')"
+        },
+        {
+            "fields": [
+                { "name": "localita.denominazi", "alias": "denominazi" }
+            ],
+            "table": {
+                "name": "acq_pompaggio"
+            },
+            "join": [
+                {
+                    "type": "spatial",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "acq_pompaggio.shape",
+                        "localita.shape"
+                    ],
+                    "cond": "="
+                }
+            ]
+        },
+        {
+            "fields": [
+                { "name": "localita.denominazi", "alias": "denominazi" }
+            ],
+            "table": {
+                "name": "a_acq_pompaggio"
+            },
+            "join": [
+                {
+                    "type": "spatial",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "a_acq_pompaggio.shape",
+                        "localita.shape"
+                    ],
+                    "cond": "="
+                }
+            ]
+        }
+    ],
+    "columns": [
+        {"id": "48300","transformation": { "func": "CONST",  "params": { "value": "3003"}}},
+
+        {"id": "48600","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
+
+        {"id": "47900","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
+        {"id": "48000","transformation": { "func": "DIRECT", "params": { "field": "denom" }}},
+        {"id": "48100","transformation": { "func": "DIRECT", "params": { "field": "transformed_x_geom" }}},
+        {"id": "48200","transformation": { "func": "DIRECT", "params": { "field": "transformed_y_geom" }}},
+        {"id": "48400","transformation": { "func": "DIRECT", "params": { "field": "quota" }}},
+        {"id": "48700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr" }}},
+        {"id": "48800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_civ" }}},
+        {"id": "49000","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_elmec" }}},
+        {"id": "49500","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_pres" }}},
+        {"id": "49600","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" }}},
+        {"id": "50200","transformation": { "func": "DIRECT", "params": { "field": "data_agg" }}},
+        {"id": "48500","transformation": { "func": "DIRECT", "params": { "field": "denominazi" }}},
+
+        {"id": "48900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons_civ", "domain_name": "D_STATO_CONS" }}},
+        {"id": "49100","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons_elmec", "domain_name": "D_STATO_CONS" }}},
+        {"id": "49400","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" }}},
+
+        {"id": "49700","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "" }}},
+        {"id": "49800","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_costr", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "49900","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr_civ", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "50000","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr_elmec", "domain_name":  "D_AFFIDABILITA" }}}
+    ]
+}
