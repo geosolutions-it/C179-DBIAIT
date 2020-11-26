@@ -198,35 +198,40 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, "static_root"))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
-AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://127.0.0.1:10389")
+# More info -> https://django-auth-ldap.readthedocs.io/en/latest/reference.html
 
-AUTH_LDAP_BIND_DN = os.getenv("LDAP_USERNAME", "uid=admin,ou=system")
-AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "secret")
-AUTH_LDAP_USER_DN_TEMPLATE = os.getenv("USER_DN_TEMPLATE", 'uid=%(user)s,ou=users,dc=wimpi,dc=net')
+AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://127.0.0.1:10389")  # uri del server ldap
 
-AUTH_LDAP_USER_ATTR_MAP = {
+AUTH_LDAP_BIND_DN = os.getenv("LDAP_USERNAME", "uid=admin,ou=system")  # auth  per connettersi al server
+AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "secret")  # auth admin per connettersi al server
+
+AUTH_LDAP_USER_DN_TEMPLATE = os.getenv("USER_DN_TEMPLATE", 'uid=%(user)s,ou=users,dc=wimpi,dc=net')  # Non obbligatorio, fornisce il DN di base applicato a tutti gli user
+
+AUTH_LDAP_USER_ATTR_MAP = {  # come viene rimappato l'utente (come django user) una volta che esiste
     'first_name': os.getenv("LDAP_FIRST_NAME", 'givenName'),
     'last_name': os.getenv("LDAP_LAST_NAME", 'sn'),
     'email': os.getenv("LDAP_EMAIL", 'mail'),
 }
 
-AUTH_LDAP_ALWAYS_UPDATE_USER = ast.literal_eval(os.getenv('AUTH_LDAP_ALWAYS_UPDATE_USER', 'True'))
+AUTH_LDAP_ALWAYS_UPDATE_USER = ast.literal_eval(os.getenv('AUTH_LDAP_ALWAYS_UPDATE_USER', 'True'))  #aggiorna ad ogni login le informazioni sullo user
 
-
-AUTH_LDAP_FIND_GROUP_PERMS = True
+AUTH_LDAP_FIND_GROUP_PERMS = True  # prende informazioni dei permessi del gruppo dal server ldap
 AUTH_LDAP_CACHE_GROUPS = True
 
-AUTH_LDAP_MIRROR_GROUPS = True
+AUTH_LDAP_MIRROR_GROUPS = True  # aggiorna i django group ad ogni login in base a quelli presenti nel server ldap
 
-AUTH_LDAP_GROUP_BASE = os.getenv("AUTH_LDAP_GROUP_BASE", "ou=roles,dc=wimpi,dc=net")
+AUTH_LDAP_GROUP_BASE = os.getenv("AUTH_LDAP_GROUP_BASE", "ou=roles,dc=wimpi,dc=net")  # base_dn -> il DN della search
 
-AUTH_LDAP_GROUP_FILTER = os.getenv("AUTH_LDAP_GROUP_FILTER", "(|(CN=managements)(CN=administrators)(CN=operators))")
+AUTH_LDAP_GROUP_FILTER = os.getenv("AUTH_LDAP_GROUP_FILTER", "(|(CN=dbiaitmanagements)(CN=dbiaitadministrators)(CN=dbiaitoperator))")  # filtro da aggiunguere qua
 
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(AUTH_LDAP_GROUP_BASE, ldap.SCOPE_SUBTREE, AUTH_LDAP_GROUP_FILTER)
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
-AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    'is_staff': "cn=managements,{}".format(AUTH_LDAP_GROUP_BASE),
-    'is_superuser': "cn=administrators,{}".format(AUTH_LDAP_GROUP_BASE),
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(AUTH_LDAP_GROUP_BASE, ldap.SCOPE_SUBTREE, AUTH_LDAP_GROUP_FILTER)  # ricerca tutti i gruppo ldap appartenenti all'utente
+
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")  # contiene tutti i gruppi che sono tornati da AUTH_LDAP_GROUP_SEARCH
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {  #mappa in true/false in base al fatto che l'utente appartenga o meno a uno dei gruppi
+    'is_staff': "cn=dbiaitmanagements,{}".format(AUTH_LDAP_GROUP_BASE),
+    'is_operator': "cn=dbiaitoperator,{}".format(AUTH_LDAP_GROUP_BASE),
+    'is_superuser': "cn=dbiaitadministrators,{}".format(AUTH_LDAP_GROUP_BASE),
 }
 
 AUTHENTICATION_BACKENDS = (
