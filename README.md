@@ -215,6 +215,7 @@ Creating an instance of ExportConfig, parses the config file and sheet config fi
 In order to parse a single sheet configuration, the following may be done:
 ``` python 
 from app.scheduler.tasks.export_definitions.config_scraper import export_config_schema
+import json
 
 sheet_config_path = "<you_config_file_path>"
 

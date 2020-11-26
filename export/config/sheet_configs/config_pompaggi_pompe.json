@@ -1,0 +1,38 @@
+{
+    "sheet": "Pompaggi_pompe",
+    "skip": false,
+    "sources": [
+        {
+            "fields": [
+                {"name": "ext_rel_pompa.codice_ato","alias": "codice_ato"},
+                {"name": "ext_rel_pompa.d_stato_cons","alias": "d_stato_cons"},
+                {"name": "ext_rel_pompa.anno_instal","alias": "anno_instal"},
+                {"name": "ext_rel_pompa.anno_ristr","alias": "anno_ristr"},
+                {"name": "ext_rel_pompa.potenza","alias": "potenza"},
+                {"name": "ext_rel_pompa.portata","alias": "portata"},
+                {"name": "ext_rel_pompa.prevalenza","alias": "prevalenza"},
+                {"name": "ext_rel_pompa.sn_riserva","alias": "sn_riserva"},
+                {"name": "ext_rel_pompa.a_anno_instal","alias": "a_anno_instal"},
+                {"name": "ext_rel_pompa.a_anno_ristr","alias": "a_anno_ristr"},
+                {"name": "ext_rel_pompa.a_potenza","alias": "a_potenza"},
+                {"name": "ext_rel_pompa.a_portata","alias": "a_portata"},
+                {"name": "ext_rel_pompa.a_prevalenza","alias": "a_prevalenza"}
+            ]
+        }
+    ],
+    "columns": [
+        {"id": "50500","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
+        {"id": "50700","transformation": { "func": "DIRECT", "params": { "field": "d_stato_cons" }}},
+        {"id": "50800","transformation": { "func": "DIRECT", "params": { "field": "anno_instal" }}},
+        {"id": "50900","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}},
+        {"id": "51000","transformation": { "func": "DIRECT", "params": { "field": "potenza" }}},
+        {"id": "51100","transformation": { "func": "DIRECT", "params": { "field": "portata" }}},
+        {"id": "51200","transformation": { "func": "DIRECT", "params": { "field": "prevalenza" }}},
+        {"id": "51300","transformation": { "func": "DIRECT", "params": { "field": "sn_riserva" }}},
+        {"id": "51400","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_instal", "domain_name": "D_AFFIDABILITA" }}},
+        {"id": "51500","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "51600","transformation": { "func": "DIRECT", "params": { "field": "a_potenza" }}},
+        {"id": "51700","transformation": { "func": "DIRECT", "params": { "field": "a_portata" }}},
+        {"id": "51800","transformation": { "func": "DIRECT", "params": { "field": "a_prevalenza" }}}
+    ]
+}
