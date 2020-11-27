@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 
 from django.test import SimpleTestCase
+from schema import SchemaError
 
 from app.scheduler.tasks.export_definitions.domains_parser import Domains
 from app.scheduler.tasks.export_definitions.exceptions import ExportConfigError
@@ -97,6 +98,34 @@ class TransformationTestCase(SimpleTestCase):
         with self.assertRaises(ExportConfigError):
             self.sut.from_name('NOT_EXISTING_CONFIG', {}).apply()
 
+
+class TransformationSchemaErrors(SimpleTestCase):
+    def setUp(self) -> None:
+        self.sut = TransformationFactory
+
+    def test_given_invalid_CONST_schema_should_rase_exception(self):
+        with self.assertRaises(SchemaError):
+            self.sut.from_name('CONST', {"foo": "bar"}).apply()
+
+    def test_given_invalid_DIRECT_schema_should_rase_exception(self):
+        with self.assertRaises(SchemaError):
+            self.sut.from_name('DIRECT', {"foo": "bar"}).apply()
+
+    def test_given_invalid_DOMAIN_schema_should_rase_exception(self):
+        with self.assertRaises(SchemaError):
+            self.sut.from_name('DOMAIN', {"foo": "bar"}).apply()
+
+    def test_given_invalid_EXPR_schema_should_rase_exception(self):
+        with self.assertRaises(SchemaError):
+            self.sut.from_name('EXPR', {"foo": "bar"}).apply()
+
+    def test_given_invalid_IF_schema_should_rase_exception(self):
+        with self.assertRaises(SchemaError):
+            self.sut.from_name('IF', {"foo": "bar"}).apply()
+
+    def test_given_invalid_CASE_schema_should_rase_exception(self):
+        with self.assertRaises(SchemaError):
+            self.sut.from_name('CASE', {"foo": "bar"}).apply()
 
 if __name__ == '__main__':
     unittest.main()
