@@ -20,7 +20,7 @@
                 {"name": "addut_tronchi.pressione", "alias": "pressione"},
                 {"name": "addut_tronchi.protezione_catodica", "alias": "protezione_catodica"},
                 {"name": "addut_tronchi.note", "alias": "note"},
-                { "name": "addut_tronchi.geom", "alias": "geom"}
+                {"name": "addut_tronchi.geom", "alias": "geom"}
             ],
             "table": {
                 "name": "addut_tronchi"

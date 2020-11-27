@@ -19,6 +19,7 @@
                 { "name": "acq_accumulo.a_anno_ristr", "alias": "a_anno_ristr"},
                 { "name": "acq_accumulo.a_volume", "alias": "a_volume"},
                 { "name": "acq_accumulo.data_agg", "alias": "data_agg"},
+                { "name": "acq_accumulo.cod_comune", "alias":"cod_comune"},
                 { "name": "acq_accumulo.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 { "name": "acq_accumulo.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 { "name": "acq_auth_accum.d_telecont", "alias": "d_telecont"},
@@ -29,17 +30,17 @@
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"}
             ],
             "table": {
-                "name": "acq_auth_accum"
+                "name": "acq_accumulo"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "acq_accumulo"
+                        "name": "acq_auth_accum"
                     },
                     "on": [
-                        "acq_auth_accum.id_accumulo",
-                        "acq_accumulo.idgis"
+                        "acq_accumulo.idgis",
+                        "acq_auth_accum.id_accumulo"
                     ],
                     "cond": "="
                 }
@@ -63,6 +64,7 @@
                 { "name": "a_acq_accumulo.a_anno_ristr", "alias": "a_anno_ristr"},
                 { "name": "a_acq_accumulo.a_volume", "alias": "a_volume"},
                 { "name": "a_acq_accumulo.data_agg", "alias": "data_agg"},
+                { "name": "a_acq_accumulo.cod_comune", "alias":"cod_comune"},
                 { "name": "a_acq_accumulo.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 { "name": "a_acq_accumulo.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 { "name": "acq_auth_accum.d_telecont", "alias": "d_telecont"},
@@ -73,17 +75,17 @@
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"}
             ],
             "table": {
-                "name": "acq_auth_accum"
+                "name": "a_acq_accumulo"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "a_acq_accumulo"
+                        "name": "acq_auth_accum"
                     },
                     "on": [
-                        "acq_auth_accum.id_accumulo",
-                        "a_acq_accumulo.idgis"
+                        "a_acq_accumulo.idgis",
+                        "acq_auth_accum.id_accumulo"
                     ],
                     "cond": "="
                 }

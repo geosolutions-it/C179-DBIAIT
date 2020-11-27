@@ -127,5 +127,6 @@ class TransformationSchemaErrors(SimpleTestCase):
         with self.assertRaises(SchemaError):
             self.sut.from_name('CASE', {"foo": "bar"}).apply()
 
+
 if __name__ == '__main__':
     unittest.main()

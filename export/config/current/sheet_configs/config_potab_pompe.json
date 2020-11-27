@@ -17,7 +17,10 @@
                 {"name": "ext_rel_pompa.a_potenza","alias": "a_potenza"},
                 {"name": "ext_rel_pompa.a_portata","alias": "a_portata"},
                 {"name": "ext_rel_pompa.a_prevalenza","alias": "a_prevalenza"}
-            ]
+            ],
+             "table":{
+                "name":"ext_rel_pompa"
+             }
         }
     ],
     "columns": [

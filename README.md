@@ -232,7 +232,7 @@ To run them, use the following command:
 
 ```
 Normal:
-python manage.py test --settings=app.local_settings
+python manage.py test --settings=app.test_settings
 
 Verbosity Mode:
 python manage.py test --settings=app.test_settings -v 2
