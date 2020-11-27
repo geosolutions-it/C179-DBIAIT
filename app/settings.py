@@ -96,6 +96,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'app.context_processors.export_vars',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -194,7 +195,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+url_path_prefix = os.getenv("URL_PATH_PREFIX", "")
+
+STATIC_URL = f'{url_path_prefix}/static/'
 STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, "static_root"))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
@@ -203,20 +206,20 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 # User to connect and search in the LDAP/AD
 AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://localhost:389/DC=publiacqua,DC=it")
 AUTH_LDAP_BIND_DN = os.getenv("LDAP_USERNAME", "CN=webgis_ldap,OU=Users,OU=IT_Services,DC=publiacqua,DC=it")
-AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "W3bg1s2020PH2O!")
+AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "random_password")
 
 LDAP_OU_APP = os.getenv("LDAP_OU_APP", "MapStore")
-LDAP_CN_OPERATOR = os.getenv("LDAP_CN_OPERATOR", "viewers")
-LDAP_CN_MANAGEMENT = os.getenv("LDAP_CN_MANAGEMENT", "editors2")
-LDAP_CN_ADMINISTRATOR = os.getenv("LDAP_CN_ADMINISTRATOR", "editors1")
+LDAP_GROUP_OPERATORS = os.getenv("LDAP_CN_OPERATOR", "viewers")
+LDAP_GROUP_MANAGERS = os.getenv("LDAP_CN_MANAGEMENT", "editors2")
+LDAP_GROP_ADMINS = os.getenv("LDAP_CN_ADMINISTRATOR", "editors1")
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     "",
     ldap.SCOPE_SUBTREE,
     "(&(objectCategory=Person)"
-    "(|(memberOf=CN=editors1,OU=MapStore,OU=IT_Services,DC=publiacqua,DC=it)"
-    "(memberOf=CN=editors2,OU=MapStore,OU=IT_Services,DC=publiacqua,DC=it)"
-    "(memberOf=CN=viewers,OU=MapStore,OU=IT_Services,DC=publiacqua,DC=it))"
+    f"(|(memberOf=CN={LDAP_GROP_ADMINS},OU={LDAP_OU_APP},OU=IT_Services,DC=publiacqua,DC=it)"
+    f"(memberOf=CN={LDAP_GROUP_MANAGERS},OU={LDAP_OU_APP},OU=IT_Services,DC=publiacqua,DC=it)"
+    f"(memberOf=CN={LDAP_GROUP_OPERATORS},OU={LDAP_OU_APP},OU=IT_Services,DC=publiacqua,DC=it))"
     "(sAMAccountName=%(user)s))")
 
 AUTH_LDAP_USER_ATTR_MAP = {
@@ -226,14 +229,14 @@ AUTH_LDAP_USER_ATTR_MAP = {
 }
 
 ldap_group_base = os.getenv("AUTH_LDAP_GROUP_BASE", "OU=MapStore,OU=IT_Services")
-ldap_group_filter = os.getenv("AUTH_LDAP_GROUP_FILTER", "(|(CN=editors1)(CN=editors2)(CN=viewers))")
+ldap_group_filter = os.getenv("AUTH_LDAP_GROUP_FILTER", f"(|(CN={LDAP_GROP_ADMINS})(CN={LDAP_GROUP_MANAGERS})(CN={LDAP_GROUP_OPERATORS}))")
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(ldap_group_base, ldap.SCOPE_SUBTREE, ldap_group_filter)
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    'is_operator': "cn=viewers,{}".format(ldap_group_base),
-    'is_staff': "cn=editors1,{}".format(ldap_group_base),
-    'is_superuser': "cn=editors2,{}".format(ldap_group_base),
+    'is_operator': f"cn={LDAP_GROUP_OPERATORS},{ldap_group_base}",
+    'is_staff': f"cn={LDAP_GROP_ADMINS},{ldap_group_base}",
+    'is_superuser': f"cn={LDAP_GROUP_MANAGERS},{ldap_group_base}",
 }
 
 AUTH_LDAP_ALWAYS_UPDATE_USER = ast.literal_eval(os.getenv('AUTH_LDAP_ALWAYS_UPDATE_USER', 'True'))
@@ -284,3 +287,4 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.CryptPasswordHasher',
 )
 
+SECURE_SSL_REDIRECT = True
