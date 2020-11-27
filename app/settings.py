@@ -202,8 +202,13 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 # -------------------------- LDAP ----------------------------------------------------------------------------------
 # User to connect and search in the LDAP/AD
 AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://localhost:389/DC=publiacqua,DC=it")
-AUTH_LDAP_BIND_DN = "CN=webgis_ldap,OU=Users,OU=IT_Services,DC=publiacqua,DC=it"
+AUTH_LDAP_BIND_DN = os.getenv("LDAP_USERNAME", "CN=webgis_ldap,OU=Users,OU=IT_Services,DC=publiacqua,DC=it")
 AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "W3bg1s2020PH2O!")
+
+LDAP_OU_APP = os.getenv("LDAP_OU_APP", "MapStore")
+LDAP_CN_OPERATOR = os.getenv("LDAP_CN_OPERATOR", "viewers")
+LDAP_CN_MANAGEMENT = os.getenv("LDAP_CN_MANAGEMENT", "editors2")
+LDAP_CN_ADMINISTRATOR = os.getenv("LDAP_CN_ADMINISTRATOR", "editors1")
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     "",
@@ -237,8 +242,8 @@ AUTH_LDAP_ALWAYS_UPDATE_USER = ast.literal_eval(os.getenv('AUTH_LDAP_ALWAYS_UPDA
 # ---------------------------------------------------------------------------------------------------------------
 
 AUTHENTICATION_BACKENDS = (
-    #'django.contrib.auth.backends.ModelBackend',
     'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 # QGis installation path
