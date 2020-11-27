@@ -235,6 +235,6 @@ Normal:
 python manage.py test --settings=app.local_settings
 
 Verbosity Mode:
-python manage.py test --settings=app.local_settings -v 2
+python manage.py test --settings=app.test_settings -v 2
 
 ```
