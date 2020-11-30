@@ -137,12 +137,34 @@
             }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.sub_funzione = 3"
+      },
+      {
+         "fields": [
+             { "name": "localita.denominazi", "alias": "denominazi" }
+         ],
+         "table": {
+             "name": "acq_captazione"
+         },
+         "join": [
+             {
+                 "type": "spatial",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "acq_captazione.shape",
+                     "localita.shape"
+                 ],
+                 "cond": "="
+             }
+         ]
       }
    ],
    "columns":[
       {"id":"17200", "transformation":{"func":"EXPR", "params":{"field":"volume_medio_prel", "expr": "_value_*1000/365/3600/24"}}},
 
       {"id":"14700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
+      {"id":"15300", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
       {"id":"14800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
       {"id":"15200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}},
       {"id":"15500", "transformation":{"func":"DIRECT", "params":{"field":"estremi_conces"}}},

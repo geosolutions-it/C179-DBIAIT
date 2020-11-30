@@ -141,14 +141,48 @@
             }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') AND a_acq_captazione.sub_funzione = 4"
-      }
+      },
+      {
+         "fields": [
+             { "name": "localita.denominazi", "alias": "denominazi" }
+         ],
+         "table": {
+             "name": "acq_captazione"
+         },
+         "join": [
+             {
+                 "type": "spatial",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "acq_captazione.shape",
+                     "localita.shape"
+                 ],
+                 "cond": "="
+             }
+         ]
+      },
+        {
+            "fields": [
+                {
+                    "name": "sorgenti_inpotab.ids_codice_potab",
+                    "alias": "ids_codice_potab"
+                }
+            ],
+            "table": {
+                "name": "sorgenti_inpotab"
+            }
+        }
    ],
    "columns":[
       {"id":"26200", "transformation":{"func":"EXPR", "params":{"field":"volume_medio_prel", "expr": "_value_*1000/365/3600/24"}}},
 
       {"id":"23700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
+      {"id":"26100", "transformation":{"func":"DIRECT", "params":{"field":"ids_codice_potab"}}},
       {"id":"23800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
       {"id":"24200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}},
+      {"id":"24300", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
       {"id":"24500", "transformation":{"func":"DIRECT", "params":{"field":"estremi_conces"}}},
       {"id":"24600", "transformation":{"func":"DIRECT", "params":{"field":"port_potab"}}},
       {"id":"24700", "transformation":{"func":"DIRECT", "params":{"field":"port_industr"}}},
