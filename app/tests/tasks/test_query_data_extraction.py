@@ -226,31 +226,5 @@ class ExportConfigTest(SimpleTestCase):
         self.assertMultiLineEqual(expected_sorgenti_spatial_query, actual[0][3])
 
 
-
-
-
-
-    """
-    @patch("app.scheduler.tasks.export_definitions.export_xls.Domains")
-    def test_export_configuration_should_return_the_expected_query_strings(self, mocked_domain):
-        mocked_domain._data = {
-            "D_T_CLORAZ": {
-"CLO": 2,
-"ALT": 5,
-"NES": 1,
-"BIO": 4,
-"IPO": 3,
-"MIS": 5
-            }
-        }
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            tmp_export_directory = pathlib.Path(tmp_dir)
-
-            x = ExportXls(export_dir=tmp_export_directory, orm_task=self.task).run()
-            print(x)
-        self.assertEqual(True, False)
-"""
-
-
 if __name__ == "__main__":
     unittest.main()
