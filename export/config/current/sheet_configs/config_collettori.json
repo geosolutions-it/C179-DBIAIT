@@ -16,17 +16,17 @@
                 {  "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" }
             ],
             "table": {
-                "name": "fgn_auth_collet"
+                "name": "fgn_collettore"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "fgn_collettore"
+                        "name": "fgn_auth_collet"
                     },
                     "on": [
-                        "fgn_auth_collet.id_collettore",
-                        "fgn_collettore.idgis"
+                        "fgn_collettore.idgis",
+                        "fgn_auth_collet.id_collettore"
                     ],
                     "cond": "="
                 }
@@ -47,17 +47,17 @@
                 {  "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" }
             ],
             "table": {
-                "name": "fgn_auth_collet"
+                "name": "a_fgn_collettore"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "a_fgn_collettore"
+                        "name": "fgn_auth_collet"
                     },
                     "on": [
-                        "fgn_auth_collet.id_collettore",
-                        "a_fgn_collettore.idgis"
+                        "a_fgn_collettore.idgis",
+                        "fgn_auth_collet.id_collettore"
                     ],
                     "cond": "="
                 }

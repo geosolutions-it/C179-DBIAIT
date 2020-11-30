@@ -63,37 +63,6 @@
                 }
             ],
             "filter": "WHERE fgn_rete_racc.d_gestore = 'PUBLIACQUA' AND fgn_rete_racc.d_ambito IN ('AT3', NULL) AND fgn_rete_racc.d_stato NOT IN ('IPR', 'IAC')"
-        },
-         {
-            "fields": [
-                {"name": "fgn_rete_racc.codice_ato","alias": "codice_ato"},
-                {"name": "fgn_rete_racc.denom","alias": "denom"},
-                {"name": "fgn_auth_rete_racc.n_scar_piena","alias": "n_scar_piena"},
-                {"name": "fgn_auth_rete_racc.episodi_allag","alias": "episodi_allag"},
-                {"name": "fgn_auth_rete_racc.sn_strum_mis_port","alias": "sn_strum_mis_port"},
-                {"name": "fgn_auth_rete_racc.d_telecont","alias": "d_telecont"},
-                {"name": "fgn_rete_racc.d_stato","alias": "d_stato"},
-                {"name": "fgn_rete_racc.data_agg","alias": "data_agg"},
-                {"name": "fgn_auth_rete_racc.nr_rip","alias": "nr_rip"},
-                {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"}
-            ],
-            "table": {
-                "name": "fgn_rete_racc"
-            },
-            "join": [
-                {
-                    "type": "inner",
-                    "table": {
-                        "name": "fgn_auth_rete_racc"
-                    },
-                    "on": [
-                        "fgn_auth_rete_racc.id_rete_racc",
-                        "fgn_rete_racc.idgis"
-                    ],
-                    "cond": "="
-                }
-            ],
-            "filter": "WHERE fgn_rete_racc.d_gestore = 'PUBLIACQUA' AND fgn_rete_racc.d_ambito IN ('AT3', NULL) AND fgn_rete_racc.d_stato NOT IN ('IPR', 'IAC')"
         }
     ],
     "columns": [

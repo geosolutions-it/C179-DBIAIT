@@ -94,7 +94,7 @@
         },
         {
             "fields": [
-                { "name": "localita.denominazione", "alias": "denominazione" }
+                { "name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
                 "name": "acq_accumulo"
@@ -117,6 +117,7 @@
     "columns": [
         {"id": "44400","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
         {"id": "44100","transformation": {"func": "CONST", "params": {"value": "3003"}}},
+        {"id": "44300","transformation": {"func": "DIRECT", "params": {"field": "denominazi"}}},
 
         {"id": "43700","transformation": {"func": "DIRECT", "params": {"field": "codice_ato"}}},
         {"id": "43800","transformation": {"func": "DIRECT", "params": {"field": "denom"}}},

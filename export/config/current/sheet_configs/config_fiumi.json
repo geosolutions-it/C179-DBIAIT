@@ -17,18 +17,6 @@
                 {"name": "acq_captazione.a_anno_ristr","alias": "a_anno_ristr"},
                 {"name": "acq_captazione.a_volume","alias": "a_volume"},
                 {"name": "acq_captazione.data_agg","alias": "data_agg"},
-                {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
-                {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
-                {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
-                {"name": "acq_capt_conces.estremi_conces","alias": "estremi_conces"},
-                {"name": "acq_capt_conces.port_potab","alias": "port_potab"},
-                {"name": "acq_capt_conces.port_industr","alias": "port_industr"},
-                {"name": "acq_capt_conces.port_irrig","alias": "port_irrig"},
-                {"name": "acq_capt_conces.port_idroel","alias": "port_idroel"},
-                {"name": "acq_capt_conces.a_port_es","alias": "a_port_es"},
-                {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
-                {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
-                {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
                 {"name": "acq_auth_capt.bacino","alias": "bacino"},
                 {"name": "acq_auth_capt.d_classific","alias": "d_classific"},
                 {"name": "acq_auth_capt.port_altro","alias": "port_altro"},
@@ -78,7 +66,7 @@
                     "cond": "="
                 }
             ],
-            "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.d_stato NOT IN ('IPR', 'IAC')"
+            "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
         },
         {
             "fields": [
@@ -95,18 +83,6 @@
                 {"name": "acq_captazione.a_anno_ristr","alias": "a_anno_ristr"},
                 {"name": "acq_captazione.a_volume","alias": "a_volume"},
                 {"name": "acq_captazione.data_agg","alias": "data_agg"},
-                {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
-                {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
-                {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
-                {"name": "acq_capt_conces.estremi_conces","alias": "estremi_conces"},
-                {"name": "acq_capt_conces.port_potab","alias": "port_potab"},
-                {"name": "acq_capt_conces.port_industr","alias": "port_industr"},
-                {"name": "acq_capt_conces.port_irrig","alias": "port_irrig"},
-                {"name": "acq_capt_conces.port_idroel","alias": "port_idroel"},
-                {"name": "acq_capt_conces.a_port_es","alias": "a_port_es"},
-                {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
-                {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
-                {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
                 {"name": "acq_auth_capt.bacino","alias": "bacino"},
                 {"name": "acq_auth_capt.d_classific","alias": "d_classific"},
                 {"name": "acq_auth_capt.port_altro","alias": "port_altro"},
@@ -143,7 +119,68 @@
                         "acq_auth_capt.id_captazione"
                     ],
                     "cond": "="
-                },
+                }
+            ],
+            "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
+        },
+        {
+            "fields": [
+                {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
+                {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
+                {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
+                {"name": "acq_capt_conces.estremi_conces","alias": "estremi_conces"},
+                {"name": "acq_capt_conces.port_potab","alias": "port_potab"},
+                {"name": "acq_capt_conces.port_industr","alias": "port_industr"},
+                {"name": "acq_capt_conces.port_irrig","alias": "port_irrig"},
+                {"name": "acq_capt_conces.port_idroel","alias": "port_idroel"},
+                {"name": "acq_capt_conces.a_port_es","alias": "a_port_es"},
+                {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
+                {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
+                {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+                {"name": "acq_captazione.cod_comune", "alias":"cod_comune"},
+                {"name":"acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            ],
+            "table": {
+                "name": "acq_captazione"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_capt_conces"
+                    },
+                    "on": [
+                        "acq_captazione.idgis",
+                        "acq_capt_conces.id_captazione"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
+        },
+         {
+            "fields": [
+                {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
+                {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
+                {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
+                {"name": "acq_capt_conces.estremi_conces","alias": "estremi_conces"},
+                {"name": "acq_capt_conces.port_potab","alias": "port_potab"},
+                {"name": "acq_capt_conces.port_industr","alias": "port_industr"},
+                {"name": "acq_capt_conces.port_irrig","alias": "port_irrig"},
+                {"name": "acq_capt_conces.port_idroel","alias": "port_idroel"},
+                {"name": "acq_capt_conces.a_port_es","alias": "a_port_es"},
+                {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
+                {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
+                {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+                {"name": "a_acq_captazione.cod_comune", "alias":"cod_comune"},
+                {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            ],
+            "table": {
+                "name": "a_acq_captazione"
+            },
+            "join": [
                 {
                     "type": "inner",
                     "table": {
@@ -156,7 +193,7 @@
                     "cond": "="
                 }
             ],
-            "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC')"
+            "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
         },
         {
             "fields": [

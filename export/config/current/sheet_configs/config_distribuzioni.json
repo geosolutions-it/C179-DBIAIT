@@ -22,17 +22,17 @@
                 { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"}
             ],
             "table": {
-                "name": "acq_auth_rete_dist"
+                "name": "acq_rete_distrib"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "acq_rete_distrib"
+                        "name": "acq_auth_rete_dist"
                     },
                     "on": [
-                        "acq_auth_rete_dist.id_rete_distrib",
-                        "acq_rete_distrib.idgis"
+                        "acq_rete_distrib.idgis",
+                        "acq_auth_rete_dist.id_rete_distrib"
                     ],
                     "cond": "="
                 }
@@ -59,17 +59,17 @@
                 { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"}
             ],
             "table": {
-                "name": "acq_auth_rete_dist"
+                "name": "a_acq_rete_distrib"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "a_acq_rete_distrib"
+                        "name": "acq_auth_rete_dist"
                     },
                     "on": [
-                        "acq_auth_rete_dist.id_rete_distrib",
-                        "a_acq_rete_distrib.idgis"
+                        "a_acq_rete_distrib.idgis",
+                        "acq_auth_rete_dist.id_rete_distrib"
                     ],
                     "cond": "="
                 }

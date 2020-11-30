@@ -79,18 +79,18 @@
             }},
          {"id":"70500", "transformation":{ "func":"CASE", "params": {"field":"41200", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
          ]}}},
         {"id":"70600", "transformation":{ "func":"CASE", "params": {"field":"41200", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
          ]}}},
        {"id":"70700", "transformation":{ "func":"CASE", "params": {"field":"41200", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
          ]}}},
        {"id": "102000", "transformation": {
                 "func": "IF",
