@@ -52,13 +52,14 @@
     ],
      "columns": [
         {"id": "41100", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
+        {"id": "40900", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
 
-        {"id": "41200", "transformation": {"func": "DOMAIN", "params": { "field": "d_materiale", "domain_name": "D_MATERIALE_IDR" }}},
-        {"id": "41300", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }}},
+        {"id": "41200", "transformation": {"func": "DOMAIN", "params": { "field": "idx_materiale", "domain_name": "D_MATERIALE_IDR" }}},
+        {"id": "41300", "transformation": {"func": "DOMAIN", "params": { "field": "id_conservazione", "domain_name": "D_STATO_CONS" }}},
 
         {"id": "41400", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }}},
 
-        {"id": "41500", "transformation": {
+        {"id": "41600", "transformation": {
                 "func": "IF",
                 "params": {
                     "field": "id_sist_prot_cat",
@@ -71,7 +72,7 @@
                 }
             }},
 
-        {"id": "41600", "transformation": {
+        {"id": "41500", "transformation": {
                 "func": "IF",
                 "params": {
                     "field": "data_esercizio",
@@ -79,21 +80,21 @@
                         "operator": "=",
                         "value": "",
                         "result": "9999",
-                        "else": "null"
+                        "else": "data_esercizio"
                     }
                 }
             }},
-         {"id":"41800", "transformation":{ "func":"CASE", "params": {"field":"41200", "cond": [
+         {"id":"41800", "transformation":{ "func":"CASE", "params": {"field":"idx_materiale", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
              {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
              {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
          ]}}},
-        {"id":"41900", "transformation":{ "func":"CASE", "params": {"field":"41200", "cond": [
+        {"id":"41900", "transformation":{ "func":"CASE", "params": {"field":"idx_diametro", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
              {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
              {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
          ]}}},
-       {"id":"42000", "transformation":{ "func":"CASE", "params": {"field":"41200", "cond": [
+       {"id":"42000", "transformation":{ "func":"CASE", "params": {"field":"idx_anno", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
              {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
              {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}

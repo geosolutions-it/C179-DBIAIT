@@ -111,8 +111,8 @@
 
         {"id": "47900","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
         {"id": "48000","transformation": { "func": "DIRECT", "params": { "field": "denom" }}},
-        {"id": "48100","transformation": { "func": "DIRECT", "params": { "field": "transformed_x_geom" }}},
-        {"id": "48200","transformation": { "func": "DIRECT", "params": { "field": "transformed_y_geom" }}},
+        {"id": "48100","transformation": { "func": "DIRECT", "params": { "field": "transformed_y_geom" }}},
+        {"id": "48200","transformation": { "func": "DIRECT", "params": { "field": "transformed_x_geom" }}},
         {"id": "48400","transformation": { "func": "DIRECT", "params": { "field": "quota" }}},
         {"id": "48700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr" }}},
         {"id": "48800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_civ" }}},
@@ -126,7 +126,7 @@
         {"id": "49100","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons_elmec", "domain_name": "D_STATO_CONS" }}},
         {"id": "49400","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" }}},
 
-        {"id": "49700","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "" }}},
+        {"id": "49700","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" }}},
         {"id": "49800","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_costr", "domain_name":  "D_AFFIDABILITA" }}},
         {"id": "49900","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr_civ", "domain_name":  "D_AFFIDABILITA" }}},
         {"id": "50000","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr_elmec", "domain_name":  "D_AFFIDABILITA" }}}

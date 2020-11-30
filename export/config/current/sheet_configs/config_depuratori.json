@@ -286,8 +286,8 @@
         {"id": "102400", "transformation": {"func": "DIRECT", "params": { "field": "sn_strum_mis_port_out" }}},
 
 
-        {"id": "72000", "transformation": {"func": "DIRECT", "params": { "field": "transformed_x_geom"}}},
-        {"id": "72100", "transformation": {"func": "DIRECT", "params": { "field": "transformed_y_geom"}}},
+        {"id": "72000", "transformation": {"func": "DIRECT", "params": { "field": "transformed_y_geom"}}},
+        {"id": "72100", "transformation": {"func": "DIRECT", "params": { "field": "transformed_x_geom"}}},
 
         {"id": "72500", "transformation": {"func": "LSTRIP", "params": { "field": "cod_comune", "char": "0" }}},
 

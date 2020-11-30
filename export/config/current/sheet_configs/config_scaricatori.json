@@ -131,15 +131,15 @@
       {"id":"102500", "transformation":{"func":"DIRECT", "params":{"field":"d_classif"}}},
       {"id":"83400", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
 
-      {"id":"83000", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
-      {"id":"83100", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"83000", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"83100", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
 
       {"id":"83600", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_scolm", "domain_name": "D_T_SCOLM"}}},
       {"id":"84700", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons", "domain_name": "D_STATO_CONS"}}},
       {"id":"84800", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
       {"id":"84900", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
-      {"id":"85000", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"85100", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_T_RILIEVO"}}},
+      {"id":"85000", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"85100", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}},
 
       {"id":"83200", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
       {"id":"85200", "transformation":{"func":"CONST", "params":{"value":"C"}}},

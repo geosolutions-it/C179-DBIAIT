@@ -219,8 +219,8 @@
       {"id":"98600", "transformation":{"func":"DIRECT", "params":{"field":"vol_uscita"}}},
       {"id":"31500", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
 
-      {"id":"31100", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
-      {"id":"31200", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"31100", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"31200", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
 
       {"id":"31700", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_trattam", "domain_name": "D_T_TRATTAM_POTAB"}}},
       {"id":"32020", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons_civ", "domain_name": "D_STATO_CONS"}}},
@@ -231,12 +231,12 @@
       {"id":"33600", "transformation":{"func":"DOMAIN", "params":{"field":"d_ass_carb_att", "domain_name": "D_ASS_CARB_ATT"}}},
       {"id":"34400", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
       {"id":"35500", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
-      {"id":"35600", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"35710", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"35800", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_gg_tratt", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"35900", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_anno_tratt", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"98700", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_uscita", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"35720", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_elmec", "domain_name": "D_T_RILIEVO"}}},
+      {"id":"35600", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"35710", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"35800", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_gg_tratt", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"35900", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_anno_tratt", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"98700", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_uscita", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"35720", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_elmec", "domain_name": "D_AFFIDABILITA"}}},
 
       {"id":"31300", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
 

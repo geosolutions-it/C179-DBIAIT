@@ -195,8 +195,8 @@
 
         {"id": "8000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
         {"id": "8100","transformation": { "func": "DIRECT", "params": { "field": "denom" }}},
-        {"id": "8200","transformation": { "func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
-        {"id": "8300","transformation": { "func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
+        {"id": "8200","transformation": { "func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
+        {"id": "8300","transformation": { "func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
         {"id": "8500","transformation": { "func": "DIRECT", "params": { "field": "quota" }}},
         {"id": "8800","transformation": { "func": "DIRECT", "params": { "field": "bacino" }}},
         {"id": "8900","transformation": { "func": "DIRECT", "params": { "field": "corso_acqua" }}},

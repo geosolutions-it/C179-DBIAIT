@@ -201,7 +201,6 @@
         {"id": "1600","transformation": {"func": "DIRECT", "params": {"field": "denominazi"}}},
         {"id": "3400","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_potab"}}},
 
-        {"id": "1600","transformation": { "func": "DIRECT", "params": { "field": "denominazi"}}},
         {"id": "1000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
         {"id": "1100","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
         {"id": "1500","transformation": { "func": "DIRECT", "params": { "field": "quota"}}},
@@ -230,9 +229,8 @@
         {"id": "4600","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port"}}},
         {"id": "5100","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor"}}},
         {"id": "5200","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor"}}},
-        {"id": "1200","transformation": { "func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
-        {"id": "1300","transformation": { "func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
-        {"id": "3300","transformation": { "func": "DIRECT", "params": { "field": "volume_medio_prel"}}},
+        {"id": "1200","transformation": { "func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
+        {"id": "1300","transformation": { "func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
         {"id": "6300","transformation": { "func": "DIRECT", "params": { "field": "data_agg"}}},
 
 
@@ -259,7 +257,7 @@
         {"id":"5800", "transformation":{
             "func": "IF",
             "params": {
-                "field": "3400",
+                "field": "ids_codice_potab",
                 "cond": {
                     "operator": "=",
                     "value": "0",

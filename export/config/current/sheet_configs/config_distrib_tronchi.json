@@ -50,10 +50,10 @@
     ],
      "columns": [
         {"id": "56500", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
-        {"id": "56800", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
+        {"id": "56800", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
 
-        {"id": "56600", "transformation": {"func": "DOMAIN", "params": { "field": "d_materiale", "domain_name": "D_MATERIALE_IDR" }}},
-        {"id": "56700", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "id_conserva" }}},
+        {"id": "56600", "transformation": {"func": "DOMAIN", "params": { "field": "id_materiale", "domain_name": "D_MATERIALE_IDR" }}},
+        {"id": "56700", "transformation": {"func": "DOMAIN", "params": { "field": "id_conservazione", "domain_name": "D_STATO_CONS" }}},
 
         {"id": "56800", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }}},
 
@@ -70,17 +70,24 @@
                 }
             }},
 
-         {"id":"83900", "transformation":{ "func":"CASE", "params": {"field":"56600", "cond": [
+         {"id":"57100", "transformation":{ "func":"CASE", "params": {"field":"id_materiale", "cond": [
+             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+         ]}}},
+        {"id":"57200", "transformation":{ "func":"CASE", "params": {"field":"diametro", "cond": [
+             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+         ]}}},
+        {"id":"57300", "transformation":{ "func":"CASE", "params": {"field":"data_esercizio", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
              {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
              {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
          ]}}},
 
         {"id": "57000", "transformation": {"func": "DOMAIN", "params": { "field": "57000", "domain_name": "D_CORPO_RICET" }}},
-        {"id": "57100", "transformation": {"func": "DOMAIN", "params": { "field": "57100", "domain_name": "D_CORPO_RICET" }}},
-        {"id": "57200", "transformation": {"func": "DOMAIN", "params": { "field": "57200", "domain_name": "D_CORPO_RICET" }}},
-        {"id": "57300", "transformation": {"func": "DOMAIN", "params": { "field": "57300", "domain_name": "D_CORPO_RICET" }}},
-        {"id": "57400", "transformation": {"func": "DOMAIN", "params": { "field": "57400", "domain_name": "D_CORPO_RICET" }}},
+        {"id": "57400", "transformation": {"func": "DOMAIN", "params": { "field": "57400", "domain_name": "D_T_RILIEVO" }}},
         {"id": "101000", "transformation": {
                 "func": "IF",
                 "params": {
