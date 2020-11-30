@@ -949,7 +949,6 @@ BEGIN
 			SET id_refluo_trasportato = ''1''
 			WHERE to_integer(id_refluo_trasportato, -9) = -9;
 		';
-		
 	END IF;
 	
 	-- valorizzazione funziona_gravita
@@ -1419,9 +1418,9 @@ BEGIN
 							--and uct.idgis = 'PAAUCO00000002082051'
 						) uc, 
 						(
-							select * from fgn_rel_prod_imm 
+							select id_produttivo, id_immissione from fgn_rel_prod_imm 
 							union all
-							select * from a_fgn_rel_prod_imm
+							select id_produttivo, id_immissione from a_fgn_rel_prod_imm
 						) prod_imm
 						where 
 						uc.ID_IMPIANTO is not null and uc.sorgente IS null and 
