@@ -195,10 +195,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-url_path_prefix = os.getenv("URL_PATH_PREFIX", "")
+url_path_prefix = os.getenv("URL_PATH_PREFIX", "").replace("", "")
 
-STATIC_URL = f'{url_path_prefix}/static/'
-STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, "static_root"))
+STATIC_URL = f'{url_path_prefix}static/'
+STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, f"{url_path_prefix}static_root"))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
 
@@ -287,5 +287,7 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.CryptPasswordHasher',
 )
 
-SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', False)
+SECURE_SSL_REDIRECT = ast.literal_eval(os.environ.get('SECURE_SSL_REDIRECT', 'False'))
+SESSION_COOKIE_SECURE = ast.literal_eval(os.environ.get('SESSION_COOKIE_SECURE', 'False'))
+CSRF_COOKIE_SECURE = ast.literal_eval(os.environ.get('CSRF_COOKIE_SECURE', 'False'))
 
