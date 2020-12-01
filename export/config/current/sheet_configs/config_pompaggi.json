@@ -22,7 +22,8 @@
                 {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "a_anno_ristr_elmec"},
                 {"name": "acq_pompaggio.data_agg","alias": "data_agg"},
                 {"name": "acq_pompaggio.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-                {"name": "acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+                {"name": "acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                { "name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
                 "name": "acq_pompaggio"
@@ -38,6 +39,17 @@
                         "acq_pompaggio.idgis"
                     ],
                     "cond": "="
+                },
+                {
+                     "type": "inner",
+                     "table": {
+                         "name": "localita"
+                     },
+                     "on": [
+                         "localita.geom",
+                         "acq_pompaggio.geom"
+                     ],
+                     "cond": "ST_INTERSECTS"
                 }
             ],
             "filter": "WHERE acq_pompaggio.d_gestore = 'PUBLIACQUA' AND acq_pompaggio.d_ambito IN ('AT3', NULL) AND acq_pompaggio.d_stato NOT IN ('IPR', 'IAC')"
@@ -62,7 +74,8 @@
                 {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "a_anno_ristr_elmec"},
                 {"name": "a_acq_pompaggio.data_agg","alias": "data_agg"},
                 {"name": "a_acq_pompaggio.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-                {"name": "a_acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+                {"name": "a_acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                { "name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
                 "name": "a_acq_pompaggio"
@@ -78,30 +91,20 @@
                         "a_acq_pompaggio.idgis"
                     ],
                     "cond": "="
+                },
+                {
+                     "type": "inner",
+                     "table": {
+                         "name": "localita"
+                     },
+                     "on": [
+                         "localita.geom",
+                         "a_acq_pompaggio.geom"
+                     ],
+                     "cond": "ST_INTERSECTS"
                 }
             ],
             "filter": "WHERE a_acq_pompaggio.d_gestore = 'PUBLIACQUA' AND a_acq_pompaggio.d_ambito IN ('AT3', NULL) AND a_acq_pompaggio.d_stato NOT IN ('IPR', 'IAC')"
-        },
-        {
-            "fields": [
-                { "name": "localita.denominazi", "alias": "denominazi" }
-            ],
-            "table": {
-                "name": "acq_pompaggio"
-            },
-            "join": [
-                {
-                    "type": "spatial",
-                    "table": {
-                        "name": "localita"
-                    },
-                    "on": [
-                        "acq_pompaggio.shape",
-                        "localita.shape"
-                    ],
-                    "cond": "="
-                }
-            ]
         }
     ],
     "columns": [

@@ -54,7 +54,7 @@
                         "localita.geom",
                         "acq_accumulo.geom"
                     ],
-                    "cond": "ST_CONTAINS"
+                    "cond": "ST_INTERSECTS"
                 }
             ],
             "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND acq_accumulo.d_ambito IN ('AT3', NULL) AND acq_accumulo.d_stato NOT IN ('IPR','IAC')"
@@ -111,7 +111,7 @@
                         "localita.geom",
                         "a_acq_accumulo.geom"
                     ],
-                    "cond": "ST_CONTAINS"
+                    "cond": "ST_INTERSECTS"
                 }
             ],
             "filter": "WHERE a_acq_accumulo.d_gestore = 'PUBLIACQUA' AND a_acq_accumulo.d_ambito IN ('AT3', NULL) AND a_acq_accumulo.d_stato NOT IN ('IPR','IAC')"

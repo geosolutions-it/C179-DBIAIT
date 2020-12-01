@@ -49,7 +49,8 @@
                 {"name": "acq_capt_conces.a_port_es","alias": "a_port_es"},
                 {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
                 {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
-                {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"}
+                {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+                { "name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
                 "name": "acq_captazione"
@@ -76,6 +77,17 @@
                         "acq_capt_conces.id_captazione"
                     ],
                     "cond": "="
+                },
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "localita.geom",
+                        "acq_captazione.geom"
+                    ],
+                    "cond": "ST_INTERSECTS"
                 }
             ],
             "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
@@ -127,7 +139,8 @@
                 {"name": "a_acq_capt_conces.a_port_es","alias": "a_port_es"},
                 {"name": "a_acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
                 {"name": "a_acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
-                {"name": "a_acq_capt_conces.a_port_deriv","alias": "a_port_deriv"}
+                {"name": "a_acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+                { "name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
                 "name": "a_acq_captazione"
@@ -154,30 +167,20 @@
                         "a_acq_capt_conces.id_captazione"
                     ],
                     "cond": "="
-                }
-            ],
-            "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
-        },
-        {
-            "fields": [
-                { "name": "localita.denominazi", "alias": "denominazi" }
-            ],
-            "table": {
-                "name": "acq_captazione"
-            },
-            "join": [
+                },
                 {
-                    "type": "spatial",
+                    "type": "inner",
                     "table": {
                         "name": "localita"
                     },
                     "on": [
-                        "acq_captazione.shape",
-                        "localita.shape"
+                        "localita.geom",
+                        "a_acq_captazione.geom"
                     ],
-                    "cond": "="
+                    "cond": "ST_INTERSECTS"
                 }
-            ]
+            ],
+            "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
         },
         {
             "fields": [

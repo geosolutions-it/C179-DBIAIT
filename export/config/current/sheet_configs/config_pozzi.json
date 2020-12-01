@@ -39,7 +39,8 @@
             {"name":"acq_captazione.data_agg", "alias":"data_agg"},
             {"name":"acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"acq_captazione"
@@ -66,6 +67,17 @@
                   "acq_captazione.idgis"
                ],
                "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "acq_captazione.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
             }
          ],
          "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3"
@@ -107,7 +119,8 @@
             {"name":"a_acq_captazione.data_agg", "alias":"data_agg"},
             {"name":"a_acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -134,30 +147,20 @@
                   "a_acq_captazione.idgis"
                ],
                "cond":"="
-            }
-         ],
-         "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.sub_funzione = 3"
-      },
-      {
-         "fields": [
-             { "name": "localita.denominazi", "alias": "denominazi" }
-         ],
-         "table": {
-             "name": "acq_captazione"
-         },
-         "join": [
-             {
-                 "type": "spatial",
+            },
+            {
+                 "type": "inner",
                  "table": {
                      "name": "localita"
                  },
                  "on": [
-                     "acq_captazione.shape",
-                     "localita.shape"
+                     "localita.geom",
+                     "a_acq_captazione.geom"
                  ],
-                 "cond": "="
-             }
-         ]
+                 "cond": "ST_INTERSECTS"
+            }
+         ],
+         "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.sub_funzione = 3"
       }
    ],
    "columns":[

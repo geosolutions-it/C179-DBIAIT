@@ -27,7 +27,8 @@
             {"name":"fgn_sfioro.d_classif", "alias":"d_classif"},
             {"name":"fgn_sfioro.cod_comune", "alias":"cod_comune"},
             {"name":"fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"fgn_sfioro"
@@ -43,6 +44,17 @@
                   "fgn_sfioro.idgis"
                ],
                "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "fgn_sfioro.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
             }
          ],
          "filter": "WHERE fgn_sfioro.d_gestore = 'PUBLIACQUA' AND fgn_sfioro.d_ambito IN ('AT3', NULL) AND fgn_sfioro.d_stato NOT IN ('IPR', 'IAC')"
@@ -72,7 +84,8 @@
             {"name":"a_fgn_sfioro.d_classif", "alias":"d_classif"},
             {"name":"a_fgn_sfioro.cod_comune", "alias":"cod_comune"},
             {"name":"a_fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"a_fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"a_fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"a_fgn_sfioro"
@@ -88,30 +101,20 @@
                   "a_fgn_sfioro.idgis"
                ],
                "cond":"="
-            }
-         ],
-         "filter": "WHERE a_fgn_sfioro.d_gestore = 'PUBLIACQUA' AND a_fgn_sfioro.d_ambito IN ('AT3', NULL) AND a_fgn_sfioro.d_stato NOT IN ('IPR', 'IAC')"
-      },
-      {
-         "fields": [
-             { "name": "localita.denominazi", "alias": "denominazi" }
-         ],
-         "table": {
-             "name": "fng_sfioro"
-         },
-         "join": [
-             {
-                 "type": "spatial",
+            },
+            {
+                 "type": "inner",
                  "table": {
                      "name": "localita"
                  },
                  "on": [
-                     "fng_sfioro.shape",
-                     "localita.shape"
+                     "localita.geom",
+                     "a_fgn_sfioro.geom"
                  ],
-                 "cond": "="
-             }
-         ]
+                 "cond": "ST_INTERSECTS"
+            }
+         ],
+         "filter": "WHERE a_fgn_sfioro.d_gestore = 'PUBLIACQUA' AND a_fgn_sfioro.d_ambito IN ('AT3', NULL) AND a_fgn_sfioro.d_stato NOT IN ('IPR', 'IAC')"
       }
    ],
    "columns":[

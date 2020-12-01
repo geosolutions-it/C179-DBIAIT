@@ -81,6 +81,7 @@
                 { "name": "fgn_auth_trattam.a_conc_co2_ing", "alias": "a_conc_co2_ing"},
                 { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
                 { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
+                { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out"}
             ],
@@ -98,6 +99,17 @@
                         "fgn_auth_trattam.id_trattamento"
                     ],
                     "cond": "="
+                },
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "localita.geom",
+                        "fgn_trattamento.geom"
+                    ],
+                    "cond": "ST_INTERSECTS"
                 }
             ],
             "filter": "WHERE fgn_trattamento.d_gestore = 'PUBLIACQUA' AND fgn_trattamento.d_ambito IN ('AT3', NULL) AND fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
@@ -181,6 +193,7 @@
                 { "name": "fgn_auth_trattam.a_conc_co2_ing", "alias": "a_conc_co2_ing"},
                 { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
                 { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
+                { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out"}
             ],
@@ -198,30 +211,20 @@
                         "fgn_auth_trattam.id_trattamento"
                     ],
                     "cond": "="
-                }
-            ],
-            "filter": "WHERE a_fgn_trattamento.d_gestore = 'PUBLIACQUA' AND a_fgn_trattamento.d_ambito IN ('AT3', NULL) AND a_fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
-        },
-        {
-            "fields": [
-                { "name": "localita.denominazi", "alias": "denominazi" }
-            ],
-            "table": {
-                "name": "fgn_trattamento"
-            },
-            "join": [
+                },
                 {
-                    "type": "spatial",
+                    "type": "inner",
                     "table": {
                         "name": "localita"
                     },
                     "on": [
-                        "fgn_trattamento.shape",
-                        "localita.shape"
+                        "localita.geom",
+                        "a_fgn_trattamento.geom"
                     ],
-                    "cond": "="
+                    "cond": "ST_INTERSECTS"
                 }
-            ]
+            ],
+            "filter": "WHERE a_fgn_trattamento.d_gestore = 'PUBLIACQUA' AND a_fgn_trattamento.d_ambito IN ('AT3', NULL) AND a_fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
         }
     ],
     "columns": [
