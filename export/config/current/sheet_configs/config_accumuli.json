@@ -27,7 +27,8 @@
                 { "name": "acq_auth_accum.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
-                { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"}
+                { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
+                { "name": "localita.denominazi", "alias": "denominazione"}
             ],
             "table": {
                 "name": "acq_accumulo"
@@ -43,6 +44,17 @@
                         "acq_auth_accum.id_accumulo"
                     ],
                     "cond": "="
+                },
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "localita.geom",
+                        "acq_accumulo.geom"
+                    ],
+                    "cond": "ST_CONTAINS"
                 }
             ],
             "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND acq_accumulo.d_ambito IN ('AT3', NULL) AND acq_accumulo.d_stato NOT IN ('IPR','IAC')"
@@ -72,7 +84,8 @@
                 { "name": "acq_auth_accum.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
-                { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"}
+                { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
+                { "name": "localita.denominazi", "alias": "denominazione"}
             ],
             "table": {
                 "name": "a_acq_accumulo"
@@ -88,30 +101,20 @@
                         "acq_auth_accum.id_accumulo"
                     ],
                     "cond": "="
-                }
-            ],
-            "filter": "WHERE a_acq_accumulo.d_gestore = 'PUBLIACQUA' AND a_acq_accumulo.d_ambito IN ('AT3', NULL) AND a_acq_accumulo.d_stato NOT IN ('IPR','IAC')"
-        },
-        {
-            "fields": [
-                { "name": "localita.denominazi", "alias": "denominazi" }
-            ],
-            "table": {
-                "name": "acq_accumulo"
-            },
-            "join": [
+                },
                 {
-                    "type": "spatial",
+                    "type": "inner",
                     "table": {
                         "name": "localita"
                     },
                     "on": [
-                        "acq_accumulo.shape",
-                        "localita.shape"
+                        "localita.geom",
+                        "a_acq_accumulo.geom"
                     ],
-                    "cond": "="
+                    "cond": "ST_CONTAINS"
                 }
-            ]
+            ],
+            "filter": "WHERE a_acq_accumulo.d_gestore = 'PUBLIACQUA' AND a_acq_accumulo.d_ambito IN ('AT3', NULL) AND a_acq_accumulo.d_stato NOT IN ('IPR','IAC')"
         }
     ],
     "columns": [
