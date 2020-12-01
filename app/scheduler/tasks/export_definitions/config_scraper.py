@@ -3,10 +3,9 @@ import json
 import schema
 import logging
 
-from enum import Enum
 from pathlib import Path
 from typing import List, Dict
-from pypika import Query, Table, Field
+from pypika import Query, Table, Field, JoinType
 
 from django.conf import settings
 from app.scheduler.utils import COMPARISON_OPERATORS_MAPPING
@@ -14,18 +13,9 @@ from app.scheduler.utils import COMPARISON_OPERATORS_MAPPING
 from .exceptions import ExportConfigError
 from .transformations import SUPPORTED_TRANSFORMATIONS, TransformationFactory
 from .validations import SUPPORTED_VALIDATIONS, ValidationFactory
-from .sql_functions import SUPPORTED_SQL_FUNCTIONS, SQL_FUNCTION_MAPPING
+from .sql_functions import SUPPORTED_SQL_FUNCTIONS, SQL_FUNCTION_MAPPING, SQL_SPATIAL_JOIN_MAPPING
 
 logger = logging.getLogger(__name__)
-
-
-class JoinType(Enum):
-    # class overriding pypika.enums.JoinType toi extend it for SPATIAL join
-    inner = ""
-    left = "LEFT"
-    right = "RIGHT"
-    outer = "FULL OUTER"
-    spatial = "SPATIAL"
 
 
 JOIN_TYPES = [join_type.name.upper() for join_type in JoinType]
@@ -75,7 +65,7 @@ export_config_schema = schema.Schema(
                             ),
                             "cond": schema.And(
                                 str,
-                                lambda v: v in COMPARISON_OPERATORS_MAPPING.keys(),
+                                lambda v: v in list(COMPARISON_OPERATORS_MAPPING.keys()) + list(SQL_SPATIAL_JOIN_MAPPING.keys()),
                             ),
                         }
                     ],
@@ -236,12 +226,19 @@ class ExportConfig:
                                 f'does not recognize table "{table_name}".'
                             )
 
+                    if join_table_config["cond"] in COMPARISON_OPERATORS_MAPPING.keys():
+                        on_cond = COMPARISON_OPERATORS_MAPPING[join_table_config["cond"]](
+                            join_on_fields[0], join_on_fields[1]
+                        )
+                    else:
+                        on_cond = SQL_SPATIAL_JOIN_MAPPING[join_table_config["cond"]](
+                            join_on_fields[0], join_on_fields[1]
+                        )
+
                     query = query.join(
                         join_table, JoinType[join_table_config["type"].lower()]
                     ).on(
-                        COMPARISON_OPERATORS_MAPPING[join_table_config["cond"]](
-                            join_on_fields[0], join_on_fields[1]
-                        )
+                        on_cond
                     )
 
                 # parse GROUP BY parameters
