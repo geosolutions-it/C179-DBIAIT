@@ -201,7 +201,7 @@ STATIC_URL = f'{url_path_prefix}static/'
 STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, f"{url_path_prefix}static_root"))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
-
+'''
 # -------------------------- LDAP ----------------------------------------------------------------------------------
 # User to connect and search in the LDAP/AD
 AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://localhost:389/DC=publiacqua,DC=it")
@@ -242,11 +242,63 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 AUTH_LDAP_ALWAYS_UPDATE_USER = ast.literal_eval(os.getenv('AUTH_LDAP_ALWAYS_UPDATE_USER', 'True'))
 #AUTH_LDAP_CACHE_GROUPS = True
 
-# ---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------'''
+
+# LDAP CONFIG
+
+
+import ldap
+from django_auth_ldap.config import LDAPSearch
+from django_auth_ldap.config import ActiveDirectoryGroupType
+
+AUTH_LDAP_SERVER_URI = 'ldap://localhost:389'
+AUTH_LDAP_BIND_DN = "CN=webgis_ldap,OU=Users,OU=IT_Services,DC=publiacqua,DC=it"
+AUTH_LDAP_BIND_PASSWORD = "W3bg1s2020PH2O!"
+
+LDAP_OU_APP = os.getenv("LDAP_OU_APP", "MapStore")
+LDAP_GROUP_OPERATORS = os.getenv("LDAP_CN_OPERATOR", "viewers")
+LDAP_GROUP_MANAGERS = os.getenv("LDAP_CN_MANAGEMENT", "editors2")
+LDAP_GROP_ADMINS = os.getenv("LDAP_CN_ADMINISTRATOR", "editors1")
+
+
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    "dc=tech,dc=local",
+    ldap.SCOPE_SUBTREE,
+    "(&(objectCategory=Person)"
+    f"(|(memberOf=CN={LDAP_GROP_ADMINS},OU={LDAP_OU_APP},OU=IT_Services,DC=publiacqua,DC=it)"
+    f"(memberOf=CN={LDAP_GROUP_MANAGERS},OU={LDAP_OU_APP},OU=IT_Services,DC=publiacqua,DC=it)"
+    f"(memberOf=CN={LDAP_GROUP_OPERATORS},OU={LDAP_OU_APP},OU=IT_Services,DC=publiacqua,DC=it))"
+    "(sAMAccountName=%(user)s))"
+    )
+
+AUTH_LDAP_USER_ATTR_MAP = {
+    "username": "sAMAccountName",
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail"
+}
+
+ldap_group_base = os.getenv("AUTH_LDAP_GROUP_BASE", "OU=MapStore,OU=IT_Services")
+ldap_group_filter = os.getenv("AUTH_LDAP_GROUP_FILTER", f"(|(CN={LDAP_GROP_ADMINS})(CN={LDAP_GROUP_MANAGERS})(CN={LDAP_GROUP_OPERATORS}))")
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(ldap_group_base, ldap.SCOPE_SUBTREE, ldap_group_filter)
+
+AUTH_LDAP_GROUP_TYPE = ActiveDirectoryGroupType(name_attr="cn")
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    'is_operator': f"cn={LDAP_GROUP_OPERATORS},{ldap_group_base}",
+    'is_staff': f"cn={LDAP_GROP_ADMINS},{ldap_group_base}",
+    'is_superuser': f"cn={LDAP_GROUP_MANAGERS},{ldap_group_base}",
+}
+
+AUTH_LDAP_FIND_GROUP_PERMS = True
+AUTH_LDAP_CACHE_GROUPS = True
+AUTH_LDAP_GROUP_CACHE_TIMEOUT = 1  # 1 hour cache
+
+# ---------
 
 AUTHENTICATION_BACKENDS = (
     'django_auth_ldap.backend.LDAPBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    # 'django.contrib.auth.backends.ModelBackend',
 )
 
 # QGis installation path
