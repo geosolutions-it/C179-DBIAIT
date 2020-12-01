@@ -34,6 +34,7 @@ COMPARISON_OPERATORS_MAPPING = {
     "<": operator.lt,
     ">=": operator.ge,
     "<=": operator.le,
+    "!=": operator.ne
 }
 
 style_class_mapper = {

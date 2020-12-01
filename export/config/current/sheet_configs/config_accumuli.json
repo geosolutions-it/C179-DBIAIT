@@ -19,6 +19,7 @@
                 { "name": "acq_accumulo.a_anno_ristr", "alias": "a_anno_ristr"},
                 { "name": "acq_accumulo.a_volume", "alias": "a_volume"},
                 { "name": "acq_accumulo.data_agg", "alias": "data_agg"},
+                { "name": "acq_accumulo.cod_comune", "alias":"cod_comune"},
                 { "name": "acq_accumulo.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 { "name": "acq_accumulo.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 { "name": "acq_auth_accum.d_telecont", "alias": "d_telecont"},
@@ -39,8 +40,8 @@
                         "name": "acq_auth_accum"
                     },
                     "on": [
-                        "acq_auth_accum.id_accumulo",
-                        "acq_accumulo.idgis"
+                        "acq_accumulo.idgis",
+                        "acq_auth_accum.id_accumulo"
                     ],
                     "cond": "="
                 },
@@ -53,7 +54,7 @@
                         "localita.geom",
                         "acq_accumulo.geom"
                     ],
-                    "cond": "ST_CONTAINS"
+                    "cond": "ST_INTERSECTS"
                 }
             ],
             "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND acq_accumulo.d_ambito IN ('AT3', NULL) AND acq_accumulo.d_stato NOT IN ('IPR','IAC')"
@@ -75,6 +76,7 @@
                 { "name": "a_acq_accumulo.a_anno_ristr", "alias": "a_anno_ristr"},
                 { "name": "a_acq_accumulo.a_volume", "alias": "a_volume"},
                 { "name": "a_acq_accumulo.data_agg", "alias": "data_agg"},
+                { "name": "a_acq_accumulo.cod_comune", "alias":"cod_comune"},
                 { "name": "a_acq_accumulo.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 { "name": "a_acq_accumulo.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 { "name": "acq_auth_accum.d_telecont", "alias": "d_telecont"},
@@ -95,8 +97,8 @@
                         "name": "acq_auth_accum"
                     },
                     "on": [
-                        "acq_auth_accum.id_accumulo",
-                        "a_acq_accumulo.idgis"
+                        "a_acq_accumulo.idgis",
+                        "acq_auth_accum.id_accumulo"
                     ],
                     "cond": "="
                 },
@@ -109,7 +111,7 @@
                         "localita.geom",
                         "a_acq_accumulo.geom"
                     ],
-                    "cond": "ST_CONTAINS"
+                    "cond": "ST_INTERSECTS"
                 }
             ],
             "filter": "WHERE a_acq_accumulo.d_gestore = 'PUBLIACQUA' AND a_acq_accumulo.d_ambito IN ('AT3', NULL) AND a_acq_accumulo.d_stato NOT IN ('IPR','IAC')"
@@ -118,6 +120,7 @@
     "columns": [
         {"id": "44400","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
         {"id": "44100","transformation": {"func": "CONST", "params": {"value": "3003"}}},
+        {"id": "44300","transformation": {"func": "DIRECT", "params": {"field": "denominazi"}}},
 
         {"id": "43700","transformation": {"func": "DIRECT", "params": {"field": "codice_ato"}}},
         {"id": "43800","transformation": {"func": "DIRECT", "params": {"field": "denom"}}},
@@ -132,8 +135,8 @@
         {"id": "45600","transformation": {"func": "DIRECT", "params": {"field": "anno_instal_clor"}}},
         {"id": "45700","transformation": {"func": "DIRECT", "params": {"field": "anno_ristr_clor"}}},
         {"id": "46200","transformation": {"func": "DIRECT", "params": {"field": "data_agg"}}},
-        {"id": "43900","transformation": {"func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
-        {"id": "44000","transformation": {"func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
+        {"id": "43900","transformation": {"func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
+        {"id": "44000","transformation": {"func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
 
         {"id": "44700", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }}},
 

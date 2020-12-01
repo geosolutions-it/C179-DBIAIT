@@ -17,17 +17,17 @@
                 {"name": "acq_auth_adduttr.anno_ristr_clor","alias": "anno_ristr_clor"}
             ],
             "table": {
-                "name": "acq_auth_adduttr"
+                "name": "acq_adduttrice"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "acq_adduttrice"
+                        "name": "acq_auth_adduttr"
                     },
                     "on": [
-                        "acq_auth_adduttr.id_adduttrice",
-                        "acq_adduttrice.idgis"
+                        "acq_adduttrice.idgis",
+                        "acq_auth_adduttr.id_adduttrice"
                     ],
                     "cond": "="
                 }
@@ -49,17 +49,17 @@
                 {"name": "acq_auth_adduttr.anno_ristr_clor","alias": "anno_ristr_clor"}
             ],
             "table": {
-                "name": "acq_auth_adduttr"
+                "name": "a_acq_adduttrice"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "a_acq_adduttrice"
+                        "name": "acq_auth_adduttr"
                     },
                     "on": [
-                        "acq_auth_adduttr.id_adduttrice",
-                        "a_acq_adduttrice.idgis"
+                        "a_acq_adduttrice.idgis",
+                        "acq_auth_adduttr.id_adduttrice"
                     ],
                     "cond": "="
                 }
@@ -82,9 +82,9 @@
 
         {"id":"40000", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
         {"id":"40300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
-        {"id":"40400", "transformation":{"func":"DOMAIN", "params":{"field":"a_portata_media", "domain_name": "D_T_RILIEVO"}}},
+        {"id":"40400", "transformation":{"func":"DOMAIN", "params":{"field":"a_portata_media", "domain_name": "D_AFFIDABILITA"}}},
 
-        {"id": "39800", "transformation":{"func": "IF", "params": { "field": "98800", "cond": {"operator": "<>",
+        {"id": "39800", "transformation":{"func": "IF", "params": { "field": "98800", "cond": {"operator": "!=",
                         "value": 0,
                         "result": 2,
                         "else": 1

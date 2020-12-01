@@ -20,6 +20,7 @@
                 { "name": "fgn_trattamento.data_agg", "alias": "data_agg"},
                 { "name": "fgn_trattamento.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 { "name": "fgn_trattamento.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                { "name": "fgn_trattamento.cod_comune", "alias":"cod_comune"},
                 { "name": "fgn_auth_trattam.anno_ristr_civ", "alias": "anno_ristr_civ"},
                 { "name": "fgn_auth_trattam.d_stato_cons_civ", "alias": "d_stato_cons_civ"},
                 { "name": "fgn_auth_trattam.anno_ristr_elmec", "alias": "anno_ristr_elmec"},
@@ -80,23 +81,35 @@
                 { "name": "fgn_auth_trattam.a_conc_co2_ing", "alias": "a_conc_co2_ing"},
                 { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
                 { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
+                { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out"}
             ],
             "table": {
-                "name": "fgn_auth_trattam"
+                "name": "fgn_trattamento"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "fgn_trattamento"
+                        "name": "fgn_auth_trattam"
                     },
                     "on": [
-                        "fgn_auth_trattam.id_trattamento",
-                        "fgn_trattamento.idgis"
+                        "fgn_trattamento.idgis",
+                        "fgn_auth_trattam.id_trattamento"
                     ],
                     "cond": "="
+                },
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "localita.geom",
+                        "fgn_trattamento.geom"
+                    ],
+                    "cond": "ST_INTERSECTS"
                 }
             ],
             "filter": "WHERE fgn_trattamento.d_gestore = 'PUBLIACQUA' AND fgn_trattamento.d_ambito IN ('AT3', NULL) AND fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
@@ -118,6 +131,7 @@
                 { "name": "a_fgn_trattamento.a_anno_costr", "alias": "a_anno_costr"},
                 { "name": "a_fgn_trattamento.data_agg", "alias": "data_agg"},
                 { "name": "a_fgn_auth_trattam.anno_ristr_civ", "alias": "anno_ristr_civ"},
+                { "name": "a_fgn_trattamento.cod_comune", "alias":"cod_comune"},
                 { "name": "fgn_trattamento.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 { "name": "fgn_trattamento.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 { "name": "fgn_auth_trattam.d_stato_cons_civ", "alias": "d_stato_cons_civ"},
@@ -179,53 +193,47 @@
                 { "name": "fgn_auth_trattam.a_conc_co2_ing", "alias": "a_conc_co2_ing"},
                 { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
                 { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
+                { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out"}
             ],
             "table": {
-                "name": "fgn_auth_trattam"
+                "name": "a_fgn_trattamento"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "a_fgn_trattamento"
+                        "name": "fgn_auth_trattam"
                     },
                     "on": [
-                        "fgn_auth_trattam.id_trattamento",
-                        "a_fgn_trattamento.idgis"
+                        "a_fgn_trattamento.idgis",
+                        "fgn_auth_trattam.id_trattamento"
                     ],
                     "cond": "="
-                }
-            ],
-            "filter": "WHERE a_fgn_trattamento.d_gestore = 'PUBLIACQUA' AND a_fgn_trattamento.d_ambito IN ('AT3', NULL) AND a_fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
-        },
-        {
-            "fields": [
-                { "name": "localita.denominazi", "alias": "denominazione" }
-            ],
-            "table": {
-                "name": "fgn_trattamento"
-            },
-            "join": [
+                },
                 {
-                    "type": "spatial",
+                    "type": "inner",
                     "table": {
                         "name": "localita"
                     },
                     "on": [
-                        "fgn_trattamento.shape",
-                        "localita.shape"
+                        "localita.geom",
+                        "a_fgn_trattamento.geom"
                     ],
-                    "cond": "="
+                    "cond": "ST_INTERSECTS"
                 }
-            ]
+            ],
+            "filter": "WHERE a_fgn_trattamento.d_gestore = 'PUBLIACQUA' AND a_fgn_trattamento.d_ambito IN ('AT3', NULL) AND a_fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
         }
     ],
     "columns": [
+        {"id": "72200", "transformation": {"func": "CONST", "params": { "value": "3003" }}},
+
         {"id": "71800", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
         {"id": "71900", "transformation": {"func": "DIRECT", "params": { "field": "denom" }}},
         {"id": "72300", "transformation": {"func": "DIRECT", "params": { "field": "quota" }}},
+        {"id": "72400", "transformation": {"func": "DIRECT", "params": { "field": "denominazi" }}},
         {"id": "72700", "transformation": {"func": "DIRECT", "params": { "field": "anno_costr" }}},
         {"id": "72800", "transformation": {"func": "DIRECT", "params": { "field": "anno_ristr_civ" }}},
         {"id": "73000", "transformation": {"func": "DIRECT", "params": { "field": "anno_ristr_elmec" }}},
@@ -281,8 +289,8 @@
         {"id": "102400", "transformation": {"func": "DIRECT", "params": { "field": "sn_strum_mis_port_out" }}},
 
 
-        {"id": "72000", "transformation": {"func": "DIRECT", "params": { "field": "transformed_x_geom"}}},
-        {"id": "72100", "transformation": {"func": "DIRECT", "params": { "field": "transformed_y_geom"}}},
+        {"id": "72000", "transformation": {"func": "DIRECT", "params": { "field": "transformed_y_geom"}}},
+        {"id": "72100", "transformation": {"func": "DIRECT", "params": { "field": "transformed_x_geom"}}},
 
         {"id": "72500", "transformation": {"func": "LSTRIP", "params": { "field": "cod_comune", "char": "0" }}},
 

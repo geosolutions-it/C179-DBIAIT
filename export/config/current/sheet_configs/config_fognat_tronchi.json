@@ -19,8 +19,7 @@
             {"name":"fognat_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
             {"name":"fognat_tronchi.depurazione", "alias": "depurazione"},
             {"name":"fognat_tronchi.id_refluo_trasportato", "alias": "id_refluo_trasportato"},
-            {"name":"fognat_tronchi.note", "alias": "note"},
-            {"name":"acq_condotta.note", "alias": "data_esercizio"}
+            {"name":"acq_condotta.data_esercizio", "alias": "data_esercizio"}
          ],
          "table":{
             "name":"fognat_tronchi"
@@ -75,7 +74,7 @@
                         "operator": "=",
                         "value": "",
                         "result": "9999",
-                        "else": ""
+                        "else": "data_esercizio"
                     }
                 }
             }
@@ -83,18 +82,18 @@
       {"id": "61900","transformation": { "func": "DOMAIN", "params": { "field": "d_tipo_acqua", "domain_name":  "D_F_T_ACQUA"}}},
       {"id":"62100", "transformation":{ "func":"CASE", "params": {"field":"d_materiale", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO != ASB and TIPO_RILIEVO != DIN)", "value": "1", "result": "B"}
          ]}}},
         {"id":"62200", "transformation":{ "func":"CASE", "params": {"field":"diametro", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> '' and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> '' and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+             {"case": "WHEN", "operator": "!= '' and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= '' and (TIPO_RILIEVO != ASB and TIPO_RILIEVO != DIN)", "value": "1", "result": "B"}
          ]}}},
        {"id":"62300", "transformation":{ "func":"CASE", "params": {"field":"data_esercizio", "cond": [
              {"case": "WHEN", "operator": "=", "value": "9999", "result": "X"},
-             {"case": "WHEN", "operator": "<> 9999 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 9999 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+             {"case": "WHEN", "operator": "!= 9999 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 9999 and (TIPO_RILIEVO != ASB and TIPO_RILIEVO != DIN)", "value": "1", "result": "B"}
          ]}}}
    ]
 }

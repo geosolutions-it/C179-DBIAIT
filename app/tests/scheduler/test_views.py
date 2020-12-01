@@ -8,6 +8,8 @@ from rest_framework import status
 
 
 class DownloadArchiveTests(TestCase):
+    databases = '__all__'
+
     def setUp(self):
         self.task = TaskFactory.create()
         self.user = self.task.requesting_user

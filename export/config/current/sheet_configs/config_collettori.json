@@ -16,17 +16,17 @@
                 {  "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" }
             ],
             "table": {
-                "name": "fgn_auth_collet"
+                "name": "fgn_collettore"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "fgn_collettore"
+                        "name": "fgn_auth_collet"
                     },
                     "on": [
-                        "fgn_auth_collet.id_collettore",
-                        "fgn_collettore.idgis"
+                        "fgn_collettore.idgis",
+                        "fgn_auth_collet.id_collettore"
                     ],
                     "cond": "="
                 }
@@ -47,17 +47,17 @@
                 {  "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" }
             ],
             "table": {
-                "name": "fgn_auth_collet"
+                "name": "a_fgn_collettore"
             },
             "join": [
                 {
                     "type": "inner",
                     "table": {
-                        "name": "a_fgn_collettore"
+                        "name": "fgn_auth_collet"
                     },
                     "on": [
-                        "fgn_auth_collet.id_collettore",
-                        "a_fgn_collettore.idgis"
+                        "a_fgn_collettore.idgis",
+                        "fgn_auth_collet.id_collettore"
                     ],
                     "cond": "="
                 }
@@ -75,7 +75,7 @@
         { "id": "69300", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } } },
 
 
-        { "id": "68800", "transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_AFFIDABILITA" } } },
+        { "id": "68800", "transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" } } },
         { "id": "69000", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } } },
 
         { "id": "69200", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_idra", "domain_name": "D_AFFIDABILITA" } } },

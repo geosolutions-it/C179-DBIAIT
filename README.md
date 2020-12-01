@@ -224,3 +224,17 @@ with open(sheet_config_path, 'r') as scp:
 
 export_config_schema.validate(sheet_config)
 ```
+
+### Run test
+All the tests runs under django environment.
+
+To run them, use the following command:
+
+```
+Normal:
+python manage.py test --settings=app.test_settings
+
+Verbosity Mode:
+python manage.py test --settings=app.test_settings -v 2
+
+```
