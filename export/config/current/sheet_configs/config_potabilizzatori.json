@@ -184,7 +184,18 @@
    "columns":[
       {"id":"30900", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
       {"id":"31000", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
-      {"id":"31400", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}},
+      {"id":"31400", "transformation":{"func":"DIRECT", "params":{"field":"quota"}},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "cond": {
+                            "operator": "=",
+                            "value": "0"
+                        }
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                }
+            ]},
       {"id":"31800", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}},
       {"id":"32100", "transformation":{"func":"DIRECT", "params":{"field":"vol_gg_trattabile"}}},
       {"id":"32200", "transformation":{"func":"DIRECT", "params":{"field":"vol_anno_trattabile"}}},

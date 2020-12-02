@@ -189,7 +189,18 @@
         {"id": "8100","transformation": { "func": "DIRECT", "params": { "field": "denom" }}},
         {"id": "8200","transformation": { "func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
         {"id": "8300","transformation": { "func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
-        {"id": "8500","transformation": { "func": "DIRECT", "params": { "field": "quota" }}},
+        {"id": "8500","transformation": { "func": "DIRECT", "params": { "field": "quota" }},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "cond": {
+                            "operator": "=",
+                            "value": "0"
+                        }
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                }
+            ]},
         {"id": "8800","transformation": { "func": "DIRECT", "params": { "field": "bacino" }}},
         {"id": "8900","transformation": { "func": "DIRECT", "params": { "field": "corso_acqua" }}},
         {"id": "9100","transformation": { "func": "DIRECT", "params": { "field": "estremi_conces" }}},

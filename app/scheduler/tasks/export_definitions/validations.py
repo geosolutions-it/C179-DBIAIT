@@ -33,6 +33,8 @@ class IfValidation(BaseValidation):
     )
 
     def validate(self, value):
+        if value is None:
+            return False
         cond = self.args["cond"]
         operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
 

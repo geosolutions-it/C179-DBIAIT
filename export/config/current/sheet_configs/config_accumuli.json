@@ -128,8 +128,31 @@
         {"id": "44500","transformation": {"func": "DIRECT", "params": {"field": "anno_costr"}}},
         {"id": "44600","transformation": {"func": "DIRECT", "params": {"field": "anno_ristr"}}},
         {"id": "45000","transformation": {"func": "DIRECT", "params": {"field": "volume"}}},
-        {"id": "44200","transformation": {"func": "DIRECT", "params": {"field": "quota"}}},
-        {"id": "45100","transformation": {"func": "DIRECT", "params": {"field": "quota_fondo"}}},
+        {"id": "44200","transformation": {"func": "DIRECT", "params": {"field": "quota"}},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "cond": {
+                            "operator": ">",
+                            "value": 0
+                        }
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                }
+            ]
+        },
+        {"id": "45100","transformation": {"func": "DIRECT", "params": {"field": "quota_fondo"}},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "cond": {
+                            "operator": ">",
+                            "value": 0
+                        }
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                }
+            ]},
         {"id": "45300","transformation": {"func": "DIRECT", "params": {"field": "sn_strum_mis_liv"}}},
         {"id": "45400","transformation": {"func": "DIRECT", "params": {"field": "sn_strum_mis_port"}}},
         {"id": "45600","transformation": {"func": "DIRECT", "params": {"field": "anno_instal_clor"}}},

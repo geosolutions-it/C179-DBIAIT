@@ -195,7 +195,18 @@
 
         {"id": "1000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
         {"id": "1100","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
-        {"id": "1500","transformation": { "func": "DIRECT", "params": { "field": "quota"}}},
+        {"id": "1500","transformation": { "func": "DIRECT", "params": { "field": "quota"}},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "cond": {
+                            "operator": "=",
+                            "value": "0"
+                        }
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                }
+            ]},
         {"id": "1800","transformation": { "func": "DIRECT", "params": { "field": "bacino"}}},
         {"id": "1900","transformation": { "func": "DIRECT", "params": { "field": "corso_acqua"}}},
         {"id": "2100","transformation": { "func": "DIRECT", "params": { "field": "estremi_conces"}}},

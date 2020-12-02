@@ -120,7 +120,18 @@
    "columns":[
       {"id":"82800", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
       {"id":"82900", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
-      {"id":"83300", "transformation":{"func":"DIRECT", "params":{"field":"quota_terr_man"}}},
+      {"id":"83300", "transformation":{"func":"DIRECT", "params":{"field":"quota_terr_man"}},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "cond": {
+                            "operator": "=",
+                            "value": "0"
+                        }
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                }
+            ]},
       {"id":"83700", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}},
       {"id":"83800", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}},
       {"id":"84000", "transformation":{"func":"DIRECT", "params":{"field":"n_ae"}}},

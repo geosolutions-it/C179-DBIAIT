@@ -189,7 +189,7 @@ class ExportXls:
                             if message:
                                 message = (
                                     message.replace("{SHEET}", sheet["sheet"])
-                                    .replace("{ROW}", first_empty_row)
+                                    .replace("{ROW}", str(first_empty_row))
                                     .replace("{FIELD}", column_letter)
                                 )
                                 logger.error(message)

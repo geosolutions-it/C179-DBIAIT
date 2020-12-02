@@ -232,7 +232,18 @@
 
         {"id": "71800", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
         {"id": "71900", "transformation": {"func": "DIRECT", "params": { "field": "denom" }}},
-        {"id": "72300", "transformation": {"func": "DIRECT", "params": { "field": "quota" }}},
+        {"id": "72300", "transformation": {"func": "DIRECT", "params": { "field": "quota" }},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "cond": {
+                            "operator": "=",
+                            "value": "0"
+                        }
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                }
+            ]},
         {"id": "72400", "transformation": {"func": "DIRECT", "params": { "field": "denominazi" }}},
         {"id": "72700", "transformation": {"func": "DIRECT", "params": { "field": "anno_costr" }}},
         {"id": "72800", "transformation": {"func": "DIRECT", "params": { "field": "anno_ristr_civ" }}},

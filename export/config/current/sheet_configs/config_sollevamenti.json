@@ -112,7 +112,18 @@
    "columns":[
       {"id":"63600", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
       {"id":"63700", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
-      {"id":"64100", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}},
+      {"id":"64100", "transformation":{"func":"DIRECT", "params":{"field":"quota"}},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "cond": {
+                            "operator": "=",
+                            "value": "0"
+                        }
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                }
+            ]},
       {"id":"64400", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}},
       {"id":"64500", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_civ"}}},
       {"id":"64700", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_elmec"}}},

@@ -173,7 +173,18 @@
       {"id":"23700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
       {"id":"26100", "transformation":{"func":"DIRECT", "params":{"field":"ids_codice_potab"}}},
       {"id":"23800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
-      {"id":"24200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}},
+      {"id":"24200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "cond": {
+                            "operator": "=",
+                            "value": "0"
+                        }
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                }
+            ]},
       {"id":"24300", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
       {"id":"24500", "transformation":{"func":"DIRECT", "params":{"field":"estremi_conces"}}},
       {"id":"24600", "transformation":{"func":"DIRECT", "params":{"field":"port_potab"}}},
