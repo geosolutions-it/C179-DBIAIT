@@ -23,7 +23,8 @@
             {"name":"fgn_imp_sollev.data_agg", "alias":"data_agg"},
             {"name":"fgn_imp_sollev.cod_comune", "alias":"cod_comune"},
             {"name":"fgn_imp_sollev.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"fgn_imp_sollev.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"fgn_imp_sollev.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"fgn_imp_sollev"
@@ -39,6 +40,17 @@
                   "fgn_imp_sollev.idgis"
                ],
                "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "fgn_imp_sollev.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
             }
          ],
          "filter": "WHERE fgn_imp_sollev.d_gestore = 'PUBLIACQUA' AND fgn_imp_sollev.d_ambito IN ('AT3', NULL) AND fgn_imp_sollev.d_stato NOT IN ('IPR', 'IAC')"
@@ -64,7 +76,8 @@
             {"name":"a_fgn_imp_sollev.data_agg", "alias":"data_agg"},
             {"name":"a_fgn_imp_sollev.cod_comune", "alias":"cod_comune"},
             {"name":"a_fgn_imp_sollev.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"a_fgn_imp_sollev.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"a_fgn_imp_sollev.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"a_fgn_imp_sollev"
@@ -80,6 +93,17 @@
                   "a_fgn_imp_sollev.idgis"
                ],
                "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "a_fgn_imp_sollev.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
             }
          ],
          "filter": "WHERE a_fgn_imp_sollev.d_gestore = 'PUBLIACQUA' AND a_fgn_imp_sollev.d_ambito IN ('AT3', NULL) AND a_fgn_imp_sollev.d_stato NOT IN ('IPR', 'IAC')"
@@ -96,17 +120,18 @@
       {"id":"65300", "transformation":{"func":"DIRECT", "params":{"field":"sn_strum_mis_pres"}}},
       {"id":"65400", "transformation":{"func":"DIRECT", "params":{"field":"sn_strum_mis_port"}}},
       {"id":"66000", "transformation":{"func":"DIRECT", "params":{"field":"data_agg"}}},
+      {"id":"64200", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
 
-      {"id":"63800", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
-      {"id":"63900", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"63800", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"63900", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
 
       {"id":"64600", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons_civ", "domain_name": "D_STATO_CONS"}}},
       {"id":"64800", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons_elmec", "domain_name": "D_STATO_CONS"}}},
       {"id":"65200", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
       {"id":"65500", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
-      {"id":"65600", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"65700", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"65800", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_elmec", "domain_name": "D_T_RILIEVO"}}},
+      {"id":"65600", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"65700", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"65800", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_elmec", "domain_name": "D_AFFIDABILITA"}}},
 
       {"id":"64000", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
 

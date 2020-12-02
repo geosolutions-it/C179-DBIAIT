@@ -1,0 +1,105 @@
+{
+    "sheet": "Distrib_tronchi",
+    "skip": false,
+    "sources": [
+        {
+            "fields": [
+                { "name": "distrib_tronchi.codice_ato", "alias": "codice_ato"},
+                { "name": "distrib_tronchi.idgis", "alias": "idgis"},
+                { "name": "distrib_tronchi.idgis_rete", "alias": "idgis_rete"},
+                { "name": "distrib_tronchi.id_tipo_telecon", "alias": "id_tipo_telecon"},
+                { "name": "distrib_tronchi.id_materiale", "alias": "id_materiale"},
+                { "name": "distrib_tronchi.id_conservazione", "alias": "id_conservazione"},
+                { "name": "distrib_tronchi.diametro", "alias": "diametro"},
+                { "name": "distrib_tronchi.anno", "alias": "anno"},
+                { "name": "distrib_tronchi.lunghezza", "alias": "lunghezza"},
+                { "name": "distrib_tronchi.idx_materiale", "alias": "idx_materiale"},
+                { "name": "distrib_tronchi.idx_diametro", "alias": "idx_diametro"},
+                { "name": "distrib_tronchi.idx_anno", "alias": "idx_anno"},
+                { "name": "distrib_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
+                { "name": "distrib_tronchi.pressione", "alias": "pressione"},
+                { "name": "distrib_tronchi.note", "alias": "note"},
+                { "name": "distrib_tronchi.geom", "alias": "geom"}
+            ],
+            "table": {
+                "name": "distrib_tronchi"
+            }
+        },
+        {
+            "fields": [
+                { "name": "acq_condotta.codice_ato", "alias": "codice_ato"},
+                { "name": "acq_condotta.data_esercizio", "alias": "data_esercizio"}
+            ],
+            "table": {
+                "name": "acq_condotta"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_rete_distrib"
+                    },
+                    "on": [
+                        "acq_condotta.id_rete",
+                        "acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
+                }
+            ]
+        }
+    ],
+     "columns": [
+        {"id": "56500", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
+        {"id": "56800", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
+
+        {"id": "56600", "transformation": {"func": "DOMAIN", "params": { "field": "id_materiale", "domain_name": "D_MATERIALE_IDR" }}},
+        {"id": "56700", "transformation": {"func": "DOMAIN", "params": { "field": "id_conservazione", "domain_name": "D_STATO_CONS" }}},
+
+        {"id": "56800", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }}},
+
+        {"id": "56900", "transformation": {
+                "func": "IF",
+                "params": {
+                    "field": "data_esercizio",
+                    "cond": {
+                        "operator": "=",
+                        "value": "",
+                        "result": 9999,
+                        "else": "data_esercizio"
+                    }
+                }
+            }},
+
+         {"id":"57100", "transformation":{ "func":"CASE", "params": {"field":"id_materiale", "cond": [
+             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+         ]}}},
+        {"id":"57200", "transformation":{ "func":"CASE", "params": {"field":"diametro", "cond": [
+             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+         ]}}},
+        {"id":"57300", "transformation":{ "func":"CASE", "params": {"field":"data_esercizio", "cond": [
+             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
+             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
+         ]}}},
+
+        {"id": "57000", "transformation": {"func": "DOMAIN", "params": { "field": "57000", "domain_name": "D_CORPO_RICET" }}},
+        {"id": "57400", "transformation": {"func": "DOMAIN", "params": { "field": "57400", "domain_name": "D_T_RILIEVO" }}},
+        {"id": "101000", "transformation": {
+                "func": "IF",
+                "params": {
+                    "field": " d_t_distretto",
+                    "cond": {
+                        "operator": "=",
+                        "value": "MIS",
+                        "result": 1,
+                        "else": 0
+                    }
+                }
+            }
+        }
+     ]
+}

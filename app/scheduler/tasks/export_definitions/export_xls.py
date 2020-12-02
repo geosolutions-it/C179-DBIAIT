@@ -84,12 +84,12 @@ class ExportXls:
         all_domains = Domains()
 
         # load seed *.xlsx file
-        excel_wb = openpyxl.load_workbook(settings.EXPORT_XLS_SEED_FILE)
+        excel_wb = openpyxl.load_workbook(settings.EXPORT_XLS_SEED_FILE.substitute())
 
         for sheet in ExportConfig():
 
             # execute pre_process for the sheet
-            pre_process = sheet.get('pre_process', None)
+            pre_process = sheet.get("pre_process", None)
             if pre_process is not None:
                 with connection.cursor() as cursor:
                     try:
@@ -125,13 +125,19 @@ class ExportXls:
             for column_index in range(1, len(excel_ws[self.SEED_FILE_ID_ROW]) + 1):
                 column_letter = cell.get_column_letter(column_index)
                 coord_id_mapping.update(
-                    {str(excel_ws[f"{column_letter}{self.SEED_FILE_ID_ROW}"].value).strip(): column_letter}
+                    {
+                        str(
+                            excel_ws[f"{column_letter}{self.SEED_FILE_ID_ROW}"].value
+                        ).strip(): column_letter
+                    }
                 )
 
             # get the index of the first empty excel row
             first_empty_row = max(len(col) for col in excel_ws.iter_cols()) + 1
 
-            with connections[translate_schema_to_db_alias(self.orm_task.schema)].cursor() as cursor:
+            with connections[
+                translate_schema_to_db_alias(self.orm_task.schema)
+            ].cursor() as cursor:
                 sql_sources = sheet["sql_sources"]
 
                 if not sql_sources:
@@ -176,7 +182,9 @@ class ExportXls:
                     for validator in column.get("validators", []):
                         if not validator["validator"].validate(transformed_value):
                             message = validator.get("warning", "")
-                            column_letter = coord_id_mapping.get(str(column["id"]), None)
+                            column_letter = coord_id_mapping.get(
+                                str(column["id"]), None
+                            )
 
                             if message:
                                 message = (

@@ -39,7 +39,8 @@
             {"name":"acq_captazione.data_agg", "alias":"data_agg"},
             {"name":"acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"acq_captazione"
@@ -66,6 +67,17 @@
                   "acq_captazione.idgis"
                ],
                "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "acq_captazione.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
             }
          ],
          "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3"
@@ -107,7 +119,8 @@
             {"name":"a_acq_captazione.data_agg", "alias":"data_agg"},
             {"name":"a_acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -134,6 +147,17 @@
                   "a_acq_captazione.idgis"
                ],
                "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "a_acq_captazione.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
             }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.sub_funzione = 3"
@@ -143,6 +167,7 @@
       {"id":"17200", "transformation":{"func":"EXPR", "params":{"field":"volume_medio_prel", "expr": "_value_*1000/365/3600/24"}}},
 
       {"id":"14700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
+      {"id":"15300", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
       {"id":"14800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
       {"id":"15200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}},
       {"id":"15500", "transformation":{"func":"DIRECT", "params":{"field":"estremi_conces"}}},
@@ -165,22 +190,22 @@
       {"id":"18400", "transformation":{"func":"DIRECT", "params":{"field":"sn_epis_inq"}}},
       {"id":"19400", "transformation":{"func":"DIRECT", "params":{"field":"data_agg"}}},
 
-      {"id":"14900", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
-      {"id":"15000", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"14900", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"15000", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
 
       {"id":"16300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons", "domain_name": "D_STATO_CONS"}}},
       {"id":"16400", "transformation":{"func":"DOMAIN", "params":{"field":"d_utilizzo", "domain_name": "D_UTILIZZO_OPERA"}}},
       {"id":"17500", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
       {"id":"18100", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
       {"id":"18500", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
-      {"id":"18600", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"18700", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"18900", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"19100", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_es", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"19200", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_uti_max", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"19300", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_uti_min", "domain_name": "D_T_RILIEVO"}}},
+      {"id":"18600", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"18700", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"18900", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"19100", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_es", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"19200", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_uti_max", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"19300", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_uti_min", "domain_name": "D_AFFIDABILITA"}}},
 
-      {"id":"15000", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
+      {"id":"15100", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
       {"id":"17800", "transformation":{"func":"CONST", "params":{"value":"0"}}},
       {"id":"17900", "transformation":{"func":"CONST", "params":{"value":"1"}}},
       {"id":"18000", "transformation":{"func":"CONST", "params":{"value":"0"}}},

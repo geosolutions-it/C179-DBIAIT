@@ -118,38 +118,22 @@ DATABASE_SCHEMAS = {
 
 DATABASES = {
     'default': {
-        'OPTIONS': {
-            # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path={DATABASE_SCHEMAS["system"]},public'
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
     'system': {
-        'OPTIONS': {
-            # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path={DATABASE_SCHEMAS["system"]},public'
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
     'analysis': {
-        'OPTIONS': {
-            # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path={DATABASE_SCHEMAS["analysis"]},public'
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
     'freeze': {
-        'OPTIONS': {
-            # extend searched schemas to enable all_domains table loading into analysis schema
-            'options': f'-c search_path={DATABASE_SCHEMAS["freeze"]},public'
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-for db_key in DATABASES:
-    DB = DATABASES[db_key]
-    DB['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
-    DB['NAME'] = os.getenv('DATABASE_NAME', 'dbiait')
-    DB['USER'] = os.getenv('DATABASE_USER', 'postgres')
-    DB['PASSWORD'] = os.getenv('DATABASE_PASSWORD', '')
-    DB['HOST'] = os.getenv('DATABASE_HOST', 'localhost')
-    DB['PORT'] = os.getenv('DATABASE_PORT', 5432)
 
 
 DATABASE_ROUTERS = ['app.scheduler.system_router.SystemRouter', 'app.scheduler.analysis_router.AnalysisRouter']
@@ -198,52 +182,40 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, "static_root"))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
+AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://127.0.0.1:10389")
 
-# -------------------------- LDAP ----------------------------------------------------------------------------------
-# User to connect and search in the LDAP/AD
-AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://localhost:389/DC=publiacqua,DC=it")
-AUTH_LDAP_BIND_DN = os.getenv("LDAP_USERNAME", "CN=webgis_ldap,OU=Users,OU=IT_Services,DC=publiacqua,DC=it")
-AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "W3bg1s2020PH2O!")
-
-LDAP_OU_APP = os.getenv("LDAP_OU_APP", "MapStore")
-LDAP_CN_OPERATOR = os.getenv("LDAP_CN_OPERATOR", "viewers")
-LDAP_CN_MANAGEMENT = os.getenv("LDAP_CN_MANAGEMENT", "editors2")
-LDAP_CN_ADMINISTRATOR = os.getenv("LDAP_CN_ADMINISTRATOR", "editors1")
-
-AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    "",
-    ldap.SCOPE_SUBTREE,
-    "(&(objectCategory=Person)"
-    "(|(memberOf=CN=editors1,OU=MapStore,OU=IT_Services,DC=publiacqua,DC=it)"
-    "(memberOf=CN=editors2,OU=MapStore,OU=IT_Services,DC=publiacqua,DC=it)"
-    "(memberOf=CN=viewers,OU=MapStore,OU=IT_Services,DC=publiacqua,DC=it))"
-    "(sAMAccountName=%(user)s))")
+AUTH_LDAP_BIND_DN = os.getenv("LDAP_USERNAME", "uid=admin,ou=system")
+AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "secret")
+AUTH_LDAP_USER_DN_TEMPLATE = os.getenv("USER_DN_TEMPLATE", 'uid=%(user)s,ou=users,dc=wimpi,dc=net')
 
 AUTH_LDAP_USER_ATTR_MAP = {
     'first_name': os.getenv("LDAP_FIRST_NAME", 'givenName'),
     'last_name': os.getenv("LDAP_LAST_NAME", 'sn'),
-    'email': os.getenv("LDAP_EMAIL", 'userPrincipalName'),
-}
-
-ldap_group_base = os.getenv("AUTH_LDAP_GROUP_BASE", "OU=MapStore,OU=IT_Services")
-ldap_group_filter = os.getenv("AUTH_LDAP_GROUP_FILTER", "(|(CN=editors1)(CN=editors2)(CN=viewers))")
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(ldap_group_base, ldap.SCOPE_SUBTREE, ldap_group_filter)
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
-
-AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    'is_operator': "cn=viewers,{}".format(ldap_group_base),
-    'is_staff': "cn=editors1,{}".format(ldap_group_base),
-    'is_superuser': "cn=editors2,{}".format(ldap_group_base),
+    'email': os.getenv("LDAP_EMAIL", 'mail'),
 }
 
 AUTH_LDAP_ALWAYS_UPDATE_USER = ast.literal_eval(os.getenv('AUTH_LDAP_ALWAYS_UPDATE_USER', 'True'))
-#AUTH_LDAP_CACHE_GROUPS = True
 
-# ---------------------------------------------------------------------------------------------------------------
+
+AUTH_LDAP_FIND_GROUP_PERMS = True
+AUTH_LDAP_CACHE_GROUPS = True
+
+AUTH_LDAP_MIRROR_GROUPS = True
+
+AUTH_LDAP_GROUP_BASE = os.getenv("AUTH_LDAP_GROUP_BASE", "ou=roles,dc=wimpi,dc=net")
+
+AUTH_LDAP_GROUP_FILTER = os.getenv("AUTH_LDAP_GROUP_FILTER", "(|(CN=managements)(CN=administrators)(CN=operators))")
+
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(AUTH_LDAP_GROUP_BASE, ldap.SCOPE_SUBTREE, AUTH_LDAP_GROUP_FILTER)
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    'is_staff': "cn=managements,{}".format(AUTH_LDAP_GROUP_BASE),
+    'is_superuser': "cn=administrators,{}".format(AUTH_LDAP_GROUP_BASE),
+}
 
 AUTHENTICATION_BACKENDS = (
-    'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
+    # 'django_auth_ldap.backend.LDAPBackend',
 )
 
 # QGis installation path

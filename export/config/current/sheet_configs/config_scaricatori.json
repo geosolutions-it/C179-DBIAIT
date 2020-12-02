@@ -27,7 +27,8 @@
             {"name":"fgn_sfioro.d_classif", "alias":"d_classif"},
             {"name":"fgn_sfioro.cod_comune", "alias":"cod_comune"},
             {"name":"fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"fgn_sfioro"
@@ -43,6 +44,17 @@
                   "fgn_sfioro.idgis"
                ],
                "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "fgn_sfioro.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
             }
          ],
          "filter": "WHERE fgn_sfioro.d_gestore = 'PUBLIACQUA' AND fgn_sfioro.d_ambito IN ('AT3', NULL) AND fgn_sfioro.d_stato NOT IN ('IPR', 'IAC')"
@@ -72,7 +84,8 @@
             {"name":"a_fgn_sfioro.d_classif", "alias":"d_classif"},
             {"name":"a_fgn_sfioro.cod_comune", "alias":"cod_comune"},
             {"name":"a_fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-            {"name":"a_fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"}
+            {"name":"a_fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"a_fgn_sfioro"
@@ -88,6 +101,17 @@
                   "a_fgn_sfioro.idgis"
                ],
                "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "a_fgn_sfioro.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
             }
          ],
          "filter": "WHERE a_fgn_sfioro.d_gestore = 'PUBLIACQUA' AND a_fgn_sfioro.d_ambito IN ('AT3', NULL) AND a_fgn_sfioro.d_stato NOT IN ('IPR', 'IAC')"
@@ -108,16 +132,17 @@
       {"id":"84600", "transformation":{"func":"DIRECT", "params":{"field":"bacino_recet"}}},
       {"id":"85300", "transformation":{"func":"DIRECT", "params":{"field":"data_agg"}}},
       {"id":"102500", "transformation":{"func":"DIRECT", "params":{"field":"d_classif"}}},
+      {"id":"83400", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
 
-      {"id":"83000", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
-      {"id":"83100", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"83000", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
+      {"id":"83100", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
 
       {"id":"83600", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_scolm", "domain_name": "D_T_SCOLM"}}},
       {"id":"84700", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons", "domain_name": "D_STATO_CONS"}}},
       {"id":"84800", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
       {"id":"84900", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
-      {"id":"85000", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_T_RILIEVO"}}},
-      {"id":"85100", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_T_RILIEVO"}}},
+      {"id":"85000", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"85100", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}},
 
       {"id":"83200", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
       {"id":"85200", "transformation":{"func":"CONST", "params":{"value":"C"}}},

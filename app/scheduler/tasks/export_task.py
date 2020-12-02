@@ -2,6 +2,7 @@ import os
 import json
 import shutil
 import pathlib
+import tempfile
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -83,22 +84,20 @@ class ExportTask(BaseTask):
 
         return current_task.id
 
-    def export_shapefiles(self, task_id):
-        with open(settings.SHAPEFILE_EXPORT_CONFIG, u"r") as f:
+    def export_shapefiles(self, export_directory: pathlib.Path, task: Task):
+        with open(settings.SHAPEFILE_EXPORT_CONFIG.substitute(), "r") as f:
             exports = json.load(f)
 
-        # create temporary export directory if it does not exist
-        not os.path.exists(settings.TEMP_EXPORT_DIR) and os.makedirs(settings.TEMP_EXPORT_DIR)
         for export in exports:
-            if not export[u"skip"]:
+            if not export["skip"]:
                 kwargs = {
-                    u"task_id": task_id,
-                    u"table": export[u"source"][u"table"],
-                    u"name": export[u"name"],
-                    u"shape_file_folder": export[u"folder"],
-                    u"fields": export[u"source"][u"fields"],
-                    u"filter_query": export[u"source"][u"filter"],
-                    u"pre_process": export[u"pre_process"],
+                    "task_id": task.id,
+                    "table": export["source"]["table"],
+                    "name": export["name"],
+                    "shape_file_folder": pathlib.Path(export_directory, export["folder"]),
+                    "fields": export["source"]["fields"],
+                    "filter_query": export["source"]["filter"],
+                    "pre_process": export["pre_process"],
                 }
                 exporter = ShapeExporter(**kwargs)
                 exporter.execute()
@@ -119,18 +118,15 @@ class ExportTask(BaseTask):
             )
             raise
 
-        # create export directory
-        export_directory = pathlib.Path(settings.EXPORT_FOLDER, str(orm_task.uuid))
-        export_directory.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_export_directory = pathlib.Path(tmp_dir)
 
-        ExportXls(export_directory, orm_task, max_progress=90).run()
+            ExportXls(tmp_export_directory, orm_task, max_progress=90).run()
+            self.export_shapefiles(tmp_export_directory, orm_task)
 
-        self.export_shapefiles(task_id)
-
-        # zip final output in export directory
-        export_file = os.path.join(settings.EXPORT_FOLDER, str(task_id))
-        results = os.path.exists(export_directory) and shutil.make_archive(export_file, u"zip", export_directory)
-        print(f"zip file creation returned {results}")
+            # zip final output in export directory
+            export_file = os.path.join(settings.EXPORT_FOLDER, f"task_{orm_task.id}")
+            shutil.make_archive(export_file, "zip", tmp_export_directory)
 
         orm_task.progress = 100
         orm_task.save()

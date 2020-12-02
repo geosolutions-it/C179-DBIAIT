@@ -1,0 +1,99 @@
+{
+    "sheet": "Collettori",
+    "skip": false,
+    "sources": [
+        {
+            "fields": [
+                {  "name": "fgn_collettore.codice_ato",  "alias": "codice_ato" },
+                {  "name": "fgn_collettore.denom",  "alias": "denom" },
+                {  "name": "fgn_collettore.d_stato",  "alias": "d_stato" },
+                {  "name": "fgn_collettore.data_agg",  "alias": "data_agg"  },
+                {  "name": "fgn_auth_collet.a_vol_idra",  "alias": "a_vol_idra" },
+                {  "name": "fgn_auth_collet.vol_idraulici",  "alias": "vol_idraulici" },
+                {  "name": "fgn_auth_collet.sn_scar_sup",  "alias": "sn_scar_sup" },
+                {  "name": "fgn_auth_collet.n_scar_piena",  "alias": "n_scar_piena" },
+                {  "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
+                {  "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" }
+            ],
+            "table": {
+                "name": "fgn_collettore"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "fgn_auth_collet"
+                    },
+                    "on": [
+                        "fgn_collettore.idgis",
+                        "fgn_auth_collet.id_collettore"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE fgn_collettore.d_gestore = 'PUBLIACQUA' AND fgn_collettore.d_ambito IN ('AT3', NULL) AND fgn_collettore.d_stato NOT IN ('IPR','IAC')"
+        },
+        {
+            "fields": [
+                {  "name": "a_fgn_collettore.codice_ato",  "alias": "codice_ato" },
+                {  "name": "a_fgn_collettore.denom",  "alias": "denom" },
+                {  "name": "a_fgn_collettore.d_stato",  "alias": "d_stato" },
+                {  "name": "a_fgn_collettore.data_agg",  "alias": "data_agg"  },
+                {  "name": "fgn_auth_collet.a_vol_idra",  "alias": "a_vol_idra" },
+                {  "name": "fgn_auth_collet.vol_idraulici",  "alias": "vol_idraulici" },
+                {  "name": "fgn_auth_collet.sn_scar_sup",  "alias": "sn_scar_sup" },
+                {  "name": "fgn_auth_collet.n_scar_piena",  "alias": "n_scar_piena" },
+                {  "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
+                {  "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" }
+            ],
+            "table": {
+                "name": "a_fgn_collettore"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "fgn_auth_collet"
+                    },
+                    "on": [
+                        "a_fgn_collettore.idgis",
+                        "fgn_auth_collet.id_collettore"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE a_fgn_collettore.d_gestore = 'PUBLIACQUA' AND a_fgn_collettore.d_ambito IN ('AT3', NULL) AND a_fgn_collettore.d_stato NOT IN ('IPR','IAC')"
+        }
+    ],
+    "columns": [
+        { "id": "68100", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } } },
+        { "id": "68200", "transformation": { "func": "DIRECT", "params": { "field": "denom" } } },
+        { "id": "68500", "transformation": { "func": "DIRECT", "params": { "field": "vol_idraulici" } } },
+        { "id": "68600", "transformation": { "func": "DIRECT", "params": { "field": "sn_scar_sup" } }},
+        { "id": "68700", "transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena" } } },
+        { "id": "68900", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" } } },
+        { "id": "69300", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } } },
+
+
+        { "id": "68800", "transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" } } },
+        { "id": "69000", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } } },
+
+        { "id": "69200", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_idra", "domain_name": "D_AFFIDABILITA" } } },
+
+        { "id": "69100", "transformation": { "func": "CONST", "params": { "value": "B" } } },
+
+        {"id": "68400", "transformation":{
+                "func": "IF",
+                "params": {
+                    "field": "68400",
+                    "cond": {
+                        "operator": "=",
+                        "value": "mista",
+                        "result": "mista",
+                        "else": "nero"
+                    }
+                }
+            }
+        }
+    ]
+}

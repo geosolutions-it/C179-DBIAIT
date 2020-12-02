@@ -1,12 +1,18 @@
 import os
-from qgis.core import QgsApplication, QgsVectorLayer, QgsDataSourceUri, QgsVectorFileWriter
+import pathlib
+
+from qgis.core import (
+    QgsApplication,
+    QgsVectorLayer,
+    QgsDataSourceUri,
+    QgsVectorFileWriter,
+)
+
 from django.conf import settings
 from django.db import connection
 
 from app.scheduler.models import Task
-
-qgs = None
-database = settings.DATABASES["analysis"]
+from app.scheduler.utils import translate_schema_to_db_alias
 
 
 class ShapeExporter:
@@ -18,8 +24,17 @@ class ShapeExporter:
             ShapeExporter.qgis = QgsApplication([], False)
             QgsApplication.initQgis()
 
-    def __init__(self, task_id: int, table: str, name: str, shape_file_folder: str, fields: list, filter_query: str, pre_process: str, year=None):
-        self.folder = settings.TEMP_EXPORT_DIR
+    def __init__(
+        self,
+        task_id: int,
+        table: str,
+        name: str,
+        shape_file_folder: pathlib.Path,
+        fields: list,
+        filter_query: str,
+        pre_process: str,
+        year=None,
+    ):
         self.year = year
         self.table = table
         self.name = name
@@ -29,14 +44,16 @@ class ShapeExporter:
         self.filter = filter_query
         self.pre_process = pre_process
 
-        task = Task.objects.filter(id=task_id).first()
-        self.schema = task.schema if task else settings.DATABASE_SCHEMAS[u"analysis"]
+        task = Task.objects.get(id=task_id)
+        self.schema = task.schema
+        self.database = settings.DATABASES[translate_schema_to_db_alias(task.schema)]
 
     def export_preprocess(self):
         analysis_cursor = connection.cursor()
         with analysis_cursor as cursor:
             cursor.callproc(
-                f"{settings.DATABASE_SCHEMAS[u'analysis']}.{self.pre_process}")
+                f"{settings.DATABASE_SCHEMAS['analysis']}.{self.pre_process}"
+            )
             result = cursor.fetchone()
             print(f"Export preprocess of [name={self.name}] returned:\n{result}")
 
@@ -45,31 +62,36 @@ class ShapeExporter:
         if self.pre_process:
             self.export_preprocess()
 
-        if os.path.exists(settings.TEMP_EXPORT_DIR):
-            shapefile_folder = os.path.join(settings.TEMP_EXPORT_DIR, str(self.task_id), self.shape_file_folder)
-            not os.path.exists(shapefile_folder) and os.makedirs(shapefile_folder)
-        else:
-            raise Exception(u"No temporaly export folder configuared")
-
-        schema = self.schema
-        if self.year is not None:
-            schema = settings.DATABASE_SCHEMAS[u"freeze"]
-
-        if self.year is not None:
-            f"{self.table}_{str(self.year)}"
+        self.shape_file_folder.mkdir(parents=True, exist_ok=True)
 
         uri = QgsDataSourceUri()
-        uri.setConnection(database[u"HOST"], str(database[u"PORT"]), database[u"NAME"], database[u"USER"], database[u"PASSWORD"])
+        uri.setConnection(
+            self.database["HOST"],
+            str(self.database["PORT"]),
+            self.database["NAME"],
+            self.database["USER"],
+            self.database["PASSWORD"],
+        )
 
-        uri.setDataSource(schema, self.table, u"geom", aSql=self.filter)
+        uri.setDataSource(self.schema, self.table, "geom", aSql=self.filter)
 
         vlayer = QgsVectorLayer(uri.uri(), self.table, "postgres")
         print("Feature count: " + str(vlayer.featureCount()))
         print("Invalid Layer: " + str(vlayer.InvalidLayer))
-        filename = os.path.join(shapefile_folder, self.table + ".shp")
+        filename = os.path.join(self.shape_file_folder, self.table + ".shp")
         fields = vlayer.fields()
 
-        attrs = [fields.indexFromName(field[u"name"]) for field in self.fields if fields.indexFromName(field[u"name"])]
-        result = QgsVectorFileWriter.writeAsVectorFormat(layer=vlayer, fileName=filename, fileEncoding=u"utf-8", driverName=u"ESRI Shapefile", attributes=attrs)
+        attrs = [
+            fields.indexFromName(field["name"])
+            for field in self.fields
+            if fields.indexFromName(field["name"])
+        ]
+        result = QgsVectorFileWriter.writeAsVectorFormat(
+            layer=vlayer,
+            fileName=filename,
+            fileEncoding="utf-8",
+            driverName="ESRI Shapefile",
+            attributes=attrs,
+        )
         del vlayer
         print(result)

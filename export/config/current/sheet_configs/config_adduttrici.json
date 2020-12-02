@@ -1,0 +1,96 @@
+{
+    "sheet": "Adduttrici",
+    "skip": false,
+    "sources": [
+        {
+            "fields": [
+                {"name": "acq_adduttrice.codice_ato", "alias": "codice_ato"},
+                {"name": "acq_adduttrice.denom","alias": "denom"},
+                {"name": "acq_adduttrice.portata_media","alias": "portata_media"},
+                {"name": "acq_adduttrice.d_stato","alias": "d_stato"},
+                {"name": "acq_adduttrice.a_portata_media","alias": "a_portata_media"},
+                {"name": "acq_adduttrice.data_agg","alias": "data_agg"},
+                {"name": "acq_adduttrice.nr_rip","alias": "nr_rip"},
+                {"name": "acq_auth_adduttr.sn_strum_mis_port","alias": "sn_strum_mis_port"},
+                {"name": "acq_auth_adduttr.d_tipo_cloraz","alias": "d_tipo_cloraz"},
+                {"name": "acq_auth_adduttr.anno_instal_clor","alias": "anno_instal_clor"},
+                {"name": "acq_auth_adduttr.anno_ristr_clor","alias": "anno_ristr_clor"}
+            ],
+            "table": {
+                "name": "acq_adduttrice"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_auth_adduttr"
+                    },
+                    "on": [
+                        "acq_adduttrice.idgis",
+                        "acq_auth_adduttr.id_adduttrice"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE acq_adduttrice.d_gestore = 'PUBLIACQUA' AND acq_adduttrice.d_ambito IN ('AT3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
+        },
+        {
+            "fields": [
+                {"name": "a_acq_adduttrice.codice_ato", "alias": "codice_ato"},
+                {"name": "a_acq_adduttrice.denom","alias": "denom"},
+                {"name": "a_acq_adduttrice.portata_media","alias": "portata_media"},
+                {"name": "a_acq_adduttrice.d_stato","alias": "d_stato"},
+                {"name": "a_acq_adduttrice.a_portata_media","alias": "a_portata_media"},
+                {"name": "a_acq_adduttrice.data_agg","alias": "data_agg"},
+                {"name": "a_acq_adduttrice.nr_rip","alias": "nr_rip"},
+                {"name": "acq_auth_adduttr.sn_strum_mis_port","alias": "sn_strum_mis_port"},
+                {"name": "acq_auth_adduttr.d_tipo_cloraz","alias": "d_tipo_cloraz"},
+                {"name": "acq_auth_adduttr.anno_instal_clor","alias": "anno_instal_clor"},
+                {"name": "acq_auth_adduttr.anno_ristr_clor","alias": "anno_ristr_clor"}
+            ],
+            "table": {
+                "name": "a_acq_adduttrice"
+            },
+            "join": [
+                {
+                    "type": "inner",
+                    "table": {
+                        "name": "acq_auth_adduttr"
+                    },
+                    "on": [
+                        "a_acq_adduttrice.idgis",
+                        "acq_auth_adduttr.id_adduttrice"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE a_acq_adduttrice.d_gestore = 'PUBLIACQUA' AND a_acq_adduttrice.d_ambito IN ('AT3', NULL) AND a_acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
+        }
+    ],
+    "columns": [
+        { "id": "40500", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
+        { "id": "98900", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
+
+        { "id": "39400", "transformation": { "func": "DIRECT",  "params": { "field": "codice_ato" } }},
+        { "id": "39500", "transformation": { "func": "DIRECT",  "params": { "field": "denom" } }},
+        { "id": "39600", "transformation": { "func": "DIRECT",  "params": { "field": "portata_media" } }},
+        { "id": "39900", "transformation": { "func": "DIRECT",  "params": { "field": "sn_strum_mis_port" } }},
+        { "id": "40100", "transformation": { "func": "DIRECT",  "params": { "field": "anno_instal_clor" } }},
+        { "id": "40200", "transformation": { "func": "DIRECT",  "params": { "field": "anno_ristr_clor" } }},
+        { "id": "40600", "transformation": { "func": "DIRECT",  "params": { "field": "data_agg" } }},
+        { "id": "99000", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" }}},
+
+        {"id":"40000", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
+        {"id":"40300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
+        {"id":"40400", "transformation":{"func":"DOMAIN", "params":{"field":"a_portata_media", "domain_name": "D_AFFIDABILITA"}}},
+
+        {"id": "39800", "transformation":{"func": "IF", "params": { "field": "98800", "cond": {"operator": "!=",
+                        "value": 0,
+                        "result": 2,
+                        "else": 1
+                    }
+                }
+            }
+        }
+    ]
+}
