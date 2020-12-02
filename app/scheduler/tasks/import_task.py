@@ -33,7 +33,7 @@ class ImportTask(BaseTask):
     name = "import"
     schema = Schema.ANALYSIS
 
-    max_tables_per_import_run = 50
+    max_tables_per_import_run = 25
 
     @classmethod
     def pre_send(
@@ -119,9 +119,9 @@ class ImportTask(BaseTask):
                 GdalUtils=GdalUtils,
                 isWindows=isWindows
             )
-            gpkg_import.run()
+            progress = gpkg_import.run()
 
-            orm_task.progress = math.floor(step * 100 / (import_steps_number + 1))
+            orm_task.progress = progress
             orm_task.save()
 
         CsvImportDefinition.run()

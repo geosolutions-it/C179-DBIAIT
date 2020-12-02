@@ -231,7 +231,7 @@ class GpkgImportDefinition(BaseImportDefinition):
                         import_end_timestamp=end_date,
                         status=task_status
                     )
-                prg = cont / n_step
                 feedback.setCurrentStep(cont - self.offset)
                 if feedback.isCanceled():
                     break
+            return (cont / n_step) * 100
