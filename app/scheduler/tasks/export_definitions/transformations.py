@@ -1,3 +1,4 @@
+import re
 import schema
 
 from typing import Dict
@@ -140,6 +141,12 @@ class CaseTransformation(BaseTransformation):
 
 
 class IfTransformation(BaseTransformation):
+    """
+    If transformation, supporting results and else values of other field of the row.
+
+    If "result" and/or "else" keys are assigned with strings, containing: "{ column_alias }",
+    value of the column will be returned instead of the string literal.
+    """
 
     schema = schema.Schema(
         {
@@ -153,12 +160,28 @@ class IfTransformation(BaseTransformation):
         }
     )
 
+    re_pattern = re.compile('{\W*(\w+)\W*}')
+
     def apply(self, row: Dict, **kwargs):
         field_value = row.get(self.args["field"], None)
         cond = self.args["cond"]
         operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
 
-        return cond["result"] if operator(field_value, cond["value"]) else cond["else"]
+        result_val = cond["result"]
+        if isinstance(result_val, str):
+            result_alias = re.match(self.re_pattern, result_val)
+
+            if result_alias is not None:
+                result_val = row.get(result_alias.group(1), None)
+
+        else_val = cond["else"]
+        if isinstance(else_val, str):
+            else_alias = re.match(self.re_pattern, else_val)
+
+            if else_alias is not None:
+                else_val = row.get(else_alias.group(1), None)
+
+        return result_val if operator(field_value, cond["value"]) else else_val
 
 
 class TransformationFactory:

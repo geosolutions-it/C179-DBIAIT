@@ -165,18 +165,7 @@
             }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') AND a_acq_captazione.sub_funzione = 4"
-      },
-        {
-            "fields": [
-                {
-                    "name": "sorgenti_inpotab.ids_codice_potab",
-                    "alias": "ids_codice_potab"
-                }
-            ],
-            "table": {
-                "name": "sorgenti_inpotab"
-            }
-        }
+      }
    ],
    "columns":[
       {"id":"26200", "transformation":{"func":"EXPR", "params":{"field":"volume_medio_prel", "expr": "_value_*1000/365/3600/24"}}},
@@ -228,6 +217,20 @@
       {"id":"26800", "transformation":{"func":"CONST", "params":{"value":"1"}}},
       {"id":"26900", "transformation":{"func":"CONST", "params":{"value":"0"}}},
 
-      {"id":"24400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}}
+      {"id":"24400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
+
+      {"id":"27800", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "ids_codice_potab",
+             "cond": {
+                     "operator": "=",
+                     "value": "0",
+                     "result": "A",
+                     "else": "{ a_volume }"
+                 }
+             }
+         }
+      }
    ]
 }

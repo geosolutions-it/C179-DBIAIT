@@ -181,17 +181,6 @@
                 }
             ],
             "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
-        },
-        {
-            "fields": [
-                {
-                    "name": "fiumi_inpotab.ids_codice_potab",
-                    "alias": "ids_codice_potab"
-                }
-            ],
-            "table": {
-                "name": "fiumi_inpotab"
-            }
         }
     ],
     "columns": [
@@ -265,7 +254,7 @@
                     "operator": "=",
                     "value": "0",
                     "result": "A",
-                    "else": "a_volume"
+                    "else": "{ a_volume }"
                 }
             }
         }}
