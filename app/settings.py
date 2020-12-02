@@ -207,10 +207,10 @@ AUTH_LDAP_SERVER_URI = os.getenv("LDAP_HOST", "ldap://localhost:389")
 AUTH_LDAP_BIND_DN = os.getenv("LDAP_USERNAME", "CN=webgis_ldap,OU=Users,OU=IT_Services,DC=publiacqua,DC=it")
 AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_PASSWORD", "password")
 
-LDAP_OU_APP = os.getenv("LDAP_OU_APP", "MapStore")
-LDAP_GROUP_OPERATORS = os.getenv("LDAP_CN_OPERATOR", "viewers")
-LDAP_GROUP_MANAGERS = os.getenv("LDAP_CN_MANAGEMENT", "editors2")
-LDAP_GROUP_ADMINS = os.getenv("LDAP_CN_ADMINISTRATOR", "editors1")
+LDAP_OU_APP = os.getenv("LDAP_OU_APP", "DBIAIT")
+LDAP_GROUP_OPERATORS = os.getenv("LDAP_GROUP_OPERATORS", "dbiaitoperator")
+LDAP_GROUP_MANAGERS = os.getenv("LDAP_GROUP_MANAGERS", "dbiaitmanagement")
+LDAP_GROUP_ADMINS = os.getenv("LDAP_GROUP_ADMINS", "dbiaitadministrator")
 
 LDAP_OPT_REFERRALS = ast.literal_eval(os.environ.get('OPT_REFERRALS', '0'))
 
