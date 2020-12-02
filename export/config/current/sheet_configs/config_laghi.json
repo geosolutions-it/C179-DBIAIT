@@ -175,17 +175,6 @@
                 }
             ],
             "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') AND SUB_FUNZIONE=1"
-        },
-        {
-            "fields": [
-                {
-                    "name": "laghi_inpotab.ids_codice_potab",
-                    "alias": "ids_codice_potab"
-                }
-            ],
-            "table": {
-                "name": "laghi_inpotab"
-            }
         }
     ],
     "columns": [
@@ -250,7 +239,7 @@
                         "operator": "=",
                         "value": "0",
                         "result": "A",
-                        "else": "12500"
+                        "else": "{ a_volume }"
                     }
                 }
             }
