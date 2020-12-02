@@ -80,7 +80,7 @@
                         "operator": "=",
                         "value": "",
                         "result": "9999",
-                        "else": "data_esercizio"
+                        "else": "{ data_esercizio }"
                     }
                 }
             }},
