@@ -17,8 +17,8 @@
     <tbody id="import-history-table">
       {% for import in object_list %}
       <tr>
-        <td>{{ import.start_date | date:"d/m/Y - H:i:s" }}</td>
-        <td>{{ import.end_date | date:"d/m/Y - H:i:s" }}</td>
+        <td data-sort='{{import.start_date | date:"y/m/d - H:i:s" }}'>{{ import.start_date | date:"d/m/Y - H:i:s" }}</td>
+        <td data-sort='{{import.end_date | date:"y/m/d - H:i:s" }}'>{{ import.end_date | date:"d/m/Y - H:i:s" }}</td>
         <td>{{ import.requesting_user }}</td>
         <td>{{ import.geopackage }}</td>
         <td style="text-align:center;">
