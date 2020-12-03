@@ -33,31 +33,31 @@ class IfValidation(BaseValidation):
         Simple example with AND:
         {
             "field": "foo_field",
-            "cond": {
+            "cond": [{
                 "and": [
                     {"operator": ">", "value": 2},
                     {"operator": "<", "value": 10},
                 ]
-            },
+            }],
         }
         return True if the value of "foo_field" is greater than 2 and lower than 10
 
         Simple example with OR:
         {
             "field": "foo_field",
-            "cond": {
+            "cond": [{
                 "or": [
                     {"operator": ">", "value": 2},
                     {"operator": "<", "value": 10},
                 ]
-            },
+            }],
         }
         return True if the value of "foo_field" is greater than 2 OR lower than 10
 
         Simple example with AND, OR and templated field:
         {
             "field": "foo_field",
-            "cond": {
+            "cond": [{
                 "and": [
                     {"lookup": "{ bar_field }", "operator": ">", "value": 2},
                     {"operator": "<", "value": 10},
@@ -66,7 +66,7 @@ class IfValidation(BaseValidation):
                     {"lookup": ">", "value": 3},
                     {"operator": "<", "value": 25},
                 ]
-            },
+            }],
         }
         return True if
         - the value of "bar_field" is greater than 2
@@ -77,19 +77,25 @@ class IfValidation(BaseValidation):
     schema = schema.Schema(
         {
             "field": str,
-            "cond":
+            "cond":[
                 schema.And(
                     {str: [{schema.Optional('lookup'): str, "operator": str, "value": object}]}
-                )
+                )]
         }
     )
     re_pattern = re.compile('{\W*(\w+)\W*}')
 
     def validate(self, row: Dict):
         conditions = self.args["cond"]
-        and_conditions = conditions.get("and", [])
-        or_conditions = conditions.get("or", [])
+        result = []
+        for cond in conditions:
+            and_conditions = cond.get("and", [])
+            or_conditions = cond.get("or", [])
+            result.append(self._validate_condition(and_conditions, or_conditions, row))
 
+        return all(result)
+
+    def _validate_condition(self, and_conditions, or_conditions, row):
         and_result = list(self._validate_list(and_conditions, row))
         or_result = list(self._validate_list(or_conditions, row))
 
