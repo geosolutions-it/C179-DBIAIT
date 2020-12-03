@@ -2,12 +2,12 @@ import unittest
 
 from django.test import SimpleTestCase
 
-from app.scheduler.tasks.export_definitions.config_scraper import ExportConfig
+from app.scheduler.tasks.export_definitions.config_scraper import XlsExportConfig
 from app.tests.tasks.query_utils import *
 
 
 class ExportConfigTest(SimpleTestCase):
-    all_sql_query = ExportConfig().config
+    all_sql_query = XlsExportConfig().config
 
     def setUp(self) -> None:
         self.maxDiff = None
