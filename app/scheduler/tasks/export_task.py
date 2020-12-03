@@ -10,10 +10,9 @@ from django.db.models import Q, ObjectDoesNotExist
 
 from app.scheduler import exceptions
 from app.scheduler.models import Task
-from app.scheduler.tasks.export_definitions.export_shapefile import ShapeExporter
 from app.scheduler.utils import Schema, TaskType, TaskStatus
-from app.scheduler.tasks.export_definitions.export_xls import ExportXls
-from app.scheduler.tasks.export_definitions.config_scraper import ExportConfig
+from app.scheduler.tasks.export_definitions.export import ExportXls, ExportShp
+from app.scheduler.tasks.export_definitions.config_scraper import XlsExportConfig, ShpExportConfig
 
 from .base_task import BaseTask
 
@@ -59,7 +58,8 @@ class ExportTask(BaseTask):
             )
 
         # 1a. validate export configuration
-        ExportConfig()
+        XlsExportConfig()
+        ShpExportConfig()
 
         # 2. create Task ORM model instance for this task execution
         try:
@@ -84,26 +84,6 @@ class ExportTask(BaseTask):
 
         return current_task.id
 
-    def export_shapefiles(self, export_directory: pathlib.Path, task: Task):
-        with open(settings.SHAPEFILE_EXPORT_CONFIG.substitute(), "r") as f:
-            exports = json.load(f)
-
-        for export in exports:
-            if not export["skip"]:
-                kwargs = {
-                    "task_id": task.id,
-                    "table": export["source"]["table"],
-                    "name": export["name"],
-                    "shape_file_folder": pathlib.Path(export_directory, export["folder"]),
-                    "fields": export["source"]["fields"],
-                    "filter_query": export["source"]["filter"],
-                    "pre_process": export["pre_process"],
-                }
-                exporter = ShapeExporter(**kwargs)
-                exporter.execute()
-            else:
-                print(f"Skipped the export of [name={export[u'name']}] shapefile")
-
     def execute(self, task_id: int, *args, **kwargs) -> None:
         """
         Method executing data export.
@@ -122,7 +102,7 @@ class ExportTask(BaseTask):
             tmp_export_directory = pathlib.Path(tmp_dir)
 
             ExportXls(tmp_export_directory, orm_task, max_progress=90).run()
-            self.export_shapefiles(tmp_export_directory, orm_task)
+            ExportShp(tmp_export_directory, orm_task).run()
 
             # zip final output in export directory
             export_file = os.path.join(settings.EXPORT_FOLDER, f"task_{orm_task.id}")
