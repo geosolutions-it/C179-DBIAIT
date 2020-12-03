@@ -98,10 +98,9 @@ class ExportConfigTest(SimpleTestCase):
             sorted(x["sql_sources"]) for x in self.all_sql_query if x["sheet"] == "Fiumi"
         ]
         # expect to have 3 queries
-        self.assertEqual(3, len(actual[0]))
+        self.assertEqual(2, len(actual[0]))
         self.assertMultiLineEqual(expected_a_fiumi_query, actual[0][0])
         self.assertMultiLineEqual(expected_fiumi_query, actual[0][1])
-        self.assertMultiLineEqual(expected_fiumi_inpotab_query, actual[0][2])
 
     def test_fognat_com_serv_queries_should_be_the_expected_ones(self):
         actual = [
@@ -142,10 +141,9 @@ class ExportConfigTest(SimpleTestCase):
             sorted(x["sql_sources"]) for x in self.all_sql_query if x["sheet"] == "Laghi"
         ]
         # expect to have 3 queries
-        self.assertEqual(3, len(actual[0]))
+        self.assertEqual(2, len(actual[0]))
         self.assertMultiLineEqual(expected_a_laghi_query, actual[0][0])
         self.assertMultiLineEqual(expected_laghi_query, actual[0][1])
-        self.assertMultiLineEqual(expected_laghi_inpotab_query, actual[0][2])
 
     def test_pompaggi_queries_should_be_the_expected_ones(self):
         actual = [
@@ -212,10 +210,9 @@ class ExportConfigTest(SimpleTestCase):
             sorted(x["sql_sources"]) for x in self.all_sql_query if x["sheet"] == "Sorgenti"
         ]
         # expect to have 3 query
-        self.assertEqual(3, len(actual[0]))
+        self.assertEqual(2, len(actual[0]))
         self.assertMultiLineEqual(expected_a_sorgenti_query, actual[0][0])
         self.assertMultiLineEqual(expected_sorgenti_query, actual[0][1])
-        self.assertMultiLineEqual(expected_sorgenti_inpotab_query, actual[0][2])
 
 
 if __name__ == "__main__":

@@ -22,21 +22,31 @@ class BaseValidation:
 
 
 class IfValidation(BaseValidation):
-
     schema = schema.Schema(
         {
-            "cond": {
-                "operator": str,
-                "value": object,
-            },
+            "cond":
+                schema.Or(
+                    {str: [{"operator": str, "value": object}]}
+                )
         }
     )
 
     def validate(self, value):
-        cond = self.args["cond"]
-        operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
+        conditions = self.args["cond"]
+        and_conditions = conditions.get("and", [])
+        or_conditions = conditions.get("or", [])
+        and_result = list(self._validate_list(and_conditions, value))
+        or_result = list(self._validate_list(or_conditions, value))
+        if len(or_result) > 0:
+            return any(or_result + and_result)
+        elif len(and_result) > 0 and len(or_result) == 0:
+            return all(and_result + or_result)
 
-        return True if operator(value, cond["value"]) else False
+    @staticmethod
+    def _validate_list(conditions, value):
+        for cond in conditions:
+            operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
+            yield operator(value, cond["value"])
 
 
 class ValidationFactory:
