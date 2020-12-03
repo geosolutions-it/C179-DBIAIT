@@ -52,7 +52,7 @@
         },
         {
             "fields": [
-                {"name":"a_a_acq_captazione.geom", "alias": "geom"},
+                {"name":"a_acq_captazione.geom", "alias": "geom"},
                 {"name":"a_acq_captazione.geom", "alias": "x_proj", "function": "GB_X"},
                 {"name":"a_acq_captazione.geom", "alias": "y_proj", "function": "GB_Y"},
                 {"name":"a_acq_captazione.codice_ato","alias": "codice_ato"}
