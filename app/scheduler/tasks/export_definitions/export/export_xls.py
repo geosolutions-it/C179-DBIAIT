@@ -133,7 +133,7 @@ class ExportXls(ExportBase):
                     sheet_row.update({column["id"]: transformed_value})
 
                     for validator in column.get("validators", []):
-                        if not validator["validator"].validate(transformed_value):
+                        if not validator["validator"].validate(raw_data_row):
                             message = validator.get("warning", "")
                             column_letter = coord_id_mapping.get(
                                 str(column["id"]), None
@@ -142,7 +142,7 @@ class ExportXls(ExportBase):
                             if message:
                                 message = (
                                     message.replace("{SHEET}", sheet["sheet"])
-                                    .replace("{ROW}", first_empty_row)
+                                    .replace("{ROW}", str(first_empty_row))
                                     .replace("{FIELD}", column_letter)
                                 )
                                 self.logger.error(message)
