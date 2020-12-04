@@ -1,3 +1,4 @@
+import ast
 import re
 
 import schema
@@ -114,6 +115,11 @@ class IfValidation(BaseValidation):
 
                 if lookup_field is not None:
                     field_value = row.get(lookup_field.group(1), None)
+                    if not isinstance(field_value, int):
+                        field_value = ast.literal_eval(row.get(lookup_field.group(1), None))
+
+            if field_value is None:
+                return False
 
             operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
             yield operator(field_value, cond["value"])

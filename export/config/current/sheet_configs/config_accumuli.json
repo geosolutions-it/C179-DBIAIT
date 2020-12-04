@@ -129,15 +129,15 @@
             "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "anno_costr",
+                        "field": "44500",
                         "cond": [{
-                            "and": [
-                                {"operator": ">=", "value": "REF_YEAR"},
+                            "or": [
+                                {"operator": ">=", "value": 2020},
                                 {"operator": "!=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value lower than 3"
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: year not valid}"
                 }
             ]
         },
@@ -147,7 +147,7 @@
             "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "quota",
+                        "field": "44200",
                         "cond": [{
                             "and": [
                                 {"operator": ">", "value": 0}
@@ -162,7 +162,7 @@
             "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "quota_fondo",
+                        "field": "45100",
                         "cond": [{
                             "and": [
                                 {"operator": ">", "value": 0}
@@ -179,16 +179,16 @@
             "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "anno_instal_clor",
+                        "field": "45600",
                         "cond": [{
                             "and": [
-                                {"lookup": "{d_tipo_cloraz}" ,"operator": "=", "value": 1},
+                                {"lookup": "{45500}" ,"operator": "=", "value": 1},
                                 {"operator": "=", "value": 9800}
                             ]
                         },
                         {
                             "and": [
-                                {"operator": ">=", "value": "REF_YEAR"},
+                                {"operator": ">=", "value": 2020},
                                 {"operator": "!=", "value": 9999}
                             ]
                         }]
@@ -201,16 +201,16 @@
             "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "anno_ristr_clor",
+                        "field": "45700",
                         "cond": [{
                             "and": [
-                                {"lookup": "{d_tipo_cloraz}" ,"operator": "=", "value": 1},
+                                {"lookup": "{45500}" ,"operator": "=", "value": 1},
                                 {"operator": "=", "value": 9800}
                             ]
                         },
                         {
                             "and": [
-                                {"operator": ">=", "value": "REF_YEAR"},
+                                {"operator": ">=", "value": 2020},
                                 {"operator": "!=", "value": 9800}
                             ]
                         }]
@@ -227,15 +227,15 @@
             "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "d_stato_cons",
+                        "field": "44700",
                         "cond": [{
                             "and": [
-                                {"lookup": "{anno_ristr}" ,"operator": ">=", "value": 2014},
+                                {"lookup": "{44600}" ,"operator": ">=", "value": 2014},
                                 {"operator": ">=", "value": 3}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value lower than 3"
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value lower than 3 or ref year not valid"
                 }
             ]
         },
@@ -247,16 +247,16 @@
             "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "d_tipo_cloraz",
+                        "field": "45500",
                         "cond": [{
                             "and": [
-                                {"lookup": "{anno_instal_clor}" ,"operator": "!=", "value": 9800},
+                                {"lookup": "{44600}" ,"operator": "!=", "value": 9800},
                                 {"operator": "!=", "value": 1}
                             ]
                         },
                         {
                             "and": [
-                                {"lookup": "{anno_instal_clor}" ,"operator": "=", "value": 9800},
+                                {"lookup": "{45600}" ,"operator": "=", "value": 9800},
                                 {"operator": "=", "value": 1}
                             ]
                         }
@@ -272,17 +272,17 @@
             "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "a_anno_ristr",
+                        "field": "45900",
                         "cond": [{
                             "and": [
-                                {"lookup": "{anno_costr}" ,"operator": "=", "value": 9999},
+                                {"lookup": "{44500}" ,"operator": "=", "value": 9999},
                                 {"operator": "=", "value": "X"}
                             ]
                         },
                         {
                             "and": [
-                                {"lookup": "{anno_costr}" ,"operator": ">=", "value": 2002},
-                                {"lookup": "{anno_costr}" ,"operator": "!=", "value": 9999},
+                                {"lookup": "{44500}" ,"operator": ">=", "value": 2002},
+                                {"lookup": "{44500}" ,"operator": "!=", "value": 9999},
                                 {"operator": "=", "value": "A"}
                             ]
                         }]
@@ -295,10 +295,10 @@
             "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "a_anno_ristr",
+                        "field": "46000",
                         "cond": [{
                             "and": [
-                                {"lookup": "{anno_ristr}" ,"operator": ">=", "value": 2002},
+                                {"lookup": "{44600}" ,"operator": ">=", "value": 2002},
                                 {"operator": "=", "value": "A"}
                             ]
                         }]
