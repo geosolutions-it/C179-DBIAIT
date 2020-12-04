@@ -133,11 +133,11 @@
                     "func": "IF",
                     "params": {
                         "field": "quota",
-                        "cond": {
+                        "cond": [{
                             "and": [
                                 {"operator": ">", "value": 0}
                             ]
-                        }
+                        }]
                     },
                     "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
                 }
@@ -148,11 +148,11 @@
                     "func": "IF",
                     "params": {
                         "field": "quota_fondo",
-                        "cond": {
+                        "cond": [{
                             "and": [
                                 {"operator": ">", "value": 0}
                             ]
-                        }
+                        }]
                     },
                     "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
                 }
@@ -171,12 +171,12 @@
                     "func": "IF",
                     "params": {
                         "field": "d_stato_cons",
-                        "cond": {
+                        "cond": [{
                             "and": [
                                 {"lookup": "{anno_ristr}" ,"operator": ">=", "value": 2014},
                                 {"operator": ">=", "value": 3}
                             ]
-                        }
+                        }]
                     },
                     "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value lower than 3"
                 }
@@ -195,14 +195,14 @@
                     "func": "IF",
                     "params": {
                         "field": "a_anno_ristr",
-                        "cond": {
+                        "cond": [{
                             "and": [
                                 {"lookup": "{anno_ristr}" ,"operator": ">=", "value": 2002},
                                 {"operator": "=", "value": "A"}
                             ]
-                        }
+                        }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value lower than 3"
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value is not A"
                 }
             ]
         },
