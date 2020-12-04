@@ -132,8 +132,9 @@ class ExportXls(ExportBase):
 
                     sheet_row.update({column["id"]: transformed_value})
 
+                for column in sheet["columns"]:
                     for validator in column.get("validators", []):
-                        if not validator["validator"].validate(raw_data_row):
+                        if not validator["validator"].validate(sheet_row):
                             message = validator.get("warning", "")
                             column_letter = coord_id_mapping.get(
                                 str(column["id"]), None
