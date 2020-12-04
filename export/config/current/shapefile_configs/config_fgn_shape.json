@@ -1,0 +1,42 @@
+{
+    "file_name": "fgn_shape.shp",
+    "skip": false,
+    "folder": "Tronchi",
+    "sources": [
+        {
+            "fields": [
+                {"name": "fgn_shape.ids_codice", "alias": "ids_codice"},
+                {"name": "fgn_shape.comune_nom", "alias": "comune_nom"},
+                {"name": "fgn_shape.id_comune_", "alias": "id_comune_"},
+                {"name": "fgn_shape.ids_codi_1", "alias": "ids_codi_1"},
+                {"name": "fgn_shape.id_materia", "alias": "id_materia"},
+                {"name": "fgn_shape.idx_materi", "alias": "idx_materi"},
+                {"name": "fgn_shape.sezione", "alias": "sezione"},
+                {"name": "fgn_shape.diametro", "alias": "diametro"},
+                {"name": "fgn_shape.idx_diamet", "alias": "idx_diamet"},
+                {"name": "fgn_shape.anno", "alias": "anno"},
+                {"name": "fgn_shape.idx_anno", "alias": "idx_anno"},
+                {"name": "fgn_shape.lunghezz_1", "alias": "lunghezz_1"},
+                {"name": "fgn_shape.idx_lunghe", "alias": "idx_lunghe"},
+                {"name": "fgn_shape.id_conserv", "alias": "id_conserv"},
+                {"name": "fgn_shape.tipo_rete", "alias": "tipo_rete"},
+                {"name": "fgn_shape.id_refluo_", "alias": "id_refluo_"},
+                {"name": "fgn_shape.funziona_g", "alias": "funziona_g"},
+                {"name": "fgn_shape.recapito", "alias": "recapito"},
+                {"name": "fgn_shape.copertura", "alias": "copertura"},
+                {"name": "fgn_shape.prof_inizi", "alias": "prof_inizi"},
+                {"name": "fgn_shape.prof_final", "alias": "prof_final"},
+                {"name": "fgn_shape.idx_profon", "alias": "idx_profon"},
+                {"name": "fgn_shape.allacci", "alias": "allacci"},
+                {"name": "fgn_shape.allacci_in", "alias": "allacci_in"},
+                {"name": "fgn_shape.lunghezza_", "alias": "lunghezza_"},
+                {"name": "fgn_shape.riparazion", "alias": "riparazion"},
+                {"name": "fgn_shape.riparazi_1", "alias": "riparazi_1"},
+                {"name": "fgn_shape.id_opera_s", "alias": "id_opera_s"}
+            ],
+            "table": {
+                "name": "fgn_shape"
+            }
+        }
+    ]
+}

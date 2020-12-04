@@ -8,6 +8,8 @@
       "shapefile_configs/config_pozzi.json",
       "shapefile_configs/config_scaricatori.json",
       "shapefile_configs/config_sollevamenti.json",
-      "shapefile_configs/config_sorgenti.json"
+      "shapefile_configs/config_sorgenti.json",
+      "shapefile_configs/config_acq_shape.json",
+      "shapefile_configs/config_fgn_shape.json"
    ]
 }
