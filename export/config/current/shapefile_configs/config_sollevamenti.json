@@ -1,0 +1,79 @@
+{
+   "file_name": "sollevamenti.shp",
+   "skip": false,
+   "folder": "Impianti",
+   "sources":[
+      {
+         "fields":[
+             {"name":"fgn_imp_sollev.geom", "alias": "geom"},
+             {"name":"fgn_imp_sollev.geom", "alias": "x_proj", "function": "GB_X"},
+             {"name":"fgn_imp_sollev.geom", "alias": "y_proj", "function": "GB_Y"},
+             {"name":"fgn_imp_sollev.codice_ato","alias": "codice_ato"}
+         ],
+         "table":{
+            "name":"fgn_imp_sollev"
+         },
+         "join":[
+            {
+               "type":"inner",
+               "table":{
+                  "name":"fgn_auth_imp_sol"
+               },
+               "on":[
+                  "fgn_auth_imp_sol.id_imp_sollev",
+                  "fgn_imp_sollev.idgis"
+               ],
+               "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "fgn_imp_sollev.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
+            }
+         ],
+         "filter": "WHERE fgn_imp_sollev.d_gestore = 'PUBLIACQUA' AND fgn_imp_sollev.d_ambito IN ('AT3', NULL) AND fgn_imp_sollev.d_stato NOT IN ('IPR', 'IAC')"
+      },
+      {
+         "fields":[
+             {"name":"a_fgn_imp_sollev.geom", "alias": "geom"},
+             {"name":"a_fgn_imp_sollev.geom", "alias": "x_proj", "function": "GB_X"},
+             {"name":"a_fgn_imp_sollev.geom", "alias": "y_proj", "function": "GB_Y"},
+             {"name":"a_fgn_imp_sollev.codice_ato","alias": "codice_ato"}
+         ],
+         "table":{
+            "name":"a_fgn_imp_sollev"
+         },
+         "join":[
+            {
+               "type":"inner",
+               "table":{
+                  "name":"fgn_auth_imp_sol"
+               },
+               "on":[
+                  "fgn_auth_imp_sol.id_imp_sollev",
+                  "a_fgn_imp_sollev.idgis"
+               ],
+               "cond":"="
+            },
+            {
+                 "type": "inner",
+                 "table": {
+                     "name": "localita"
+                 },
+                 "on": [
+                     "localita.geom",
+                     "a_fgn_imp_sollev.geom"
+                 ],
+                 "cond": "ST_INTERSECTS"
+            }
+         ],
+         "filter": "WHERE a_fgn_imp_sollev.d_gestore = 'PUBLIACQUA' AND a_fgn_imp_sollev.d_ambito IN ('AT3', NULL) AND a_fgn_imp_sollev.d_stato NOT IN ('IPR', 'IAC')"
+      }
+   ]
+}
