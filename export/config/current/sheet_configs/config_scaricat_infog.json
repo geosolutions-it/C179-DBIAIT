@@ -1,0 +1,21 @@
+{
+   "sheet":"Scaricat_infog",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"scaricato_infog.ids_codice", "alias":"ids_codice"},
+            {"name":"scaricato_infog.ids_codice_fognatura", "alias":"ids_codice_fognatura"},
+            {"name":"scaricato_infog.id_gestore_fognatura", "alias":"id_gestore_fognatura"}
+         ],
+         "table":{
+            "name": "scaricato_infog"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "85600","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "85800","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_fognatura"}}},
+      {"id": "85900","transformation": {"func": "DIRECT", "params": {"field": "id_gestore_fognatura"}}}
+   ]
+}

@@ -1,0 +1,21 @@
+{
+   "sheet":"Pompaggi_inserba",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"pompaggi_inserba.ids_codice", "alias":"ids_codice"},
+            {"name":"pompaggi_inserba.ids_codice_serbatoio", "alias":"ids_codice_serbatoio"},
+            {"name":"pompaggi_inserba.id_gestore_serbatoio", "alias":"id_gestore_serbatoio"}
+         ],
+         "table":{
+            "name": "pompaggi_inserba"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "52700","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "52900","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_serbatoio"}}},
+      {"id": "53000","transformation": {"func": "DIRECT", "params": {"field": "id_gestore_serbatoio"}}}
+   ]
+}

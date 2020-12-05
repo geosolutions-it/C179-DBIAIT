@@ -1,0 +1,21 @@
+{
+   "sheet":"Sorgenti_inreti",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"sorgenti_inreti.ids_codice", "alias":"ids_codice"},
+            {"name":"sorgenti_inreti.ids_codice_rete", "alias":"ids_codice_rete"},
+            {"name":"sorgenti_inreti.id_gestore_rete", "alias":"id_gestore_rete"}
+         ],
+         "table":{
+            "name": "sorgenti_inreti"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "29100","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "29300","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_rete"}}},
+      {"id": "29400","transformation": {"func": "DIRECT", "params": {"field": "id_gestore_rete"}}}
+   ]
+}
