@@ -1,10 +1,11 @@
 {
     "file_name": "acq_shape.shp",
     "skip": false,
-    "folder": "Tronchi",
+    "folder": "Shape/Tronchi",
     "sources": [
         {
             "fields": [
+                {"name": "acq_shape.geom", "alias": "geom"},
                 {"name": "acq_shape.ids_codice", "alias": "ids_codice"},
                 {"name": "acq_shape.comune_nom", "alias": "comune_nom"},
                 {"name": "acq_shape.id_comune_", "alias": "id_comune_"},

@@ -1,10 +1,11 @@
 {
     "file_name": "fgn_shape.shp",
     "skip": false,
-    "folder": "Tronchi",
+    "folder": "Shape/Tronchi",
     "sources": [
         {
             "fields": [
+                {"name": "fgn_shape.geom", "alias": "geom"},
                 {"name": "fgn_shape.ids_codice", "alias": "ids_codice"},
                 {"name": "fgn_shape.comune_nom", "alias": "comune_nom"},
                 {"name": "fgn_shape.id_comune_", "alias": "id_comune_"},
@@ -16,7 +17,7 @@
                 {"name": "fgn_shape.idx_diamet", "alias": "idx_diamet"},
                 {"name": "fgn_shape.anno", "alias": "anno"},
                 {"name": "fgn_shape.idx_anno", "alias": "idx_anno"},
-                {"name": "fgn_shape.lunghezz_1", "alias": "lunghezz_1"},
+                {"name": "fgn_shape.lunghez_1", "alias": "lunghezz_1"},
                 {"name": "fgn_shape.idx_lunghe", "alias": "idx_lunghe"},
                 {"name": "fgn_shape.id_conserv", "alias": "id_conserv"},
                 {"name": "fgn_shape.tipo_rete", "alias": "tipo_rete"},
