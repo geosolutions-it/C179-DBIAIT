@@ -215,7 +215,7 @@ LDAP_GROUP_ADMINS = os.getenv("LDAP_GROUP_ADMINS", "dbiaitadministrator")
 LDAP_OPT_REFERRALS = ast.literal_eval(os.environ.get('OPT_REFERRALS', '0'))
 
 AUTH_LDAP_CONNECTION_OPTIONS = {
-    ldap.OPT_REFERRALS: os.getenv("OPT_REFERRALS", LDAP_OPT_REFERRALS),
+    ldap.OPT_REFERRALS: LDAP_OPT_REFERRALS
 }
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
