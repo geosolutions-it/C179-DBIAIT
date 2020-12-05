@@ -2,9 +2,10 @@ import fiona
 import pathlib
 import shapely.wkb
 
+from django.conf import settings
 from shapely.geometry import mapping
 from django.db import connections, ProgrammingError
-
+from app.scheduler.tasks.import_definitions.base_import import initQgis
 from app.scheduler.tasks.export_definitions.config_scraper import ShpExportConfig
 from app.scheduler.utils import dictfetchall, translate_schema_to_db_alias
 
@@ -13,12 +14,57 @@ from .export_base import ExportBase
 
 class ExportShp(ExportBase):
 
+    def create_gdal_commands(self, database_config, shp_full_path, sql, is_windows=False):
+        ogr_exe = "ogr2ogr"
+        if is_windows:
+            ogr_exe += ".exe"
+
+        db_host = database_config["HOST"]
+        db_port = database_config["PORT"]
+        db_name = database_config["DATABASE"]
+        db_schema = database_config["SCHEMA"]
+        db_user = database_config["USERNAME"]
+        db_password = database_config["PASSWORD"]
+
+        options = '-progress '
+        options += '-f "ESRI Shapefile" ' + shp_full_path + ' '
+        options += 'PG:" dbname=\'%s\' host=%s port=%s user=\'%s\' password=\'%s\' active_schema=%s " ' \
+                   % (db_name, db_host, db_port, db_user, db_password, db_schema)
+        options += '-sql "%s" ' % (sql,)
+        #options += '-lco GEOMETRY_NAME=geom '
+
+        self.logger.debug("OGR Command: " + options)
+
+        commands = [ogr_exe, options]
+        return commands
+
+    def execute_command(self, gdal_utils, commands):
+        try:
+            gdal_utils.runGdal(commands)
+            print(gdal_utils.consoleOutput)
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+
     def run(self):
         """
-        Method executing export of the data into *.xlsx file,
+        Method executing export of the data into *.shp file,
         """
+        database = settings.DATABASES[settings.TASKS_DATABASE]
+        database_config = {
+            "HOST": database["HOST"],
+            "PORT": database["PORT"],
+            "DATABASE": database["NAME"],
+            "SCHEMA": self.orm_task.schema,
+            "USERNAME": database["USER"],
+            "PASSWORD": database["PASSWORD"],
+        }
+
         self.starting_progress = self.orm_task.progress
         self.configure_file_logger()
+        self.logger.info("Exporting shapefile...")
+
+        qgs, processing, gdal_utils, is_windows = initQgis()
 
         # parse export configuration
         config = ShpExportConfig()
@@ -37,7 +83,7 @@ class ExportShp(ExportBase):
                 self.logger.error(
                     f"Procedure '{pre_process}' called by shapefile '{shape_conf['name']}' FAILED with:\n"
                     f"{type(e).__name__}: {e}.\n"
-                    f"Skipping '{shape_conf['name']}' sheet generation."
+                    f"Skipping '{shape_conf['name']}' shapefile generation."
                 )
                 continue
 
@@ -52,60 +98,18 @@ class ExportShp(ExportBase):
             )
 
             target_shapefile.parent.mkdir(parents=True, exist_ok=True)
-
-            with connections[
-                translate_schema_to_db_alias(self.orm_task.schema)
-            ].cursor() as cursor:
+            try:
+                shp_out_path = str(target_shapefile.absolute())
                 sql_sources = shape_conf["sql_sources"]
-
-                if not sql_sources:
-                    self.logger.warning(
-                        f"Sources for '{shape_conf['file_name']}' is empty. Skipping..."
-                    )
-                    continue
-
-                raw_data = []
-                for source in sql_sources:
-                    try:
-                        cursor.execute(source)
-                    except ProgrammingError as e:
-                        self.logger.error(
-                            f"Fetching source for sheet '{shape_conf['file_name']}' failed with:\n"
-                            f"{type(e).__name__}: {e}.\n"
-                            f"Source: '{source}'."
-                        )
-                        continue
-
-                    raw_data.extend(dictfetchall(cursor))
-
-            records = []
-            shp_schema = None
-            for raw_data_row in raw_data:
-
-                hex_geom = raw_data_row.pop('geom', None)
-                if hex_geom is None:
-                    self.logger.debug(f"Empty geometry for row in {shape_conf['file_name']}")
-                    continue
-
-                geom = shapely.wkb.loads(hex_geom, hex=True)
-
-                if shp_schema is None:
-                    shp_schema = {
-                        'geometry': type(geom).__name__,
-                        'properties': {
-                            key: type(val).__name__ for key, val in raw_data_row.items() if key != 'geom'
-                        }
-                    }
-
-                records.append({
-                        'geometry': mapping(geom),
-                        'properties': raw_data_row,
-                    }
-                )
-
-            with fiona.open(str(target_shapefile.absolute()), 'w', 'ESRI Shapefile', shp_schema) as shp:
-                shp.writerecords(records)
-
+                sql = sql_sources[0]
+                for i in range(1, len(sql_sources)):
+                    sql += " UNION ALL " + sql_sources[i]
+                print(sql)
+                commands = self.create_gdal_commands(database_config, shp_out_path, sql, is_windows)
+                self.execute_command(gdal_utils, commands)
+            except Exception as e1:
+                self.logger.error("Exception: " + str(e1), e1)
+                raise e1
             # update task status
             step += 1
             self.update_progress(step, total_shapes_number)
