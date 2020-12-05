@@ -97,16 +97,18 @@ class ExportTask(BaseTask):
                 f"between task scheduling and execution."
             )
             raise
+        try:
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                tmp_export_directory = pathlib.Path(tmp_dir)
 
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            tmp_export_directory = pathlib.Path(tmp_dir)
+                ExportXls(tmp_export_directory, orm_task, max_progress=90).run()
+                ExportShp(tmp_export_directory, orm_task).run()
 
-            ExportXls(tmp_export_directory, orm_task, max_progress=90).run()
-            ExportShp(tmp_export_directory, orm_task).run()
-
-            # zip final output in export directory
-            export_file = os.path.join(settings.EXPORT_FOLDER, f"task_{orm_task.id}")
-            shutil.make_archive(export_file, "zip", tmp_export_directory)
+                # zip final output in export directory
+                export_file = os.path.join(settings.EXPORT_FOLDER, f"task_{orm_task.id}")
+                shutil.make_archive(export_file, "zip", tmp_export_directory)
+        except Exception as e:
+            print("Exception: " + str(e))
 
         orm_task.progress = 100
         orm_task.save()
