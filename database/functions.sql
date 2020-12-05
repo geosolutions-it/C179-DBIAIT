@@ -72,6 +72,18 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public;
+------------------------------------------------------------------
+-- Transform a Geometry to EPSG:4326
+CREATE OR REPLACE FUNCTION public.ST_TRANSFORM_4326(
+	v_geom GEOMETRY
+) RETURNS GEOMETRY AS $$
+BEGIN
+	RETURN ST_TRANSFORM(v_geom, 4326);
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public;	
 --------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.GB_X(
 	v_geom GEOMETRY

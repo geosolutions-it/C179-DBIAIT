@@ -1,0 +1,21 @@
+{
+   "sheet":"Laghi_inpotab",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"laghi_inpotab.ids_codice", "alias":"ids_codice"},
+            {"name":"laghi_inpotab.ids_codice_potab", "alias":"ids_codice_potab"},
+            {"name":"laghi_inpotab.id_gestore_potab", "alias":"id_gestore_potab"}
+         ],
+         "table":{
+            "name": "laghi_inpotab"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "13300","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "13500","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_potab"}}},
+      {"id": "13600","transformation": {"func": "DIRECT", "params": {"field": "id_gestore_potab"}}}
+   ]
+}

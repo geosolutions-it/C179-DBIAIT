@@ -1,0 +1,21 @@
+{
+   "sheet":"Sorgenti_inpotab",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"sorgenti_inpotab.ids_codice", "alias":"ids_codice"},
+            {"name":"sorgenti_inpotab.ids_codice_potab", "alias":"ids_codice_potab"},
+            {"name":"sorgenti_inpotab.id_gestore_potab", "alias":"id_gestore_potab"}
+         ],
+         "table":{
+            "name": "sorgenti_inpotab"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "28500","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "28700","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_potab"}}},
+      {"id": "28800","transformation": {"func": "DIRECT", "params": {"field": "id_gestore_potab"}}}
+   ]
+}

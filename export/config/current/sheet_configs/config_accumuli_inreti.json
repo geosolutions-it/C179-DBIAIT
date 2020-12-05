@@ -1,0 +1,21 @@
+{
+   "sheet":"Accumuli_inreti",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"accumuli_inreti.ids_codice", "alias":"ids_codice"},
+            {"name":"accumuli_inreti.ids_codice_rete", "alias":"ids_codice_rete"},
+            {"name":"accumuli_inreti.id_gestore_rete", "alias":"id_gestore_rete"}
+         ],
+         "table":{
+            "name": "accumuli_inreti"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "47100","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "47300","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_rete"}}},
+      {"id": "47400","transformation": {"func": "DIRECT", "params": {"field": "id_gestore_rete"}}}
+   ]
+}

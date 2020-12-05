@@ -1,0 +1,21 @@
+{
+   "sheet":"Potab_incaptaz",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"potab_incaptaz.ids_codice", "alias":"ids_codice"},
+            {"name":"potab_incaptaz.ids_codice_captazione", "alias":"ids_codice_captazione"},
+            {"name":"potab_incaptaz.id_gestore_captazione", "alias":"id_gestore_captazione"}
+         ],
+         "table":{
+            "name": "potab_incaptaz"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "36400","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "36600","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_captazione"}}},
+      {"id": "36700","transformation": {"func": "DIRECT", "params": {"field": "id_gestore_captazione"}}}
+   ]
+}

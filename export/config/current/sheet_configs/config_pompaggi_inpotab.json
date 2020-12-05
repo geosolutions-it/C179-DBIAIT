@@ -1,0 +1,21 @@
+{
+   "sheet":"Pompaggi_inpotab",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"pompaggi_inpotab.ids_codice", "alias":"ids_codice"},
+            {"name":"pompaggi_inpotab.ids_codice_potab", "alias":"ids_codice_potab"},
+            {"name":"pompaggi_inpotab.id_gestore_potab", "alias":"id_gestore_potab"}
+         ],
+         "table":{
+            "name": "pompaggi_inpotab"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "52100","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "52300","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_potab"}}},
+      {"id": "52400","transformation": {"func": "DIRECT", "params": {"field": "id_gestore_potab"}}}
+   ]
+}

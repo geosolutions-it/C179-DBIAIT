@@ -1,0 +1,21 @@
+{
+   "sheet":"Accumuli_inadd",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"accumuli_inadd.ids_codice", "alias":"ids_codice"},
+            {"name":"accumuli_inadd.ids_codice_adduzione", "alias":"ids_codice_adduzione"},
+            {"name":"accumuli_inadd.id_gestore_adduzione", "alias":"id_gestore_adduzione"}
+         ],
+         "table":{
+            "name": "accumuli_inadd"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "46500","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "46700","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_adduzione"}}},
+      {"id": "46800","transformation": {"func": "DIRECT", "params": {"field": "id_gestore_adduzione"}}}
+   ]
+}

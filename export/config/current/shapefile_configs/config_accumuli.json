@@ -1,7 +1,7 @@
 {
     "file_name": "accumuli.shp",
     "skip": false,
-    "folder": "Impianti",
+    "folder": "Shape/Impianti",
     "sources": [
         {
             "fields": [

@@ -1,7 +1,7 @@
 {
    "file_name": "sorgenti.shp",
    "skip": false,
-   "folder": "Impianti",
+   "folder": "Shape/Impianti",
    "sources":[
       {
          "fields":[

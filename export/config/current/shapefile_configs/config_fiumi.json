@@ -1,7 +1,7 @@
 {
     "file_name": "fiumi.shp",
     "skip": false,
-    "folder": "Impianti",
+    "folder": "Shape/Impianti",
     "sources": [
         {
             "fields": [
