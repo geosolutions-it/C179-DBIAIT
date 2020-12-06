@@ -1,0 +1,21 @@
+{
+   "sheet":"Distrib_loc_serv",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"distrib_loc_serv.codice_opera", "alias":"codice_opera"},
+            {"name":"distrib_loc_serv.id_localita_istat", "alias":"id_localita_istat"},
+            {"name":"distrib_loc_serv.perc_popsrv", "alias":"perc_popsrv"}
+         ],
+         "table":{
+            "name": "distrib_loc_serv"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "102700","transformation": {"func": "DIRECT", "params": {"field": "codice_opera"}}},
+      {"id": "102900","transformation": {"func": "DIRECT", "params": {"field": "id_localita_istat"}}},
+      {"id": "103000","transformation": {"func": "DIRECT", "params": {"field": "perc_popsrv"}}}
+   ]
+}

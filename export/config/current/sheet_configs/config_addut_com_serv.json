@@ -1,0 +1,19 @@
+{
+   "sheet":"Addut_com_serv",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"addut_com_serv.ids_codice", "alias":"ids_codice"},
+            {"name":"addut_com_serv.id_comune_istat", "alias":"id_comune_istat"}
+         ],
+         "table":{
+            "name": "addut_com_serv"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "42400","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "42600","transformation": {"func": "DIRECT", "params": {"field": "id_comune_istat"}}}
+   ]
+}

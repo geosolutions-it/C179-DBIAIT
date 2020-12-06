@@ -1,0 +1,19 @@
+{
+   "sheet":"Collett_com_serv",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"collet_com_serv.ids_codice", "alias":"ids_codice"},
+            {"name":"collet_com_serv.id_comune_istat", "alias":"id_comune_istat"}
+         ],
+         "table":{
+            "name": "collet_com_serv"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "71100","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
+      {"id": "71300","transformation": {"func": "DIRECT", "params": {"field": "id_comune_istat"}}}
+   ]
+}

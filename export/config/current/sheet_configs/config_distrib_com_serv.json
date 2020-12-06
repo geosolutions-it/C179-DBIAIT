@@ -1,0 +1,21 @@
+{
+   "sheet":"Distrib_com_serv",
+   "skip":false,
+   "sources":[
+      {
+         "fields":[
+            {"name":"distrib_com_serv.codice_opera", "alias":"codice_opera"},
+            {"name":"distrib_com_serv.id_comune_istat", "alias":"id_comune_istat"},
+            {"name":"distrib_com_serv.perc_popsrv", "alias":"perc_popsrv"}
+         ],
+         "table":{
+            "name": "distrib_com_serv"
+         }
+      }
+   ],
+   "columns":[
+      {"id": "57700","transformation": {"func": "DIRECT", "params": {"field": "codice_opera"}}},
+      {"id": "57900","transformation": {"func": "DIRECT", "params": {"field": "id_comune_istat"}}},
+      {"id": "58000","transformation": {"func": "DIRECT", "params": {"field": "perc_popsrv"}}}
+   ]
+}
