@@ -84,7 +84,8 @@
                     }
                 }
             }},
-         {"id":"41800", "transformation":{ "func":"CASE", "params": {"field":"idx_materiale", "cond": [
+        {"id": "41700", "transformation": {"func": "DIRECT", "params": { "field": "lunghezza" }}},
+        {"id":"41800", "transformation":{ "func":"CASE", "params": {"field":"idx_materiale", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
              {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
              {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
