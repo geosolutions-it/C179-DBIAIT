@@ -4,14 +4,18 @@
       "sheet_configs/config_accumuli_inadd.json",
       "sheet_configs/config_accumuli_inreti.json",
 
+      "sheet_configs/config_addut_com_serv.json",
       "sheet_configs/config_addut_inreti.json",
       "sheet_configs/config_addut_tronchi.json",
       "sheet_configs/config_adduttrici.json",
+      "sheet_configs/config_collett_com_serv.json",
       "sheet_configs/config_collett_tronchi.json",
       "sheet_configs/config_collettori.json",
       "sheet_configs/config_depurat_incoll.json",
       "sheet_configs/config_depurat_pompe.json",
       "sheet_configs/config_depuratori.json",
+      "sheet_configs/config_distrib_com_serv.json",
+      "sheet_configs/config_distrib_loc_serv.json",
       "sheet_configs/config_distrib_tronchi.json",
       "sheet_configs/config_distribuzioni.json",
 
