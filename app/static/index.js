@@ -18,11 +18,20 @@ const table_function_mapper = {
         }
     },
     "#process-status-table": function (response) {
-        const table = $("#process-status-table");
+        const table = $("#processing-table").DataTable();
         if (response) {
-            table.empty();
+            table.clear().draw();
             response.forEach(function (data) {
-                table.append(`<tr class="${data.style_class}"><td>${data.user}</td><td>${get_local_date(data.start_date) || "--/--/---"}</td><td>${get_local_date(data.end_date) || "--/--/---"}</td><td class="text-lowercase"><a href="#" onclick="display_error_log('${escape(data.task_log)}', '${data.status}')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="${data.status_icon}"></i></a></td></tr>`);
+                var escaped = escape(data.task_log);
+                var errorModal = '<a href="#" onclick="display_error_log(\'' + escaped + '\', \'' + data.status + '\')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="'+ data.status_icon + '"></i></a>'
+                var row = table.row.add([
+                    data.id,
+                    data.user,
+                    get_local_date(data.start_date)  || "--/--/---" ,
+                    get_local_date(data.end_date)  || "--/--/---" ,
+                    errorModal
+                    ]).draw( false ).node();
+                $(row).addClass(data.style_class);
             });
         }
     },
@@ -66,8 +75,11 @@ function get_local_date(utc_date) {
     }
     else {
         const localDate = new Date(utc_date);
-        return localDate.toUTCString();
+        return moment(localDate.toUTCString(), 'ddd, DD MMM YYYY HH:mm:ss').format("DD/MM/YYYY - HH:mm:ss");
     }
+}
+
+function changeTimeFormat(date) {
 }
 
 window.addEventListener("load", function () {
