@@ -4,31 +4,58 @@
 <div id="dashboard-container" class="container dashboard">
     <div class="row">
         <div class="col-md-4 col-sm-6 dashboard-item">
+            {% if request.user.is_staff or request.user.is_superuser %}
             <a href="{% url 'import-view' %}">
                 <i class="fas fas fa-file-import"></i>
                 <h5>Import</h5>
             </a>
+            {% else %}
+            <a>
+                <i class="fas fas fa-file-import icon-forbidden"></i>
+                <h5 class="icon-forbidden">Import</h5>
+            </a>
+            {% endif %}
         </div>
         <div class="col-md-4 col-sm-6 dashboard-item">
+            {% if request.user.is_staff or request.user.is_superuser %}
             <a href="{% url 'process-view' %}">
                 <i class="fas fa-microchip"></i>
                 <h5>Processing</h5>
             </a>
+            {% else %}
+            <a>
+                <i class="fas fa-microchip icon-forbidden"></i>
+                <h5 class="icon-forbidden">Processing</h5>
+            </a>
+            {% endif %}
         </div>
+
         <div class="col-md-4 col-sm-6 dashboard-item">
+            {% if request.user.is_active or request.user.is_superuser  %}
             <a href="{% url 'export-view' %}">
                 <i class="fas fa-file-export"></i>
                 <h5>Export</h5>
             </a>
+            {% else %}
+            <a>
+                <i class="fas fa-file-export icon-forbidden"></i>
+                <h5 class="icon-forbidden">Export</h5>
+            </a>
+            {% endif %}
         </div>
         <div class="col-md-4 col-sm-6 dashboard-item">
-            <!--
-            <a href="{% url 'freeze-view' %}">
-            -->
+            {% if request.user.is_superuser %}
+            <!--a href="{% url 'freeze-view' %}"-->
             <a>
                 <i class="fas fa-snowflake icon-forbidden"></i>
                 <h5 class="icon-forbidden">Freeze</h5>
             </a>
+            {% else %}
+            <a>
+                <i class="fas fa-snowflake icon-forbidden"></i>
+                <h5 class="icon-forbidden">Freeze</h5>
+            </a>
+            {% endif %}
         </div>
         <div class="col-md-4 col-sm-6 dashboard-item">
             <a href="{% url 'configuration-view' %}">

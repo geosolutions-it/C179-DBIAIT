@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if request.user.is_staff or request.user.is_superuser %}
 <div class="container">
   <div class="row">
     <div class="col-xs-6 col-md-4">
@@ -116,4 +117,7 @@
     } );
 } );
 </script>
+{% else %}
+{% include "errors/denied.html" %}
+{% endif %}
 {% endblock %}
