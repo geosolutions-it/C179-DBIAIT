@@ -2,20 +2,23 @@ from app.scheduler.views import (Configuration, Dashboard, ExportListView,
                                  ExportDownloadView, Freeze, GetImportStatus,
                                  GetProcessStatusListAPIView, HistoricalImport,
                                  Import, ProcessView, QueueImportView,
-                                 QueueProcessView, GetImportedLayer)
+                                 QueueProcessView, GetImportedLayer, GetExportStatus)
 from django.urls import include, path
 
 urlpatterns = [
     path(u"", Dashboard.as_view(), name=u'dashboard-view'),
     path(u"configuration/", Configuration.as_view(), name=u"configuration-view"),
+    path(u"export/", include([
+        path(u"", ExportListView.as_view(), name=u'export-view'),
+        path("status", GetExportStatus.as_view(), name="get-export-status-api-view"),
+        path(u"download/<int:task_id>", ExportDownloadView.as_view(),
+             name=u'export-download-view'),
+    ])),
     path(u"import/", include([
         path(u"", Import.as_view(), name=u'import-view'),
         path(u"historical/", HistoricalImport.as_view(),
              name=u'historical-import-view'),
-        path(u"dump/", ExportListView.as_view(), name=u'export-view'),
         path(u"start/", QueueImportView.as_view(), name=u'queue-import-view'),
-        path(u"download/<int:task_id>", ExportDownloadView.as_view(),
-             name=u'export-download-view'),
         path(u"api/", include([
             path("status", GetImportStatus.as_view(),
                  name=u'get-import-status-api-view'),
