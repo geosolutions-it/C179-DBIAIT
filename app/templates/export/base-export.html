@@ -36,7 +36,7 @@
     </tbody>
   </table>
 </div>
-
+<br>
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="importHistoryModal" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -75,6 +75,12 @@
     ajax_call("{% url 'get-export-status-api-view' %}", "#export-status-table");
     setInterval(function () { ajax_call("{% url 'get-export-status-api-view' %}", "#export-status-table") }, 15000);
   });
+</script>
+<script>
+//clear form values
+if ( window.history.replaceState ) {
+  window.history.replaceState( null, null, window.location.href );
+}
 </script>
 {% endblock %}
 {% endblock %}
