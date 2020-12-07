@@ -3,7 +3,7 @@ from urllib import parse
 
 from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
 from app.scheduler.models import Task, TaskStatus, ImportedLayer
-from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer
+from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer, ExportTaskSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
@@ -139,6 +139,11 @@ class ExportListView(LoginRequiredMixin, ListView):
         context['current_url'] = current_url
         context['schemas'] = settings.DATABASE_SCHEMAS
         return context
+
+
+class GetExportStatus(generics.ListAPIView):
+    queryset = Task.objects.filter(type='EXPORT').order_by('-id')
+    serializer_class = ExportTaskSerializer
 
 
 class ProcessView(LoginRequiredMixin, ListView):

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load utils %}
 
 {% block content %}
 <div class="container">
@@ -18,7 +19,7 @@
     </div>
   </form>
   {% block export_content%}
-  <table class="table">
+  <table class="table" id="export-table">
     <thead>
       <tr>
         <th>Utente</th>
@@ -29,50 +30,57 @@
         <th>Download</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="export-status-table">
       {% for export in object_list %}
-      <tr>
-        <td>{{ export.requesting_user }}</td>
-        <td>{{ export.geopackage }}</td>
-        <td>{{ export.start_date | date:"d/m/Y - H:i:s" |default_if_none:"--/--/----" }}</td>
-        <td>{{ export.end_date | date:"d/m/Y - H:i:s" |default_if_none:"--/--/----" }}</td>
-        <td>
-          <i class="{{ export.status_icon }}"></i>
-        </td>
-        <td>
-          <a href="{% url 'export-download-view' task_id=export.pk %}" target="_blank">
-            <i class="fas fa-download"></i>
-          </a>
-        </td>
-      </tr>
       {% endfor %}
-      </tr>
     </tbody>
   </table>
 </div>
-{% if error %}
-<div class="modal fade" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="false">
-  <div class="modal-dialog" role="document">
+<br>
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="importHistoryModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
+        <h5 class="modal-title">Log</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body text-danger">
-        {{ error }}
+      <div class="modal-body">
+        <div id="task-log">
+          <div class="text-center text-secondary">
+            <small>please wait...</small>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-info" data-dismiss="modal">va bene</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  $(document).ready(function() {
+    $('#export-table').DataTable( {
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
+        },
+        "order": [[ 1, "desc" ]]
+    } );
+} );
+</script>
 <script>
   window.addEventListener("load", function () {
-    $('#error-modal').modal('show');
+    ajax_call("{% url 'get-export-status-api-view' %}", "#export-status-table");
+    setInterval(function () { ajax_call("{% url 'get-export-status-api-view' %}", "#export-status-table") }, 15000);
   });
 </script>
-{% endif %}
+<script>
+//clear form values
+if ( window.history.replaceState ) {
+  window.history.replaceState( null, null, window.location.href );
+}
+</script>
 {% endblock %}
 {% endblock %}

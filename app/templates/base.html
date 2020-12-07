@@ -29,6 +29,8 @@
   <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"
     integrity="sha384-bX64nQ/u/Jovgh0rdhdtHy2BMWv9TOOds6b4reiVcJ0KcA76JdIxmwar1pN2NsUj"
     crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+    crossorigin="anonymous"></script>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -36,7 +38,7 @@
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/">
+          <a class="navbar-brand" href="/{{URL_PATH_PREFIX}}">
             <img src="{% static 'DBIAIT_logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
             Progetto DBI per AIT
           </a>

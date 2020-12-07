@@ -19,3 +19,12 @@ class ProcessSerializer(serializers.ModelSerializer):
         model = Task
         fields = [u'id', u'user', u'start_date', u'end_date',
                   u'status', u'style_class', u'status_icon', u'task_log']
+
+
+class ExportTaskSerializer(serializers.ModelSerializer):
+    geopackage_name = serializers.CharField(source='geopackage.name', read_only=True)
+
+    class Meta:
+        model = Task
+        fields = (u'id', u'user', u'geopackage_name', u'start_date', u'end_date',
+                  u'status', u'style_class', u'status_icon', u'task_log')

@@ -34,6 +34,7 @@
       <table class="table" id="processing-table">
         <thead>
           <tr>
+            <th>ID</th>
             <th>Utente</th>
             <th>Data Inizio</th>
             <th>Data Fine</th>
@@ -41,16 +42,6 @@
           </tr>
         </thead>
         <tbody id="process-status-table">
-          {% for process_history in process_history_queryset %}
-          <tr class="{{ process_history.style_class }}">
-            <td>{{ process_history.requesting_user }}</td>
-            <td>{{ process_history.start_date|default_if_none:"--/--/----" }}</td>
-            <td>{{ process_history.end_date|default_if_none:"--/--/----" }}</td>
-            <td class="text-lowercase">
-              <a href="#"><i class="{{ process_history.status_icon }}"></i></a>
-            </td>
-          </tr>
-          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -112,7 +103,14 @@
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
         },
-        "order": [[ 1, "desc" ]]
+         "columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false,
+                "searchable": false
+            }
+        ],
+        "order": [[ 0, "desc" ]]
     } );
 } );
 </script>
