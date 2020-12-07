@@ -26,6 +26,25 @@ const table_function_mapper = {
             });
         }
     },
+    "#export-status-table": function (response) {
+        const table = $("#export-table").DataTable();
+        if (response) {
+            table.clear().draw();
+            response.forEach(function (data) {
+            var escaped = escape(data.task_log);
+            var errorModal = '<a href="#" onclick="display_error_log(\'' + escaped + '\', \'' + data.status + '\')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="'+ data.status_icon + '"></i></a>'
+            var download = '<a href="download/' + data.id + '" target="_blank"><i class="fas fa-download"></i></a>';
+            table.row.add([
+                data.user,
+                data.geopackage_name,
+                get_local_date(data.start_date)  || "--/--/---" ,
+                get_local_date(data.end_date)  || "--/--/---" ,
+                errorModal,
+                download,
+                ]).draw( false );
+            });
+        }
+    },
 }
 
 function ajax_call(url, table) {
@@ -38,8 +57,13 @@ function ajax_call(url, table) {
 }
 
 function get_local_date(utc_date) {
-    const localDate = new Date(utc_date);
-    return localDate.toUTCString();
+    if (utc_date == null) {
+        return "--/--/---"
+    }
+    else {
+        const localDate = new Date(utc_date);
+        return localDate.toUTCString();
+    }
 }
 
 window.addEventListener("load", function () {
