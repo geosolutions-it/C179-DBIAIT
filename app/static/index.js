@@ -33,7 +33,11 @@ const table_function_mapper = {
             response.forEach(function (data) {
             var escaped = escape(data.task_log);
             var errorModal = '<a href="#" onclick="display_error_log(\'' + escaped + '\', \'' + data.status + '\')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="'+ data.status_icon + '"></i></a>'
-            var download = '<a href="download/' + data.id + '" target="_blank"><i class="fas fa-download"></i></a>';
+            if (data.status == 'RUNNING' || data.status == 'QUEUED') {
+                download = ""
+            } else {
+                var download = '<a href="download/' + data.id + '" target="_blank"><i class="fas fa-download"></i></a>';
+            }
             table.row.add([
                 data.user,
                 data.geopackage_name,
