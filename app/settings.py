@@ -248,8 +248,8 @@ AUTH_LDAP_GROUP_SEARCH = LDAPSearch(ldap_group_base, ldap.SCOPE_SUBTREE, ldap_gr
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    'is_staff': f"cn={LDAP_GROUP_ADMINS},{ldap_group_base}",
-    'is_superuser': f"cn={LDAP_GROUP_MANAGERS},{ldap_group_base}",
+    'is_staff': f"cn={LDAP_GROUP_MANAGERS},{ldap_group_base}",
+    'is_superuser': f"cn={LDAP_GROUP_ADMINS},{ldap_group_base}",
 }
 
 # ---------
