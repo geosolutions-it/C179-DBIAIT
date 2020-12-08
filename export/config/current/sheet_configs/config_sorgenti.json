@@ -42,6 +42,7 @@
             {"name":"acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
@@ -49,7 +50,7 @@
          },
          "join":[
             {
-               "type":"inner",
+               "type":"left",
                "table":{
                   "name":"acq_capt_conces"
                },
@@ -60,7 +61,7 @@
                "cond":"="
             },
             {
-               "type":"inner",
+               "type":"left",
                "table":{
                   "name":"acq_auth_capt"
                },
@@ -71,7 +72,18 @@
                "cond":"="
             },
             {
-                 "type": "inner",
+               "type":"left",
+               "table":{
+                  "name":"sorgenti_inpotab"
+               },
+               "on":[
+                  "sorgenti_inpotab.ids_codice",
+                  "acq_captazione.codice_ato"
+               ],
+               "cond":"="
+            },
+            {
+                 "type": "left",
                  "table": {
                      "name": "localita"
                  },
@@ -124,6 +136,7 @@
             {"name":"a_acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+            {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
@@ -131,7 +144,7 @@
          },
          "join":[
             {
-               "type":"inner",
+               "type":"left",
                "table":{
                   "name":"acq_capt_conces"
                },
@@ -142,7 +155,7 @@
                "cond":"="
             },
             {
-               "type":"inner",
+               "type":"left",
                "table":{
                   "name":"acq_auth_capt"
                },
@@ -153,7 +166,18 @@
                "cond":"="
             },
             {
-                 "type": "inner",
+               "type":"left",
+               "table":{
+                  "name":"sorgenti_inpotab"
+               },
+               "on":[
+                  "sorgenti_inpotab.ids_codice",
+                  "a_acq_captazione.codice_ato"
+               ],
+               "cond":"="
+            },
+            {
+                 "type": "left",
                  "table": {
                      "name": "localita"
                  },
@@ -231,6 +255,20 @@
                  }
              }
          }
+      },
+      {"id":"26100", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "cod_opera_inpotab_not_exist",
+             "cond": {
+                     "operator": "=",
+                     "value": 1,
+                     "result": "{ volume_medio_prel }",
+                     "else": 0
+                 }
+             }
+         }
       }
+
    ]
 }

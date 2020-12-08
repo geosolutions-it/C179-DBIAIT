@@ -47,14 +47,15 @@
                 {"name": "acq_captazione.data_agg","alias": "data_agg"},
                 {"name": "acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-                { "name": "localita.denominazi", "alias": "denominazi" }
+                {"name": "laghi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
+                {"name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
                 "name": "acq_captazione"
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_capt"
                     },
@@ -65,7 +66,7 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_capt_conces"
                     },
@@ -76,7 +77,18 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                   "type":"left",
+                   "table":{
+                      "name":"laghi_inpotab"
+                   },
+                   "on":[
+                      "laghi_inpotab.ids_codice",
+                      "acq_captazione.codice_ato"
+                   ],
+                   "cond":"="
+                },
+                {
+                    "type": "left",
                     "table": {
                         "name": "localita"
                     },
@@ -134,6 +146,7 @@
                 {"name": "a_acq_captazione.cod_comune", "alias":"cod_comune"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                {"name":"laghi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 { "name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
@@ -141,7 +154,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_capt"
                     },
@@ -152,7 +165,7 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_capt_conces"
                     },
@@ -163,7 +176,18 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                   "type":"left",
+                   "table":{
+                      "name":"laghi_inpotab"
+                   },
+                   "on":[
+                      "laghi_inpotab.ids_codice",
+                      "a_acq_captazione.codice_ato"
+                   ],
+                   "cond":"="
+                },
+                {
+                    "type": "left",
                     "table": {
                         "name": "localita"
                     },
@@ -231,7 +255,7 @@
         {"id": "12700","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_max", "domain_name":  "D_AFFIDABILITA" }}},
         {"id": "12800","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_min", "domain_name":  "D_AFFIDABILITA" }}},
         {"id": "12900","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA" }}},
-        {"id":"12500", "transformation":{
+        {"id": "12500","transformation": {
             "func": "IF",
             "params": {
                 "field": "denominazi",
@@ -243,6 +267,19 @@
                     }
                 }
             }
-        }
+        },
+        {"id":"10400", "transformation":{
+             "func": "IF",
+             "params": {
+                 "field": "cod_opera_inpotab_not_exist",
+                 "cond": {
+                         "operator": "=",
+                         "value": 1,
+                         "result": "{ volume_medio_prel }",
+                         "else": 0
+                     }
+                 }
+             }
+         }
     ]
 }

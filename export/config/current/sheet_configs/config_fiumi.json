@@ -36,8 +36,8 @@
                 {"name": "acq_auth_capt.anno_ristr_clor","alias": "anno_ristr_clor"},
                 {"name": "acq_auth_capt.a_area_bac_affer","alias": "a_area_bac_affer"},
                 {"name": "acq_captazione.cod_comune", "alias":"cod_comune"},
-                {"name":"acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-                {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                {"name": "acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                {"name": "acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
                 {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
                 {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
@@ -50,14 +50,15 @@
                 {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
                 {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
-                { "name": "localita.denominazi", "alias": "denominazi" }
+                {"name": "fiumi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
+                {"name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
                 "name": "acq_captazione"
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_capt"
                     },
@@ -68,7 +69,7 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_capt_conces"
                     },
@@ -79,7 +80,18 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                   "type":"left",
+                   "table":{
+                      "name":"fiumi_inpotab"
+                   },
+                   "on":[
+                      "fiumi_inpotab.ids_codice",
+                      "acq_captazione.codice_ato"
+                   ],
+                   "cond":"="
+                },
+                {
+                    "type": "left",
                     "table": {
                         "name": "localita"
                     },
@@ -140,14 +152,15 @@
                 {"name": "a_acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
                 {"name": "a_acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "a_acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
-                { "name": "localita.denominazi", "alias": "denominazi" }
+                {"name": "fiumi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
+                {"name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
                 "name": "a_acq_captazione"
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_capt"
                     },
@@ -158,7 +171,7 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "a_acq_capt_conces"
                     },
@@ -169,7 +182,18 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                   "type":"left",
+                   "table":{
+                      "name":"fiumi_inpotab"
+                   },
+                   "on":[
+                      "fiumi_inpotab.ids_codice",
+                      "a_acq_captazione.codice_ato"
+                   ],
+                   "cond":"="
+                },
+                {
+                    "type": "left",
                     "table": {
                         "name": "localita"
                     },
@@ -225,7 +249,6 @@
         {"id": "1300","transformation": { "func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
         {"id": "6300","transformation": { "func": "DIRECT", "params": { "field": "data_agg"}}},
 
-
         {"id": "2000","transformation": { "func": "DOMAIN", "params": { "field": "d_classific", "domain_name":  "D_CLASSIFIC"}}},
         {"id": "2900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name":  "D_STATO_CONS"}}},
         {"id": "3000","transformation": { "func": "DOMAIN", "params": { "field": "d_utilizzo", "domain_name":  "D_UTILIZZO_OPERA"}}},
@@ -257,6 +280,19 @@
                     "else": "{ a_volume }"
                 }
             }
-        }}
+        }},
+        {"id":"3400", "transformation":{
+             "func": "IF",
+             "params": {
+                 "field": "cod_opera_inpotab_not_exist",
+                 "cond": {
+                         "operator": "=",
+                         "value": 1,
+                         "result": "{ volume_medio_prel }",
+                         "else": 0
+                     }
+                 }
+             }
+         }
     ]
 }

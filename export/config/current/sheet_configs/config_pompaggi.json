@@ -23,6 +23,8 @@
                 {"name": "acq_pompaggio.data_agg","alias": "data_agg"},
                 {"name": "acq_pompaggio.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                {"name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
+                {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
                 { "name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
@@ -30,7 +32,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_pompag"
                     },
@@ -41,7 +43,18 @@
                     "cond": "="
                 },
                 {
-                     "type": "inner",
+                   "type":"left",
+                   "table":{
+                      "name":"stats_pompe"
+                   },
+                   "on":[
+                      "stats_pompe.codice_ato",
+                      "acq_pompaggio.codice_ato"
+                   ],
+                   "cond":"="
+                },
+                {
+                     "type": "left",
                      "table": {
                          "name": "localita"
                      },
@@ -75,6 +88,8 @@
                 {"name": "a_acq_pompaggio.data_agg","alias": "data_agg"},
                 {"name": "a_acq_pompaggio.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "a_acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                {"name": "stats_pompe.sum_potenza", "alias": "sum_potenza"},
+                {"name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
                 { "name": "localita.denominazi", "alias": "denominazi" }
             ],
             "table": {
@@ -82,7 +97,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_pompag"
                     },
@@ -93,7 +108,18 @@
                     "cond": "="
                 },
                 {
-                     "type": "inner",
+                   "type":"left",
+                   "table":{
+                      "name":"stats_pompe"
+                   },
+                   "on":[
+                      "stats_pompe.codice_ato",
+                      "a_acq_pompaggio.codice_ato"
+                   ],
+                   "cond":"="
+                },
+                {
+                     "type": "left",
                      "table": {
                          "name": "localita"
                      },
@@ -124,6 +150,9 @@
         {"id": "49600","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" }}},
         {"id": "50200","transformation": { "func": "DIRECT", "params": { "field": "data_agg" }}},
         {"id": "48500","transformation": { "func": "DIRECT", "params": { "field": "denominazi" }}},
+
+        {"id":"49200", "transformation":{"func":"DIRECT", "params":{"field":"sum_potenza"}}},
+        {"id":"50100", "transformation":{"func":"DIRECT", "params":{"field":"avg_idx_potenza"}}},
 
         {"id": "48900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons_civ", "domain_name": "D_STATO_CONS" }}},
         {"id": "49100","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons_elmec", "domain_name": "D_STATO_CONS" }}},

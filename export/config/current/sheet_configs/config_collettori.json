@@ -4,23 +4,24 @@
     "sources": [
         {
             "fields": [
-                {  "name": "fgn_collettore.codice_ato",  "alias": "codice_ato" },
-                {  "name": "fgn_collettore.denom",  "alias": "denom" },
-                {  "name": "fgn_collettore.d_stato",  "alias": "d_stato" },
-                {  "name": "fgn_collettore.data_agg",  "alias": "data_agg"  },
-                {  "name": "fgn_auth_collet.a_vol_idra",  "alias": "a_vol_idra" },
-                {  "name": "fgn_auth_collet.vol_idraulici",  "alias": "vol_idraulici" },
-                {  "name": "fgn_auth_collet.sn_scar_sup",  "alias": "sn_scar_sup" },
-                {  "name": "fgn_auth_collet.n_scar_piena",  "alias": "n_scar_piena" },
-                {  "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
-                {  "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" }
+                { "name": "fgn_collettore.codice_ato",  "alias": "codice_ato" },
+                { "name": "fgn_collettore.denom",  "alias": "denom" },
+                { "name": "fgn_collettore.d_stato",  "alias": "d_stato" },
+                { "name": "fgn_collettore.data_agg",  "alias": "data_agg"  },
+                { "name": "fgn_auth_collet.a_vol_idra",  "alias": "a_vol_idra" },
+                { "name": "fgn_auth_collet.vol_idraulici",  "alias": "vol_idraulici" },
+                { "name": "fgn_auth_collet.sn_scar_sup",  "alias": "sn_scar_sup" },
+                { "name": "fgn_auth_collet.n_scar_piena",  "alias": "n_scar_piena" },
+                { "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
+                { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" },
+                { "name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"}
             ],
             "table": {
                 "name": "fgn_collettore"
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "fgn_auth_collet"
                     },
@@ -29,35 +30,58 @@
                         "fgn_auth_collet.id_collettore"
                     ],
                     "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "fgn_lunghezza_rete"
+                    },
+                    "on": [
+                        "fgn_collettore.codice_ato",
+                        "fgn_lunghezza_rete.codice_ato"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE fgn_collettore.d_gestore = 'PUBLIACQUA' AND fgn_collettore.d_ambito IN ('AT3', NULL) AND fgn_collettore.d_stato NOT IN ('IPR','IAC')"
         },
         {
             "fields": [
-                {  "name": "a_fgn_collettore.codice_ato",  "alias": "codice_ato" },
-                {  "name": "a_fgn_collettore.denom",  "alias": "denom" },
-                {  "name": "a_fgn_collettore.d_stato",  "alias": "d_stato" },
-                {  "name": "a_fgn_collettore.data_agg",  "alias": "data_agg"  },
-                {  "name": "fgn_auth_collet.a_vol_idra",  "alias": "a_vol_idra" },
-                {  "name": "fgn_auth_collet.vol_idraulici",  "alias": "vol_idraulici" },
-                {  "name": "fgn_auth_collet.sn_scar_sup",  "alias": "sn_scar_sup" },
-                {  "name": "fgn_auth_collet.n_scar_piena",  "alias": "n_scar_piena" },
-                {  "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
-                {  "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" }
+                { "name": "a_fgn_collettore.codice_ato",  "alias": "codice_ato" },
+                { "name": "a_fgn_collettore.denom",  "alias": "denom" },
+                { "name": "a_fgn_collettore.d_stato",  "alias": "d_stato" },
+                { "name": "a_fgn_collettore.data_agg",  "alias": "data_agg"  },
+                { "name": "fgn_auth_collet.a_vol_idra",  "alias": "a_vol_idra" },
+                { "name": "fgn_auth_collet.vol_idraulici",  "alias": "vol_idraulici" },
+                { "name": "fgn_auth_collet.sn_scar_sup",  "alias": "sn_scar_sup" },
+                { "name": "fgn_auth_collet.n_scar_piena",  "alias": "n_scar_piena" },
+                { "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
+                { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" },
+                { "name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"}
             ],
             "table": {
                 "name": "a_fgn_collettore"
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "fgn_auth_collet"
                     },
                     "on": [
                         "a_fgn_collettore.idgis",
                         "fgn_auth_collet.id_collettore"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "fgn_lunghezza_rete"
+                    },
+                    "on": [
+                        "a_fgn_collettore.codice_ato",
+                        "fgn_lunghezza_rete.codice_ato"
                     ],
                     "cond": "="
                 }
@@ -68,6 +92,9 @@
     "columns": [
         { "id": "68100", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } } },
         { "id": "68200", "transformation": { "func": "DIRECT", "params": { "field": "denom" } } },
+
+        { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
+
         { "id": "68500", "transformation": { "func": "DIRECT", "params": { "field": "vol_idraulici" } } },
         { "id": "68600", "transformation": { "func": "DIRECT", "params": { "field": "sn_scar_sup" } }},
         { "id": "68700", "transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena" } } },

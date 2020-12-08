@@ -90,7 +90,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "fgn_auth_trattam"
                     },
@@ -101,7 +101,7 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "localita"
                     },
@@ -202,7 +202,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "fgn_auth_trattam"
                     },
@@ -213,7 +213,7 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "localita"
                     },
