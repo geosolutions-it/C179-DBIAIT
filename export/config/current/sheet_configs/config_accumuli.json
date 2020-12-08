@@ -35,7 +35,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_accum"
                     },
@@ -46,7 +46,7 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "localita"
                     },
@@ -92,7 +92,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_accum"
                     },
@@ -103,7 +103,7 @@
                     "cond": "="
                 },
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "localita"
                     },

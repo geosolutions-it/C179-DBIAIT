@@ -145,6 +145,15 @@ class Acquedotto(BaseProcessTask):
         pass
 
 
+class ArchiviPompe(BaseProcessTask):
+    algorithm = u"populate_archivi_pompe"
+    name = u"Archivi pompe"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
 process_mapper = {
     u"Località Istat": LocalitaIstat,
     u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalita,
@@ -152,6 +161,7 @@ process_mapper = {
     u"Percentuale popolazione servita sulla rete per comune": PercentualePopolazioneServitaSullaRetePerComune,
     u"Servizio utenza": ServizioUtenza,
     u"Abitanti equivalenti trattati da depuratori o scarico diretto": AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto,
+    u"Archivi pompe": ArchiviPompe,
     u"Acquedotto": Acquedotto,
     u"Fognatura": Fognatura
 }

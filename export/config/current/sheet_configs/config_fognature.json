@@ -20,7 +20,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "fgn_auth_rete_racc"
                     },
@@ -51,7 +51,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "fgn_auth_rete_racc"
                     },

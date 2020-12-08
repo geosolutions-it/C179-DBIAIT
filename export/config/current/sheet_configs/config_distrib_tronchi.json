@@ -35,7 +35,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_rete_distrib"
                     },

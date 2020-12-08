@@ -13,67 +13,7 @@
          "table":{
             "name":"fgn_sfioro"
          },
-         "join":[
-            {
-               "type":"inner",
-               "table":{
-                  "name":"fgn_auth_sfioro"
-               },
-               "on":[
-                  "fgn_auth_sfioro.id_sfioro",
-                  "fgn_sfioro.idgis"
-               ],
-               "cond":"="
-            },
-            {
-                 "type": "inner",
-                 "table": {
-                     "name": "localita"
-                 },
-                 "on": [
-                     "localita.geom",
-                     "fgn_sfioro.geom"
-                 ],
-                 "cond": "ST_INTERSECTS"
-            }
-         ],
          "filter": "WHERE fgn_sfioro.d_gestore = 'PUBLIACQUA' AND fgn_sfioro.d_ambito IN ('AT3', NULL) AND fgn_sfioro.d_stato NOT IN ('IPR', 'IAC')"
-      },
-      {
-         "fields":[
-             {"name":"a_fgn_sfioro.geom", "alias": "geom"},
-             {"name":"a_fgn_sfioro.geom", "alias": "x_proj", "function": "GB_X"},
-             {"name":"a_fgn_sfioro.geom", "alias": "y_proj", "function": "GB_Y"},
-             {"name":"a_fgn_sfioro.codice_ato","alias": "codice_ato"}
-         ],
-         "table":{
-            "name":"a_fgn_sfioro"
-         },
-         "join":[
-            {
-               "type":"inner",
-               "table":{
-                  "name":"fgn_auth_sfioro"
-               },
-               "on":[
-                  "fgn_auth_sfioro.id_sfioro",
-                  "a_fgn_sfioro.idgis"
-               ],
-               "cond":"="
-            },
-            {
-                 "type": "inner",
-                 "table": {
-                     "name": "localita"
-                 },
-                 "on": [
-                     "localita.geom",
-                     "a_fgn_sfioro.geom"
-                 ],
-                 "cond": "ST_INTERSECTS"
-            }
-         ],
-         "filter": "WHERE a_fgn_sfioro.d_gestore = 'PUBLIACQUA' AND a_fgn_sfioro.d_ambito IN ('AT3', NULL) AND a_fgn_sfioro.d_stato NOT IN ('IPR', 'IAC')"
       }
    ]
 }

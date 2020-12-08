@@ -67,7 +67,7 @@
          },
          "join":[
             {
-               "type":"inner",
+               "type":"left",
                "table":{
                   "name":"acq_auth_potab"
                },
@@ -78,7 +78,7 @@
                "cond":"="
             },
             {
-                 "type": "inner",
+                 "type": "left",
                  "table": {
                      "name": "localita"
                  },
@@ -156,7 +156,7 @@
          },
          "join":[
             {
-               "type":"inner",
+               "type":"left",
                "table":{
                   "name":"acq_auth_potab"
                },
@@ -167,7 +167,7 @@
                "cond":"="
             },
              {
-                 "type": "inner",
+                 "type": "left",
                  "table": {
                      "name": "localita"
                  },

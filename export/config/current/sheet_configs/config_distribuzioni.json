@@ -26,7 +26,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_rete_dist"
                     },
@@ -63,7 +63,7 @@
             },
             "join": [
                 {
-                    "type": "inner",
+                    "type": "left",
                     "table": {
                         "name": "acq_auth_rete_dist"
                     },
