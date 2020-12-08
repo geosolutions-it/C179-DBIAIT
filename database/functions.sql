@@ -85,6 +85,24 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public;	
 --------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.IS_NULL(
+	v_value anyelement
+) RETURNS INTEGER AS $$
+	SELECT 
+		case when v_value IS NULL then 1
+		else 0
+		end;
+$$  LANGUAGE sql;	
+--------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.TO_BIT(
+	v_value VARCHAR
+) RETURNS BIT AS $$
+	SELECT 
+		case when UPPER(v_value) IN ('SI','YES', 'S', 'Y') then 1::BIT
+		else 0::BIT
+		end;
+$$  LANGUAGE sql;	
+--------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.GB_X(
 	v_geom GEOMETRY
 ) RETURNS DOUBLE PRECISION AS $$
@@ -1866,10 +1884,25 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_archivi_pompe(
 DECLARE 
 	v_t INTEGER;
 	v_f INTEGER;
+	v_in_tables VARCHAR[] := ARRAY['acq_captazione', 'acq_potabiliz', 'acq_pompaggio', 'fgn_imp_sollev', 'fgn_trattamento'];
 	v_tables VARCHAR[] := ARRAY['POZZI_POMPE', 'POTAB_POMPE', 'POMPAGGI_POMPE', 'SOLLEV_POMPE', 'DEPURATO_POMPE'];
+	v_filters VARCHAR[] := ARRAY[
+		'p.tipo_oggetto = ''ACQ_CAPTAZIONE'' AND c.sub_funzione = 3', 
+		'p.tipo_oggetto = ''ACQ_POTABILIZ''',  
+		'p.tipo_oggetto = ''ACQ_POMPAGGIO''', 
+		'p.tipo_oggetto = ''FGN_IMP_SOLLEV''', 
+		'p.tipo_oggetto = ''FGN_TRATTAMENTO'''
+	];
+	--POZZI_POMPE -> 	[acq_captazione]  -> tipo_oggetto = 'ACQ_CAPTAZIONE' AND c.sub_funzione = 3
+	--POTAB_POMPE -> 	[acq_potabiliz]   -> tipo_oggetto = 'ACQ_POTABILIZ'
+	--POMPAGGI_POMPE -> [acq_pompaggio]   -> tipo_oggetto = 'ACQ_POMPAGGIO'
+	--SOLLEV_POMPE -> 	[fgn_imp_sollev]  -> tipo_oggetto = 'FGN_IMP_SOLLEV' 
+	--DEPURATO_POMPE -> [fgn_trattamento] -> tipo_oggetto = 'FGN_TRATTAMENTO'
 	v_fields VARCHAR[] := ARRAY['IDX_ANNO_INSTAL', 'IDX_ANNO_RISTR', 'IDX_POTENZA', 'IDX_PORTATA', 'IDX_PREVALENZA'];
 BEGIN
 
+	DELETE FROM STATS_POMPE;
+	
     FOR v_t IN array_lower(v_tables,1) .. array_upper(v_tables,1)
 	LOOP
 	
@@ -1883,16 +1916,20 @@ BEGIN
 				IDX_POTENZA, IDX_PORTATA, IDX_PREVALENZA
 			)
 			SELECT 
-				CODICE_ATO, D_STATO_CONS, ANNO_INSTAL, 
-				ANNO_RISTR, POTENZA, PORTATA, 
-				PREVALENZA, 
+				c.CODICE_ATO, p.D_STATO_CONS, p.ANNO_INSTAL, 
+				p.ANNO_RISTR, p.POTENZA, p.PORTATA, 
+				p.PREVALENZA, 
 				CASE WHEN 
-					SN_RISERVA = ''NO'' THEN 0::BIT
+					p.SN_RISERVA = ''NO'' THEN 0::BIT
 				ELSE 1::BIT END,
-				A_ANNO_INSTAL, A_ANNO_RISTR,
-				A_POTENZA, A_PORTATA, A_PREVALENZA				
-			FROM ARCHIVIO_POMPE p, ALL_DOMAINS d
-			WHERE TIPO_OGGETTO = ''ACQ_CAPTAZIONE'';'; -- TODO: add other condition (?)
+				p.A_ANNO_INSTAL, p.A_ANNO_RISTR,
+				p.A_POTENZA, p.A_PORTATA, p.A_PREVALENZA				
+			FROM ' || v_in_tables[v_t] || ' c, ARCHIVIO_POMPE p, ALL_DOMAINS d
+			WHERE 
+				' || v_filters[v_t] ||' 
+				and c.d_gestore = ''PUBLIACQUA'' AND c.d_ambito IN (''AT3'', NULL) 
+				and c.d_stato in (''ATT'',''FIP'')
+				and c.idgis = p.id_oggetto';
 
 			FOR v_f IN array_lower(v_fields,1) .. array_upper(v_fields,1)
 			LOOP
@@ -1904,6 +1941,32 @@ BEGIN
 					AND d.valore_gis = ' || v_tables[v_t] || '.' || v_fields[v_f] || ';';
 			END LOOP;		
 		
+		-- Statistics
+		EXECUTE '
+		INSERT INTO STATS_POMPE(codice_ato, sum_potenza, avg_idx_potenza)
+		SELECT t1.codice_ato, t1.sum_potenza, t2.idx_potenza 
+		FROM 
+		(
+			SELECT 
+				codice_ato,
+				SUM(
+					CASE WHEN sn_riserva=0::BIT THEN potenza ELSE 0 END
+				) sum_potenza
+			FROM ' || v_tables[v_t] || ' 
+			GROUP BY codice_ato
+		) t1,
+		(
+			SELECT 
+				DISTINCT ON (codice_ato) t.codice_ato, t.idx_potenza 
+			FROM (
+				SELECT codice_ato, idx_potenza, COUNT(0) cnt
+				FROM ' || v_tables[v_t] || ' 
+				GROUP BY codice_ato, idx_potenza
+			) t
+			ORDER BY codice_ato, cnt DESC
+		) t2
+		WHERE t1.codice_ato = t2.codice_ato;';
+		
 	END LOOP;	
 	
 	RETURN TRUE;
@@ -1913,3 +1976,7 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;		
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+
