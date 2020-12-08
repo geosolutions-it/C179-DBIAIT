@@ -1979,4 +1979,127 @@ $$  LANGUAGE plpgsql
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
-
+-- Partition table by year, note
+--
+-- select DBIAIT_FREEZE.initialize_freeze_table('acq_accumulo',2021,'example for 2021');
+-- 
+CREATE OR REPLACE FUNCTION DBIAIT_FREEZE.initialize_freeze_table(
+	v_table_name VARCHAR,
+	v_year INTEGER,
+	v_note TEXT
+) RETURNS BOOLEAN AS $$
+DECLARE 
+	v_count INTEGER:=0;
+	v_schema_anl VARCHAR(16) := 'dbiait_analysis';	
+	v_schema_frz VARCHAR(16) := 'dbiait_freeze';
+	v_def_note VARCHAR(4000) := '';
+BEGIN
+	-- check if the child table (by year) already exists
+	SELECT count(0) INTO v_count
+	FROM information_schema.tables 
+	WHERE UPPER(table_schema) = UPPER(v_schema_frz) 
+	and UPPER(table_name) = UPPER(v_table_name || '_' || v_year)
+	and table_type = 'BASE TABLE';
+	
+	IF v_count = 0 THEN
+		-- create a child table with 2 additional fields (_year, _note)
+		EXECUTE 'CREATE TABLE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' AS TABLE ' || v_schema_anl || '.' || v_table_name;
+		
+		EXECUTE 'ALTER TABLE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' ADD COLUMN _year INTEGER NOT NULL DEFAULT ' || v_year;
+		
+		EXECUTE 'ALTER TABLE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' ADD COLUMN _note TEXT';
+		
+		EXECUTE 'INSERT INTO ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' SELECT * FROM ' || v_schema_anl || '.' || v_table_name;
+		
+		IF v_note IS NOT NULL THEN
+			EXECUTE 'UPDATE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' SET _note = $1 ' using v_note;
+		END IF;
+	ELSE
+		-- Raise an exception: we cannot initialize an existing partition
+		RAISE EXCEPTION 'Table % is already partitioned for year %', v_table_name, v_year; 
+	END IF;
+	
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_FREEZE;
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+-- Remove all tables by year
+--
+-- select DBIAIT_FREEZE.freeze_tables(2021);
+-- 
+CREATE OR REPLACE FUNCTION DBIAIT_FREEZE.freeze_tables(
+	v_year INTEGER,
+	v_note TEXT
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_schema_frz VARCHAR(16) := 'dbiait_freeze';
+	v_schema_anl VARCHAR(16) := 'dbiait_analysis';
+	v_rec RECORD;
+	v_res BOOLEAN;
+BEGIN
+	FOR v_rec IN 
+		SELECT table_name::VARCHAR
+		FROM information_schema.tables 
+		WHERE UPPER(table_schema) = UPPER(v_schema_anl) 
+		and table_type = 'BASE TABLE'
+	LOOP	
+		v_res := initialize_freeze_table(v_rec.table_name, v_year, v_note);
+	END LOOP;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_FREEZE;
+--------------------------------------------------------------------------------------------
+-- Remove a table by name, year
+--
+-- select DBIAIT_FREEZE.remove_freeze_table('acq_accumulo', 2021);
+-- 
+CREATE OR REPLACE FUNCTION DBIAIT_FREEZE.remove_freeze_table(
+	v_table_name VARCHAR,
+	v_year INTEGER
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_schema_frz VARCHAR(16) := 'dbiait_freeze';
+BEGIN
+	EXECUTE 'DROP TABLE IF EXISTS ' || v_schema_frz || '.' || v_table_name || '_' || v_year;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_FREEZE;
+--------------------------------------------------------------------------------------------
+-- Remove all tables by year
+--
+-- select DBIAIT_FREEZE.remove_freeze_tables(2021);
+-- 
+CREATE OR REPLACE FUNCTION DBIAIT_FREEZE.remove_freeze_tables(
+	v_year INTEGER
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_schema_frz VARCHAR(16) := 'dbiait_freeze';
+	v_rec RECORD;
+BEGIN
+	FOR v_rec IN 
+		SELECT table_name
+		FROM information_schema.tables 
+		WHERE UPPER(table_schema) = UPPER(v_schema_frz) 
+		and table_name like '%_' || v_year
+		and table_type = 'BASE TABLE'
+	LOOP	
+		EXECUTE 'DROP TABLE IF EXISTS ' || v_schema_frz || '.' || v_rec.table_name;
+	END LOOP;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_FREEZE;
+----------------------------------------------------------------------------------------------
+	
