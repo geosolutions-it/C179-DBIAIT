@@ -45,10 +45,9 @@
         </div>
         <div class="col-md-4 col-sm-6 dashboard-item">
             {% if request.user.is_superuser %}
-            <!--a href="{% url 'freeze-view' %}"-->
-            <a>
-                <i class="fas fa-snowflake icon-forbidden"></i>
-                <h5 class="icon-forbidden">Freeze</h5>
+            <a href="{% url 'freeze-view' %}">
+                <i class="fas fa-snowflake"></i>
+                <h5>Freeze</h5>
             </a>
             {% else %}
             <a>

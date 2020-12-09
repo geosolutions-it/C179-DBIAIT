@@ -1,9 +1,11 @@
+from datetime import datetime
 from os import fstat, listdir, path
 from urllib import parse
 
 from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
-from app.scheduler.models import Task, TaskStatus, ImportedLayer
-from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer, ExportTaskSerializer
+from app.scheduler.models import Task, TaskStatus, ImportedLayer, FreezeLayer
+from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer, \
+    ExportTaskSerializer, FreezeLayerSerializer, FreezeSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
@@ -13,6 +15,8 @@ from django.views import View
 from django.views.generic import ListView
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
+
+from app.scheduler.tasks import FreezeTask
 from app.scheduler.tasks.process_tasks import process_mapper
 from app.scheduler.tasks.import_task import ImportTask
 from app.scheduler.tasks.export_task import ExportTask
@@ -186,13 +190,64 @@ class QueueProcessView(LoginRequiredMixin, View):
             return redirect(f"{reverse(u'process-view')}?process_name={process_name}&error={parse.quote(str(e))}")
 
 
-class Freeze(LoginRequiredMixin, View):
-    def get(self, request):
-        bread_crumbs = {
-            'Freeze': reverse('freeze-view'),
-        }
-        context = {'bread_crumbs': bread_crumbs}
-        return render(request, 'freeze/base-freeze.html', context)
+class Freeze(LoginRequiredMixin, ListView):
+    template_name = u'freeze/active-freeze.html'
+    queryset = Task.objects.filter(type='FREEZE', status__in=[
+                                   TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = super(Freeze, self).get_context_data(**kwargs)
+        context['bread_crumbs'] = {
+            'Freeze': reverse('freeze-view'), 'Corrente': u"#"}
+        context['current_url'] = current_url
+        context['current_year'] = datetime.now().year
+        context['years_available'] = [x for x in range(2000, 2100)]
+        return context
+
+
+class QueueFreezeView(LoginRequiredMixin, View):
+    def post(self, request):
+        selected_year = request.POST.get(u"selected-year")
+        freeze_notes = request.POST.get(u"freeze-notes")
+        try:
+            FreezeTask.send(FreezeTask.pre_send(requesting_user=request.user, ref_year=selected_year, notes=freeze_notes))
+            return redirect(reverse(u"freeze-view"))
+        except QueuingCriteriaViolated as e:
+            return redirect(reverse(u"freeze-view"))
+
+
+class GetFreezeStatus(generics.ListAPIView):
+    queryset = Task.objects.filter(type='FREEZE').order_by('-id')[:1]
+    serializer_class = FreezeSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class GetFreezeLayer(generics.RetrieveAPIView):
+    serializer_class = FreezeLayerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        """
+        Return only the ImportLayer related to a specific uuid
+        """
+        task_id = request.query_params['task_id']
+        response = [layer.to_dict() for layer in FreezeLayer.objects.filter(task__uuid=task_id).order_by('-id')]
+        return JsonResponse(response, safe=False)
+
+
+class HistoricalFreeze(LoginRequiredMixin, ListView):
+    template_name = u'freeze/historical-freeze.html'
+    queryset = Task.objects.filter(type='FREEZE').exclude(
+        status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = super(HistoricalFreeze, self).get_context_data(**kwargs)
+        context['bread_crumbs'] = {
+            'Freeze': reverse('import-view'), 'Storico': "#"}
+        context['current_url'] = current_url
+        return context
 
 
 class ExportDownloadView(LoginRequiredMixin, View):
