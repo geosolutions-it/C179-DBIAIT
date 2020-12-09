@@ -29,7 +29,7 @@ class FreezeDefinition(BaseFreezeDefinition):
 
     @staticmethod
     def get_freeze_layers():
-        layers = connections['analysis'].introspection.table_names()
+        layers = connections['analysis'].introspection.table_names()  # TODO check su come rimuovere public dalla ricerca delle tabelle
         return layers
 
     def run(self):

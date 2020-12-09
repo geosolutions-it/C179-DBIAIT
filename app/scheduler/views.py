@@ -241,14 +241,20 @@ class HistoricalFreeze(LoginRequiredMixin, ListView):
     queryset = Task.objects.filter(type='FREEZE').exclude(
         status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
 
+    obj = []
+    print(queryset)
+
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name
         context = super(HistoricalFreeze, self).get_context_data(**kwargs)
         context['bread_crumbs'] = {
-            'Freeze': reverse('import-view'), 'Storico': "#"}
+            'Freeze': reverse('freeze-view'), 'Storico': "#"}
         context['current_url'] = current_url
         return context
 
+    def get_ref_year(self, task_id):
+        FreezeLayer.objects.get('ref_yer').filter(task_id=task_id)[1]
+        return
 
 class ExportDownloadView(LoginRequiredMixin, View):
     def get(self, request, task_id: int):
