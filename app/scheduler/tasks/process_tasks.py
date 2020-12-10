@@ -154,7 +154,17 @@ class ArchiviPompe(BaseProcessTask):
         pass
 
 
+class Networks(BaseProcessTask):
+    algorithm = u"create_networks"
+    name = u"Generazione grafo (rete idrica e fognaria)"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
 process_mapper = {
+    u"Generazione grafo (rete idrica e fognaria)": Networks,
     u"Località Istat": LocalitaIstat,
     u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalita,
     u"Popolazione residente Istat per comune": PopolazioneResidenteIstatPerComune,
