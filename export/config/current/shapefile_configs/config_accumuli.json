@@ -14,6 +14,18 @@
                 "name": "acq_accumulo"
             },
             "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND acq_accumulo.d_ambito IN ('AT3', NULL) AND acq_accumulo.d_stato NOT IN ('IPR','IAC')"
+        },
+        {
+            "fields": [
+                {"name":"a_acq_accumulo.geom", "alias": "geom"},
+                {"name":"a_acq_accumulo.geom", "alias": "x_proj", "function": "GB_X"},
+                {"name":"a_acq_accumulo.geom", "alias": "y_proj", "function": "GB_Y"},
+                {"name":"a_acq_accumulo.codice_ato","alias": "codice_ato"}
+            ],
+            "table": {
+                "name": "a_acq_accumulo"
+            },
+            "filter": "WHERE a_acq_accumulo.d_gestore = 'PUBLIACQUA' AND a_acq_accumulo.d_ambito IN ('AT3', NULL) AND a_acq_accumulo.d_stato NOT IN ('IPR','IAC')"
         }
     ]
 }

@@ -5,7 +5,7 @@
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.snap_tolerance(
 ) RETURNS DOUBLE PRECISION AS $$
 BEGIN
-    RETURN 0.01;
+    RETURN 0.001;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -266,7 +266,13 @@ BEGIN
     
 	-- reset dei dati
 	UPDATE POP_RES_COMUNE
-	SET pop_ser_acq = NULL, perc_acq = NULL;
+	SET 
+		pop_ser_acq = NULL, --OK (1)
+		perc_acq = NULL,	--OK (1)
+		perc_fgn = NULL,	--OK
+		pop_ser_fgn = NULL, --OK
+		perc_dep = NULL,	--OK		
+		pop_ser_dep = NULL;	--OK
 
 	-- updating field pop_ser_acq
 	UPDATE POP_RES_COMUNE
@@ -359,7 +365,6 @@ BEGIN
 	DELETE FROM UTENZA_SERVIZIO_BAC;
 	
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UTENZA_SERVIZIO';
-	
 	
 	--LOCALITA
 	EXECUTE '
@@ -906,7 +911,7 @@ BEGIN
 			NULL,
 			a.d_materiale as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,
-			a.d_diametro,
+			coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ),
 			CASE 
 				WHEN a.data_esercizio IS NULL THEN 9999 
 				ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER 
@@ -2102,4 +2107,80 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_FREEZE;
 ----------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
+--WAITING GRAFO (Fase 2.5 - punto 7)
+-- Populate table ADDUT_COM_SERV
+-- Example:
+-- select DBIAIT_ANALYSIS.populate_addut_com_serv();
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_addut_com_serv(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	
+	DELETE FROM addut_com_serv;
+	
+	INSERT into addut_com_serv(ids_codice, id_comune_istat)
+	SELECT tr.codice_ato, (cc.cod_istat::INTEGER)::VARCHAR
+	FROM addut_tronchi tr
+	LEFT JOIN confine_comunale cc 
+		ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom);
+		
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ADDUT_COM_SERV';
+	
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT idgis, 'ADDUT_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di una rete' 
+	FROM (
+		SELECT tr.idgis, (cc.cod_istat::INTEGER)::VARCHAR
+		FROM addut_tronchi tr
+		LEFT JOIN confine_comunale cc 
+			ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom)
+	) t group by t.idgis having count(0) > 1;
+	--select ids_codice, 'ADDUT_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di una rete'
+	--from addut_com_serv acs 
+	--group by ids_codice
+	--having count(0) > 1;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+------------------------------------------------------------------------------------------------
+-- Populate table COLLET_COM_SERV
+--
+-- Example:
+-- select DBIAIT_ANALYSIS.populate_collet_com_serv();
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_collet_com_serv(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	
+	DELETE FROM collet_com_serv;
+	
+	INSERT into collet_com_serv(ids_codice, id_comune_istat)
+	SELECT tr.codice_ato, (cc.cod_istat::INTEGER)::VARCHAR
+	FROM collett_tronchi tr
+	LEFT JOIN confine_comunale cc 
+		ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom);
+	
+	--LOG ANOMALIE (da verificare: qui tronchi che hanno stesso codice_ato vengono fuori perche intersecano piu comuni)
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'COLLET_COM_SERV';
+	
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT idgis, 'COLLET_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di una rete' 
+	FROM (
+		SELECT tr.idgis, (cc.cod_istat::INTEGER)::VARCHAR
+		FROM collett_tronchi tr
+		LEFT JOIN confine_comunale cc 
+			ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom)
+	) t group by t.idgis having count(0) > 1;
+	--select ids_codice, 'COLLET_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di una rete'
+	--from collet_com_serv acs 
+	--group by ids_codice
+	--having count(0) > 1;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
 	

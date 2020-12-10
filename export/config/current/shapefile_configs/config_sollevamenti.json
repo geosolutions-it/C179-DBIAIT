@@ -14,6 +14,17 @@
             "name":"fgn_imp_sollev"
          },
          "filter": "WHERE fgn_imp_sollev.d_gestore = 'PUBLIACQUA' AND fgn_imp_sollev.d_ambito IN ('AT3', NULL) AND fgn_imp_sollev.d_stato NOT IN ('IPR', 'IAC')"
+      },{
+         "fields":[
+             {"name":"a_fgn_imp_sollev.geom", "alias": "geom"},
+             {"name":"a_fgn_imp_sollev.geom", "alias": "x_proj", "function": "GB_X"},
+             {"name":"a_fgn_imp_sollev.geom", "alias": "y_proj", "function": "GB_Y"},
+             {"name":"a_fgn_imp_sollev.codice_ato","alias": "codice_ato"}
+         ],
+         "table":{
+            "name":"a_fgn_imp_sollev"
+         },
+         "filter": "WHERE a_fgn_imp_sollev.d_gestore = 'PUBLIACQUA' AND a_fgn_imp_sollev.d_ambito IN ('AT3', NULL) AND a_fgn_imp_sollev.d_stato NOT IN ('IPR', 'IAC')"
       }
    ]
 }

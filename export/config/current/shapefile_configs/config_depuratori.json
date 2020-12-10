@@ -14,6 +14,18 @@
                 "name": "fgn_trattamento"
             },
             "filter": "WHERE fgn_trattamento.d_gestore = 'PUBLIACQUA' AND fgn_trattamento.d_ambito IN ('AT3', NULL) AND fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
+        },
+        {
+            "fields": [
+                {"name":"a_fgn_trattamento.geom", "alias": "geom"},
+                {"name":"a_fgn_trattamento.geom", "alias": "x_proj", "function": "GB_X"},
+                {"name":"a_fgn_trattamento.geom", "alias": "y_proj", "function": "GB_Y"},
+                {"name":"a_fgn_trattamento.codice_ato","alias": "codice_ato"}
+            ],
+            "table": {
+                "name": "a_fgn_trattamento"
+            },
+            "filter": "WHERE a_fgn_trattamento.d_gestore = 'PUBLIACQUA' AND a_fgn_trattamento.d_ambito IN ('AT3', NULL) AND a_fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
         }
     ]
 }
