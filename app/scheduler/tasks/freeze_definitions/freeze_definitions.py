@@ -1,11 +1,10 @@
+from django.db import connections, connection
 from django.utils import timezone
 
 from app import settings
 from app.scheduler.models import Task, FreezeLayer
-from app.scheduler.tasks.base_task import trace_it
 from app.scheduler.tasks.freeze_definitions.base_freeze import BaseFreezeDefinition
 from app.scheduler.utils import Schema, TaskStatus
-from django.db import connections, connection
 
 
 class FreezeDefinition(BaseFreezeDefinition):

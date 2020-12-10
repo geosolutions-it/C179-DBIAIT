@@ -2,8 +2,10 @@ from datetime import datetime
 from os import fstat, listdir, path
 from urllib import parse
 
+from django.db.models import Max
+
 from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
-from app.scheduler.models import Task, TaskStatus, ImportedLayer, FreezeLayer
+from app.scheduler.models import Task, TaskStatus, ImportedLayer, FreezeLayer, Freeze as FreezeModel
 from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer, \
     ExportTaskSerializer, FreezeLayerSerializer, FreezeSerializer
 from django.conf import settings
@@ -238,11 +240,8 @@ class GetFreezeLayer(generics.RetrieveAPIView):
 
 class HistoricalFreeze(LoginRequiredMixin, ListView):
     template_name = u'freeze/historical-freeze.html'
-    queryset = Task.objects.filter(type='FREEZE').exclude(
-        status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
-
-    obj = []
-    print(queryset)
+    queryset = FreezeModel.objects.filter(task__type='FREEZE').exclude(
+        task__status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
 
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name
@@ -252,9 +251,6 @@ class HistoricalFreeze(LoginRequiredMixin, ListView):
         context['current_url'] = current_url
         return context
 
-    def get_ref_year(self, task_id):
-        FreezeLayer.objects.get('ref_yer').filter(task_id=task_id)[1]
-        return
 
 class ExportDownloadView(LoginRequiredMixin, View):
     def get(self, request, task_id: int):

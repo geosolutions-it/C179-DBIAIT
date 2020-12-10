@@ -89,6 +89,15 @@ class ImportedLayer(models.Model):
         }
 
 
+class Freeze(models.Model):
+    ref_year = models.IntegerField(blank=False, null=False)
+    notes = models.TextField(blank=True, null=True)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.ref_year)
+
+
 class FreezeLayer(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     freeze_start_timestamp = models.DateTimeField(default=datetime.datetime.now)

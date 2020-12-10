@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q, ObjectDoesNotExist
 
 from app.scheduler import exceptions
-from app.scheduler.models import Task
+from app.scheduler.models import Task, Freeze
 from app.scheduler.utils import Schema, TaskType, TaskStatus
 
 from .base_task import BaseTask, trace_it
@@ -68,6 +68,13 @@ class FreezeTask(BaseTask):
             params={"kwargs": {"ref_year": str(ref_year), "notes": notes}}
         )
         current_task.save()
+
+        freeze_information = Freeze(
+            ref_year=ref_year,
+            notes=notes,
+            task=current_task
+        )
+        freeze_information.save()
 
         return current_task.id
 
