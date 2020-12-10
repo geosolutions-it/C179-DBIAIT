@@ -78,6 +78,7 @@ class FreezeTask(BaseTask):
 
         return current_task.id
 
+    @trace_it
     def execute(self, task_id: int, *args, ref_year: str = None, notes: str = None, **kwargs) -> None:
         """
         Freezing data.

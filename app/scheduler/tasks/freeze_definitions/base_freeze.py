@@ -53,15 +53,15 @@ class BaseFreezeDefinition:
     def _handle_sheet_files(self, ref_year):
         output_path = f"{settings.EXPORT_FOLDER}/freeze/{ref_year}/sheet_configs/"
         input_dir = f"{settings.EXPORT_CONF_DIR}/current/sheet_configs/"
-        return self._add_year_to_config(output_path, input_dir, ref_year)
+        return self._add_year_to_table_name(output_path, input_dir, ref_year)
 
     def _handle_shp_files(self, ref_year):
         output_path = f"{settings.EXPORT_FOLDER}/freeze/{ref_year}/shapefile_configs/"
         input_dir = f"{settings.EXPORT_CONF_DIR}/current/shapefile_configs/"
-        return self._add_year_to_config(output_path, input_dir, ref_year)
+        return self._add_year_to_table_name(output_path, input_dir, ref_year)
 
     @staticmethod
-    def _add_year_to_config(output_dir, input_dir, ref_year):
+    def _add_year_to_table_name(output_dir, input_dir, ref_year):
         if not os.path.exists(output_dir):
             os.makedirs(output_dir, exist_ok=True)
 
@@ -73,6 +73,12 @@ class BaseFreezeDefinition:
                 table_name = x.get('table')['name']
                 table = {"name": f"{table_name}_{ref_year}", "alias": table_name}
                 x['table'] = table
+                join_tables = x.get('join')
+                if join_tables is not None:
+                    for y in join_tables:
+                        join_table_name = y.get('table')['name']
+                        j_table = {"name": f"{join_table_name}_{ref_year}", "alias": join_table_name}
+                        y['table'] = j_table
 
             with open(f"{output_dir}/{config}", 'w') as new_conf:
                 new_conf.write(json.dumps(sheet_conf, indent=4))
