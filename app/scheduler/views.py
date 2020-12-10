@@ -215,6 +215,8 @@ class QueueFreezeView(LoginRequiredMixin, View):
             return redirect(reverse(u"freeze-view"))
         except QueuingCriteriaViolated as e:
             return redirect(reverse(u"freeze-view"))
+        except Exception as e:
+            return redirect(reverse(u"freeze-view"))
 
 
 class GetFreezeStatus(generics.ListAPIView):

@@ -29,7 +29,7 @@ class BaseFreezeDefinition:
         conf_file = os.path.exists(self.config_filename.substitute(mapping={'year': ref_year}))
         shp_file = os.path.exists(self.shp_file.substitute(mapping={'year': ref_year}))
         netsic_file = os.path.exists(self.netsic_file.substitute(mapping={'year': ref_year}))
-        if all([conf_file, shp_file, netsic_file]):
+        if not all([conf_file, shp_file, netsic_file]):
             raise Exception("Configuration files for the selected year Already exists")
         return False
 
