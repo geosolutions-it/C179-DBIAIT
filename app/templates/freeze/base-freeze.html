@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if request.user.is_superuser %}
+{% if request.user.is_superuser and FREEZE_FEATURE_TOGGLE %}
     <div class="container">
         <div class="tab">
             <a href="{% url 'freeze-view' %}" class="tablinks{% if current_url == 'freeze-view'%} active{% endif %}">Corrente</a>

@@ -44,7 +44,7 @@
             {% endif %}
         </div>
         <div class="col-md-4 col-sm-6 dashboard-item">
-            {% if request.user.is_superuser %}
+            {% if request.user.is_superuser and FREEZE_FEATURE_TOGGLE %}
             <a href="{% url 'freeze-view' %}">
                 <i class="fas fa-snowflake"></i>
                 <h5>Freeze</h5>

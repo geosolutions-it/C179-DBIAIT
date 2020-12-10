@@ -2,12 +2,6 @@ from datetime import datetime
 from os import fstat, listdir, path
 from urllib import parse
 
-from django.db.models import Max
-
-from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
-from app.scheduler.models import Task, TaskStatus, ImportedLayer, FreezeLayer, Freeze as FreezeModel
-from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer, \
-    ExportTaskSerializer, FreezeLayerSerializer, FreezeSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
@@ -18,10 +12,14 @@ from django.views.generic import ListView
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 
+from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
+from app.scheduler.models import Task, TaskStatus, ImportedLayer, FreezeLayer, Freeze as FreezeModel
+from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer, \
+    ExportTaskSerializer, FreezeLayerSerializer, FreezeSerializer
 from app.scheduler.tasks import FreezeTask
-from app.scheduler.tasks.process_tasks import process_mapper
-from app.scheduler.tasks.import_task import ImportTask
 from app.scheduler.tasks.export_task import ExportTask
+from app.scheduler.tasks.import_task import ImportTask
+from app.scheduler.tasks.process_tasks import process_mapper
 
 
 class Dashboard(LoginRequiredMixin, View):
@@ -231,7 +229,7 @@ class GetFreezeLayer(generics.RetrieveAPIView):
 
     def get(self, request, **kwargs):
         """
-        Return only the ImportLayer related to a specific uuid
+        Return only the FreezeLayer related to a specific uuid
         """
         task_id = request.query_params['task_id']
         response = [layer.to_dict() for layer in FreezeLayer.objects.filter(task__uuid=task_id).order_by('-id')]
