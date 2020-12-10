@@ -67,7 +67,7 @@ def initQgis():
     qgs = QgsApplication([], False)
     qgs.initQgis()
 
-    sys.path.append('C:\\OSGeo4W64\\apps\\qgis\\python\\plugins')
+    #sys.path.append('C:\\OSGeo4W64\\apps\\qgis\\python\\plugins')
 
     import processing
     from processing.core.Processing import Processing
