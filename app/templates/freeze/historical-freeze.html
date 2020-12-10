@@ -4,14 +4,14 @@
 {% block freeze_content %}
 <div class="container">
   <br>
-  <table class="table display" id="history-freeze-table">
+  <table class="table display compact" id="history-freeze-table">
     <thead>
       <tr>
-        <th>Iniziato alle</th>
-        <th>Completato alle</th>
-        <th>Avviato da</th>
+        <th>Iniziato</th>
+        <th>Completato</th>
+        <th>Avviato</th>
         <th>GeoPackage</th>
-        <th>Anno di riferimento</th>
+        <th>Anno</th>
         <th>Note</th>
         <th style="text-align:center;">Stato</th>
       </tr>
@@ -26,7 +26,7 @@
         <td>{{ freeze.ref_year }}</td>
         <td>{{ freeze.notes }}</td>
         <td style="text-align:center;">
-          <a href="#" onclick="display_error_log('{{freeze.task_log|escapejs}}', '{{freeze.status}}')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="{% get_status_icon freeze.task.status %}"></i></a>
+          <a href="#" onclick="display_error_log('{{freeze.task.task_log|escapejs}}', '{{freeze.task.status}}')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="{% get_status_icon freeze.task.status %}"></i></a>
         </td>
       </tr>
       {% endfor %}
@@ -67,5 +67,5 @@
     } );
 } );
 </script>
-
+<br>
 {% endblock %}

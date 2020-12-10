@@ -9,13 +9,13 @@ from app.scheduler.utils import Schema, TaskStatus
 
 class FreezeDefinition(BaseFreezeDefinition):
     def __init__(
-            self,
-            orm_task: Task,
-            offset=0,
-            limit=50,
-            schema=Schema.FREEZE,
-            current_year=None,
-            notes=None
+        self,
+        orm_task: Task,
+        offset=0,
+        limit=50,
+        schema=Schema.FREEZE,
+        current_year=None,
+        notes=None,
     ):
         super().__init__(schema=schema)
 
@@ -28,8 +28,11 @@ class FreezeDefinition(BaseFreezeDefinition):
 
     @staticmethod
     def get_freeze_layers():
-        layers = connections['analysis'].introspection.table_names()  # TODO check su come rimuovere public dalla ricerca delle tabelle
-        return layers
+        with connection.cursor() as cursor:
+            query = f"SELECT table_name::VARCHAR FROM information_schema.tables WHERE UPPER(table_schema) = UPPER('{Schema.ANALYSIS}') and table_type = 'BASE TABLE'"
+            cursor.execute(query)
+            layers = cursor.fetchall()
+        return [table[0] for table in layers]
 
     def run(self):
         layer_to_freeze = self.get_freeze_layers()
@@ -55,7 +58,7 @@ class FreezeDefinition(BaseFreezeDefinition):
                         layer_name=layername.lower(),
                         freeze_start_timestamp=start_date,
                         freeze_end_timestamp=end_date,
-                        status=task_status
+                        status=task_status,
                     )
             return (cont / n_step) * 100
 
@@ -63,9 +66,16 @@ class FreezeDefinition(BaseFreezeDefinition):
         print(f"PROCESSING {layer}...")
         freeze_cursor = connection.cursor()
         with freeze_cursor as cursor:
-            kparam = {"v_table_name": layer, "v_year": self.current_year, "v_note": self.notes}
+            kparam = {
+                "v_table_name": layer,
+                "v_year": self.current_year,
+                "v_note": self.notes,
+            }
             cursor.callproc(
-                f"{settings.DATABASE_SCHEMAS['freeze']}.initialize_freeze_table", kparam)
+                f"{settings.DATABASE_SCHEMAS['freeze']}.initialize_freeze_table", kparam
+            )
             result = cursor.fetchone()
-        print(f"procedure {settings.DATABASE_SCHEMAS['freeze']}.initialize_freeze_table => {result}")
+        print(
+            f"procedure {settings.DATABASE_SCHEMAS['freeze']}.initialize_freeze_table => {result}"
+        )
         return result
