@@ -21,6 +21,7 @@ class BaseFreezeDefinition:
         self.config_filename = settings.EXPORT_CONF_FILE
         self.shp_file = settings.SHAPEFILE_EXPORT_CONFIG
         self.netsic_file = settings.EXPORT_XLS_SEED_FILE
+        self.export_folder = f"{settings.EXPORT_FOLDER}/freeze/"
 
     def _year_config_file_exists(self, ref_year):
         """
@@ -30,12 +31,12 @@ class BaseFreezeDefinition:
         shp_file = os.path.exists(self.shp_file.substitute(mapping={'year': ref_year}))
         netsic_file = os.path.exists(self.netsic_file.substitute(mapping={'year': ref_year}))
         if not all([conf_file, shp_file, netsic_file]):
-            raise Exception("Configuration files for the selected year Already exists")
-        return False
+            return True
+        raise Exception("Configuration files for the selected year Already exists")
 
     def _create_year_folder(self, ref_year):
         try:
-            export_folder = f"{settings.EXPORT_FOLDER}/freeze/{ref_year}"
+            export_folder = f"{settings.EXPORT_FOLDER}/config/{ref_year}"
             if not os.path.exists(export_folder):
                 os.makedirs(export_folder, exist_ok=True)
 
@@ -51,12 +52,12 @@ class BaseFreezeDefinition:
             raise e
 
     def _handle_sheet_files(self, ref_year):
-        output_path = f"{settings.EXPORT_FOLDER}/freeze/{ref_year}/sheet_configs/"
+        output_path = f"{settings.EXPORT_FOLDER}/config/{ref_year}/sheet_configs/"
         input_dir = f"{settings.EXPORT_CONF_DIR}/current/sheet_configs/"
         return self._add_year_to_table_name(output_path, input_dir, ref_year)
 
     def _handle_shp_files(self, ref_year):
-        output_path = f"{settings.EXPORT_FOLDER}/freeze/{ref_year}/shapefile_configs/"
+        output_path = f"{settings.EXPORT_FOLDER}/config/{ref_year}/shapefile_configs/"
         input_dir = f"{settings.EXPORT_CONF_DIR}/current/shapefile_configs/"
         return self._add_year_to_table_name(output_path, input_dir, ref_year)
 

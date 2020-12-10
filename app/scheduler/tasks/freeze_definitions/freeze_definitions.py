@@ -35,7 +35,7 @@ class FreezeDefinition(BaseFreezeDefinition):
         return [table[0] for table in layers]
 
     def freeze_configuration_files(self, year):
-        if not self._year_config_file_exists(year):
+        if self._year_config_file_exists(year):
             self._create_year_folder(year)
             self._handle_sheet_files(year)
             self._handle_shp_files(year)
