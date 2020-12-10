@@ -94,6 +94,8 @@ class FreezeTask(BaseTask):
             )
             raise
 
+        FreezeDefinition(orm_task).freeze_configuration_files(year=ref_year)
+
         feature_classes = FreezeDefinition.get_freeze_layers()
         total_feature_classes_number = len(feature_classes)
         import_steps_number = math.ceil(
