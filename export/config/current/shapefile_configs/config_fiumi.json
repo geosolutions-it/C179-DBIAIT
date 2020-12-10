@@ -14,6 +14,18 @@
                 "name": "acq_captazione"
             },
             "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
+        },
+        {
+            "fields": [
+                {"name":"a_acq_captazione.geom", "alias": "geom"},
+                {"name":"a_acq_captazione.geom", "alias": "x_proj", "function": "GB_X"},
+                {"name":"a_acq_captazione.geom", "alias": "y_proj", "function": "GB_Y"},
+                {"name":"a_acq_captazione.codice_ato","alias": "codice_ato"}
+            ],
+            "table": {
+                "name": "a_acq_captazione"
+            },
+            "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
         }
     ]
 }
