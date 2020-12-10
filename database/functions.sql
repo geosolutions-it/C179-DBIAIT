@@ -2183,4 +2183,125 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
+-------------------------------------------------------------------------------------------------------
+-- Create the network node for a specified table
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.create_network_nodes('acq_condotta')
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.create_network_nodes(
+	v_table_name VARCHAR
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_node_table VARCHAR;
+BEGIN
+	v_node_table := v_table_name || '_nodes';
+	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_node_table;
+	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_node_table || '(id INTEGER)';
+	PERFORM AddGeometryColumn ('dbiait_analysis', v_node_table, 'geom', 25832, 'POINT', 2); 
 	
+	EXECUTE '
+		INSERT INTO dbiait_analysis.' || v_node_table || ' (geom, id)
+		select geom, ROW_NUMBER () OVER () id from (
+
+			select distinct on (ST_ASTEXT(geom)) geom
+			from (
+				
+				select 
+				   st_snaptogrid(st_startpoint(t.geom), 0.001) geom
+				from (
+				   select st_geometryn(geom, 1) geom
+				   from ' || v_table_name || '
+				   where st_numgeometries(geom)=1
+				) t
+				
+				UNION ALL
+				
+				select 
+				   st_snaptogrid(st_endpoint(t.geom), 0.001) geom
+				from (
+				   select st_geometryn(geom, 1) geom
+				   from ' || v_table_name || '
+				   where st_numgeometries(geom)=1
+				) t
+				
+			) t2
+			
+		) t3
+	';
+	
+	EXECUTE 'CREATE INDEX ' || v_node_table || '_geom_idx ON dbiait_analysis.' || v_node_table || ' USING GIST(geom)';
+	
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;	
+-------------------------------------------------------------------------------------------------------
+-- Create the network edges for a specified table
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.create_network_edges('acq_condotta')
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.create_network_edges(
+	v_table_name VARCHAR
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_edge_table VARCHAR;
+	v_tol DOUBLE PRECISION;
+BEGIN
+	v_tol := snap_tolerance();
+	v_edge_table := v_table_name || '_edges';
+	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_edge_table;
+	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_edge_table || '(id INTEGER, idgis VARCHAR(32), source INTEGER, target INTEGER)';
+	PERFORM AddGeometryColumn ('dbiait_analysis', v_edge_table, 'geom', 25832, 'LINESTRING', 2); 
+	
+	EXECUTE '
+		INSERT INTO dbiait_analysis.' || v_edge_table || ' (id, idgis, geom)
+		SELECT ROW_NUMBER () OVER () id, idgis, st_geometryn(geom, 1) geom
+		FROM ' || v_table_name || '
+		WHERE st_numgeometries(geom) = 1
+	';
+	
+	EXECUTE 'CREATE INDEX ' || v_edge_table || '_geom_idx ON dbiait_analysis.' || v_edge_table || ' USING GIST(geom)';
+	
+	--Update source field
+	EXECUTE '
+	update dbiait_analysis.' || v_edge_table || '
+	set source = n.id
+	from acq_condotta_nodes n
+	where st_buffer(st_startpoint(dbiait_analysis.' || v_edge_table || '.geom),$1)&&n.geom
+	and st_intersects(n.geom,st_buffer(st_startpoint(dbiait_analysis.' || v_edge_table || '.geom),$2))
+	' USING v_tol, v_tol;
+	--Update target field
+	EXECUTE '
+	update dbiait_analysis.' || v_edge_table || '
+	set target = n.id
+	from acq_condotta_nodes n
+	where st_buffer(st_endpoint(dbiait_analysis.' || v_edge_table || '.geom),$1)&&n.geom
+	and st_intersects(n.geom,st_buffer(st_endpoint(dbiait_analysis.' || v_edge_table || '.geom),$2))
+	' USING v_tol, v_tol;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+-------------------------------------------------------------------------------------------------------
+-- Create the networks for acq_condotta/fgn_condotta
+--
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.create_networks()
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.create_networks(
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_result BOOLEAN;
+BEGIN
+	-- Rete Idrica
+	PERFORM DBIAIT_ANALYSIS.create_network_nodes('acq_condotta');
+	PERFORM DBIAIT_ANALYSIS.create_network_edges('acq_condotta');
+	-- Rete Fognaria
+	PERFORM DBIAIT_ANALYSIS.create_network_nodes('fgn_condotta');
+	PERFORM DBIAIT_ANALYSIS.create_network_edges('fgn_condotta');
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+
