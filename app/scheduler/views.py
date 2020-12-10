@@ -211,9 +211,11 @@ class QueueFreezeView(LoginRequiredMixin, View):
         selected_year = request.POST.get(u"selected-year")
         freeze_notes = request.POST.get(u"freeze-notes")
         try:
-            FreezeTask.send(FreezeTask.pre_send(requesting_user=request.user, ref_year=selected_year, notes=freeze_notes))
+            FreezeTask.send(task_id=FreezeTask.pre_send(requesting_user=request.user, ref_year=selected_year, notes=freeze_notes))
             return redirect(reverse(u"freeze-view"))
         except QueuingCriteriaViolated as e:
+            return redirect(reverse(u"freeze-view"))
+        except Exception as e:
             return redirect(reverse(u"freeze-view"))
 
 
