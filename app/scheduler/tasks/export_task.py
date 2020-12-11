@@ -38,6 +38,7 @@ class ExportTask(BaseTask):
         cls,
         requesting_user: get_user_model(),
         schema: str = Schema.ANALYSIS,
+        ref_year: str = None
     ):
 
         # 1. check if the Task may be queued
@@ -58,8 +59,8 @@ class ExportTask(BaseTask):
             )
 
         # 1a. validate export configuration
-        XlsExportConfig()
-        ShpExportConfig()
+        XlsExportConfig(ref_year)
+        ShpExportConfig(ref_year)
 
         # 2. create Task ORM model instance for this task execution
         try:

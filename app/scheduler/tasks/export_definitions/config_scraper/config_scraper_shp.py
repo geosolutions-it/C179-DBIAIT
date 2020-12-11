@@ -21,10 +21,15 @@ shp_export_config_schema = schema.Schema(
 
 
 class ShpExportConfig(BaseExportConfig):
-    def __init__(self):
+    def __init__(self, ref_year=None):
         super().__init__()
+        self.ref_year = ref_year
 
-        with open(settings.SHAPEFILE_EXPORT_CONFIG.substitute(), "r") as ecf:
+        sett = settings.SHAPEFILE_EXPORT_CONFIG.substitute()
+        if self.ref_year is not None:
+            sett = settings.SHAPEFILE_EXPORT_CONFIG.substitute({"year": self.ref_year})
+
+        with open(sett, "r") as ecf:
             config = json.load(ecf)
 
         shapes_config_files = config.get("shp_files_configs", None)
@@ -44,8 +49,12 @@ class ShpExportConfig(BaseExportConfig):
                     f"Sheet config path may not be absolute: {shape_config_path}."
                 )
             else:
+                parent_folder = Path(settings.EXPORT_CONF_FILE.substitute()).parent
+                if ref_year is not None:
+                    parent_folder = Path(settings.EXPORT_CONF_FILE.substitute({"year": self.ref_year})).parent
+
                 shape_config_path = Path(
-                    Path(settings.EXPORT_CONF_FILE.substitute()).parent,
+                    parent_folder,
                     shape_config_path,
                 )
 

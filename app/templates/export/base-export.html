@@ -6,11 +6,18 @@
   <form method="POST" class="form-inline">
     {% csrf_token %}
     <div class="form-group mx-sm-3 mb-2">
-      <label for="Ambiente" class="mx-sm-1">Ambiente: </label>
-      <select name="export-schema" class="form-control">
+      <label for="Ambiente" class="mx-sm-2 " id="ambiente">Ambiente: </label>
+      <select name="export-schema" id="export-schema" class="form-control">
         <option value="{{ schemas.analysis }}" selected="selected">Analisi</option>
-        <!-- option value="{{ schemas.freeze }}">Storicizzazione</option -->
+        <option value="{{ schemas.freeze }}">Storicizzazione</option>
       </select>
+      <select name="freeze-year" id="freeze-year" class="form-control">
+          <label for="anno-rif" class="mx-sm-2" id="anno-rif">Anno</label>
+          <option selected value="None">Anno di riferimento</option>
+          {% for year in years_available %}
+            <option value="{{ year }}">{{ year }}</option>
+          {% endfor %}
+        </select>
     </div>
     <div class="form-group mb-2">
       <button type="submit" class="btn btn-info">
@@ -59,7 +66,30 @@
     </div>
   </div>
 </div>
-
+{% if error %}
+<div class="modal fade in" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-danger">
+        {{ error }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info" data-dismiss="modal">va bene</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#error-modal").modal('show');
+    });
+</script>
+{% endif %}
 <script>
   $(document).ready(function() {
     $('#export-table').DataTable( {
@@ -69,6 +99,17 @@
         "order": [[ 1, "desc" ]]
     } );
 } );
+</script>
+<script>
+  $('#freeze-year').hide();
+  $('#export-schema').change(function(){
+      console.log($('#export-schema').val());
+      if($('#export-schema').val() == 'dbiait_freeze') {
+          $('#freeze-year').show();
+      } else {
+          $('#freeze-year').hide();
+      }
+  });
 </script>
 <script>
   window.addEventListener("load", function () {
