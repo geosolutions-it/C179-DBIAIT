@@ -87,7 +87,7 @@ class IfValidation(BaseValidation):
     )
     re_pattern = re.compile('{\W*(\w+)\W*}')
 
-    def validate(self, row: Dict, ref_year: str = None):
+    def validate(self, row: Dict, ref_year: int = None):
         conditions = self.args["cond"]
         result = []
         for cond in conditions:

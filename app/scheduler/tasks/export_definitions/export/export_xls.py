@@ -37,6 +37,7 @@ class ExportXls(ExportBase):
         config = XlsExportConfig(self.ref_year)
 
         # calculate total number of steps
+        print(f"Exporting XLS for {len(config)} config files")
         total_sheet_number = len(config)
         step = 1
 
@@ -137,25 +138,31 @@ class ExportXls(ExportBase):
 
                 for column in sheet["columns"]:
                     for validator in column.get("validators", []):
-                        if not validator["validator"].validate(sheet_row, self.ref_year):
-                            message = validator.get("warning", "")
-                            column_letter = coord_id_mapping.get(
-                                str(column["id"]), None
+                        try:
+                            if not validator["validator"].validate(sheet_row, self.ref_year):
+                                message = validator.get("warning", "")
+                                column_letter = coord_id_mapping.get(
+                                    str(column["id"]), None
+                                )
+
+                                if message:
+                                    message = (
+                                        message.replace("{SHEET}", sheet["sheet"])
+                                        .replace("{ROW}", str(first_empty_row))
+                                        .replace("{FIELD}", column_letter)
+                                    )
+                                    self.logger.error(message)
+                                else:
+                                    self.logger.error(
+                                        f"Validation failed for cell '{column_letter}{first_empty_row}' "
+                                        f"in the '{sheet['sheet']}' sheet."
+                                    )
+                        except Exception as e:
+                            self.logger.error(
+                                f"Error occurred during validation of column with "
+                                f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
+                                f"{type(e).__name__}: {e}.\n"
                             )
-
-                            if message:
-                                message = (
-                                    message.replace("{SHEET}", sheet["sheet"])
-                                    .replace("{ROW}", str(first_empty_row))
-                                    .replace("{FIELD}", column_letter)
-                                )
-                                self.logger.error(message)
-                            else:
-                                self.logger.error(
-                                    f"Validation failed for cell '{column_letter}{first_empty_row}' "
-                                    f"in the '{sheet['sheet']}' sheet."
-                                )
-
                 # insert sheet_row into excel
                 for column_id, value in sheet_row.items():
                     column_letter = coord_id_mapping.get(str(column_id))
@@ -180,6 +187,11 @@ class ExportXls(ExportBase):
             step += 1
             self.update_progress(step, total_sheet_number)
 
+        # update the information in the sheet "DATI" before save it
+
+        excel_wb["DATI"]["B5"] = today.date()
+        excel_wb["DATI"]["B8"] = self.ref_year
+        excel_wb["DATI"]["B10"] = today.date()
         # save updated *.xlsx seed file in the target location
         excel_wb.save(target_xls_file)
 

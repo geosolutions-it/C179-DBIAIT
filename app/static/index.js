@@ -71,8 +71,8 @@ const table_function_mapper = {
             table.clear().draw();
             response.forEach(function (data) {
             var escaped = escape(data.task_log)
-            if (escaped.length > 1000) {
-                var escaped = escape(data.task_log).substr(0, 1000) + "......<br>Controlla il log nello zip per maggiori informazioni";
+            if (escaped.length > 10000) {
+                var escaped = escape(data.task_log).substr(0, 10000) + "......<br>Controlla il log nello zip per maggiori informazioni";
             }
             var errorModal = '<a href="#" onclick="display_error_log(\'' + escaped + '\', \'' + data.status + '\')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="'+ data.status_icon + '"></i></a>'
             if (data.status == 'RUNNING' || data.status == 'QUEUED') {
