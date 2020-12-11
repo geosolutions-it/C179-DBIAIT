@@ -104,7 +104,9 @@ class ExportTask(BaseTask):
         try:
             with tempfile.TemporaryDirectory() as tmp_dir:
                 tmp_export_directory = pathlib.Path(tmp_dir)
-                ref_year = ast.literal_eval(kwargs.get('ref_year'))
+                ref_year = kwargs.get('ref_year')
+                if kwargs.get('ref_year') is not None:
+                    ref_year = ast.literal_eval(ref_year)
                 print(f"Start EXPORTING XLS for year {ref_year}")
                 ExportXls(tmp_export_directory, orm_task, max_progress=90, ref_year=ref_year).run()
                 print(f"Finish EXPORTING XLS")
