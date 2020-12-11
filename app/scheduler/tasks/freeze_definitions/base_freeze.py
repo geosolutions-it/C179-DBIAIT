@@ -33,7 +33,7 @@ class BaseFreezeDefinition:
         if not all([conf_file, shp_file, netsic_file]):
             return True
         raise FileExistsError("I file di configurazione per l'anno selezionato sono già stati storicizzati. "
-                              "Prima di riproare, è necessario eliminare i file esistenti")
+                              "Prima di riprovare, è necessario eliminare i file esistenti")
 
     def _create_year_folder(self, ref_year):
         try:

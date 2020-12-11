@@ -108,13 +108,26 @@ class Configuration(LoginRequiredMixin, View):
 
 
 class QueueImportView(LoginRequiredMixin, View):
+    template_name = u'import/active-import.html'
+
     def post(self, request):
         gpkg_name = request.POST.get(u"gpkg-name")
+        context = self.get_context_data()
         try:
             ImportTask.send(ImportTask.pre_send(requesting_user=request.user, gpkg_name=gpkg_name))
             return redirect(reverse(u"import-view"))
         except QueuingCriteriaViolated as e:
-            return redirect(reverse(u"import-view"))
+            context['error'] = str(e)
+            return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = dict()
+        context['bread_crumbs'] = {
+            'Import': reverse('import-view'), 'Corrente': u"#"}
+        context['current_url'] = current_url
+        context['geopackage_files'] = Import.get_geopackage_files()
+        return context
 
 
 class ExportListView(LoginRequiredMixin, ListView):

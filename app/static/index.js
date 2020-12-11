@@ -18,11 +18,17 @@ const table_function_mapper = {
         }
     },
     "#test-import-table": function (response) {
-        const table = $("#test-import-table");
+        const table = $("#dt-import-table").DataTable();
         if (response) {
-            table.empty();
+            table.clear().draw();
             response.forEach(function (data) {
-                table.append(`<tr><td>${data.layer_name}</td><td>${get_local_date(data.import_start_timestamp)}</td><td>${get_local_date(data.import_end_timestamp)}</td><td>${data.status}</td></tr>`);
+                var row = table.row.add([
+                    data.layer_name,
+                    get_local_date(data.import_start_timestamp) ,
+                    get_local_date(data.import_end_timestamp),
+                    data.status
+                    ]).draw( false ).node();
+                $(row).addClass(data.style_class);
             });
         }
     },
@@ -31,7 +37,6 @@ const table_function_mapper = {
         if (response) {
             table.clear().draw();
             response.forEach(function (data) {
-            console.log(data.freeze_end_timestamp);
                 var row = table.row.add([
                     data.layer_name,
                     get_local_date(data.freeze_start_timestamp) ,
