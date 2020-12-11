@@ -146,7 +146,7 @@ class ExportListView(LoginRequiredMixin, ListView):
             context["error"] = str("Prima di avviare l'export della storicizzazione, selezionare un anno valido")
             return render(request, ExportListView.template_name, context)
         try:
-            ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema, ref_year=ref_year))
+            ExportTask.perform(ExportTask.pre_send(requesting_user=request.user, schema=export_schema, ref_year=ref_year))
         except (QueuingCriteriaViolated, SchedulingParametersError) as e:
             context[u"error"] = str(e)
         return render(request, ExportListView.template_name, context)

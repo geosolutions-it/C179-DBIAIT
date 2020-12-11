@@ -137,7 +137,7 @@ class ExportXls(ExportBase):
 
                 for column in sheet["columns"]:
                     for validator in column.get("validators", []):
-                        if not validator["validator"].validate(sheet_row):
+                        if not validator["validator"].validate(sheet_row, self.ref_year):
                             message = validator.get("warning", "")
                             column_letter = coord_id_mapping.get(
                                 str(column["id"]), None
