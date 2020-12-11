@@ -34,7 +34,7 @@ class ExportXls(ExportBase):
         )
 
         # parse export configuration
-        config = XlsExportConfig()
+        config = XlsExportConfig(self.ref_year)
 
         # calculate total number of steps
         total_sheet_number = len(config)
@@ -44,7 +44,10 @@ class ExportXls(ExportBase):
         all_domains = Domains()
 
         # load seed *.xlsx file
-        excel_wb = openpyxl.load_workbook(settings.EXPORT_XLS_SEED_FILE.substitute())
+        seed_path = settings.EXPORT_XLS_SEED_FILE.substitute()
+        if self.ref_year is not None:
+            seed_path = settings.EXPORT_XLS_SEED_FILE.substitute({"year": self.ref_year})
+        excel_wb = openpyxl.load_workbook(seed_path)
 
         for sheet in config:
 
