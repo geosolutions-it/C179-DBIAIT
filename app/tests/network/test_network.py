@@ -11,7 +11,7 @@ from app.scheduler.network.networkx_finder import NetworkFinder
 class MyTestCase(SimpleTestCase):
     def setUp(self) -> None:
         self.sut = NetworkFinder
-        self.sut.get_condotta_nodes = MagicMock(
+        self.sut._get_condotta_nodes = MagicMock(
             return_value=[
                 CondottaNode(1),
                 CondottaNode(2),
@@ -20,7 +20,12 @@ class MyTestCase(SimpleTestCase):
                 CondottaNode(5),
             ]
         )
-        self.sut.get_condotta_edges = MagicMock(
+        self.sut._get_hidden_condotta_nodes = MagicMock(
+            return_value=[
+                CondottaNode(10, hidden=True)
+            ]
+        )
+        self.sut._get_condotta_edges = MagicMock(
             return_value=[
                 CondottaEdge(source=1, target=2),
                 CondottaEdge(source=1, target=8),
@@ -71,6 +76,11 @@ class MyTestCase(SimpleTestCase):
         actual = self.sut(name="condotta").get_furthest_nodes(1)
         expected = {8, 9, 10}
         self.assertSetEqual(expected, actual)
+
+    def test_given_restricted_view_of_noted_should_find_all_the_furthest_nodes(self):
+        actual = self.sut(name="condotta").subgraph_with_hidden_nodes(1)
+        expected = [(1, [2, 8, 5]), (2, [3]), (3, [9])]
+        self.assertEqual(sorted(expected), sorted(actual))
 
 
 if __name__ == "__main__":
