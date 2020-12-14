@@ -1,3 +1,4 @@
+import ast
 from datetime import datetime
 from os import fstat, listdir, path
 from urllib import parse
@@ -125,10 +126,14 @@ class ExportListView(LoginRequiredMixin, ListView):
         Queue export task and return results of export status
         """
         export_schema = request.POST.get(u"export-schema")
+        ref_year = ast.literal_eval(request.POST.get(u"freeze-year"))
         self.object_list = self.get_queryset()
         context = self.get_context_data()
+        if export_schema == 'dbiait_freeze' and ref_year is None:
+            context["error"] = str("Prima di avviare l'export della storicizzazione, selezionare un anno valido")
+            return render(request, ExportListView.template_name, context)
         try:
-            ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema))
+            ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema, ref_year=ref_year))
         except (QueuingCriteriaViolated, SchedulingParametersError) as e:
             context[u"error"] = str(e)
         return render(request, ExportListView.template_name, context)
@@ -142,6 +147,7 @@ class ExportListView(LoginRequiredMixin, ListView):
         context['bread_crumbs'] = {'Export': reverse('export-view')}
         context['current_url'] = current_url
         context['schemas'] = settings.DATABASE_SCHEMAS
+        context['years_available'] = FreezeModel.objects.all().distinct('ref_year').order_by('-ref_year')
         return context
 
 

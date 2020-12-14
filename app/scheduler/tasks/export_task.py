@@ -38,6 +38,7 @@ class ExportTask(BaseTask):
         cls,
         requesting_user: get_user_model(),
         schema: str = Schema.ANALYSIS,
+        ref_year: str = None
     ):
 
         # 1. check if the Task may be queued
@@ -58,8 +59,8 @@ class ExportTask(BaseTask):
             )
 
         # 1a. validate export configuration
-        XlsExportConfig()
-        ShpExportConfig()
+        XlsExportConfig(ref_year)
+        ShpExportConfig(ref_year)
 
         # 2. create Task ORM model instance for this task execution
         try:
@@ -78,8 +79,10 @@ class ExportTask(BaseTask):
             schema=schema,
             geopackage=geopackage,
             type=cls.task_type,
-            name=cls.name,
+            name=cls.name
         )
+        if ref_year is not None:
+            current_task.params = {"kwargs": {"ref_year": str(ref_year)}}
         current_task.save()
 
         return current_task.id
@@ -101,8 +104,8 @@ class ExportTask(BaseTask):
             with tempfile.TemporaryDirectory() as tmp_dir:
                 tmp_export_directory = pathlib.Path(tmp_dir)
 
-                ExportXls(tmp_export_directory, orm_task, max_progress=90).run()
-                ExportShp(tmp_export_directory, orm_task).run()
+                ExportXls(tmp_export_directory, orm_task, max_progress=90, ref_year=kwargs.get("ref_year")).run()
+                ExportShp(tmp_export_directory, orm_task, ref_year=kwargs.get("ref_year")).run()
 
                 # zip final output in export directory
                 export_file = os.path.join(settings.EXPORT_FOLDER, f"task_{orm_task.id}")

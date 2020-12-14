@@ -40,7 +40,7 @@ class FreezeTask(BaseTask):
         # 1. check if the Task may be queued
         colliding_tasks = Task.objects.filter(
             Q(status=TaskStatus.QUEUED) | Q(status=TaskStatus.RUNNING)
-        ).exclude(Q(schema=Schema.ANALYSIS) & Q(type=TaskType.EXPORT))
+        )
 
         if len(colliding_tasks) > 0:
             raise exceptions.QueuingCriteriaViolated(
@@ -69,13 +69,6 @@ class FreezeTask(BaseTask):
         )
         current_task.save()
 
-        freeze_information = Freeze(
-            ref_year=ref_year,
-            notes=notes,
-            task=current_task
-        )
-        freeze_information.save()
-
         return current_task.id
 
     def execute(self, task_id: int, *args, ref_year: str = None, notes: str = None, **kwargs) -> None:
@@ -95,6 +88,13 @@ class FreezeTask(BaseTask):
             raise
 
         FreezeDefinition(orm_task).freeze_configuration_files(year=ref_year)
+
+        freeze_information = Freeze(
+            ref_year=ref_year,
+            notes=notes,
+            task=orm_task
+        )
+        freeze_information.save()
 
         feature_classes = FreezeDefinition.get_freeze_layers()
         total_feature_classes_number = len(feature_classes)
