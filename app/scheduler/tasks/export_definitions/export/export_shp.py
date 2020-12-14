@@ -68,7 +68,7 @@ class ExportShp(ExportBase):
 
         # parse export configuration
         config = ShpExportConfig(self.ref_year)
-
+        print(f"Exporting Shape for {len(config)} config files")
         # calculate total number of steps
         total_shapes_number = len(config)
         step = 1

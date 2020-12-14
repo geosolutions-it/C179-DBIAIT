@@ -18,11 +18,17 @@ const table_function_mapper = {
         }
     },
     "#test-import-table": function (response) {
-        const table = $("#test-import-table");
+        const table = $("#dt-import-table").DataTable();
         if (response) {
-            table.empty();
+            table.clear().draw();
             response.forEach(function (data) {
-                table.append(`<tr><td>${data.layer_name}</td><td>${get_local_date(data.import_start_timestamp)}</td><td>${get_local_date(data.import_end_timestamp)}</td><td>${data.status}</td></tr>`);
+                var row = table.row.add([
+                    data.layer_name,
+                    get_local_date(data.import_start_timestamp) ,
+                    get_local_date(data.import_end_timestamp),
+                    data.status
+                    ]).draw( false ).node();
+                $(row).addClass(data.style_class);
             });
         }
     },
@@ -31,7 +37,6 @@ const table_function_mapper = {
         if (response) {
             table.clear().draw();
             response.forEach(function (data) {
-            console.log(data.freeze_end_timestamp);
                 var row = table.row.add([
                     data.layer_name,
                     get_local_date(data.freeze_start_timestamp) ,
@@ -66,8 +71,8 @@ const table_function_mapper = {
             table.clear().draw();
             response.forEach(function (data) {
             var escaped = escape(data.task_log)
-            if (escaped.length > 1000) {
-                var escaped = escape(data.task_log).substr(0, 1000) + "......<br>Controlla il log nello zip per maggiori informazioni";
+            if (escaped.length > 10000) {
+                var escaped = escape(data.task_log).substr(0, 10000) + "......<br>Controlla il log nello zip per maggiori informazioni";
             }
             var errorModal = '<a href="#" onclick="display_error_log(\'' + escaped + '\', \'' + data.status + '\')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="'+ data.status_icon + '"></i></a>'
             if (data.status == 'RUNNING' || data.status == 'QUEUED') {

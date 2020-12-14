@@ -55,7 +55,9 @@ class ImportTask(BaseTask):
 
         if len(colliding_tasks) > 0:
             raise exceptions.QueuingCriteriaViolated(
-                f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
+                "Ci sono dei task al momento in secuzione, che impediscono l'avvio del processo di freeze. "
+                "Si prega di riprovare più tardi"
+                # f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
             )
 
         # 2. get or create GeoPackage ORM model instance for this task execution

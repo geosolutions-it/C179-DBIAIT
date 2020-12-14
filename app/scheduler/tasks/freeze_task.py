@@ -40,11 +40,12 @@ class FreezeTask(BaseTask):
         # 1. check if the Task may be queued
         colliding_tasks = Task.objects.filter(
             Q(status=TaskStatus.QUEUED) | Q(status=TaskStatus.RUNNING)
-        )
+        ).exclude(Q(schema=Schema.ANALYSIS) & Q(type=TaskType.EXPORT))
 
         if len(colliding_tasks) > 0:
             raise exceptions.QueuingCriteriaViolated(
-                f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
+                # f"I seguenti task impediscono l'avvio del task di Freeze: {[task.type for task in colliding_tasks]}"
+                "Ci sono dei task al momento in secuzione, che impediscono l'avvio del processo di freeze. Si prega di riprovare più tardi"
             )
 
         # 2. create Task ORM model instance for this task execution
@@ -67,6 +68,15 @@ class FreezeTask(BaseTask):
             name=cls.name,
             params={"kwargs": {"ref_year": str(ref_year), "notes": notes}}
         )
+        '''
+        Before save the task in "queued", the system will check if the configuration files 
+        are already present in the export folder. This is needed here because otherwise 
+        we will not raise the exception to the user
+        '''
+        FreezeDefinition(current_task).freeze_configuration_files(year=ref_year)
+        '''
+        If the file are copied, we will save the task in queued mode
+        '''
         current_task.save()
 
         return current_task.id
@@ -86,8 +96,6 @@ class FreezeTask(BaseTask):
                 f"between task scheduling and execution."
             )
             raise
-
-        FreezeDefinition(orm_task).freeze_configuration_files(year=ref_year)
 
         freeze_information = Freeze(
             ref_year=ref_year,

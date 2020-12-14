@@ -108,13 +108,26 @@ class Configuration(LoginRequiredMixin, View):
 
 
 class QueueImportView(LoginRequiredMixin, View):
+    template_name = u'import/active-import.html'
+
     def post(self, request):
         gpkg_name = request.POST.get(u"gpkg-name")
+        context = self.get_context_data()
         try:
             ImportTask.send(ImportTask.pre_send(requesting_user=request.user, gpkg_name=gpkg_name))
             return redirect(reverse(u"import-view"))
         except QueuingCriteriaViolated as e:
-            return redirect(reverse(u"import-view"))
+            context['error'] = str(e)
+            return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = dict()
+        context['bread_crumbs'] = {
+            'Import': reverse('import-view'), 'Corrente': u"#"}
+        context['current_url'] = current_url
+        context['geopackage_files'] = Import.get_geopackage_files()
+        return context
 
 
 class ExportListView(LoginRequiredMixin, ListView):
@@ -213,16 +226,31 @@ class Freeze(LoginRequiredMixin, ListView):
 
 
 class QueueFreezeView(LoginRequiredMixin, View):
+    template_name = u'freeze/active-freeze.html'
+
     def post(self, request):
         selected_year = request.POST.get(u"selected-year")
         freeze_notes = request.POST.get(u"freeze-notes")
+        context = self.get_context_data()
         try:
             FreezeTask.send(task_id=FreezeTask.pre_send(requesting_user=request.user, ref_year=selected_year, notes=freeze_notes))
             return redirect(reverse(u"freeze-view"))
         except QueuingCriteriaViolated as e:
-            return redirect(reverse(u"freeze-view"))
-        except Exception as e:
-            return redirect(reverse(u"freeze-view"))
+            context['error'] = str(e)
+            return render(request, self.template_name, context)
+        except FileExistsError as e:
+            context['error'] = str(e)
+            return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = dict()
+        context['bread_crumbs'] = {
+            'Freeze': reverse('freeze-view'), 'Corrente': u"#"}
+        context['current_url'] = current_url
+        context['current_year'] = datetime.now().year
+        context['years_available'] = [x for x in range(2000, 2100)]
+        return context
 
 
 class GetFreezeStatus(generics.ListAPIView):

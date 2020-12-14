@@ -32,7 +32,8 @@ class BaseFreezeDefinition:
         netsic_file = os.path.exists(self.netsic_file.substitute(mapping={'year': ref_year}))
         if not all([conf_file, shp_file, netsic_file]):
             return True
-        raise Exception("Configuration files for the selected year Already exists")
+        raise FileExistsError("I file di configurazione per l'anno selezionato sono già stati storicizzati. "
+                              "Prima di riprovare, è necessario eliminare i file esistenti")
 
     def _create_year_folder(self, ref_year):
         try:
