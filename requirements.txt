@@ -25,3 +25,4 @@ openpyxl==3.0.5
 django-postgres-copy==2.4.2
 shapely==1.7.1
 fiona==1.8.18
+networkx==2.5

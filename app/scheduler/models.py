@@ -2,13 +2,14 @@ import os
 import uuid
 import datetime
 from pathlib import Path
+
 from postgres_copy import CopyManager
 
 from app.scheduler.utils import (
     TaskStatus,
     default_storage,
     status_icon_mapper,
-    style_class_mapper,
+    style_class_mapper, Schema,
 )
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -133,3 +134,24 @@ class AllDomains(models.Model):
     class Meta:
         managed = False
         db_table = "all_domains"
+
+
+class CondottaEdge(models.Model):
+    id = models.IntegerField(null=False, primary_key=True)
+    idgis = models.CharField(null=False, max_length=32)
+    source = models.IntegerField(null=False)
+    target = models.IntegerField(null=False)
+    bidirectional = models.BooleanField(default=False, null=True)
+
+    class Meta:
+        managed = False
+        db_table = f'{Schema.ANALYSIS}\".\"acq_condotta_edges'
+
+
+class CondottaNode(models.Model):
+    id = models.IntegerField(null=False, primary_key=True)
+    hidden = models.BooleanField(null=False, default=False)
+
+    class Meta:
+        managed = False
+        db_table = f'{Schema.ANALYSIS}\".\"acq_condotta_nodes'
