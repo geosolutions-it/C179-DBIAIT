@@ -142,6 +142,7 @@ class CondottaEdge(models.Model):
     source = models.IntegerField(null=False)
     target = models.IntegerField(null=False)
     bidirectional = models.BooleanField(default=False, null=True)
+    cost = models.IntegerField(default=0, null=False)
 
     class Meta:
         managed = False

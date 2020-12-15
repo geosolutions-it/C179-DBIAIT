@@ -18,6 +18,6 @@ class Command(BaseCommand):
         x = NetworkFinder(name="condotta")
         print(f"Successors: {x.search_successors(start_node)}")
         print(f"Descendant: {x.search_descendants(start_node)}")
-        print(f"Furthest nodes: {x.get_furthest_nodes(start_node)}")
+        print(f"Furthest nodes: {x.get_boundary_nodes(start_node)}")
         print(datetime.now())
 
