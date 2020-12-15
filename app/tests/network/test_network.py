@@ -75,9 +75,14 @@ class MyTestCase(SimpleTestCase):
         expected = {8, 9, 10}, 6
         self.assertTupleEqual(expected, actual)
 
-    def test_given_restricted_view_of_noted_should_find_all_the_boundaries_nodes_with_his_cost(self):
+    def test_given_restricted_view_of_noted_should_find_all_the_sucessors_nodes_with_his_cost(self):
         actual = self.sut(name="condotta").subgraph_with_hidden_nodes(1)
         expected = [(1, [2, 8, 5]), (2, [3]), (3, [9])], 5
+        self.assertTupleEqual(expected, actual)
+
+    def test_given_restricted_view_of_noted_should_find_all_the_boundaries_nodes_with_his_cost(self):
+        actual = self.sut(name="condotta").get_boundary_nodes_with_obstacles(1)
+        expected = {8, 9, 5}, 5
         self.assertTupleEqual(expected, actual)
 
 

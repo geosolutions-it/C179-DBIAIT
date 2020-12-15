@@ -26,6 +26,14 @@ class NetworkFinder:
         parent_nodes = [x[0] for x in successors]
         return set(all_nodes) - set(parent_nodes), cost
 
+    def get_boundary_nodes_with_obstacles(self, start_node):
+        subgraph = nx.restricted_view(self.G, [x.id for x in self.hidden_nodes], self.edges)
+        successors = sorted(list(nx.bfs_successors(subgraph, start_node)))
+        cost = self._calculate_cost(self.G, successors)
+        all_nodes = [y for x in successors for y in x[1]]
+        parent_nodes = [x[0] for x in successors]
+        return (set(all_nodes) - set(parent_nodes)), cost
+
     def subgraph_with_hidden_nodes(self, start_node):
         subgraph = nx.restricted_view(self.G, [x.id for x in self.hidden_nodes], self.edges)
         successors = sorted(list(nx.bfs_successors(subgraph, start_node)))
