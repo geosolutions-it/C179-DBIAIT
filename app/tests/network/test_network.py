@@ -36,7 +36,7 @@ class MyTestCase(SimpleTestCase):
             ]
         )
 
-    def test_given_a_node_id_1_should_find_the_correct_successor(self):
+    def test_given_a_node_id_1_should_find_the_correct_successor_with_his_cost(self):
         actual = self.sut(name="condotta").search_successors(1)
         expected = [(1, [2, 8, 5]), (2, [3]), (3, [9]), (5, [10])], 6
         self.assertTupleEqual(expected, actual)
@@ -45,17 +45,17 @@ class MyTestCase(SimpleTestCase):
         with self.assertRaises(NetworkXError):
             self.sut(name="condotta").search_successors(1000)
 
-    def test_given_a_node_id_9_should_return_empty_list(self):
+    def test_given_a_node_id_9_should_return_empty_list_with_his_cost(self):
         actual = self.sut(name="condotta").search_successors(9)
         expected = [(9, [])], 0
         self.assertTupleEqual(expected, actual)
 
-    def test_given_a_node_id_10_should_return_the_bidirectional_edge(self):
+    def test_given_a_node_id_10_should_return_the_bidirectional_edge_with_his_cost(self):
         actual = self.sut(name="condotta").search_successors(10)
         expected = [(10, [5])], 1
         self.assertTupleEqual(expected, actual)
 
-    def test_given_a_node_id_2_should_find_the_correct_successor(self):
+    def test_given_a_node_id_2_should_find_the_correct_successor_with_his_cost(self):
         actual = self.sut(name="condotta").search_successors(2)
         expected = [(2, [3]), (3, [9])], 2
         self.assertTupleEqual(expected, actual)
@@ -70,12 +70,12 @@ class MyTestCase(SimpleTestCase):
         expected = [3, 9]
         self.assertListEqual(expected, sorted(actual))
 
-    def test_given_a_node_id_1_should_return_only_the_boundaries_nodes(self):
+    def test_given_a_node_id_1_should_return_only_the_boundaries_nodes_with_his_cost(self):
         actual = self.sut(name="condotta").get_boundary_nodes(1)
         expected = {8, 9, 10}, 6
         self.assertTupleEqual(expected, actual)
 
-    def test_given_restricted_view_of_noted_should_find_all_the_boundaries_nodes(self):
+    def test_given_restricted_view_of_noted_should_find_all_the_boundaries_nodes_with_his_cost(self):
         actual = self.sut(name="condotta").subgraph_with_hidden_nodes(1)
         expected = [(1, [2, 8, 5]), (2, [3]), (3, [9])], 5
         self.assertTupleEqual(expected, actual)
