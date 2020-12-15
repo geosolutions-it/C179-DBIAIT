@@ -38,8 +38,8 @@ class MyTestCase(SimpleTestCase):
 
     def test_given_a_node_id_1_should_find_the_correct_successor(self):
         actual = self.sut(name="condotta").search_successors(1)
-        expected = [(1, [2, 8, 5]), (2, [3]), (3, [9]), (5, [10])]
-        self.assertTupleEqual((sorted(expected), 6), actual)
+        expected = [(1, [2, 8, 5]), (2, [3]), (3, [9]), (5, [10])], 6
+        self.assertTupleEqual(expected, actual)
 
     def test_given_a_node_id_1000_should_raise_exception(self):
         with self.assertRaises(NetworkXError):
