@@ -77,8 +77,8 @@ class MyTestCase(SimpleTestCase):
 
     def test_given_restricted_view_of_noted_should_find_all_the_boundaries_nodes(self):
         actual = self.sut(name="condotta").subgraph_with_hidden_nodes(1)
-        expected = [(1, [2, 8, 5]), (2, [3]), (3, [9])]
-        self.assertTupleEqual((expected, 5), actual)
+        expected = [(1, [2, 8, 5]), (2, [3]), (3, [9])], 5
+        self.assertTupleEqual(expected, actual)
 
 
 if __name__ == "__main__":
