@@ -1,9 +1,8 @@
+import ast
+from datetime import datetime
 from os import fstat, listdir, path
 from urllib import parse
 
-from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
-from app.scheduler.models import Task, TaskStatus, ImportedLayer
-from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer, ExportTaskSerializer
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
@@ -13,9 +12,15 @@ from django.views import View
 from django.views.generic import ListView
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
-from app.scheduler.tasks.process_tasks import process_mapper
-from app.scheduler.tasks.import_task import ImportTask
+
+from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
+from app.scheduler.models import Task, TaskStatus, ImportedLayer, FreezeLayer, Freeze as FreezeModel
+from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer, \
+    ExportTaskSerializer, FreezeLayerSerializer, FreezeSerializer
+from app.scheduler.tasks import FreezeTask
 from app.scheduler.tasks.export_task import ExportTask
+from app.scheduler.tasks.import_task import ImportTask
+from app.scheduler.tasks.process_tasks import process_mapper
 
 
 class Dashboard(LoginRequiredMixin, View):
@@ -105,13 +110,26 @@ class Configuration(LoginRequiredMixin, View):
 
 
 class QueueImportView(LoginRequiredMixin, View):
+    template_name = u'import/active-import.html'
+
     def post(self, request):
         gpkg_name = request.POST.get(u"gpkg-name")
+        context = self.get_context_data()
         try:
             ImportTask.send(ImportTask.pre_send(requesting_user=request.user, gpkg_name=gpkg_name))
             return redirect(reverse(u"import-view"))
         except QueuingCriteriaViolated as e:
-            return redirect(reverse(u"import-view"))
+            context['error'] = str(e)
+            return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = dict()
+        context['bread_crumbs'] = {
+            'Import': reverse('import-view'), 'Corrente': u"#"}
+        context['current_url'] = current_url
+        context['geopackage_files'] = Import.get_geopackage_files()
+        return context
 
 
 class ExportListView(LoginRequiredMixin, ListView):
@@ -123,11 +141,14 @@ class ExportListView(LoginRequiredMixin, ListView):
         Queue export task and return results of export status
         """
         export_schema = request.POST.get(u"export-schema")
+        ref_year = ast.literal_eval(request.POST.get(u"freeze-year"))
         self.object_list = self.get_queryset()
         context = self.get_context_data()
+        if export_schema == 'dbiait_freeze' and ref_year is None:
+            context["error"] = str("Prima di avviare l'export della storicizzazione, selezionare un anno valido")
+            return render(request, ExportListView.template_name, context)
         try:
-            ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema))
-            #ExportTask.execute(ExportTask.pre_send(requesting_user=request.user, schema=export_schema))
+            ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema, ref_year=ref_year))
         except (QueuingCriteriaViolated, SchedulingParametersError) as e:
             context[u"error"] = str(e)
         return render(request, ExportListView.template_name, context)
@@ -141,6 +162,7 @@ class ExportListView(LoginRequiredMixin, ListView):
         context['bread_crumbs'] = {'Export': reverse('export-view')}
         context['current_url'] = current_url
         context['schemas'] = settings.DATABASE_SCHEMAS
+        context['years_available'] = FreezeModel.objects.all().distinct('ref_year').order_by('-ref_year')
         return context
 
 
@@ -189,13 +211,81 @@ class QueueProcessView(LoginRequiredMixin, View):
             return redirect(f"{reverse(u'process-view')}?process_name={process_name}&error={parse.quote(str(e))}")
 
 
-class Freeze(LoginRequiredMixin, View):
-    def get(self, request):
-        bread_crumbs = {
-            'Freeze': reverse('freeze-view'),
-        }
-        context = {'bread_crumbs': bread_crumbs}
-        return render(request, 'freeze/base-freeze.html', context)
+class Freeze(LoginRequiredMixin, ListView):
+    template_name = u'freeze/active-freeze.html'
+    queryset = Task.objects.filter(type='FREEZE', status__in=[
+                                   TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = super(Freeze, self).get_context_data(**kwargs)
+        context['bread_crumbs'] = {
+            'Freeze': reverse('freeze-view'), 'Corrente': u"#"}
+        context['current_url'] = current_url
+        context['current_year'] = datetime.now().year
+        context['years_available'] = [x for x in range(2000, 2100)]
+        return context
+
+
+class QueueFreezeView(LoginRequiredMixin, View):
+    template_name = u'freeze/active-freeze.html'
+
+    def post(self, request):
+        selected_year = request.POST.get(u"selected-year")
+        freeze_notes = request.POST.get(u"freeze-notes")
+        context = self.get_context_data()
+        try:
+            FreezeTask.send(task_id=FreezeTask.pre_send(requesting_user=request.user, ref_year=selected_year, notes=freeze_notes))
+            return redirect(reverse(u"freeze-view"))
+        except QueuingCriteriaViolated as e:
+            context['error'] = str(e)
+            return render(request, self.template_name, context)
+        except FileExistsError as e:
+            context['error'] = str(e)
+            return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = dict()
+        context['bread_crumbs'] = {
+            'Freeze': reverse('freeze-view'), 'Corrente': u"#"}
+        context['current_url'] = current_url
+        context['current_year'] = datetime.now().year
+        context['years_available'] = [x for x in range(2000, 2100)]
+        return context
+
+
+class GetFreezeStatus(generics.ListAPIView):
+    queryset = Task.objects.filter(type='FREEZE').order_by('-id')[:1]
+    serializer_class = FreezeSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class GetFreezeLayer(generics.RetrieveAPIView):
+    serializer_class = FreezeLayerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        """
+        Return only the FreezeLayer related to a specific uuid
+        """
+        task_id = request.query_params['task_id']
+        response = [layer.to_dict() for layer in FreezeLayer.objects.filter(task__uuid=task_id).order_by('-id')]
+        return JsonResponse(response, safe=False)
+
+
+class HistoricalFreeze(LoginRequiredMixin, ListView):
+    template_name = u'freeze/historical-freeze.html'
+    queryset = FreezeModel.objects.filter(task__type='FREEZE').exclude(
+        task__status__in=[TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = super(HistoricalFreeze, self).get_context_data(**kwargs)
+        context['bread_crumbs'] = {
+            'Freeze': reverse('freeze-view'), 'Storico': "#"}
+        context['current_url'] = current_url
+        return context
 
 
 class ExportDownloadView(LoginRequiredMixin, View):

@@ -1,79 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if request.user.is_superuser %}
-<div class="container">
-  <form method="get" class="form-inline">
-    {% csrf_token %}
-    <div class="form-group mx-sm-3 mb-2">
-      <label for="Anno di competenza" class="mx-sm-1">Anno di competenza: </label>
-      <input type="date" class="form-control">
+{% if request.user.is_superuser and FREEZE_FEATURE_TOGGLE %}
+    <div class="container">
+        <div class="tab">
+            <a href="{% url 'freeze-view' %}" class="tablinks{% if current_url == 'freeze-view'%} active{% endif %}">Corrente</a>
+            <a href="{% url 'historical-freeze-view' %}" class="tablinks{% if current_url == 'historical-freeze-view'%} active{% endif %}">Storico</a>
+        </div>
     </div>
-    <div class="form-group mx-sm-3 mb-2">
-      <label for="Anno di competenza" class="mx-sm-1">Note regolatorie: </label>
-      <input type="text" class="form-control" placeholder="Note regolatorie">
-    </div>
-    <div class="form-group mb-2">
-      <button type="submit" class="btn btn-info">
-        <i class="fas fa-plus"></i>
-      </button>
-    </div>
-  </form>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Utente</th>
-        <th>Anno di competenza</th>
-        <th>Data Inizio</th>
-        <th>Data Fine</th>
-        <th>Esito</th>
-        <th>Download</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Messi</td>
-        <td>18/05/2020</td>
-        <td>Josh</td>
-        <td>12/10/2020 10:00</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
-      </tr>
-      <tr>
-        <td>Dybala</td>
-        <td>2020</td>
-        <td>12/10/2020 10:00</td>
-        <td>12/10/2020 10:00</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
-      </tr>
-      <tr>
-        <td>Dybala</td>
-        <td>2020</td>
-        <td>12/10/2020 10:00</td>
-        <td>12/10/2020 10:00</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
-      </tr>
-      <tr>
-        <td>Zlatan</td>
-        <td>2020</td>
-        <td>12/10/2020 10:00</td>
-        <td>12/10/2020 10:00</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
-      </tr>
-      <tr>
-        <td>Mario Balotelli</td>
-        <td>2020</td>
-        <td>12/10/2020 10:00</td>
-        <td>12/10/2020 10:00</td>
-        <td>60 tabelle importate</td>
-        <td>Icon</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+    {% block freeze_content %}
+        {# content of the running/current freeze#}
+    {% endblock %}
 {% else %}
 {% include "errors/denied.html" %}
 {% endif %}

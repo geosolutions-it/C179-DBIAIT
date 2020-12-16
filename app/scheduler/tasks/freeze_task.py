@@ -1,11 +1,14 @@
+import math
+
 from django.contrib.auth import get_user_model
 from django.db.models import Q, ObjectDoesNotExist
 
 from app.scheduler import exceptions
-from app.scheduler.models import Task
+from app.scheduler.models import Task, Freeze
 from app.scheduler.utils import Schema, TaskType, TaskStatus
 
-from .base_task import BaseTask
+from .base_task import BaseTask, trace_it
+from .freeze_definitions.freeze_definitions import FreezeDefinition
 
 
 class FreezeTask(BaseTask):
@@ -24,11 +27,14 @@ class FreezeTask(BaseTask):
     task_type = TaskType.FREEZE
     name = "freeze"
     schema = Schema.FREEZE
+    max_tables_per_import_run = 25
 
     @classmethod
     def pre_send(
         cls,
         requesting_user: get_user_model(),
+        ref_year: str,
+        notes: str,
     ):
 
         # 1. check if the Task may be queued
@@ -38,7 +44,8 @@ class FreezeTask(BaseTask):
 
         if len(colliding_tasks) > 0:
             raise exceptions.QueuingCriteriaViolated(
-                f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
+                # f"I seguenti task impediscono l'avvio del task di Freeze: {[task.type for task in colliding_tasks]}"
+                "Ci sono dei task al momento in secuzione, che impediscono l'avvio del processo di freeze. Si prega di riprovare più tardi"
             )
 
         # 2. create Task ORM model instance for this task execution
@@ -59,13 +66,67 @@ class FreezeTask(BaseTask):
             geopackage=geopackage,
             type=cls.task_type,
             name=cls.name,
+            params={"kwargs": {"ref_year": str(ref_year), "notes": notes}}
         )
+        '''
+        Before save the task in "queued", the system will check if the configuration files 
+        are already present in the export folder. This is needed here because otherwise 
+        we will not raise the exception to the user
+        '''
+        FreezeDefinition(current_task).freeze_configuration_files(year=ref_year)
+        '''
+        If the file are copied, we will save the task in queued mode
+        '''
         current_task.save()
 
         return current_task.id
 
-    def execute(self, task_id: int, *args, **kwargs) -> None:
+    def execute(self, task_id: int, *args, ref_year: str = None, notes: str = None, **kwargs) -> None:
         """
-        This function should contain the actual code freezing data
+        Freezing data.
+        By Default ref_year and notes are passed by **kwargs. For local usage (with execute) pass them as param to the execute command
         """
-        pass
+        print(f"Starting FREEZE execution of of year: {ref_year}")
+
+        try:
+            orm_task = Task.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
+            )
+            raise
+
+        freeze_information = Freeze(
+            ref_year=ref_year,
+            notes=notes,
+            task=orm_task
+        )
+        freeze_information.save()
+
+        feature_classes = FreezeDefinition.get_freeze_layers()
+        total_feature_classes_number = len(feature_classes)
+        import_steps_number = math.ceil(
+            total_feature_classes_number / self.max_tables_per_import_run
+        )
+
+        for step in range(import_steps_number):
+            offset = step * self.max_tables_per_import_run
+            limit = self.max_tables_per_import_run
+            # Import of Feature Classes
+            freeze_process = FreezeDefinition(
+                  orm_task=orm_task,
+                  offset=offset,
+                  limit=limit,
+                  current_year=ref_year,
+                  notes=notes
+              )
+            progress = freeze_process.run()
+
+            orm_task.progress = progress
+            orm_task.save()
+
+        setattr(orm_task, 'progress', 100)
+        orm_task.save()
+
+        print(f"Finished FREEZE execution of of year: {ref_year}")

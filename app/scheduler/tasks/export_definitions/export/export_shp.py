@@ -67,8 +67,8 @@ class ExportShp(ExportBase):
         qgs, processing, gdal_utils, is_windows = initQgis()
 
         # parse export configuration
-        config = ShpExportConfig()
-
+        config = ShpExportConfig(self.ref_year)
+        print(f"Exporting Shape for {len(config)} config files")
         # calculate total number of steps
         total_shapes_number = len(config)
         step = 1
