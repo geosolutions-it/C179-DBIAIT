@@ -43,6 +43,7 @@ CREATE TABLE DBIAIT_ANALYSIS.DISTRIB_LOC_SERV (
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.POP_RES_COMUNE;
 CREATE TABLE DBIAIT_ANALYSIS.POP_RES_COMUNE (
+	OID			SERIAL,
 	PRO_COM 	VARCHAR(8),
 	DENOM 		VARCHAR(100),
 	POP_RES 	INTEGER,
@@ -312,6 +313,7 @@ CREATE TABLE DBIAIT_ANALYSIS.COLLETT_TRONCHI(
 	idx_ANNO 				VARCHAR(5),  
 	idx_LUNGHEZZA 			VARCHAR(5),  
 	depurazione 			BIT(1),  
+	id_refluo_trasportato 	VARCHAR(5), 
 	note 					VARCHAR(255) 
 );
 SELECT AddGeometryColumn ('dbiait_analysis','collett_tronchi','geom', 25832, 'MULTILINESTRING',2);
@@ -376,7 +378,8 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE(
 	codice_ato		VARCHAR(32),
 	tipo_infr		VARCHAR(100),
 	lunghezza 		double precision,
-	lunghezza_dep 	double precision
+	lunghezza_dep 	double precision,
+	id_refluo_trasportato INTEGER
 );
 
 --
@@ -750,7 +753,57 @@ CREATE TABLE DBIAIT_ANALYSIS.confine_comunale
     denom character varying(100),		--
     pro_com__1 character varying(50),
     shape_leng double precision,
-    shape_area double precision			--
+    shape_area double precision,		
+	PRIMARY KEY(pro_com)
 );
 SELECT AddGeometryColumn ('dbiait_analysis', 'confine_comunale', 'geom', 25832, 'MULTIPOLYGON', 2);
+---------------------------------------------------------------------------------------------------
+alter table DBIAIT_ANALYSIS.confine_comunale add constraint confine_comunale_uq UNIQUE(pro_com);
+alter table DBIAIT_ANALYSIS.pop_res_comune   add constraint pop_res_comune_pk PRIMARY KEY(pro_com);
+alter table DBIAIT_ANALYSIS.utenza_sap       add constraint utenza_sap_pk PRIMARY KEY(impianto);
+alter table DBIAIT_ANALYSIS.acq_cond_altro   add constraint acq_cond_altro_pk PRIMARY KEY(idgis);
+alter table DBIAIT_ANALYSIS.fgn_cond_altro   add constraint fgn_cond_altro_pk PRIMARY KEY(idgis);
+alter table DBIAIT_ANALYSIS.archivio_pompe   add column oid serial;
+alter table DBIAIT_ANALYSIS.FIUMI_INRETI     add constraint fiumi_inreti_pk PRIMARY KEY(ids_codice,ids_codice_rete);
+alter table DBIAIT_ANALYSIS.LAGHI_INRETI     add constraint laghi_inreti_pk PRIMARY KEY(ids_codice,ids_codice_rete);
+alter table DBIAIT_ANALYSIS.POZZI_INRETI     add constraint pozzi_inreti_pk PRIMARY KEY(ids_codice,ids_codice_rete);
+alter table DBIAIT_ANALYSIS.SORGENTI_INRETI  add constraint sorgenti_inreti_pk PRIMARY KEY(ids_codice,ids_codice_rete);
+alter table DBIAIT_ANALYSIS.POTAB_INRETI     add constraint potab_inreti_pk PRIMARY KEY(ids_codice,ids_codice_rete);
+alter table DBIAIT_ANALYSIS.ADDUT_INRETI     add constraint addut_inreti_pk PRIMARY KEY(ids_codice,ids_codice_rete);
+alter table DBIAIT_ANALYSIS.ACCUMULI_INRETI  add constraint accumuli_inreti_pk PRIMARY KEY(ids_codice,ids_codice_rete);
+alter table DBIAIT_ANALYSIS.ADDUT_COM_SERV   add constraint ADDUT_COM_SERV_pk PRIMARY KEY(ids_codice,id_comune_istat);
+alter table DBIAIT_ANALYSIS.COLLET_COM_SERV  add constraint COLLET_COM_SERV_pk PRIMARY KEY(ids_codice,id_comune_istat);
+alter table DBIAIT_ANALYSIS.ACCUMULI_INADD   add constraint ACCUMULI_INADD_pk PRIMARY KEY(ids_codice,ids_codice_adduzione);
+alter table DBIAIT_ANALYSIS.DEPURATO_INCOLL  add constraint DEPURATO_INCOLL_pk PRIMARY KEY(ids_codice,ids_codice_collettore);
+alter table DBIAIT_ANALYSIS.SCARICATO_INFOG  add constraint SCARICATO_INFOG_pk PRIMARY KEY(ids_codice,ids_codice_fognatura);
+alter table DBIAIT_ANALYSIS.FIUMI_INPOTAB    add constraint FIUMI_INPOTAB_pk PRIMARY KEY(ids_codice,ids_codice_potab);
+alter table DBIAIT_ANALYSIS.LAGHI_INPOTAB    add constraint LAGHI_INPOTAB_pk PRIMARY KEY(ids_codice,ids_codice_potab);
+alter table DBIAIT_ANALYSIS.POZZI_INPOTAB    add constraint POZZI_INPOTAB_pk PRIMARY KEY(ids_codice,ids_codice_potab);
+alter table DBIAIT_ANALYSIS.SORGENTI_INPOTAB add constraint SORGENTI_INPOTAB_pk PRIMARY KEY(ids_codice,ids_codice_potab);
+alter table DBIAIT_ANALYSIS.POTAB_INCAPTAZ	 add constraint POTAB_INCAPTAZ_pk PRIMARY KEY(ids_codice,ids_codice_captazione);
+alter table DBIAIT_ANALYSIS.POMPAGGI_INPOTAB add constraint POMPAGGI_INPOTAB_pk PRIMARY KEY(ids_codice,ids_codice_potab);
+alter table DBIAIT_ANALYSIS.POMPAGGI_INSERBA add constraint POMPAGGI_INSERBA_pk PRIMARY KEY(ids_codice,ids_codice_serbatoio);
+--alter table DBIAIT_ANALYSIS.DECOD_COM	       add constraint DECOD_COM_pk PRIMARY KEY(PRO_COM_ACC,PRO_COM);
+alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO	   add constraint UTENZA_SERVIZIO_pk PRIMARY KEY(ID_UBIC_CONTATORE);
+alter table DBIAIT_ANALYSIS.ABITANTI_TRATTATI  add constraint ABITANTI_TRATTATI_pk PRIMARY KEY(IDGIS);
+alter table DBIAIT_ANALYSIS.DISTRIB_TRONCHI	   add constraint DISTRIB_TRONCHI_pk PRIMARY KEY(IDGIS);
+alter table DBIAIT_ANALYSIS.ADDUT_TRONCHI	   add constraint ADDUT_TRONCHI_pk PRIMARY KEY(IDGIS);
+alter table DBIAIT_ANALYSIS.ACQ_SHAPE	       add constraint ACQ_SHAPE_pk PRIMARY KEY(ids_codi_1);
+alter table DBIAIT_ANALYSIS.ACQ_LUNGHEZZA_RETE add constraint ACQ_LUNGHEZZA_RETE_pk PRIMARY KEY(idgis);
+alter table DBIAIT_ANALYSIS.FOGNAT_TRONCHI	   add constraint FOGNAT_TRONCHI_pk PRIMARY KEY(idgis);
+alter table DBIAIT_ANALYSIS.COLLETT_TRONCHI	   add constraint COLLETT_TRONCHI_pk PRIMARY KEY(idgis);
+alter table DBIAIT_ANALYSIS.FGN_SHAPE	       add constraint FGN_SHAPE_pk PRIMARY KEY(ids_codi_1);
+alter table DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE add constraint FGN_LUNGHEZZA_RETE_pk PRIMARY KEY(idgis);
+alter table DBIAIT_ANALYSIS.ACQ_ALLACCIO	   add constraint ACQ_ALLACCIO_pk PRIMARY KEY(IDGIS);
+alter table DBIAIT_ANALYSIS.FGN_ALLACCIO	   add constraint FGN_ALLACCIO_pk PRIMARY KEY(IDGIS);
+alter table DBIAIT_ANALYSIS.POMPAGGI_POMPE	   add column oid SERIAL;
+alter table DBIAIT_ANALYSIS.SOLLEV_POMPE	   add column oid SERIAL;
+alter table DBIAIT_ANALYSIS.DEPURATO_POMPE	   add column oid SERIAL;
+alter table DBIAIT_ANALYSIS.POTAB_POMPE	       add column oid SERIAL;
+alter table DBIAIT_ANALYSIS.POZZI_POMPE	       add column oid SERIAL;
+alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_ACQ	add constraint UTENZA_SERVIZIO_ACQ_pk PRIMARY KEY(ID_UBIC_CONTATORE);
+alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_LOC	add constraint UTENZA_SERVIZIO_LOC_pk PRIMARY KEY(ID_UBIC_CONTATORE);
+alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_FGN	add constraint UTENZA_SERVIZIO_FGN_pk PRIMARY KEY(ID_UBIC_CONTATORE);
+alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_BAC	add constraint UTENZA_SERVIZIO_BAC_pk PRIMARY KEY(ID_UBIC_CONTATORE);
+-----------------------------------------------------------------------------------------------------------------------
 
