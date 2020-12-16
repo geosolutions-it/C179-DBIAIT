@@ -862,16 +862,12 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi_fgn(
 DECLARE
 	v_sub_funzione INTEGER := 0;
 	v_join_table VARCHAR(32):='';
-	v_col_refluo VARCHAR(32):='';
-	v_exp_refluo VARCHAR(64):='';
 	v_tipo_infr VARCHAR(32);
 BEGIN
 
 	IF v_table = 'FOGNAT_TRONCHI' THEN
 		v_sub_funzione := 1;
 		v_join_table := 'FGN_RETE_RACC';
-		v_col_refluo := ',id_refluo_trasportato';
-		v_exp_refluo := 'a.d_tipo_acqua as id_refluo_trasportato,';
 		v_tipo_infr := 'RETE RACCOLTA';
 	ELSIF v_table = 'COLLETT_TRONCHI' THEN
 		v_sub_funzione := 2;
@@ -899,7 +895,7 @@ BEGIN
 			,idx_diametro	
 			,idx_anno		
 			,idx_lunghezza	
-			' || v_col_refluo || '
+			,id_refluo_trasportato
 			,funziona_gravita
 			,depurazione		
 		)
@@ -932,7 +928,7 @@ BEGIN
 				ELSE ''B''
 			END idx_anno, 
 			a.d_tipo_rilievo as idx_lunghezza,
-			' || v_exp_refluo || '
+			a.d_tipo_acqua as id_refluo_trasportato,
 			0::BIT,
 			0::BIT
 		FROM 
@@ -971,20 +967,18 @@ BEGIN
 		WHERE d.valore_gis = COALESCE(' || v_table || '.idx_lunghezza,''SCO'') AND d.dominio_gis = ''D_T_RILIEVO'';
 	';
 	
-	IF v_table = 'FOGNAT_TRONCHI' THEN	
-		-- valorizzazione id_refluo_trasportato
-		EXECUTE '
-			UPDATE ' || v_table || '
-			SET id_refluo_trasportato = d.valore_netsic
-			FROM ALL_DOMAINS d
-			WHERE d.valore_gis = COALESCE(' || v_table || '.id_refluo_trasportato,''MIS'') AND d.dominio_netsic = ''id_refluo_trasportato'';
-		';
-		EXECUTE '
-			UPDATE ' || v_table || '
-			SET id_refluo_trasportato = ''1''
-			WHERE to_integer(id_refluo_trasportato, -9) = -9;
-		';
-	END IF;
+	-- valorizzazione id_refluo_trasportato
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_refluo_trasportato = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = COALESCE(' || v_table || '.id_refluo_trasportato,''MIS'') AND d.dominio_netsic = ''id_refluo_trasportato'';
+	';
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_refluo_trasportato = ''1''
+		WHERE to_integer(id_refluo_trasportato, -9) = -9;
+	';
 	
 	-- valorizzazione funziona_gravita
 	EXECUTE '
@@ -1111,7 +1105,8 @@ BEGIN
 		codice_ato,
 		tipo_infr,
 		lunghezza,
-		lunghezza_dep
+		lunghezza_dep,
+		id_refluo_trasportato
 	)
 	select 
 		idgis_rete, codice_ato, 'DISTRIBUZIONE', sum(lunghezza) lung, 
@@ -1120,10 +1115,11 @@ BEGIN
 				or t.idgis_bac is not NULL
 			then lunghezza 
 			else 0 end
-		) lung_tlc 
+		) lung_tlc,
+		case when sum(id_rt) = 0 then 2 else 1 end
 	from (
 		select 
-			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, 	  
+			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
 			case when 
 				recapito IS NOT NULL or bc.idgis is not NULL
 				then lunghezza 
@@ -1141,7 +1137,8 @@ BEGIN
 		codice_ato,
 		tipo_infr,
 		lunghezza,
-		lunghezza_dep
+		lunghezza_dep,
+		id_refluo_trasportato
 	)
 	select 
 		idgis_rete, codice_ato, 'ADDUZIONE', sum(lunghezza) lung, 
@@ -1150,10 +1147,11 @@ BEGIN
 				or t.idgis_bac is not NULL
 			then lunghezza 
 			else 0 end
-		) lung_tlc 
+		) lung_tlc,
+		case when sum(id_rt) = 0 then 2 else 1 end
 	from (
 		select 
-			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, 	  
+			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
 			case when 
 				recapito IS NOT NULL or bc.idgis is not NULL
 				then lunghezza 
@@ -1409,8 +1407,8 @@ BEGIN
 					WHERE 
 						d.idgis = cc.id_immissione 
 						and c.sub_funzione = 0
-						and c.geom&&st_buffer(d.geom, 0.01)
-						and st_intersects(c.geom, st_buffer(d.geom, 0.01))
+						and c.geom&&st_buffer(d.geom, v_tol)
+						and st_intersects(c.geom, st_buffer(d.geom, v_tol))
 				) t GROUP BY t.id_condotta
 			) z
 			WHERE ac.idgis = z.id_condotta	
@@ -1465,8 +1463,8 @@ BEGIN
 					WHERE 
 						d.idgis = cc.id_immissione 
 						and c.sub_funzione = 0
-						and c.geom&&st_buffer(d.geom, 0.01)
-						and st_intersects(c.geom, st_buffer(d.geom, 0.01))
+						and c.geom&&st_buffer(d.geom, v_tol)
+						and st_intersects(c.geom, st_buffer(d.geom, v_tol))
 				) t GROUP BY t.id_condotta
 			) z
 			WHERE ac.idgis = z.id_condotta	
@@ -1554,6 +1552,24 @@ BEGIN
 			AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
 		) x GROUP BY x.idgis
 	) w WHERE w.idgis = FGN_COND_ALTRO.idgis;
+
+
+	--
+	INSERT INTO FGN_ALLACCIO(
+		idgis, codice_ato, tipo_infr, 
+		nr_allacci_c, lung_alla_c, 
+		nr_allacci_i, lung_alla_i, 
+		nr_allacci_c_ril, lung_alla_c_ril, 
+		nr_allacci_i_ril, lung_alla_i_ril
+	)
+	SELECT id_rete, codice_ato, tipo_infr, 
+		sum(nr_allacci_c), sum(lu_allacci_c)/1000, 
+		sum(nr_allacci_i), sum(lu_allacci_i)/1000, 
+		sum(nr_allacci_c_ril), sum(lu_allacci_c_ril)/1000,
+		sum(nr_allacci_i_ril), sum(lu_allacci_i_ril)/1000
+	FROM FGN_COND_ALTRO 
+	WHERE id_rete is NOT NULL
+	GROUP BY id_rete, codice_ato, tipo_infr;
 
 	--
 	-- LOG ANOMALIES
@@ -1961,14 +1977,24 @@ BEGIN
 			GROUP BY codice_ato
 		) t1,
 		(
-			SELECT 
-				DISTINCT ON (codice_ato) t.codice_ato, t.idx_potenza 
-			FROM (
-				SELECT codice_ato, idx_potenza, COUNT(0) cnt
-				FROM ' || v_tables[v_t] || ' 
+			select codice_ato,
+			   case when t.avg_potenza = 1 then ''A''
+					when t.avg_potenza = 2 then ''C''
+					when t.avg_potenza = 3 then ''D''
+					else ''B''
+			   end idx_potenza
+			FROM(
+				SELECT codice_ato, 
+				ROUND(avg(
+					case when idx_potenza=''A'' then 1
+						 when idx_potenza=''C'' then 2
+						 when idx_potenza=''D'' then 3
+						 else 0
+					end
+				)) avg_potenza
+				FROM ' || v_tables[v_t] || '
 				GROUP BY codice_ato, idx_potenza
 			) t
-			ORDER BY codice_ato, cnt DESC
 		) t2
 		WHERE t1.codice_ato = t2.codice_ato;';
 		
@@ -2183,4 +2209,125 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
+-------------------------------------------------------------------------------------------------------
+-- Create the network node for a specified table
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.create_network_nodes('acq_condotta')
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.create_network_nodes(
+	v_table_name VARCHAR
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_node_table VARCHAR;
+BEGIN
+	v_node_table := v_table_name || '_nodes';
+	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_node_table;
+	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_node_table || '(id INTEGER)';
+	PERFORM AddGeometryColumn ('dbiait_analysis', v_node_table, 'geom', 25832, 'POINT', 2); 
 	
+	EXECUTE '
+		INSERT INTO dbiait_analysis.' || v_node_table || ' (geom, id)
+		select geom, ROW_NUMBER () OVER () id from (
+
+			select distinct on (ST_ASTEXT(geom)) geom
+			from (
+				
+				select 
+				   st_snaptogrid(st_startpoint(t.geom), 0.001) geom
+				from (
+				   select st_geometryn(geom, 1) geom
+				   from ' || v_table_name || '
+				   where st_numgeometries(geom)=1
+				) t
+				
+				UNION ALL
+				
+				select 
+				   st_snaptogrid(st_endpoint(t.geom), 0.001) geom
+				from (
+				   select st_geometryn(geom, 1) geom
+				   from ' || v_table_name || '
+				   where st_numgeometries(geom)=1
+				) t
+				
+			) t2
+			
+		) t3
+	';
+	
+	EXECUTE 'CREATE INDEX ' || v_node_table || '_geom_idx ON dbiait_analysis.' || v_node_table || ' USING GIST(geom)';
+	
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;	
+-------------------------------------------------------------------------------------------------------
+-- Create the network edges for a specified table
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.create_network_edges('acq_condotta')
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.create_network_edges(
+	v_table_name VARCHAR
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_edge_table VARCHAR;
+	v_tol DOUBLE PRECISION;
+BEGIN
+	v_tol := snap_tolerance();
+	v_edge_table := v_table_name || '_edges';
+	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_edge_table;
+	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_edge_table || '(id INTEGER, idgis VARCHAR(32), source INTEGER, target INTEGER)';
+	PERFORM AddGeometryColumn ('dbiait_analysis', v_edge_table, 'geom', 25832, 'LINESTRING', 2); 
+	
+	EXECUTE '
+		INSERT INTO dbiait_analysis.' || v_edge_table || ' (id, idgis, geom)
+		SELECT ROW_NUMBER () OVER () id, idgis, st_geometryn(geom, 1) geom
+		FROM ' || v_table_name || '
+		WHERE st_numgeometries(geom) = 1
+	';
+	
+	EXECUTE 'CREATE INDEX ' || v_edge_table || '_geom_idx ON dbiait_analysis.' || v_edge_table || ' USING GIST(geom)';
+	
+	--Update source field
+	EXECUTE '
+	update dbiait_analysis.' || v_edge_table || '
+	set source = n.id
+	from acq_condotta_nodes n
+	where st_buffer(st_startpoint(dbiait_analysis.' || v_edge_table || '.geom),$1)&&n.geom
+	and st_intersects(n.geom,st_buffer(st_startpoint(dbiait_analysis.' || v_edge_table || '.geom),$2))
+	' USING v_tol, v_tol;
+	--Update target field
+	EXECUTE '
+	update dbiait_analysis.' || v_edge_table || '
+	set target = n.id
+	from acq_condotta_nodes n
+	where st_buffer(st_endpoint(dbiait_analysis.' || v_edge_table || '.geom),$1)&&n.geom
+	and st_intersects(n.geom,st_buffer(st_endpoint(dbiait_analysis.' || v_edge_table || '.geom),$2))
+	' USING v_tol, v_tol;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql 
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+-------------------------------------------------------------------------------------------------------
+-- Create the networks for acq_condotta/fgn_condotta
+--
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.create_networks()
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.create_networks(
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_result BOOLEAN;
+BEGIN
+	-- Rete Idrica
+	PERFORM DBIAIT_ANALYSIS.create_network_nodes('acq_condotta');
+	PERFORM DBIAIT_ANALYSIS.create_network_edges('acq_condotta');
+	-- Rete Fognaria
+	PERFORM DBIAIT_ANALYSIS.create_network_nodes('fgn_condotta');
+	PERFORM DBIAIT_ANALYSIS.create_network_edges('fgn_condotta');
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+

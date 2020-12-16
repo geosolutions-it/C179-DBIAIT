@@ -6,6 +6,7 @@
       "shapefile_configs/config_laghi.json",
       "shapefile_configs/config_potabilizzatori.json",
       "shapefile_configs/config_pozzi.json",
+      "shapefile_configs/config_pompaggi.json",
       "shapefile_configs/config_scaricatori.json",
       "shapefile_configs/config_sollevamenti.json",
       "shapefile_configs/config_sorgenti.json",
