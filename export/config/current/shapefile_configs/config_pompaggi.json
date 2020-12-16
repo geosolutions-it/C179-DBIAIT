@@ -1,0 +1,30 @@
+{
+   "file_name": "pompaggi.shp",
+   "skip": false,
+   "folder": "Shape/Impianti",
+   "sources":[
+      {
+         "fields":[
+             {"name":"acq_pompaggio.geom", "alias": "geom"},
+             {"name":"acq_pompaggio.geom", "alias": "x_proj", "function": "ST_X"},
+             {"name":"acq_pompaggio.geom", "alias": "y_proj", "function": "ST_Y"},
+             {"name":"acq_pompaggio.codice_ato","alias": "codice_ato"}
+         ],
+         "table":{
+            "name":"acq_pompaggio"
+         },
+         "filter": "WHERE acq_pompaggio.d_gestore = 'PUBLIACQUA' AND acq_pompaggio.d_ambito IN ('AT3', NULL) AND acq_pompaggio.d_stato NOT IN ('IPR', 'IAC')"
+      },{
+         "fields":[
+             {"name":"a_acq_pompaggio.geom", "alias": "geom"},
+             {"name":"a_acq_pompaggio.geom", "alias": "x_proj", "function": "ST_X"},
+             {"name":"a_acq_pompaggio.geom", "alias": "y_proj", "function": "ST_Y"},
+             {"name":"a_acq_pompaggio.codice_ato","alias": "codice_ato"}
+         ],
+         "table":{
+            "name":"a_acq_pompaggio"
+         },
+         "filter": "WHERE a_acq_pompaggio.d_gestore = 'PUBLIACQUA' AND a_acq_pompaggio.d_ambito IN ('AT3', NULL) AND a_acq_pompaggio.d_stato NOT IN ('IPR', 'IAC')"
+      }
+   ]
+}

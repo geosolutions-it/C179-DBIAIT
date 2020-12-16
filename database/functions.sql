@@ -862,16 +862,12 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi_fgn(
 DECLARE
 	v_sub_funzione INTEGER := 0;
 	v_join_table VARCHAR(32):='';
-	v_col_refluo VARCHAR(32):='';
-	v_exp_refluo VARCHAR(64):='';
 	v_tipo_infr VARCHAR(32);
 BEGIN
 
 	IF v_table = 'FOGNAT_TRONCHI' THEN
 		v_sub_funzione := 1;
 		v_join_table := 'FGN_RETE_RACC';
-		v_col_refluo := ',id_refluo_trasportato';
-		v_exp_refluo := 'a.d_tipo_acqua as id_refluo_trasportato,';
 		v_tipo_infr := 'RETE RACCOLTA';
 	ELSIF v_table = 'COLLETT_TRONCHI' THEN
 		v_sub_funzione := 2;
@@ -899,7 +895,7 @@ BEGIN
 			,idx_diametro	
 			,idx_anno		
 			,idx_lunghezza	
-			' || v_col_refluo || '
+			,id_refluo_trasportato
 			,funziona_gravita
 			,depurazione		
 		)
@@ -932,7 +928,7 @@ BEGIN
 				ELSE ''B''
 			END idx_anno, 
 			a.d_tipo_rilievo as idx_lunghezza,
-			' || v_exp_refluo || '
+			a.d_tipo_acqua as id_refluo_trasportato,
 			0::BIT,
 			0::BIT
 		FROM 
@@ -971,20 +967,18 @@ BEGIN
 		WHERE d.valore_gis = COALESCE(' || v_table || '.idx_lunghezza,''SCO'') AND d.dominio_gis = ''D_T_RILIEVO'';
 	';
 	
-	IF v_table = 'FOGNAT_TRONCHI' THEN	
-		-- valorizzazione id_refluo_trasportato
-		EXECUTE '
-			UPDATE ' || v_table || '
-			SET id_refluo_trasportato = d.valore_netsic
-			FROM ALL_DOMAINS d
-			WHERE d.valore_gis = COALESCE(' || v_table || '.id_refluo_trasportato,''MIS'') AND d.dominio_netsic = ''id_refluo_trasportato'';
-		';
-		EXECUTE '
-			UPDATE ' || v_table || '
-			SET id_refluo_trasportato = ''1''
-			WHERE to_integer(id_refluo_trasportato, -9) = -9;
-		';
-	END IF;
+	-- valorizzazione id_refluo_trasportato
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_refluo_trasportato = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = COALESCE(' || v_table || '.id_refluo_trasportato,''MIS'') AND d.dominio_netsic = ''id_refluo_trasportato'';
+	';
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_refluo_trasportato = ''1''
+		WHERE to_integer(id_refluo_trasportato, -9) = -9;
+	';
 	
 	-- valorizzazione funziona_gravita
 	EXECUTE '
@@ -1111,7 +1105,8 @@ BEGIN
 		codice_ato,
 		tipo_infr,
 		lunghezza,
-		lunghezza_dep
+		lunghezza_dep,
+		id_refluo_trasportato
 	)
 	select 
 		idgis_rete, codice_ato, 'DISTRIBUZIONE', sum(lunghezza) lung, 
@@ -1120,10 +1115,11 @@ BEGIN
 				or t.idgis_bac is not NULL
 			then lunghezza 
 			else 0 end
-		) lung_tlc 
+		) lung_tlc,
+		case when sum(id_rt) = 0 then 2 else 1 end
 	from (
 		select 
-			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, 	  
+			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
 			case when 
 				recapito IS NOT NULL or bc.idgis is not NULL
 				then lunghezza 
@@ -1141,7 +1137,8 @@ BEGIN
 		codice_ato,
 		tipo_infr,
 		lunghezza,
-		lunghezza_dep
+		lunghezza_dep,
+		id_refluo_trasportato
 	)
 	select 
 		idgis_rete, codice_ato, 'ADDUZIONE', sum(lunghezza) lung, 
@@ -1150,10 +1147,11 @@ BEGIN
 				or t.idgis_bac is not NULL
 			then lunghezza 
 			else 0 end
-		) lung_tlc 
+		) lung_tlc,
+		case when sum(id_rt) = 0 then 2 else 1 end
 	from (
 		select 
-			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, 	  
+			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
 			case when 
 				recapito IS NOT NULL or bc.idgis is not NULL
 				then lunghezza 
@@ -1554,6 +1552,24 @@ BEGIN
 			AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
 		) x GROUP BY x.idgis
 	) w WHERE w.idgis = FGN_COND_ALTRO.idgis;
+
+
+	--
+	INSERT INTO FGN_ALLACCIO(
+		idgis, codice_ato, tipo_infr, 
+		nr_allacci_c, lung_alla_c, 
+		nr_allacci_i, lung_alla_i, 
+		nr_allacci_c_ril, lung_alla_c_ril, 
+		nr_allacci_i_ril, lung_alla_i_ril
+	)
+	SELECT id_rete, codice_ato, tipo_infr, 
+		sum(nr_allacci_c), sum(lu_allacci_c)/1000, 
+		sum(nr_allacci_i), sum(lu_allacci_i)/1000, 
+		sum(nr_allacci_c_ril), sum(lu_allacci_c_ril)/1000,
+		sum(nr_allacci_i_ril), sum(lu_allacci_i_ril)/1000
+	FROM FGN_COND_ALTRO 
+	WHERE id_rete is NOT NULL
+	GROUP BY id_rete, codice_ato, tipo_infr;
 
 	--
 	-- LOG ANOMALIES
@@ -1961,14 +1977,24 @@ BEGIN
 			GROUP BY codice_ato
 		) t1,
 		(
-			SELECT 
-				DISTINCT ON (codice_ato) t.codice_ato, t.idx_potenza 
-			FROM (
-				SELECT codice_ato, idx_potenza, COUNT(0) cnt
-				FROM ' || v_tables[v_t] || ' 
+			select codice_ato,
+			   case when t.avg_potenza = 1 then ''A''
+					when t.avg_potenza = 2 then ''C''
+					when t.avg_potenza = 3 then ''D''
+					else ''B''
+			   end idx_potenza
+			FROM(
+				SELECT codice_ato, 
+				ROUND(avg(
+					case when idx_potenza=''A'' then 1
+						 when idx_potenza=''C'' then 2
+						 when idx_potenza=''D'' then 3
+						 else 0
+					end
+				)) avg_potenza
+				FROM ' || v_tables[v_t] || '
 				GROUP BY codice_ato, idx_potenza
 			) t
-			ORDER BY codice_ato, cnt DESC
 		) t2
 		WHERE t1.codice_ato = t2.codice_ato;';
 		
@@ -2279,7 +2305,7 @@ BEGIN
 	' USING v_tol, v_tol;
 	RETURN TRUE;
 END;
-$$  LANGUAGE plpgsql
+$$  LANGUAGE plpgsql 
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
 -------------------------------------------------------------------------------------------------------

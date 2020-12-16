@@ -271,7 +271,7 @@ IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'co
 IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
 
 # Directory in which generated exports are kept
-EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(BASE_DIR, "export"))
+EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(FTP_FOLDER, "export"))
 
 EXPORT_CONF_DIR = os.getenv("EXPORT_CONF_DIR", os.path.join(EXPORT_FOLDER, 'config'))
 
