@@ -1,7 +1,7 @@
-{% extends "import/base-import.html" %}
+{% extends "freeze/base-freeze.html" %}
 {% load utils %}
 
-{% block import_content %}
+{% block freeze_content %}
 {% if object_list%}
 <div class="container">
   <table class="table">
@@ -13,7 +13,7 @@
         <th></th>
       </tr>
     </thead>
-    <tbody id="import-status-table">
+    <tbody id="freeze-status-table">
       <tr>
         <td colspan="3" class="text-center">
           <small class="text-secondary">Attendere...</small>
@@ -21,7 +21,7 @@
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm" id="dt-import-table">
+  <table class="table table-sm" id="dt-freeze-table">
     <thead>
       <tr>
           <th>Layer</th>
@@ -30,7 +30,7 @@
           <th>Status</th>
         </tr>
     </thead>
-     <tbody id="test-import-table">
+     <tbody id="layer-freeze-table">
       <tr>
         <td class="text-center">
           <small class="text-secondary">Attendere...</small>
@@ -44,23 +44,23 @@
 </div>
 <script>
   window.addEventListener("load", function () {
-    ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table");
-    setInterval(function () { ajax_call("{% url 'get-import-status-api-view' %}", "#import-status-table") }, 5000);
+    ajax_call("{% url 'get-freeze-status-api-view' %}", "#freeze-status-table");
+    setInterval(function () { ajax_call("{% url 'get-freeze-status-api-view' %}", "#freeze-status-table") }, 5000);
   });
 </script>
 <script>
   window.addEventListener("load", function () {
     setInterval(function () {
-      var url = "{% url 'get-single-import-status-api-view' %}" + "?task_id=";
-      var taskId = $("#import-status-table #task_uuid").text();
-      ajax_call(url + taskId, "#test-import-table")
+      var url = "{% url 'get-single-freeze-status-api-view' %}" + "?task_id=";
+      var taskId = $("#freeze-status-table #task_uuid").text();
+      ajax_call(url + taskId, "#layer-freeze-table")
       }, 5000
     );
   });
 </script>
 <script>
   $(document).ready(function() {
-    $('#dt-import-table').DataTable( {
+    $('#dt-freeze-table').DataTable( {
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
         },
@@ -69,20 +69,42 @@
 } );
 </script>
 {% else %}
-<div class="container mt-5">
-  <form method="post" action="{% url 'queue-import-view' %}" class="mt-5">
+<div class="container mt-5 table-responsive">
+  <form method="post" action="{% url 'queue-freeze-view' %}" class="mt-5">
     {% csrf_token %}
-    <div class="form-group mt-5">
-      <select name="gpkg-name" class="form-control form-control-lg">
-        {% for file in geopackage_files %}
-        <option value="{{ file }}">{{ file }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <button type="submit" class="btn btn-info mb-2 btn-block">AVVIA</button>
+    <table class="table-sm form-group mx-auto w-auto">
+      <thead>
+        <tr>
+            <th>Anno</th>
+            <th>
+              <select name="selected-year" class="form-control md">
+              {% for year in years_available %}
+                {% if year == current_year %}
+                <option selected value="{{ year }}">{{ year }}</option>
+                {% else %}
+                <option value="{{ year }}">{{ year }}</option>
+                {% endif %}
+              {% endfor %}
+              </select>
+            </th>
+          </tr>
+      </thead>
+       <tbody>
+        <tr>
+          <td class="text-center">
+            <b>Notes</b>
+          </td>
+          <td>
+             <textarea name="freeze-notes" class="form-control md" rows="4" cols="50" placeholder="Inserire qui le note da associare al freeze"></textarea>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="submit" class="btn btn-info mb-2 col-sm-5 btn-block mx-auto w-auto">AVVIA</button>
   </form>
 </div>
 {% endif %}
+
 {% if error %}
 <div class="modal fade in" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">

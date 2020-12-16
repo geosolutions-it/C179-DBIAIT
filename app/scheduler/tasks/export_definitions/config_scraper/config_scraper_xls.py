@@ -51,10 +51,15 @@ xls_export_config_schema = schema.Schema(
 
 
 class XlsExportConfig(BaseExportConfig):
-    def __init__(self):
+    def __init__(self, year=None):
         super().__init__()
+        self.year = year
 
-        with open(settings.EXPORT_CONF_FILE.substitute(), "r") as ecf:
+        sett = settings.EXPORT_CONF_FILE.substitute()
+        if year is not None:
+            sett = settings.EXPORT_CONF_FILE.substitute({"year": year})
+
+        with open(sett, "r") as ecf:
             config = json.load(ecf)
 
         sheets_config_files = config.get("xls_sheet_configs", None)
@@ -74,8 +79,12 @@ class XlsExportConfig(BaseExportConfig):
                     f"Sheet config path may not be absolute: {sheet_config_path}."
                 )
             else:
+                parent_folder = Path(settings.EXPORT_CONF_FILE.substitute()).parent
+                if year is not None:
+                    parent_folder = Path(settings.EXPORT_CONF_FILE.substitute({"year": year})).parent
+
                 sheet_config_path = Path(
-                    Path(settings.EXPORT_CONF_FILE.substitute()).parent,
+                    parent_folder,
                     sheet_config_path,
                 )
 

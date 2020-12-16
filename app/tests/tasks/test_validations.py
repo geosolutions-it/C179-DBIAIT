@@ -136,6 +136,21 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field)
         self.assertFalse(actual)
 
+    def test_given_transformation_name_IF_with_REF_YEAR_with_true_cond_should_return_the_expected_output(
+        self,
+    ):
+        condition_schema = {
+            "field": "foo_field",
+            "cond": [{
+                "and": [
+                    {"operator": "<", "value": "{REF_YEAR}"},
+                    {"operator": ">", "value": 0},
+                ]
+            }],
+        }
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
 
 if __name__ == "__main__":
     unittest.main()

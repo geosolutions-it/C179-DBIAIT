@@ -1,5 +1,6 @@
 import ast
 import re
+from datetime import datetime
 
 import schema
 from .exceptions import ExportConfigError
@@ -18,7 +19,7 @@ class BaseValidation:
         self.schema.validate(args)
         self.args = args
 
-    def validate(self, value):
+    def validate(self, value, ref_year):
         """
         Apply the transformation
         """
@@ -86,19 +87,19 @@ class IfValidation(BaseValidation):
     )
     re_pattern = re.compile('{\W*(\w+)\W*}')
 
-    def validate(self, row: Dict):
+    def validate(self, row: Dict, ref_year: int = None):
         conditions = self.args["cond"]
         result = []
         for cond in conditions:
             and_conditions = cond.get("and", [])
             or_conditions = cond.get("or", [])
-            result.append(self._validate_condition(and_conditions, or_conditions, row))
+            result.append(self._validate_condition(and_conditions, or_conditions, row, ref_year))
 
         return all(result)
 
-    def _validate_condition(self, and_conditions, or_conditions, row):
-        and_result = list(self._validate_list(and_conditions, row))
-        or_result = list(self._validate_list(or_conditions, row))
+    def _validate_condition(self, and_conditions, or_conditions, row, ref_year):
+        and_result = list(self._validate_list(and_conditions, row, ref_year))
+        or_result = list(self._validate_list(or_conditions, row, ref_year))
 
         if len(and_result) > 0 and len(or_result) > 0:
             return all([and_result, any(or_result)])
@@ -107,7 +108,7 @@ class IfValidation(BaseValidation):
         elif len(and_result) > 0 and len(or_result) == 0:
             return all(and_result)
 
-    def _validate_list(self, conditions, row):
+    def _validate_list(self, conditions, row, ref_year):
         field_value = row.get(self.args["field"], None)
         for cond in conditions:
             if "lookup" in cond:
@@ -120,6 +121,9 @@ class IfValidation(BaseValidation):
 
             if field_value is None:
                 return False
+
+            if cond['value'] == "{REF_YEAR}":
+                cond['value'] = ref_year or datetime.utcnow().year
 
             operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
             yield operator(field_value, cond["value"])

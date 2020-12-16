@@ -132,7 +132,7 @@
                         "field": "44500",
                         "cond": [{
                             "or": [
-                                {"operator": ">=", "value": 2020},
+                                {"operator": ">=", "value": "{REF_YEAR}"},
                                 {"operator": "!=", "value": 9999}
                             ]
                         }]
@@ -188,7 +188,7 @@
                         },
                         {
                             "and": [
-                                {"operator": ">=", "value": 2020},
+                                {"operator": ">=", "value": "{REF_YEAR}"},
                                 {"operator": "!=", "value": 9999}
                             ]
                         }]
@@ -281,7 +281,7 @@
                         },
                         {
                             "and": [
-                                {"lookup": "{44500}" ,"operator": ">=", "value": 2002},
+                                {"lookup": "{44500}" ,"operator": ">=", "value": "{REF_YEAR}"},
                                 {"lookup": "{44500}" ,"operator": "!=", "value": 9999},
                                 {"operator": "=", "value": "A"}
                             ]

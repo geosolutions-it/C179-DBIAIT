@@ -89,6 +89,32 @@ class ImportedLayer(models.Model):
         }
 
 
+class Freeze(models.Model):
+    ref_year = models.IntegerField(blank=False, null=False)
+    notes = models.TextField(blank=True, null=True)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.ref_year)
+
+
+class FreezeLayer(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    freeze_start_timestamp = models.DateTimeField(default=datetime.datetime.now)
+    freeze_end_timestamp = models.DateTimeField(null=True)
+    layer_name = models.CharField(max_length=250, null=False)
+    status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
+
+    def to_dict(self):
+        return {
+            "task": str(self.task.uuid),
+            "freeze_start_timestamp": str(self.freeze_start_timestamp),
+            "freeze_end_timestamp": str(self.freeze_end_timestamp),
+            "layer_name": self.layer_name,
+            "status": self.status
+        }
+
+
 class AllDomains(models.Model):
     """
     "all_domains" table model used for a quick *.csv data loading

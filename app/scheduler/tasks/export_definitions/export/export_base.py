@@ -12,7 +12,7 @@ from app.scheduler.utils import dictfetchall, translate_schema_to_db_alias
 class ExportBase:
 
     def __init__(
-        self, export_dir: pathlib.Path, orm_task: Task, max_progress: int = 100
+        self, export_dir: pathlib.Path, orm_task: Task, max_progress: int = 100, ref_year=None
     ):
         """
         Initialization function of data export
@@ -27,6 +27,7 @@ class ExportBase:
         self.max_progress = max_progress
         self.starting_progress = orm_task.progress
         self.logger = None
+        self.ref_year = ref_year
 
         # make sure target location exists
         self.export_dir.parent.mkdir(parents=True, exist_ok=True)
