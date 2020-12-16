@@ -87,9 +87,11 @@ class Configuration(LoginRequiredMixin, View):
         database_port = settings.DATABASES[u'system'][u'PORT']
         database_name = settings.DATABASES[u'system'][u'NAME']
         database_user = settings.DATABASES[u'system'][u'USER']
+        app_version = settings.APP_VERSION
 
         environment = u'SVILUPPO' if settings.DEBUG else u'PRODUZIONE'
         context = {
+            u'app_version': app_version,
             u'bread_crumbs': bread_crumbs,
             u'environment': environment,
             u'database_host': database_host,
@@ -125,6 +127,7 @@ class ExportListView(LoginRequiredMixin, ListView):
         context = self.get_context_data()
         try:
             ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema))
+            #ExportTask.execute(ExportTask.pre_send(requesting_user=request.user, schema=export_schema))
         except (QueuingCriteriaViolated, SchedulingParametersError) as e:
             context[u"error"] = str(e)
         return render(request, ExportListView.template_name, context)

@@ -1407,8 +1407,8 @@ BEGIN
 					WHERE 
 						d.idgis = cc.id_immissione 
 						and c.sub_funzione = 0
-						and c.geom&&st_buffer(d.geom, 0.01)
-						and st_intersects(c.geom, st_buffer(d.geom, 0.01))
+						and c.geom&&st_buffer(d.geom, v_tol)
+						and st_intersects(c.geom, st_buffer(d.geom, v_tol))
 				) t GROUP BY t.id_condotta
 			) z
 			WHERE ac.idgis = z.id_condotta	
@@ -1463,8 +1463,8 @@ BEGIN
 					WHERE 
 						d.idgis = cc.id_immissione 
 						and c.sub_funzione = 0
-						and c.geom&&st_buffer(d.geom, 0.01)
-						and st_intersects(c.geom, st_buffer(d.geom, 0.01))
+						and c.geom&&st_buffer(d.geom, v_tol)
+						and st_intersects(c.geom, st_buffer(d.geom, v_tol))
 				) t GROUP BY t.id_condotta
 			) z
 			WHERE ac.idgis = z.id_condotta	
