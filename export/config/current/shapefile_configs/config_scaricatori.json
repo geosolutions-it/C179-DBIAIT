@@ -6,8 +6,8 @@
       {
          "fields":[
              {"name":"fgn_sfioro.geom", "alias": "geom"},
-             {"name":"fgn_sfioro.geom", "alias": "x_proj", "function": "ST_X"},
-             {"name":"fgn_sfioro.geom", "alias": "y_proj", "function": "ST_Y"},
+             {"name":"fgn_sfioro.geom", "alias": "x_proj", "function": "ST_ROUND_X"},
+             {"name":"fgn_sfioro.geom", "alias": "y_proj", "function": "ST_ROUND_Y"},
              {"name":"fgn_sfioro.codice_ato","alias": "codice_ato"}
          ],
          "table":{
@@ -17,8 +17,8 @@
       },{
          "fields":[
              {"name":"a_fgn_sfioro.geom", "alias": "geom"},
-             {"name":"a_fgn_sfioro.geom", "alias": "x_proj", "function": "ST_X"},
-             {"name":"a_fgn_sfioro.geom", "alias": "y_proj", "function": "ST_Y"},
+             {"name":"a_fgn_sfioro.geom", "alias": "x_proj", "function": "ST_ROUND_X"},
+             {"name":"a_fgn_sfioro.geom", "alias": "y_proj", "function": "ST_ROUND_Y"},
              {"name":"a_fgn_sfioro.codice_ato","alias": "codice_ato"}
          ],
          "table":{
