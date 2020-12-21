@@ -97,8 +97,35 @@
 
         { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
         { "id": "68400", "transformation": { "func": "DIRECT",  "params": { "field": "id_refluo_trasportato" } }},
+        { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } },"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "70400",
+                        "cond": [{
+                            "or": [
+                              {"lookup": "{69000}","operator": "=", "value": 1.2},
+                              {"operator": "=", "value": "{70400}"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9800"
+                }
+            ]},
         { "id": "68500", "transformation": { "func": "DIRECT", "params": { "field": "vol_idraulici" } } },
-        { "id": "68600", "transformation": { "func": "DIRECT", "params": { "field": "sn_scar_sup" } }},
+        { "id": "68600", "transformation": { "func": "DIRECT", "params": { "field": "sn_scar_sup" } },"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "68600",
+                        "cond": [{
+                            "or": [
+                              {"lookup": "{102000}","operator": "=", "value": 1},
+                              {"operator": "=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not 0"
+                }
+            ]},
         { "id": "68700", "transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena" } } },
         { "id": "68900", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" } } },
         { "id": "69300", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } } },
