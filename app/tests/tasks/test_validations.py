@@ -59,6 +59,17 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field)
         self.assertFalse(actual)
 
+    def test_given_transformation_name_IF_AND_multiple_lookup_should_return_the_expected_output(
+        self,
+    ):
+        condition_schema = {
+            "field": "foo_field",
+            "cond": [{"and": [{"lookup": "{bar_field}", "operator": "!=", "value": "{foo_field}"}]}],
+        }
+        self.field = {"foo_field": 1, "bar_field": 2}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
     def test_given_transformation_name_IF_AND_with_false_cond_should_return_the_expected_output(
         self,
     ):
