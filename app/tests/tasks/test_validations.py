@@ -39,14 +39,15 @@ class ValidationTestCase(SimpleTestCase):
             "field": "foo_field",
             "cond": [{
                     "and": [
-                      {"operator": "<=", "value": "{REF_YEAR}"},
-                      {"operator": "!=", "value": 9999}
+                      {"lookup": "{48700}", "operator": ">=", "value": 2002},
+                      {"lookup": "{48700}", "operator": "!=", "value": 9999},
+                      {"operator": "=", "value": "A"}
                     ]
                 }],
         }
-        self.field = {"foo_field": 2021}
+        self.field = {"48700": "9998", "foo_field": "A"}
         actual = self.validate.from_name("IF", condition_schema).validate(self.field)
-        self.assertFalse(actual)
+        self.assertTrue(actual)
 
     def test_given_transformation_name_IF_AND_with_true_cond_and_not_matching_regex_should_return_the_expected_output(
         self,
