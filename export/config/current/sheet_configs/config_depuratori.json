@@ -260,7 +260,7 @@
                     "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9999"
                 }
             ]},
-        {"id": "72800", "transformation": {"func": "DIRECT", "params": { "field": "anno_ristr_civ" }},"validations": [{
+        {"id": "72800", "transformation": {"func": "DIRECT", "params": { "field": "anno_ristr_civ" }}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "72800",
