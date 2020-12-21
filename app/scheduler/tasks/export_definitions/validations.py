@@ -116,7 +116,7 @@ class IfValidation(BaseValidation):
 
                 if lookup_field is not None:
                     field_value = row.get(lookup_field.group(1), None)
-                    if not isinstance(field_value, int):
+                    if not isinstance(field_value, int) and field_value is not None:
                         field_value = ast.literal_eval(row.get(lookup_field.group(1), None))
 
             if field_value is None:
