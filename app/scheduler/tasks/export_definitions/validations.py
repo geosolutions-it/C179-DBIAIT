@@ -117,20 +117,32 @@ class IfValidation(BaseValidation):
                 if lookup_field is not None:
                     field_value = row.get(lookup_field.group(1), None)
 
-            if not isinstance(field_value, int) and field_value is not None and not isinstance(field_value, float):
-                try:
-                    field_value = ast.literal_eval(field_value)
-                except ValueError as e:
-                    field_value = field_value
+            if cond['value'] == "{REF_YEAR}":
+                cond['value'] = ref_year or datetime.utcnow().year
+
+            if isinstance(cond["value"], str) and "{" in cond['value']:
+                lookup_value = re.match(self.re_pattern, cond['value'])
+
+                if lookup_value is not None:
+                    value = row.get(lookup_value.group(1), None)
+                cond["value"] = self.cast_field(value)
+
+            field_value = self.cast_field(field_value)
 
             if field_value is None:
                 return False
 
-            if cond['value'] == "{REF_YEAR}":
-                cond['value'] = ref_year or datetime.utcnow().year
 
             operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
             yield operator(field_value, cond["value"])
+
+    def cast_field(self, field_value):
+        if not isinstance(field_value, int) and field_value is not None and not isinstance(field_value, float):
+            try:
+                field_value = ast.literal_eval(field_value)
+            except ValueError as e:
+                field_value = field_value
+        return field_value
 
 
 class ValidationFactory:
