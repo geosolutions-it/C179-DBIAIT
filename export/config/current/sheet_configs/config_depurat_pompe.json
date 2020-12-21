@@ -26,14 +26,71 @@
     "columns": [
         {"id": "81000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
         {"id": "81200","transformation": { "func": "DIRECT", "params": { "field": "d_stato_cons" }}},
-        {"id": "81300","transformation": { "func": "DIRECT", "params": { "field": "anno_instal" }}},
-        {"id": "81400","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}},
+        {"id": "81300","transformation": { "func": "DIRECT", "params": { "field": "anno_instal" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "81300",
+                        "cond": [{
+                            "and": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field greater than ref_year"
+                }
+            ]},
+        {"id": "81400","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "81400",
+                        "cond": [{
+                            "and": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field greater than ref_year"
+                }
+            ]},
         {"id": "81500","transformation": { "func": "DIRECT", "params": { "field": "potenza" }}},
         {"id": "81600","transformation": { "func": "DIRECT", "params": { "field": "portata" }}},
         {"id": "81700","transformation": { "func": "DIRECT", "params": { "field": "prevalenza" }}},
         {"id": "81800","transformation": { "func": "DIRECT", "params": { "field": "sn_riserva" }}},
-        {"id": "81900","transformation": { "func": "DIRECT", "params": { "field": "a_anno_instal" }}},
-        {"id": "82000","transformation": { "func": "DIRECT", "params": { "field": "a_anno_ristr" }}},
+        {"id": "81900","transformation": { "func": "DIRECT", "params": { "field": "a_anno_instal" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "82000",
+                        "cond": [{
+                            "or": [
+                              {"lookup": "{81300}","operator": "=", "value": 9999},
+                              {"operator":  "=", "value": "X"}
+                            ],
+                            "or": [
+                              {"lookup": "{81300}", "operator": ">=", "value": 2002},
+                              {"lookup": "{81300}", "operator":  "!=", "value": 9999},
+                              {"operator":  "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not A or X"
+                }
+            ]},
+        {"id": "82000","transformation": { "func": "DIRECT", "params": { "field": "a_anno_ristr" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "82000",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{81400}","operator": ">=", "value": 2002},
+                              {"operator":  "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not A"
+                }
+            ]},
         {"id": "82100","transformation": { "func": "DIRECT", "params": { "field": "a_potenza" }}},
         {"id": "82200","transformation": { "func": "DIRECT", "params": { "field": "a_portata" }}},
         {"id": "82300","transformation": { "func": "DIRECT", "params": { "field": "a_prevalenza" }}}
