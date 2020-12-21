@@ -109,15 +109,19 @@ class IfValidation(BaseValidation):
             return all(and_result)
 
     def _validate_list(self, conditions, row, ref_year):
-        field_value = row.get(self.args["field"], None)
         for cond in conditions:
+            field_value = row.get(self.args["field"], None)
             if "lookup" in cond:
                 lookup_field = re.match(self.re_pattern, cond['lookup'])
 
                 if lookup_field is not None:
                     field_value = row.get(lookup_field.group(1), None)
-                    if not isinstance(field_value, int) and field_value is not None:
-                        field_value = ast.literal_eval(row.get(lookup_field.group(1), None))
+
+            if not isinstance(field_value, int) and field_value is not None and not isinstance(field_value, float):
+                try:
+                    field_value = ast.literal_eval(field_value)
+                except ValueError as e:
+                    field_value = field_value
 
             if field_value is None:
                 return False
