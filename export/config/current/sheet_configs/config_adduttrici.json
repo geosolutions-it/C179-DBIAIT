@@ -102,13 +102,45 @@
         { "id": "39600", "transformation": { "func": "DIRECT",  "params": { "field": "portata_media" } }},
         { "id": "39700", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
         { "id": "39900", "transformation": { "func": "DIRECT",  "params": { "field": "sn_strum_mis_port" } }},
-        { "id": "40100", "transformation": { "func": "DIRECT",  "params": { "field": "anno_instal_clor" } }},
+        { "id": "40100", "transformation": { "func": "DIRECT",  "params": { "field": "anno_instal_clor" } },"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "40100",
+                        "cond": [{
+                            "or": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": "!=", "value": 9999}
+                            ]
+                        },
+                        {
+                            "and": [
+                              {"lookup": "{40000}", "operator": "=", "value": 1},
+                              {"operator": "=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9800"
+                }
+            ]},
         { "id": "40200", "transformation": { "func": "DIRECT",  "params": { "field": "anno_ristr_clor" } }},
         { "id": "40600", "transformation": { "func": "DIRECT",  "params": { "field": "data_agg" } }},
         { "id": "98800", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza_tlc" } }},
         { "id": "99000", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" }}},
 
-        {"id":"40000", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
+        {"id":"40000", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "40000",
+                        "cond": [{
+                            "or": [
+                              {"lookup":  "{40100}", "operator": "!=", "value": 9800},
+                              {"operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value 1 is not permitted"
+                }
+            ]},
         {"id":"40300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
         {"id":"40400", "transformation":{"func":"DOMAIN", "params":{"field":"a_portata_media", "domain_name": "D_AFFIDABILITA"}}},
 
