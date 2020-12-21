@@ -249,7 +249,7 @@
         {"id": "9700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr" }},"validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "72700",
+                        "field": "9700",
                         "cond": [{
                             "or": [
                               {"operator": ">=", "value": "{REF_YEAR}"},
@@ -263,7 +263,7 @@
         {"id": "9800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }},"validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "72700",
+                        "field": "9800",
                         "cond": [{
                             "or": [
                               {"operator": ">=", "value": "{REF_YEAR}"},
@@ -365,7 +365,7 @@
         {"id": "11800","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor" }}, "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "11900",
+                        "field": "11800",
                         "cond": [{
                             "and": [
                               {"lookup": "{11700}","operator": "=", "value": 1},
