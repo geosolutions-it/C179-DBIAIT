@@ -102,7 +102,7 @@
                     "params": {
                         "field": "70400",
                         "cond": [{
-                            "or": [
+                            "and": [
                               {"lookup": "{69000}","operator": "=", "value": 1.2},
                               {"operator": "=", "value": "{70400}"}
                             ]
