@@ -32,7 +32,7 @@
                         "field": "81300",
                         "cond": [{
                             "and": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": ">=", "value": "{REF_YEAR}"},
                               {"operator":  "!=", "value": 9999}
                             ]
                         }]
@@ -46,7 +46,7 @@
                         "field": "81400",
                         "cond": [{
                             "and": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": ">=", "value": "{REF_YEAR}"},
                               {"operator":  "!=", "value": 9800}
                             ]
                         }]
