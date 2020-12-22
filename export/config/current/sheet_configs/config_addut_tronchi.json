@@ -131,20 +131,8 @@
                 }
             }},
         {"id": "41700", "transformation": {"func": "DIRECT", "params": { "field": "lunghezza" }}},
-        {"id":"41800", "transformation":{ "func":"CASE", "params": {"field":"idx_materiale", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
-        {"id":"41900", "transformation":{ "func":"CASE", "params": {"field":"idx_diametro", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
-       {"id":"42000", "transformation":{ "func":"CASE", "params": {"field":"idx_anno", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}}
+        {"id": "41800", "transformation": {"func": "DIRECT", "params": { "field": "idx_materiale" }}},
+        {"id": "41900", "transformation": {"func": "DIRECT", "params": { "field": "idx_diametro" }}},
+        {"id": "42000", "transformation": {"func": "DIRECT", "params": { "field": "idx_anno" }}}
      ]
 }

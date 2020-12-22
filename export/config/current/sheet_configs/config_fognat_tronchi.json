@@ -113,20 +113,9 @@
             ]
       },
       {"id": "61900","transformation": { "func": "DOMAIN", "params": { "field": "d_tipo_acqua", "domain_name":  "D_F_T_ACQUA"}}},
-      {"id":"62100", "transformation":{ "func":"CASE", "params": {"field":"d_materiale", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO != ASB and TIPO_RILIEVO != DIN)", "value": "1", "result": "B"}
-         ]}}},
-        {"id":"62200", "transformation":{ "func":"CASE", "params": {"field":"diametro", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= '' and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= '' and (TIPO_RILIEVO != ASB and TIPO_RILIEVO != DIN)", "value": "1", "result": "B"}
-         ]}}},
-       {"id":"62300", "transformation":{ "func":"CASE", "params": {"field":"data_esercizio", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "9999", "result": "X"},
-             {"case": "WHEN", "operator": "!= 9999 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 9999 and (TIPO_RILIEVO != ASB and TIPO_RILIEVO != DIN)", "value": "1", "result": "B"}
-         ]}}}
+
+      {"id": "62100","transformation": { "func": "DIRECT", "params": { "field": "idx_materiale"}}},
+      {"id": "62200","transformation": { "func": "DIRECT", "params": { "field": "idx_diametro"}}},
+      {"id": "62300","transformation": { "func": "DIRECT", "params": { "field": "idx_anno"}}}
    ]
 }

@@ -111,22 +111,10 @@
                     "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
                 }
             ]},
+        {"id": "57100", "transformation": {"func": "DIRECT", "params": { "field": "id_materiale" }}},
+        {"id": "57200", "transformation": {"func": "DIRECT", "params": { "field": "idx_diametro" }}},
+        {"id": "57300", "transformation": {"func": "DIRECT", "params": { "field": "idx_anno" }}},
 
-         {"id":"57100", "transformation":{ "func":"CASE", "params": {"field":"id_materiale", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
-        {"id":"57200", "transformation":{ "func":"CASE", "params": {"field":"diametro", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
-        {"id":"57300", "transformation":{ "func":"CASE", "params": {"field":"data_esercizio", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
 
         {"id": "57000", "transformation": {"func": "DOMAIN", "params": { "field": "57000", "domain_name": "D_CORPO_RICET" }}},
         {"id": "57400", "transformation": {"func": "DOMAIN", "params": { "field": "57400", "domain_name": "D_T_RILIEVO" }}},
