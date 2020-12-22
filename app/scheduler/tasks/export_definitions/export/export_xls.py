@@ -126,6 +126,10 @@ class ExportXls(ExportBase):
                         transformed_value = column["transformer"].apply(
                             row=raw_data_row, domains=all_domains
                         )
+                    except KeyError as e:
+                        transformed_value = None
+                    except TypeError as e:
+                        transformed_value = None
                     except Exception as e:
                         self.logger.error(
                             f"Error occurred during transformation of column with "
@@ -190,7 +194,7 @@ class ExportXls(ExportBase):
         # update the information in the sheet "DATI" before save it
 
         excel_wb["DATI"]["B5"] = today.date()
-        excel_wb["DATI"]["B8"] = self.ref_year
+        excel_wb["DATI"]["B8"] = self.ref_year if self.ref_year is not None else datetime.utcnow().year
         excel_wb["DATI"]["B10"] = today.date()
         # save updated *.xlsx seed file in the target location
         excel_wb.save(target_xls_file)

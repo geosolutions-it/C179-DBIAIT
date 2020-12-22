@@ -125,13 +125,13 @@ class IfValidation(BaseValidation):
 
                 if lookup_value is not None:
                     value = row.get(lookup_value.group(1), None)
+
                 cond["value"] = self.cast_field(value)
 
             field_value = self.cast_field(field_value)
 
             if field_value is None:
                 return False
-
 
             operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
             yield operator(field_value, cond["value"])
@@ -142,6 +142,8 @@ class IfValidation(BaseValidation):
                 field_value = ast.literal_eval(field_value)
             except ValueError as e:
                 field_value = field_value
+        if isinstance(field_value, datetime):
+            field_value = field_value.year
         return field_value
 
 
