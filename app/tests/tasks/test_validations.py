@@ -21,6 +21,34 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field)
         self.assertTrue(actual)
 
+    def test_given_transformation_name_IF_AND_with_None_value_and_true_cond_should_return_the_expected_output(
+        self,
+    ):
+        condition_schema = {
+            "field": "foo_field",
+            "cond": [{"and": [{"lookup": "{bar_field}", "operator": "!=", "value": 1}]}],
+        }
+        self.field = {"foo_field": 1, "bar_field": None}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
+    def test_given_transformation_name_IF_AND_with_ref_netsic_value_and_true_cond_should_return_the_expected_output(
+        self,
+    ):
+        condition_schema = {
+            "field": "foo_field",
+            "cond": [{
+                    "and": [
+                      {"lookup": "{48700}", "operator": ">=", "value": 2002},
+                      {"lookup": "{48700}", "operator": "!=", "value": 9999},
+                      {"operator": "=", "value": "A"}
+                    ]
+                }],
+        }
+        self.field = {"48700": "9998", "foo_field": "A"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
     def test_given_transformation_name_IF_AND_with_true_cond_and_not_matching_regex_should_return_the_expected_output(
         self,
     ):
@@ -30,6 +58,17 @@ class ValidationTestCase(SimpleTestCase):
         }
         actual = self.validate.from_name("IF", condition_schema).validate(self.field)
         self.assertFalse(actual)
+
+    def test_given_transformation_name_IF_AND_multiple_lookup_should_return_the_expected_output(
+        self,
+    ):
+        condition_schema = {
+            "field": "foo_field",
+            "cond": [{"and": [{"lookup": "{bar_field}", "operator": "!=", "value": "{foo_field}"}]}],
+        }
+        self.field = {"foo_field": 1, "bar_field": 2}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
 
     def test_given_transformation_name_IF_AND_with_false_cond_should_return_the_expected_output(
         self,

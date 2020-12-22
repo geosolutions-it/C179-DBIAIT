@@ -138,10 +138,61 @@
    "columns":[
       {"id":"63600", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
       {"id":"63700", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
-      {"id":"64100", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}},
-      {"id":"64400", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}},
-      {"id":"64500", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_civ"}}},
-      {"id":"64700", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_elmec"}}},
+      {"id":"64100", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "64100",
+                        "cond": [{
+                            "and": [
+                              {"operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is 0"
+                }
+            ]},
+      {"id":"64400", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "64400",
+                        "cond": [{
+                            "or": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is lower than the ref_year"
+                }
+            ]},
+      {"id":"64500", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_civ"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "64500",
+                        "cond": [{
+                            "or": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is lower than the ref_year"
+                }
+            ]},
+      {"id":"64700", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_elmec"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "64700",
+                        "cond": [{
+                            "or": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is lower than the ref_year"
+                }
+            ]},
       {"id":"65100", "transformation":{"func":"DIRECT", "params":{"field":"sn_sgrigliat"}}},
       {"id":"65300", "transformation":{"func":"DIRECT", "params":{"field":"sn_strum_mis_pres"}}},
       {"id":"65400", "transformation":{"func":"DIRECT", "params":{"field":"sn_strum_mis_port"}}},
@@ -154,13 +205,71 @@
       {"id":"64900", "transformation":{"func":"DIRECT", "params":{"field":"sum_potenza"}}},
       {"id":"65900", "transformation":{"func":"DIRECT", "params":{"field":"avg_idx_potenza"}}},
 
-      {"id":"64600", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons_civ", "domain_name": "D_STATO_CONS"}}},
+      {"id":"64600", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons_civ", "domain_name": "D_STATO_CONS"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "64600",
+                        "cond": [{
+                            "or": [
+                              {"lookup": "{64500}","operator": ">=", "value": 2014},
+                              {"operator": ">=", "value": 3}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is lower than 3"
+                }
+            ]},
       {"id":"64800", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons_elmec", "domain_name": "D_STATO_CONS"}}},
       {"id":"65200", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
       {"id":"65500", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
-      {"id":"65600", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}},
-      {"id":"65700", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}},
-      {"id":"65800", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_elmec", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"65600", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "65600",
+                        "cond": [{
+                            "or": [
+                              {"lookup": "{64400}","operator": "=", "value": 9999},
+                              {"operator": "=", "value": "X"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{64400}","operator": "=", "value": 2002},
+                              {"lookup": "{64400}","operator": "=", "value": 9999},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is lower than 3"
+                }
+            ]},
+      {"id":"65700", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "65700",
+                        "cond": [{
+                            "or": [
+                              {"lookup": "{64500}","operator": ">=", "value": 2002},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is lower than 3"
+                }
+            ]},
+      {"id":"65800", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_elmec", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "65800",
+                        "cond": [{
+                            "or": [
+                              {"lookup": "{64700}","operator": ">=", "value": 2002},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is lower than 3"
+                }
+            ]},
 
       {"id":"64000", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
 

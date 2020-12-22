@@ -120,9 +120,47 @@
    "columns":[
       {"id":"82800", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
       {"id":"82900", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
-      {"id":"83300", "transformation":{"func":"DIRECT", "params":{"field":"quota_terr_man"}}},
-      {"id":"83700", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}},
-      {"id":"83800", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}},
+      {"id":"83300", "transformation":{"func":"DIRECT", "params":{"field":"quota_terr_man"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "83300",
+                        "cond": [{
+                            "or": [
+                              {"operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is 0"
+                }
+            ]},
+      {"id":"83700", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "83700",
+                        "cond": [{
+                            "or": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                }
+            ]},
+      {"id":"83800", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "83800",
+                        "cond": [{
+                            "or": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                }
+            ]},
       {"id":"84000", "transformation":{"func":"DIRECT", "params":{"field":"n_ae"}}},
       {"id":"84100", "transformation":{"func":"DIRECT", "params":{"field":"larg_uti_poz_scol"}}},
       {"id":"84200", "transformation":{"func":"DIRECT", "params":{"field":"lung_uti_poz_scol"}}},
@@ -141,8 +179,40 @@
       {"id":"84700", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons", "domain_name": "D_STATO_CONS"}}},
       {"id":"84800", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
       {"id":"84900", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
-      {"id":"85000", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}},
-      {"id":"85100", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"85000", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "85000",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{83700}","operator": "=", "value": 9999},
+                              {"operator":  "=", "value": "X"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{83700}","operator": ">=", "value": 2002},
+                              {"lookup": "{83700}","operator": "!=", "value": 9999},
+                              {"operator":  "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                }
+            ]},
+      {"id":"85100", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "85100",
+                        "cond": [{
+                            "or": [
+                              {"lookup": "{83800}","operator": ">=", "value": 2002},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value is not A"
+                }
+            ]},
 
       {"id":"83200", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
       {"id":"85200", "transformation":{"func":"CONST", "params":{"value":"C"}}},

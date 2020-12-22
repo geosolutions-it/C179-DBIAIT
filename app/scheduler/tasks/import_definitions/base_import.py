@@ -66,13 +66,14 @@ def initQgis():
     """
     qgs = QgsApplication([], False)
     qgs.initQgis()
-
-    #sys.path.append('C:\\OSGeo4W64\\apps\\qgis\\python\\plugins')
+    isWindows = os.name == 'nt'
+    if isWindows:
+        sys.path.append('C:\\OSGeo4W64\\apps\\qgis\\python\\plugins')
 
     import processing
     from processing.core.Processing import Processing
     from processing.algs.gdal.GdalUtils import GdalUtils
-    from processing.tools.system import isWindows
+    #from processing.tools.system import isWindows
 
     Processing.initialize()
     QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())

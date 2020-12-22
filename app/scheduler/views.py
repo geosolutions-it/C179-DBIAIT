@@ -92,9 +92,11 @@ class Configuration(LoginRequiredMixin, View):
         database_port = settings.DATABASES[u'system'][u'PORT']
         database_name = settings.DATABASES[u'system'][u'NAME']
         database_user = settings.DATABASES[u'system'][u'USER']
+        app_version = settings.APP_VERSION
 
         environment = u'SVILUPPO' if settings.DEBUG else u'PRODUZIONE'
         context = {
+            u'app_version': app_version,
             u'bread_crumbs': bread_crumbs,
             u'environment': environment,
             u'database_host': database_host,

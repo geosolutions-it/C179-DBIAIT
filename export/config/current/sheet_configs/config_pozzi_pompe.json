@@ -25,15 +25,85 @@
    ],
    "columns":[
       {"id":"19700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
-      {"id":"19900", "transformation":{"func":"DIRECT", "params":{"field":"d_stato_cons"}}},
-      {"id":"20000", "transformation":{"func":"DIRECT", "params":{"field":"anno_instal"}}},
-      {"id":"20100", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}},
+      {"id":"19900", "transformation":{"func":"DIRECT", "params":{"field":"d_stato_cons"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "19900",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{20100}","operator": ">=", "value": 2014},
+                              {"operator": ">=", "value": 3}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is lower than 3"
+                }
+            ]},
+      {"id":"20000", "transformation":{"func":"DIRECT", "params":{"field":"anno_instal"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "20000",
+                        "cond": [{
+                            "and": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                }
+            ]},
+      {"id":"20100", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "20100",
+                        "cond": [{
+                            "and": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                }
+            ]},
       {"id":"20200", "transformation":{"func":"DIRECT", "params":{"field":"potenza"}}},
       {"id":"20300", "transformation":{"func":"DIRECT", "params":{"field":"portata"}}},
       {"id":"20400", "transformation":{"func":"DIRECT", "params":{"field":"prevalenza"}}},
       {"id":"20500", "transformation":{"func":"DIRECT", "params":{"field":"sn_riserva"}}},
-      {"id":"20600", "transformation":{"func":"DIRECT", "params":{"field":"a_anno_instal"}}},
-      {"id":"20700", "transformation":{"func":"DIRECT", "params":{"field":"a_anno_ristr"}}},
+      {"id":"20600", "transformation":{"func":"DIRECT", "params":{"field":"a_anno_instal"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "20600",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{20000}","operator": "=", "value": 9999},
+                              {"operator": "=", "value": "X"}
+                            ],
+                            "or": [
+                              {"lookup": "{20000}","operator": ">=", "value": 2002},
+                              {"lookup": "{20000}","operator": "!=", "value": 9999},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not X or A"
+                }
+            ]},
+      {"id":"20700", "transformation":{"func":"DIRECT", "params":{"field":"a_anno_ristr"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "20700",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{20100}","operator": ">=", "value": 2002},
+                              {"operator":  "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not A"
+                }
+            ]},
       {"id":"20800", "transformation":{"func":"DIRECT", "params":{"field":"a_potenza"}}},
       {"id":"20900", "transformation":{"func":"DIRECT", "params":{"field":"a_portata"}}},
       {"id":"21000", "transformation":{"func":"DIRECT", "params":{"field":"a_prevalenza"}}}

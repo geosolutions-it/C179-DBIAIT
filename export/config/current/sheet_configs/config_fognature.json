@@ -13,7 +13,10 @@
                 {"name": "fgn_rete_racc.d_stato","alias": "d_stato"},
                 {"name": "fgn_rete_racc.data_agg","alias": "data_agg"},
                 {"name": "fgn_auth_rete_racc.nr_rip","alias": "nr_rip"},
-                {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"}
+                {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"},
+                {"name": "fgn_lunghezza_rete.tipo_infr","alias": "tipo_infr"},
+                {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
+                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"}
             ],
             "table": {
                 "name": "a_fgn_rete_racc"
@@ -27,6 +30,16 @@
                     "on": [
                         "fgn_auth_rete_racc.id_rete_racc",
                         "a_fgn_rete_racc.idgis"
+                    ],
+                    "cond": "="
+                }, {
+                    "type": "left",
+                    "table": {
+                        "name": "fgn_lunghezza_rete"
+                    },
+                    "on": [
+                        "a_fgn_rete_racc.idgis",
+                        "fgn_lunghezza_rete.idgis"
                     ],
                     "cond": "="
                 }
@@ -44,7 +57,10 @@
                 {"name": "fgn_rete_racc.d_stato","alias": "d_stato"},
                 {"name": "fgn_rete_racc.data_agg","alias": "data_agg"},
                 {"name": "fgn_auth_rete_racc.nr_rip","alias": "nr_rip"},
-                {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"}
+                {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"},
+                {"name": "fgn_lunghezza_rete.tipo_infr","alias": "tipo_infr"},
+                {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
+                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"}
             ],
             "table": {
                 "name": "fgn_rete_racc"
@@ -60,6 +76,16 @@
                         "fgn_rete_racc.idgis"
                     ],
                     "cond": "="
+                }, {
+                    "type": "left",
+                    "table": {
+                        "name": "fgn_lunghezza_rete"
+                    },
+                    "on": [
+                        "fgn_rete_racc.idgis",
+                        "fgn_lunghezza_rete.idgis"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE fgn_rete_racc.d_gestore = 'PUBLIACQUA' AND fgn_rete_racc.d_ambito IN ('AT3', NULL) AND fgn_rete_racc.d_stato NOT IN ('IPR', 'IAC')"
@@ -70,7 +96,22 @@
         {"id": "59600","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
         {"id": "60000","transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena"}}},
         {"id": "60100","transformation": { "func": "DIRECT", "params": { "field": "episodi_allag"}}},
+        {"id": "101300","transformation": { "func": "DIRECT", "params": { "field": ""}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "101300",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{60200}","operator": "=", "value": 0},
+                              {"operator":  "=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not 0"
+                }
+            ]},
         {"id": "60300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port"}}},
+        {"id": "101300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port"}}},
         {"id": "60900","transformation": { "func": "DIRECT", "params": { "field": "data_agg"}}},
         {"id": "101400","transformation": { "func": "DIRECT", "params": { "field": "nr_rip"}}},
         {"id": "101600","transformation": { "func": "DIRECT", "params": { "field": "nr_rip_allac"}}},

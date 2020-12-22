@@ -122,16 +122,25 @@ class ExportXls(ExportBase):
                 sheet_row = {}
 
                 for column in sheet["columns"]:
+                    warning_log = "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: {E}" if not column['warning'] else column['warning']
                     try:
                         transformed_value = column["transformer"].apply(
                             row=raw_data_row, domains=all_domains
                         )
+                    except KeyError as e:
+                        transformed_value = None
+                    except TypeError as e:
+                        transformed_value = None
                     except Exception as e:
-                        self.logger.error(
-                            f"Error occurred during transformation of column with "
-                            f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
-                            f"{type(e).__name__}: {e}.\n"
+                        message = (
+                            warning_log.replace("{SHEET}", sheet["sheet"]).replace("{ROW}", str(first_empty_row)).replace("{FIELD}", column['id']).replace("{E}", e.args[0])
                         )
+                        self.logger.error(message)
+                        #  self.logger.error(
+                        #      f"Trasformazione: Error occurred during transformation of column with "
+                        #      f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
+                        #      f"{type(e).__name__}: {e}.\n"
+                        #  )
                         transformed_value = None
 
                     sheet_row.update({column["id"]: transformed_value})
@@ -159,7 +168,7 @@ class ExportXls(ExportBase):
                                     )
                         except Exception as e:
                             self.logger.error(
-                                f"Error occurred during validation of column with "
+                                f"Validation: Error occurred during validation of column with "
                                 f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
                                 f"{type(e).__name__}: {e}.\n"
                             )
@@ -176,7 +185,7 @@ class ExportXls(ExportBase):
                         excel_ws[f"{column_letter}{first_empty_row}"] = value
                     except Exception as e:
                         self.logger.error(
-                            f"Error occurred during inserting value to the column with "
+                            f"Excel Config: Error occurred during inserting value to the column with "
                             f"ID '{column_id}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
                             f"{type(e).__name__}: {e}.\n"
                         )
@@ -190,7 +199,7 @@ class ExportXls(ExportBase):
         # update the information in the sheet "DATI" before save it
 
         excel_wb["DATI"]["B5"] = today.date()
-        excel_wb["DATI"]["B8"] = self.ref_year
+        excel_wb["DATI"]["B8"] = self.ref_year or datetime.utcnow().year
         excel_wb["DATI"]["B10"] = today.date()
         # save updated *.xlsx seed file in the target location
         excel_wb.save(target_xls_file)

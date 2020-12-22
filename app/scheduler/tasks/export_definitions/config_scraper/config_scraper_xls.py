@@ -34,6 +34,7 @@ xls_export_config_schema = schema.Schema(
                         str, lambda v: v.upper() in SUPPORTED_TRANSFORMATIONS
                     ),
                     schema.Optional("params"): {str: object},
+                    schema.Optional("warning"): str,
                 },
                 schema.Optional("validations"): [
                     {
@@ -128,8 +129,12 @@ class XlsExportConfig(BaseExportConfig):
             transformation = column.pop("transformation")
             transformer = TransformationFactory.from_name(
                 transformation["func"], transformation["params"]
+
             )
-            column.update({"transformer": transformer})
+            column.update({
+                    "transformer": transformer,
+                    "warning": transformation.get("warning", None)
+                })
 
             # translate validations into parametrized validator instances
             validators = []

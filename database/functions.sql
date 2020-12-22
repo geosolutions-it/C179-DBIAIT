@@ -12,6 +12,34 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
+-- Extract X coordinate from geometry with specific decimals
+-- Example:
+--  select st_round_x(geom, 4) from geom_table
+CREATE OR REPLACE FUNCTION public.st_round_x(
+	v_geom GEOMETRY,
+	v_decimal INTEGER DEFAULT 6
+) RETURNS NUMERIC AS $$
+BEGIN
+    RETURN ROUND(ST_X(v_geom)::NUMERIC, v_decimal);
+EXCEPTION WHEN OTHERS THEN
+	RETURN NULL;
+END;
+$$  LANGUAGE plpgsql;
+--------------------------------------------------------------------
+-- Extract Y coordinate from geometry with specific decimals
+-- Example:
+--  select st_round_y(geom, 4) from geom_table
+CREATE OR REPLACE FUNCTION public.st_round_y(
+	v_geom GEOMETRY,
+	v_decimal INTEGER DEFAULT 6
+) RETURNS NUMERIC AS $$
+BEGIN
+    RETURN ROUND(ST_Y(v_geom)::NUMERIC, v_decimal);
+EXCEPTION WHEN OTHERS THEN
+	RETURN NULL;
+END;
+$$  LANGUAGE plpgsql;	
+--------------------------------------------------------------------
 -- Convert a string into an integer
 -- Example:
 --  select dbiait_analysis.to_integer('9')
@@ -932,16 +960,16 @@ BEGIN
 			0::BIT,
 			0::BIT
 		FROM 
-			FGN_CONDOTTA a,  
+			FGN_CONDOTTA a
+			LEFT JOIN
 			' || v_join_table || ' r
+			ON a.id_rete = r.idgis
 		WHERE 
 			(a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) 
 			AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR a.D_STATO IS NULL) 
 			AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) 
 			AND (a.D_TIPO_ACQUA in (''MIS'',''NER'',''SCA'') or a.D_TIPO_ACQUA IS NULL)
-			AND (a.D_GESTORE = ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
-			AND a.id_rete=r.idgis;
-		';
+			AND (a.D_GESTORE = ''PUBLIACQUA'') AND a.SUB_FUNZIONE = $1;' USING v_sub_funzione;
 
 	--D_MATERIALE convertito in D_MATERIALE_IDR
 	EXECUTE '
@@ -1050,6 +1078,13 @@ BEGIN
 		FROM ' || v_table || ';
 	' using v_tipo_infr;
 	
+	-- LOG
+	DELETE FROM LOG_STANDALONE WHERE alg_name = v_table;
+	EXECUTE '
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT idgis, ''' || v_table || ''', ''Campo recapito non valorizzato'' 
+	FROM ' || v_table || ' WHERE recapito is NULL';
+	
 	RETURN TRUE;
 
 END;
@@ -1099,7 +1134,7 @@ BEGIN
 
 	DELETE FROM FGN_LUNGHEZZA_RETE;
 	
-	-- DISTRIBUZIONE
+	-- FOGNATURA
 	INSERT INTO FGN_LUNGHEZZA_RETE(
 		idgis,
 		codice_ato,
@@ -1109,7 +1144,7 @@ BEGIN
 		id_refluo_trasportato
 	)
 	select 
-		idgis_rete, codice_ato, 'DISTRIBUZIONE', sum(lunghezza) lung, 
+		idgis_rete, codice_ato, 'FOGNATURA', sum(lunghezza) lung, 
 		sum(
 			case when recapito IS NOT NULL 
 				or t.idgis_bac is not NULL
@@ -1119,19 +1154,20 @@ BEGIN
 		case when sum(id_rt) = 0 then 2 else 1 end
 	from (
 		select 
-			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
+			distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
 			case when 
 				recapito IS NOT NULL or bc.idgis is not NULL
 				then lunghezza 
 			else 0 end lung_tlc 
 		FROM
 		  FOGNAT_TRONCHI as ft
-		LEFT OUTER JOIN
+		LEFT JOIN
 		  FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
+		WHERE idgis_rete is not NULL
 	) t 
 	GROUP BY t.codice_ato, t.idgis_rete;
 	
-	-- ADDUZIONE
+	-- COLLETTORE
 	INSERT INTO FGN_LUNGHEZZA_RETE(
 		idgis,
 		codice_ato,
@@ -1141,7 +1177,7 @@ BEGIN
 		id_refluo_trasportato
 	)
 	select 
-		idgis_rete, codice_ato, 'ADDUZIONE', sum(lunghezza) lung, 
+		idgis_rete, codice_ato, 'COLLETTORE', sum(lunghezza) lung, 
 		sum(
 			case when recapito IS NOT NULL 
 				or t.idgis_bac is not NULL
@@ -1151,15 +1187,16 @@ BEGIN
 		case when sum(id_rt) = 0 then 2 else 1 end
 	from (
 		select 
-			ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
+			distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
 			case when 
 				recapito IS NOT NULL or bc.idgis is not NULL
 				then lunghezza 
 			else 0 end lung_tlc 
 		FROM
 		  COLLETT_TRONCHI as ft
-		LEFT OUTER JOIN
+		LEFT JOIN
 		  FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
+		WHERE idgis_rete is not NULL  
 	) t 
 	GROUP BY t.codice_ato, t.idgis_rete;
 	
@@ -1407,8 +1444,8 @@ BEGIN
 					WHERE 
 						d.idgis = cc.id_immissione 
 						and c.sub_funzione = 0
-						and c.geom&&st_buffer(d.geom, 0.01)
-						and st_intersects(c.geom, st_buffer(d.geom, 0.01))
+						and c.geom&&st_buffer(d.geom, v_tol)
+						and st_intersects(c.geom, st_buffer(d.geom, v_tol))
 				) t GROUP BY t.id_condotta
 			) z
 			WHERE ac.idgis = z.id_condotta	
@@ -1463,8 +1500,8 @@ BEGIN
 					WHERE 
 						d.idgis = cc.id_immissione 
 						and c.sub_funzione = 0
-						and c.geom&&st_buffer(d.geom, 0.01)
-						and st_intersects(c.geom, st_buffer(d.geom, 0.01))
+						and c.geom&&st_buffer(d.geom, v_tol)
+						and st_intersects(c.geom, st_buffer(d.geom, v_tol))
 				) t GROUP BY t.id_condotta
 			) z
 			WHERE ac.idgis = z.id_condotta	
@@ -1765,18 +1802,19 @@ BEGIN
 		,id_conserv	
 		,id_refluo_	
 		,funziona_g 
+		,recapito
 		,geom
 	)
 	SELECT 
 		'FOGNATURA', codice_ato, idgis, to_integer(id_materiale), idx_materiale, 
 		to_integer(diametro), idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, to_integer(id_conservazione), 
-		id_refluo_trasportato::INTEGER, funziona_gravita, geom 
+		id_refluo_trasportato::INTEGER, funziona_gravita, recapito, geom 
 	FROM FOGNAT_TRONCHI
 	UNION ALL
 	SELECT 
 		'COLLETTORE', codice_ato, idgis, to_integer(id_materiale), idx_materiale, 
 		to_integer(diametro), idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, to_integer(id_conservazione), 
-		0 id_refluo_trasportato, funziona_gravita, geom 
+		0 id_refluo_trasportato, funziona_gravita, recapito, geom 
 	FROM COLLETT_TRONCHI;
 	
 	-- (comune_nome, id_comune_istat)	
@@ -2204,6 +2242,163 @@ BEGIN
 	--from collet_com_serv acs 
 	--group by ids_codice
 	--having count(0) > 1;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+------------------------------------------------------------------------------------------------
+-- Populate tables:
+--    FIUMI_INRETI 
+--    LAGHI_INRETI
+--    POZZI_INRETI
+--    SORGENTI_INRETI
+--    POTAB_INRETI
+--    ADDUT_INRETI
+--    ACCUMULI_INRETI
+--
+-- Example:
+-- select DBIAIT_ANALYSIS.populate_impianti_inreti();
+--
+-- TODO: vericare se campi e tabelle sono quelli attesi
+-- Che valori mettere per il campo id_gestore_fognatura?
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_impianti_inreti(
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_in_tables VARCHAR[] := ARRAY[
+		'acq_captazione', 
+		'acq_captazione',
+		'acq_captazione',
+		'acq_captazione',
+		'acq_potabiliz',
+		'acq_accumulo'
+	];
+	v_tables VARCHAR[] := ARRAY[
+		'FIUMI_INRETI', 
+		'LAGHI_INRETI',
+		'POZZI_INRETI',
+		'SORGENTI_INRETI',
+		'POTAB_INRETI',
+		'ACCUMULI_INRETI'
+	];
+	v_in_fields VARCHAR[] := ARRAY[
+		't.codice_ato, r.codice_ato, NULL',
+		't.codice_ato, r.codice_ato, NULL',
+		't.codice_ato, r.codice_ato, NULL',
+		't.codice_ato, r.codice_ato, NULL',
+		't.codice_ato, r.codice_ato, NULL',
+		't.codice_ato, r.codice_ato, NULL'
+	];
+	v_out_fields VARCHAR[] := ARRAY[
+		'ids_codice, ids_codice_rete, id_gestore_rete',
+		'ids_codice, ids_codice_rete, id_gestore_rete',
+		'ids_codice, ids_codice_rete, id_gestore_rete',
+		'ids_codice, ids_codice_rete, id_gestore_rete',
+		'ids_codice, ids_codice_rete, id_gestore_rete',
+		'ids_codice, ids_codice_rete, id_gestore_rete'
+	];
+	v_filters VARCHAR[] := ARRAY[
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato NOT IN (''IPR'', ''IAC'') AND t.SUB_FUNZIONE=0',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato NOT IN (''IPR'', ''IAC'') AND t.SUB_FUNZIONE=1',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato NOT IN (''IPR'', ''IAC'') AND t.SUB_FUNZIONE=3',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato NOT IN (''IPR'', ''IAC'') AND t.SUB_FUNZIONE=4',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato NOT IN (''IPR'', ''IAC'')',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato NOT IN (''IPR'', ''IAC'')'
+	];
+BEGIN
+	
+	FOR v_t IN array_lower(v_tables,1) .. array_upper(v_tables,1)
+	LOOP
+		-- Cleanup destination table
+		EXECUTE 'DELETE FROM ' || v_tables[v_t] || ';';
+		
+		--Populate destination table
+		EXECUTE '
+		INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
+		SELECT ' || v_in_fields[v_t] || ' 
+		FROM ' || v_in_tables[v_t] || ' t
+		LEFT join acq_rete_distrib r
+		  ON r.geom&&t.geom AND st_INTERSECTS(r.geom,t.geom)
+		WHERE r.codice_ato is NOT NULL
+		' || v_filters[v_t];
+		
+		--LOG ANOMALIE
+		DELETE FROM LOG_STANDALONE WHERE alg_name = v_tables[v_t];
+	
+		-- Elementi che intersecano piu' di una rete
+		EXECUTE '
+		INSERT INTO LOG_STANDALONE (id, alg_name, description)
+		SELECT idgis, $1, ''Elemento intersecante piu'''' ('' || count(0) || '') di una rete'' 
+		FROM (
+			SELECT t.idgis
+			FROM ' || v_in_tables[v_t] || ' t
+			LEFT JOIN acq_rete_distrib r 
+				ON r.geom&&t.geom AND st_INTERSECTS(r.geom, t.geom)
+			WHERE r.codice_ato is NOT NULL
+			' || v_filters[v_t] || '
+		) t2 group by t2.idgis having count(0) > 1;' USING v_tables[v_t];
+		
+		-- Elementi che non intersecano alcuna rete
+		EXECUTE '
+		INSERT INTO LOG_STANDALONE (id, alg_name, description)
+		SELECT t.idgis, $1, ''Elemento non intersecante alcuna rete''
+		FROM ' || v_in_tables[v_t] || ' t
+		LEFT JOIN acq_rete_distrib r 
+			ON r.geom&&t.geom AND st_INTERSECTS(r.geom, t.geom)
+		where r.codice_ato is NULL ' || v_filters[v_t] USING v_tables[v_t];
+		
+	END LOOP;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+------------------------------------------------------------------------------------------------
+-- Populate table SCARICATO_INFOG
+--
+-- Example:
+-- select DBIAIT_ANALYSIS.populate_scaricato_infog();
+--
+-- TODO: vericare se campi e tabelle sono quelli attesi
+-- Che valori mettere per il campo id_gestore_fognatura?
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_scaricato_infog(
+) RETURNS BOOLEAN AS $$
+BEGIN
+	
+	DELETE FROM SCARICATO_INFOG;
+	
+	INSERT into SCARICATO_INFOG(ids_codice, ids_codice_fognatura, id_gestore_fognatura)
+	SELECT sf.codice_ato, rr.codice_ato, null
+	FROM fgn_sfioro sf
+	LEFT JOIN fgn_rete_racc rr 
+		ON rr.geom&&sf.geom AND st_INTERSECTS(rr.geom,sf.geom)
+	where rr.codice_ato is not null;
+		
+	--LOG ANOMALIE
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'SCARICATO_INFOG';
+	
+	-- Elementi che intersecano piu' di una rete
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT idgis, 'SCARICATO_INFOG', 'Elemento intersecante piu'' (' || count(0) || ') di una rete' 
+	FROM (
+		SELECT sf.idgis
+		FROM fgn_sfioro sf
+		LEFT JOIN fgn_rete_racc rr 
+			ON rr.geom&&sf.geom AND st_INTERSECTS(rr.geom,sf.geom)
+		where rr.codice_ato is not null
+	) t group by t.idgis having count(0) > 1;
+
+	-- Elementi che non intersecano alcuna rete
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT sf.idgis, 'SCARICATO_INFOG', 'Elemento non intersecante alcuna rete' 
+	FROM fgn_sfioro sf
+	LEFT JOIN fgn_rete_racc rr 
+		ON rr.geom&&sf.geom AND st_INTERSECTS(rr.geom,sf.geom)
+	where rr.codice_ato is null;
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql

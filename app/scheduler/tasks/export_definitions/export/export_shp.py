@@ -15,9 +15,9 @@ from .export_base import ExportBase
 class ExportShp(ExportBase):
 
     def create_gdal_commands(self, database_config, shp_full_path, sql, is_windows=False):
-        ogr_exe = "ogr2ogr"
+        ogr_exe = "/usr/bin/ogr2ogr"
         if is_windows:
-            ogr_exe += ".exe"
+            ogr_exe = "ogr2ogr.exe"
 
         db_host = database_config["HOST"]
         db_port = database_config["PORT"]

@@ -97,10 +97,9 @@ class GpkgImportDefinition(BaseImportDefinition):
         return None
 
     def create_gdal_commands(self, layer_name, gtype):
-        ogr_exe = "ogr2ogr"
-        if self.isWindows():
-            ogr_exe += ".exe"
-
+        ogr_exe = "/usr/bin/ogr2ogr"
+        if self.isWindows:
+            ogr_exe = "ogr2ogr.exe"
         db_host = self.database_config["HOST"]
         db_port = self.database_config["PORT"]
         db_name = self.database_config["DATABASE"]

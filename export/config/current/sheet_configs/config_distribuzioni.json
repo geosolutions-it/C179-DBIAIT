@@ -89,7 +89,19 @@
         { "id": "99200", "transformation": { "func": "DIRECT", "params": { "field": "sn_ili" } }},
         { "id": "99600", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_max" } }},
         { "id": "100000", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_min" } }},
-
+        { "id": "53700", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza" } },"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "570000",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{55300}","operator": "=", "value": 1.2 }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9800"
+                }
+            ]},
         { "id": "55300", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } }},
         { "id": "55500", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_immesso", "domain_name": "D_AFFIDABILITA" } }},
         { "id": "55800", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_imm_terzi", "domain_name": "D_AFFIDABILITA" } }},
