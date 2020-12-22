@@ -199,7 +199,7 @@ class ExportXls(ExportBase):
         # update the information in the sheet "DATI" before save it
 
         excel_wb["DATI"]["B5"] = today.date()
-        excel_wb["DATI"]["B8"] = self.ref_year if self.ref_year is not None else datetime.utcnow().year
+        excel_wb["DATI"]["B8"] = self.ref_year or datetime.utcnow().year
         excel_wb["DATI"]["B10"] = today.date()
         # save updated *.xlsx seed file in the target location
         excel_wb.save(target_xls_file)
