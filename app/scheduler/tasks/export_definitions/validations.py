@@ -95,7 +95,7 @@ class IfValidation(BaseValidation):
             or_conditions = cond.get("or", [])
             result.append(self._validate_condition(and_conditions, or_conditions, row, ref_year))
 
-        return all(result)
+        return any(result)
 
     def _validate_condition(self, and_conditions, or_conditions, row, ref_year):
         and_result = list(self._validate_list(and_conditions, row, ref_year))
