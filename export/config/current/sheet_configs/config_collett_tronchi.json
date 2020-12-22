@@ -20,51 +20,82 @@
                 {"name": "collett_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
                 {"name": "collett_tronchi.depurazione", "alias": "depurazione"},
                 {"name": "collett_tronchi.note", "alias": "note"},
-                {"name": "collett_tronchi.geom", "alias": "geom"}
+                {"name": "collett_tronchi.geom", "alias": "geom"},
+                {"name":  "acq_condotta.data_esercizio", "alias": "data_esercizio"},
+                { "name": "fgn_condotta.codice_ato", "alias": "fgn_codice_ato"}
             ],
             "table": {
                 "name": "collett_tronchi"
-            }
-        },
-        {
-            "fields": [
-                { "name": "fgn_condotta.codice_ato", "alias": "codice_ato"}
-            ],
-            "table": {
-                "name": "fgn_condotta"
             },
             "join": [
                 {
                     "type": "left",
                     "table": {
+                        "name": "fgn_condotta"
+                    },
+                    "on": [
+                        "collett_tronchi.idgis",
+                        "fgn_condotta.idgis"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
                         "name": "fgn_collettore"
                     },
                     "on": [
-                        "fgn_condotta.id_rete",
+                        "collett_tronchi.idgis",
                         "fgn_collettore.idgis"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "acq_condotta"
+                    },
+                    "on": [
+                        "collett_tronchi.idgis",
+                        "acq_condotta.idgis"
                     ],
                     "cond": "="
                 }
             ]
-        },
-       {
-            "fields": [
-                {"name":  "acq_condotta.data_esercizio", "alias": "data_esercizio"}
-            ],
-            "table": {
-                "name": "acq_condotta"
-            }
         }
     ],
      "columns": [
         {"id": "69800", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
-        {"id": "69600", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
+        {"id": "69600", "transformation": {"func": "DIRECT", "params": { "field": "fgn_codice_ato" }}},
 
-        {"id": "69900", "transformation": {"func": "DOMAIN", "params": { "field": "id_materiale", "domain_name": "D_MATERIALE_IDR" }}},
+        {"id": "69900", "transformation": {"func": "DOMAIN", "params": { "field": "id_materiale", "domain_name": "D_MATERIALE_IDR" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "69900",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{70200}" ,"operator": ">=", "value": 2014},
+                              {"operator":  "!=", "value": null}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is Null and data_esercizio is greater than 2014"
+                }
+            ]},
         {"id": "70000", "transformation": {"func": "DOMAIN", "params": { "field": "id_conservazione", "domain_name": "D_STATO_CONS" }}},
 
-        {"id": "70100", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }}},
-
+        {"id": "70100", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "70100",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{70200}" ,"operator": ">=", "value": 2002},
+                              {"operator":  "!=", "value": null}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is Null and data_esercizio is greater than 2002"
+                }
+            ]},
 
         {"id": "70200", "transformation": {
                 "func": "IF",
@@ -74,26 +105,30 @@
                         "operator": "=",
                         "value": "",
                         "result": 9999,
-                        "else": "data_esercizio"
+                        "else": "{data_esercizio}"
                     }
                 }
-            }},
+            },"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "70200",
+                        "cond": [{
+                            "and": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator": "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9999"
+                }
+            ]},
         {"id": "70400", "transformation": {"func": "DIRECT", "params": { "field": "lunghezza" }}},
-        {"id":"70500", "transformation":{ "func":"CASE", "params": {"field":"id_materiale", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
-        {"id":"70600", "transformation":{ "func":"CASE", "params": {"field":"diametro", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
-       {"id":"70700", "transformation":{ "func":"CASE", "params": {"field":"data_esercizio", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
+
+
+      {"id": "70500","transformation": { "func": "DIRECT", "params": { "field": "idx_materiale"}}},
+      {"id": "70600","transformation": { "func": "DIRECT", "params": { "field": "idx_diametro"}}},
+      {"id": "70700","transformation": { "func": "DIRECT", "params": { "field": "idx_anno"}}},
+
        {"id": "102000", "transformation": {
                 "func": "IF",
                 "params": {
@@ -105,6 +140,19 @@
                         "else": 0
                     }
                 }
-            }}
+            },"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "102000",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{68600}" ,"operator": "=", "value": 1},
+                              {"operator":  "=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not 0"
+                }
+            ]}
      ]
 }

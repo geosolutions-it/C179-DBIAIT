@@ -19,7 +19,8 @@
             {"name":"fognat_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
             {"name":"fognat_tronchi.depurazione", "alias": "depurazione"},
             {"name":"fognat_tronchi.id_refluo_trasportato", "alias": "id_refluo_trasportato"},
-            {"name":"acq_condotta.data_esercizio", "alias": "data_esercizio"}
+            {"name":"acq_condotta.data_esercizio", "alias": "data_esercizio"},
+            {"name":"fgn_condotta.codice_ato", "alias": "codice_ato"}
          ],
          "table":{
             "name":"fognat_tronchi"
@@ -37,34 +38,53 @@
                  "cond": "="
              }
          ]
-      },
-      {
-         "fields":[
-            {"name":"fgn_condotta.codice_ato", "alias": "codice_ato"}
-         ],
-         "table":{
-            "name":"fgn_condotta"
-         },
-         "join": [
-             {
-                 "type": "left",
-                 "table": {
-                     "name": "acq_rete_racc"
-                 },
-                 "on": [
-                     "acq_rete_racc.idgis",
-                     "fgn_condotta.id_rete"
-                 ],
-                 "cond": "="
-             }
-         ]
       }
    ],
    "columns":[
       {"id": "61200","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
       {"id": "61400","transformation": { "func": "DIRECT", "params": { "field": "idgis"}}},
-      {"id": "61700","transformation": { "func": "DIRECT", "params": { "field": "diametro"}}},
-      {"id": "61500","transformation": { "func": "DOMAIN", "params": { "field": "d_materiale", "domain_name":  "D_MATERIALE_IDR"}}},
+      {"id": "101800","transformation": { "func": "DIRECT", "params": { "field": "depurazione"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "101800",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{101300}","operator": "=", "value": 1},
+                              {"operator":  "=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not 0"
+                }
+            ]},
+      {"id": "61700","transformation": { "func": "DIRECT", "params": { "field": "diametro"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "61700",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{61800}","operator": ">=", "value": 2002},
+                              {"operator":  "!=", "value": "None"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is greater than 2002 or is None"
+                }
+            ]},
+      {"id": "61500","transformation": { "func": "DOMAIN", "params": { "field": "d_materiale", "domain_name":  "D_MATERIALE_IDR"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "61500",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{61800}","operator": ">=", "value": 2014},
+                              {"operator":  "!=", "value": "None"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is greater than 2014 or is None"
+                }
+            ]},
       {"id": "61600","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name":  "D_STATO_CONS"}}},
       {"id":"61800", "transformation":{
             "func": "IF",
@@ -74,26 +94,28 @@
                         "operator": "=",
                         "value": "",
                         "result": "9999",
-                        "else": "data_esercizio"
+                        "else": "{data_esercizio}"
                     }
                 }
-            }
+            }, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "61800",
+                        "cond": [{
+                            "and": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is lower than the ref_year"
+                }
+            ]
       },
       {"id": "61900","transformation": { "func": "DOMAIN", "params": { "field": "d_tipo_acqua", "domain_name":  "D_F_T_ACQUA"}}},
-      {"id":"62100", "transformation":{ "func":"CASE", "params": {"field":"d_materiale", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 1 and (TIPO_RILIEVO != ASB and TIPO_RILIEVO != DIN)", "value": "1", "result": "B"}
-         ]}}},
-        {"id":"62200", "transformation":{ "func":"CASE", "params": {"field":"diametro", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "!= '' and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= '' and (TIPO_RILIEVO != ASB and TIPO_RILIEVO != DIN)", "value": "1", "result": "B"}
-         ]}}},
-       {"id":"62300", "transformation":{ "func":"CASE", "params": {"field":"data_esercizio", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "9999", "result": "X"},
-             {"case": "WHEN", "operator": "!= 9999 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "!= 9999 and (TIPO_RILIEVO != ASB and TIPO_RILIEVO != DIN)", "value": "1", "result": "B"}
-         ]}}}
+
+      {"id": "62100","transformation": { "func": "DIRECT", "params": { "field": "idx_materiale"}}},
+      {"id": "62200","transformation": { "func": "DIRECT", "params": { "field": "idx_diametro"}}},
+      {"id": "62300","transformation": { "func": "DIRECT", "params": { "field": "idx_anno"}}}
    ]
 }

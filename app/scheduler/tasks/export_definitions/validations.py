@@ -95,7 +95,7 @@ class IfValidation(BaseValidation):
             or_conditions = cond.get("or", [])
             result.append(self._validate_condition(and_conditions, or_conditions, row, ref_year))
 
-        return all(result)
+        return any(result)
 
     def _validate_condition(self, and_conditions, or_conditions, row, ref_year):
         and_result = list(self._validate_list(and_conditions, row, ref_year))
@@ -109,24 +109,42 @@ class IfValidation(BaseValidation):
             return all(and_result)
 
     def _validate_list(self, conditions, row, ref_year):
-        field_value = row.get(self.args["field"], None)
         for cond in conditions:
+            field_value = row.get(self.args["field"], None)
             if "lookup" in cond:
                 lookup_field = re.match(self.re_pattern, cond['lookup'])
 
                 if lookup_field is not None:
                     field_value = row.get(lookup_field.group(1), None)
-                    if not isinstance(field_value, int):
-                        field_value = ast.literal_eval(row.get(lookup_field.group(1), None))
-
-            if field_value is None:
-                return False
 
             if cond['value'] == "{REF_YEAR}":
                 cond['value'] = ref_year or datetime.utcnow().year
 
+            if isinstance(cond["value"], str) and "{" in cond['value']:
+                lookup_value = re.match(self.re_pattern, cond['value'])
+
+                if lookup_value is not None:
+                    value = row.get(lookup_value.group(1), None)
+
+                cond["value"] = self.cast_field(value)
+
+            field_value = self.cast_field(field_value)
+
+            if field_value is None:
+                return False
+
             operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
             yield operator(field_value, cond["value"])
+
+    def cast_field(self, field_value):
+        if not isinstance(field_value, int) and field_value is not None and not isinstance(field_value, float):
+            try:
+                field_value = ast.literal_eval(field_value)
+            except ValueError as e:
+                field_value = field_value
+        if isinstance(field_value, datetime):
+            field_value = field_value.year
+        return field_value
 
 
 class ValidationFactory:

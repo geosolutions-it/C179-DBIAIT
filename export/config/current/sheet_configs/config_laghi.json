@@ -213,47 +213,386 @@
         {"id": "8100","transformation": { "func": "DIRECT", "params": { "field": "denom" }}},
         {"id": "8200","transformation": { "func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
         {"id": "8300","transformation": { "func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
-        {"id": "8500","transformation": { "func": "DIRECT", "params": { "field": "quota" }}},
+        {"id": "8500","transformation": { "func": "DIRECT", "params": { "field": "quota" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "8500",
+                        "cond": [{
+                            "and": [
+                              {"operator": "!=", "value": 0 }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 0"
+                }
+            ]},
         {"id": "8800","transformation": { "func": "DIRECT", "params": { "field": "bacino" }}},
         {"id": "8900","transformation": { "func": "DIRECT", "params": { "field": "corso_acqua" }}},
         {"id": "9100","transformation": { "func": "DIRECT", "params": { "field": "estremi_conces" }}},
-        {"id": "9200","transformation": { "func": "DIRECT", "params": { "field": "port_potab" }}},
+        {"id": "9200","transformation": { "func": "DIRECT", "params": { "field": "port_potab" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "9200",
+                        "cond": [{
+                            "and": [
+                              {"operator": ">=", "value": "{10500}" }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not greater than 10500"
+                }
+            ]},
         {"id": "9300","transformation": { "func": "DIRECT", "params": { "field": "port_industr" }}},
         {"id": "9400","transformation": { "func": "DIRECT", "params": { "field": "port_irrig" }}},
         {"id": "9500","transformation": { "func": "DIRECT", "params": { "field": "port_idroel" }}},
         {"id": "9600","transformation": { "func": "DIRECT", "params": { "field": "port_altro" }}},
-        {"id": "9700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr" }}},
-        {"id": "9800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}},
-        {"id": "10100","transformation": { "func": "DIRECT", "params": { "field": "utilizzo_annuo" }}},
+        {"id": "9700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "9700",
+                        "cond": [{
+                            "or": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator": "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9999"
+                }
+            ]},
+        {"id": "9800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "9800",
+                        "cond": [{
+                            "or": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator": "!=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9999"
+                }
+            ]},
+        {"id": "10100","transformation": { "func": "DIRECT", "params": { "field": "utilizzo_annuo" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "10100",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10300}","operator": "=", "value": 0},
+                              {"operator": "=", "value": "0"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10300}","operator": ">", "value": 0},
+                              {"operator": "<", "value": 100}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10000}","operator": "=", "value": "Continuo"},
+                              {"operator": "=", "value": 100}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not continuo or occasionale"
+                }
+            ]},
         {"id": "10200","transformation": { "func": "DIRECT", "params": { "field": "area_bac_affer" }}},
-        {"id": "10300","transformation": { "func": "DIRECT", "params": { "field": "volume_medio_prel" }}},
-        {"id": "10600","transformation": { "func": "DIRECT", "params": { "field": "port_uti_max" }}},
-        {"id": "10700","transformation": { "func": "DIRECT", "params": { "field": "port_uti_min" }}},
+        {"id": "10300","transformation": { "func": "DIRECT", "params": { "field": "volume_medio_prel" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "10300",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{12000}","operator": "=", "value": 1},
+                              {"operator": ">", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{9200}","operator": "=", "value": 0},
+                              {"operator": "<=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not valid"
+                }
+            ]},
+        {"id": "10600","transformation": { "func": "DIRECT", "params": { "field": "port_uti_max" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "10600",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10500}","operator": "=", "value": 0},
+                              {"operator": "=", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10500}","operator": ">", "value": 0},
+                              {"operator": ">", "value": "{10500}"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not valid"
+                }
+            ]},
+        {"id": "10700","transformation": { "func": "DIRECT", "params": { "field": "port_uti_min" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "10700",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10500}","operator": "=", "value": 0},
+                              {"operator": "=", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10500}","operator": ">", "value": 0},
+                              {"operator": ">", "value": "{10500}"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not valid"
+                }
+            ]},
         {"id": "10800","transformation": { "func": "DIRECT", "params": { "field": "port_deriv" }}},
         {"id": "10900","transformation": { "func": "DIRECT", "params": { "field": "volume_invaso" }}},
         {"id": "11000","transformation": { "func": "DIRECT", "params": { "field": "altezza_diga" }}},
         {"id": "11100","transformation": { "func": "DIRECT", "params": { "field": "sn_inv_norm_coll" }}},
         {"id": "11300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" }}},
         {"id": "10400","transformation": { "func": "DIRECT", "params": { "field": "denominazi" }}},
-        {"id": "11800","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor" }}},
-        {"id": "11900","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor" }}},
+        {"id": "11800","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "11800",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{11700}","operator": "=", "value": 1},
+                              {"operator": "=", "value": 9800}
+                            ]
+                        },{
+                            "or": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
+                              {"operator": "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field error"
+                }
+            ]},
+        {"id": "11900","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "11900",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{11700}","operator": "=", "value": 1},
+                              {"operator": "=", "value": 9800}
+                            ]
+                        },{
+                            "or": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
+                              {"operator": "!=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field error"
+                }
+            ]},
         {"id": "13000","transformation": { "func": "DIRECT", "params": { "field": "data_agg" }}},
 
-        {"id": "10500","transformation": { "func": "EXPR", "params": { "field": "volume_medio_prel" ,"expr": "_value_*1000/365/3600/24"}}},
+        {"id": "10500","transformation": { "func": "EXPR", "params": { "field": "volume_medio_prel" ,"expr": "_value_*1000/365/3600/24"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "10500",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{9200}","operator": "<", "value": "{10500}"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not lower than the field 9200"
+                }
+            ]},
 
         {"id": "9000","transformation": { "func": "DOMAIN", "params": { "field": "d_classific", "domain_name": "D_CLASSIFIC" }}},
-        {"id": "9900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }}},
-        {"id": "10000","transformation": { "func": "DOMAIN", "params": { "field": "d_utilizzo", "domain_name": "D_UTILIZZO_OPERA" }}},
+        {"id": "9900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "9900",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{9800}","operator": ">=", "value": 2014},
+                              {"operator": ">=", "value": 3}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is lower than 3"
+                }
+            ]},
+        {"id": "10000","transformation": { "func": "DOMAIN", "params": { "field": "d_utilizzo", "domain_name": "D_UTILIZZO_OPERA" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "10000",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10100}","operator": "=", "value": 100},
+                              {"operator": "=", "value": "Continuo"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10300}","operator": "=", "value": 0},
+                              {"lookup": "{12000}","operator": "=", "value": 1},
+                              {"operator": "=", "value": "Occasionale"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not continuo or occasionale"
+                }
+            ]},
         {"id": "11200","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" }}},
-        {"id": "11700","transformation": { "func": "DOMAIN", "params": { "field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ" }}},
+        {"id": "11700","transformation": { "func": "DOMAIN", "params": { "field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "11700",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{11800}","operator": "!=", "value": 9800},
+                              {"operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is 1"
+                }
+            ]},
         {"id": "12000","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" }}},
         {"id": "12100","transformation": { "func": "DOMAIN", "params": { "field": "a_area_bac_affer", "domain_name":  "D_AFFIDABILITA" }}},
-        {"id": "12200","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_costr", "domain_name":  "D_AFFIDABILITA" }}},
-        {"id": "12300","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name":  "D_AFFIDABILITA" }}},
-        {"id": "12400","transformation": { "func": "DOMAIN", "params": { "field": "a_volume", "domain_name":  "D_AFFIDABILITA" }}},
-        {"id": "12600","transformation": { "func": "DOMAIN", "params": { "field": "a_port_es", "domain_name":  "D_AFFIDABILITA" }}},
-        {"id": "12700","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_max", "domain_name":  "D_AFFIDABILITA" }}},
-        {"id": "12800","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_min", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "12200","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_costr", "domain_name":  "D_AFFIDABILITA" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "12200",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{9700}","operator": "=", "value": 9999},
+                              {"operator": "=", "value": "x"}
+                            ]
+                        },{
+                            "or": [
+                              {"lookup": "{9700}","operator": ">", "value": 2002},
+                              {"lookup": "{9700}","operator": "!=", "value": 9999},
+                              {"operator": "=", "value": "a"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not A or X"
+                }
+            ]},
+        {"id": "12300","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "12300",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{9800}","operator": "=", "value": 2002},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not A"
+                }
+            ]},
+        {"id": "12400","transformation": { "func": "DOMAIN", "params": { "field": "a_volume", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "12400",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10300}","operator": "=", "value": 0},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10300}","operator": ">", "value": 0},
+                              {"lookup": "{11300}","operator": "=", "value": 1},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10300}","operator": ">", "value": 0},
+                              {"lookup": "{11300}","operator": "=", "value": 0},
+                              {"operator": "=", "value": "C"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: One or more condition are failing"
+                }
+            ]},
+        {"id": "12600","transformation": { "func": "DOMAIN", "params": { "field": "a_port_es", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "12600",
+                        "cond": [{
+                            "and": [
+                              {"operator": "=", "value": "{12400}"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not equal to ID 12400"
+                }
+            ]},
+        {"id": "12700","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_max", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "12700",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10600}","operator": "=", "value": 0},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10600}","operator": ">", "value": 0},
+                              {"lookup": "{10600}","operator": "=", "value": 1},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10600}","operator": ">", "value": 0},
+                              {"lookup": "{10600}","operator": "=", "value": 0},
+                              {"operator": "=", "value": "C"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: One or more condition are failing"
+                }
+            ]},
+        {"id": "12800","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_min", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "12800",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10700}","operator": "=", "value": 0},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10700}","operator": ">", "value": 0},
+                              {"lookup": "{10700}","operator": "=", "value": 1},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10700}","operator": ">", "value": 0},
+                              {"lookup": "{10700}","operator": "=", "value": 0},
+                              {"operator": "=", "value": "C"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: One or more condition are failing"
+                }
+            ]},
         {"id": "12900","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA" }}},
         {"id": "12500","transformation": {
             "func": "IF",

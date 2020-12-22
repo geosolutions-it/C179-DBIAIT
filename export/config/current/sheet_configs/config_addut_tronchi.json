@@ -20,29 +20,33 @@
                 {"name": "addut_tronchi.pressione", "alias": "pressione"},
                 {"name": "addut_tronchi.protezione_catodica", "alias": "protezione_catodica"},
                 {"name": "addut_tronchi.note", "alias": "note"},
-                {"name": "addut_tronchi.geom", "alias": "geom"}
-            ],
-            "table": {
-                "name": "addut_tronchi"
-            }
-        },
-        {
-            "fields": [
-                { "name": "acq_adduttrice.codice_ato", "alias": "codice_ato"},
+                {"name": "addut_tronchi.geom", "alias": "geom"},
                 {"name":  "acq_condotta.id_sist_prot_cat", "alias": "id_sist_prot_cat"},
+                {"name":  "acq_adduttrice.codice_ato", "alias": "adduttrice_codice_ato"},
                 {"name":  "acq_condotta.data_esercizio", "alias": "data_esercizio"}
             ],
             "table": {
-                "name": "acq_condotta"
+                "name": "addut_tronchi"
             },
-            "join": [
-                {
+          "join" : [
+              {
+                    "type": "left",
+                    "table": {
+                        "name": "acq_condotta"
+                    },
+                    "on": [
+                        "addut_tronchi.idgis",
+                        "acq_condotta.idgis"
+                    ],
+                    "cond": "="
+                },
+              {
                     "type": "left",
                     "table": {
                         "name": "acq_adduttrice"
                     },
                     "on": [
-                        "acq_condotta.id_rete",
+                        "addut_tronchi.idgis_rete",
                         "acq_adduttrice.idgis"
                     ],
                     "cond": "="
@@ -52,12 +56,41 @@
     ],
      "columns": [
         {"id": "41100", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
-        {"id": "40900", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
+        {"id": "40900", "transformation": {"func": "DIRECT", "params": { "field": "adduttrice_codice_ato" }}},
+        {"id": "41500", "transformation": {"func": "DIRECT", "params": { "field": "data_esercizio" }}},
 
-        {"id": "41200", "transformation": {"func": "DOMAIN", "params": { "field": "idx_materiale", "domain_name": "D_MATERIALE_IDR" }}},
+        {"id": "41200", "transformation": {"func": "DOMAIN", "params": { "field": "id_materiale", "domain_name": "D_MATERIALE_IDR" }},
+            "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "41200",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{41500}" ,"operator": ">=", "value": 2014},
+                              {"operator":  "!=", "value": null}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 2014 and the value is null"
+                }
+            ]
+        },
         {"id": "41300", "transformation": {"func": "DOMAIN", "params": { "field": "id_conservazione", "domain_name": "D_STATO_CONS" }}},
 
-        {"id": "41400", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }}},
+        {"id": "41400", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "41400",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{41500}" ,"operator": ">=", "value": 2002},
+                              {"operator":  "!=", "value": null}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 2002 and the value is null"
+                }
+            ]},
 
         {"id": "41600", "transformation": {
                 "func": "IF",
@@ -67,10 +100,23 @@
                         "operator": "<>",
                         "value": "",
                         "result": "1",
-                        "else":" 0"
+                        "else": "0"
                     }
                 }
-            }},
+            },"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "41400",
+                        "cond": [{
+                            "and": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9999"
+                }
+            ]},
 
         {"id": "41500", "transformation": {
                 "func": "IF",
@@ -80,25 +126,13 @@
                         "operator": "=",
                         "value": "",
                         "result": "9999",
-                        "else": "data_esercizio"
+                        "else": "{data_esercizio}"
                     }
                 }
             }},
         {"id": "41700", "transformation": {"func": "DIRECT", "params": { "field": "lunghezza" }}},
-        {"id":"41800", "transformation":{ "func":"CASE", "params": {"field":"idx_materiale", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
-        {"id":"41900", "transformation":{ "func":"CASE", "params": {"field":"idx_diametro", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}},
-       {"id":"42000", "transformation":{ "func":"CASE", "params": {"field":"idx_anno", "cond": [
-             {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO = ASB or TIPO_RILIEVO = DIN)", "value": "1", "result": "A"},
-             {"case": "WHEN", "operator": "<> 1 and (TIPO_RILIEVO <> ASB and TIPO_RILIEVO <> DIN)", "value": "1", "result": "B"}
-         ]}}}
+        {"id": "41800", "transformation": {"func": "DIRECT", "params": { "field": "idx_materiale" }}},
+        {"id": "41900", "transformation": {"func": "DIRECT", "params": { "field": "idx_diametro" }}},
+        {"id": "42000", "transformation": {"func": "DIRECT", "params": { "field": "idx_anno" }}}
      ]
 }

@@ -219,11 +219,35 @@
 
         {"id": "1000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
         {"id": "1100","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
-        {"id": "1500","transformation": { "func": "DIRECT", "params": { "field": "quota"}}},
+        {"id": "1500","transformation": { "func": "DIRECT", "params": { "field": "quota"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "1500",
+                        "cond": [{
+                            "and": [
+                              {"operator": "!=", "value": 0 }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 0"
+                }
+            ]},
         {"id": "1800","transformation": { "func": "DIRECT", "params": { "field": "bacino"}}},
         {"id": "1900","transformation": { "func": "DIRECT", "params": { "field": "corso_acqua"}}},
         {"id": "2100","transformation": { "func": "DIRECT", "params": { "field": "estremi_conces"}}},
-        {"id": "2200","transformation": { "func": "DIRECT", "params": { "field": "port_potab"}}},
+        {"id": "2200","transformation": { "func": "DIRECT", "params": { "field": "port_potab"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "2200",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{3500}","operator": ">", "value": "{2200}"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 0"
+                }
+            ]},
         {"id": "2300","transformation": { "func": "DIRECT", "params": { "field": "port_industr"}}},
         {"id": "2400","transformation": { "func": "DIRECT", "params": { "field": "port_irrig"}}},
         {"id": "2500","transformation": { "func": "DIRECT", "params": { "field": "port_idroel"}}},

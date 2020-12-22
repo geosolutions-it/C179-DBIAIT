@@ -26,14 +26,71 @@
     "columns": [
         {"id": "50500","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
         {"id": "50700","transformation": { "func": "DIRECT", "params": { "field": "d_stato_cons" }}},
-        {"id": "50800","transformation": { "func": "DIRECT", "params": { "field": "anno_instal" }}},
-        {"id": "50900","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}},
+        {"id": "50800","transformation": { "func": "DIRECT", "params": { "field": "anno_instal" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "50800",
+                        "cond": [{
+                            "and": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is greater than ref_year"
+                }
+            ]},
+        {"id": "50900","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "50900",
+                        "cond": [{
+                            "and": [
+                              {"operator": ">=", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is greater than ref_year"
+                }
+            ]},
         {"id": "51000","transformation": { "func": "DIRECT", "params": { "field": "potenza" }}},
         {"id": "51100","transformation": { "func": "DIRECT", "params": { "field": "portata" }}},
         {"id": "51200","transformation": { "func": "DIRECT", "params": { "field": "prevalenza" }}},
         {"id": "51300","transformation": { "func": "DIRECT", "params": { "field": "sn_riserva" }}},
-        {"id": "51400","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_instal", "domain_name": "D_AFFIDABILITA" }}},
-        {"id": "51500","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name":  "D_AFFIDABILITA" }}},
+        {"id": "51400","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_instal", "domain_name": "D_AFFIDABILITA" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "51400",
+                        "cond": [{
+                            "or": [
+                              {"lookup": "{50800}","operator": "=", "value": 9999},
+                              {"operator":  "=", "value": "X"}
+                            ],
+                            "or": [
+                              {"lookup": "{50800}", "operator": ">=", "value": 2002},
+                              {"lookup": "{50800}", "operator":  "!=", "value": 9999},
+                              {"operator":  "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not A or X"
+                }
+            ]},
+        {"id": "51500","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "51500",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{50900}","operator": ">=", "value": 2002},
+                              {"operator":  "=", "value": "A"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is greater than ref_year"
+                }
+            ]},
         {"id": "51600","transformation": { "func": "DIRECT", "params": { "field": "a_potenza" }}},
         {"id": "51700","transformation": { "func": "DIRECT", "params": { "field": "a_portata" }}},
         {"id": "51800","transformation": { "func": "DIRECT", "params": { "field": "a_prevalenza" }}}
