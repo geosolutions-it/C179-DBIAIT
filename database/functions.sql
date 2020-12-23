@@ -1029,14 +1029,8 @@ BEGIN
 				select c.idgis 
 				FROM 
 					fgn_condotta c,
-					fgn_bacino b, ' || v_join_table || ' r
-				where b.sub_funzione = 3
-				and c.id_rete = r.idgis
-				and c.geom && b.geom 
-				and st_intersects(c.geom, b.geom)
-				and r.d_stato in (''ATT'',''FIP'')
-				and (r.d_ambito is null or r.d_ambito = ''AT3'')
-				and r.d_gestore = ''PUBLIACQUA''
+					fgn_trattamento d
+				where c.sist_acq_dep = d.business_id
 			) t WHERE t.idgis = ' || v_table || '.idgis		
 		);
 	';
