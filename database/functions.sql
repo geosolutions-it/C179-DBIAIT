@@ -2185,7 +2185,7 @@ BEGIN
 	DELETE FROM addut_com_serv;
 	
 	INSERT into addut_com_serv(ids_codice, id_comune_istat)
-	SELECT tr.codice_ato, (cc.cod_istat::INTEGER)::VARCHAR
+	SELECT DISTINCT tr.codice_ato, (cc.cod_istat::INTEGER)::VARCHAR
 	FROM addut_tronchi tr
 	LEFT JOIN confine_comunale cc 
 		ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom);
@@ -2222,10 +2222,11 @@ BEGIN
 	DELETE FROM collet_com_serv;
 	
 	INSERT into collet_com_serv(ids_codice, id_comune_istat)
-	SELECT tr.codice_ato, (cc.cod_istat::INTEGER)::VARCHAR
+	SELECT distinct tr.codice_ato, (cc.cod_istat::INTEGER)::VARCHAR
 	FROM collett_tronchi tr
 	LEFT JOIN confine_comunale cc 
-		ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom);
+		ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom)
+	WHERE tr.codice_ato is not NULL;
 	
 	--LOG ANOMALIE (da verificare: qui tronchi che hanno stesso codice_ato vengono fuori perche intersecano piu comuni)
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'COLLET_COM_SERV';
@@ -2321,7 +2322,7 @@ BEGIN
 		--Populate destination table
 		EXECUTE '
 		INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
-		SELECT ' || v_in_fields[v_t] || ' 
+		SELECT DISTINCT ' || v_in_fields[v_t] || '
 		FROM ' || v_in_tables[v_t] || ' t
 		LEFT join acq_rete_distrib r
 		  ON r.geom&&t.geom AND st_INTERSECTS(r.geom,t.geom)
@@ -2377,7 +2378,7 @@ BEGIN
 	DELETE FROM ACCUMULI_INADD;
 	
 	INSERT into ACCUMULI_INADD(ids_codice, ids_codice_adduzione, id_gestore_adduzione)
-	select a.codice_ato, c.codice_ato, NULL 
+	select DISTINCT a.codice_ato, c.codice_ato, 3
 	from acq_accumulo a left JOIN addut_tronchi c
 	on c.geom&&ST_BUFFER(a.geom, v_tol) and ST_INTERSECTS(c.geom, ST_BUFFER(a.geom, v_tol))
 	WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato NOT IN ('IPR','IAC')
@@ -2431,7 +2432,7 @@ BEGIN
 	DELETE FROM DEPURATO_INCOLL;
 	
 	INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
-	select a.codice_ato, c.codice_ato, NULL 
+	select DISTINCT a.codice_ato, c.codice_ato, 3
 	from fgn_trattamento a left JOIN collett_tronchi c
 	on c.geom&&ST_BUFFER(a.geom, v_tol) and ST_INTERSECTS(c.geom, ST_BUFFER(a.geom, v_tol))
 	WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
@@ -2484,7 +2485,7 @@ BEGIN
 	DELETE FROM SCARICATO_INFOG;
 	
 	INSERT into SCARICATO_INFOG(ids_codice, ids_codice_fognatura, id_gestore_fognatura)
-	SELECT sf.codice_ato, rr.codice_ato, 3
+	SELECT distinct sf.codice_ato, rr.codice_ato, 3
 	FROM fgn_sfioro sf
 	LEFT JOIN fgn_rete_racc rr 
 		ON rr.geom&&sf.geom AND st_INTERSECTS(rr.geom,sf.geom)
