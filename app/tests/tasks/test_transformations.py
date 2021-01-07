@@ -69,6 +69,22 @@ class TransformationTestCase(SimpleTestCase):
         actual = self.sut.from_name('IF', if_condition).apply(row={"foo": 1})
         self.assertEqual(2, actual)
 
+    def test_given_transformation_name_ROUND_should_return_the_expected_output(self):
+        if_condition = {
+            "field": "foo",
+            "ndigits": 3
+        }
+        actual = self.sut.from_name('ROUND', if_condition).apply(row={"foo": 1.2})
+        self.assertEqual(1.2, actual)
+
+    def test_given_transformation_name_ROUND_should_return_the_expected_output_with_truncated_digits(self):
+        if_condition = {
+            "field": "foo",
+            "ndigits": 3
+        }
+        actual = self.sut.from_name('ROUND', if_condition).apply(row={"foo": 1.22345678})
+        self.assertEqual(1.223, actual)
+
     def test_given_transformation_name_IF_ne_should_return_the_expected_output(self):
         if_condition = {
             "field": "foo",
