@@ -56,6 +56,23 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
+    --------------------------------------------------------------------
+-- Convert a float in integer
+-- Example:
+--  select dbiait_analysis.from_float_to_int(9.4) -> 9
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.from_float_to_int(
+	v_number FLOAT,
+	v_default INTEGER DEFAULT 0
+) RETURNS INTEGER AS $$
+BEGIN
+    RETURN v_number::INTEGER;
+EXCEPTION WHEN OTHERS THEN
+	RETURN v_default;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- Etract pro-com part from the localita ISTAT (removing last 5 characters)
 -- Example:
