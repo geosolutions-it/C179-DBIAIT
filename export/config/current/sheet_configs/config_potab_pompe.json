@@ -11,7 +11,7 @@
                 {"name": "ext_rel_pompa.potenza","alias": "potenza"},
                 {"name": "ext_rel_pompa.portata","alias": "portata"},
                 {"name": "ext_rel_pompa.prevalenza","alias": "prevalenza"},
-                {"name": "ext_rel_pompa.sn_riserva","alias": "sn_riserva"},
+                {"name": "ext_rel_pompa.sn_riserva","alias": "sn_riserva", "function": "TO_BIT"},
                 {"name": "ext_rel_pompa.a_anno_instal","alias": "a_anno_instal"},
                 {"name": "ext_rel_pompa.a_anno_ristr","alias": "a_anno_ristr"},
                 {"name": "ext_rel_pompa.a_potenza","alias": "a_potenza"},
