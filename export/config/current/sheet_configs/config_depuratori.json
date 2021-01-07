@@ -6,7 +6,7 @@
             "fields": [
                 { "name": "fgn_trattamento.codice_ato", "alias": "codice_ato"},
                 { "name": "fgn_trattamento.denom", "alias": "denom"},
-                { "name": "fgn_trattamento.quota", "alias": "quota"},
+                { "name": "fgn_trattamento.quota", "alias": "quota", "function":  "FROM_FLOAT_TO_INT"},
                 { "name": "fgn_trattamento.d_corpo_ricet", "alias": "d_corpo_ricet"},
                 { "name": "fgn_trattamento.pot_prog", "alias": "pot_prog"},
                 { "name": "fgn_trattamento.conc_co2_ing", "alias": "conc_co2_ing"},
@@ -81,9 +81,12 @@
                 { "name": "fgn_auth_trattam.a_conc_co2_ing", "alias": "a_conc_co2_ing"},
                 { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
                 { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
+                { "name": "fgn_auth_trattam.consumo_ee", "alias": "consumo_ee"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"}
+                { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
+                { "name": "abitanti_trattati.ae_tot", "alias": "ae_tot"},
+                { "name": "abitanti_trattati.ae_civ", "alias": "ae_civ"}
             ],
             "table": {
                 "name": "fgn_trattamento"
@@ -110,6 +113,17 @@
                         "fgn_trattamento.geom"
                     ],
                     "cond": "ST_INTERSECTS"
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "abitanti_trattati"
+                    },
+                    "on": [
+                        "fgn_trattamento.idgis",
+                        "abitanti_trattati.codice"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE fgn_trattamento.d_gestore = 'PUBLIACQUA' AND fgn_trattamento.d_ambito IN ('AT3', NULL) AND fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
@@ -118,7 +132,7 @@
             "fields": [
                 { "name": "a_fgn_trattamento.codice_ato", "alias": "codice_ato"},
                 { "name": "a_fgn_trattamento.denom", "alias": "denom"},
-                { "name": "a_fgn_trattamento.quota", "alias": "quota"},
+                { "name": "a_fgn_trattamento.quota", "alias": "quota", "function":  "FROM_FLOAT_TO_INT"},
                 { "name": "a_fgn_trattamento.d_corpo_ricet", "alias": "d_corpo_ricet"},
                 { "name": "a_fgn_trattamento.pot_prog", "alias": "pot_prog"},
                 { "name": "a_fgn_trattamento.conc_co2_ing", "alias": "conc_co2_ing"},
@@ -193,6 +207,7 @@
                 { "name": "fgn_auth_trattam.a_conc_co2_ing", "alias": "a_conc_co2_ing"},
                 { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
                 { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
+                { "name": "fgn_auth_trattam.consumo_ee", "alias": "consumo_ee"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"}
@@ -222,6 +237,17 @@
                         "a_fgn_trattamento.geom"
                     ],
                     "cond": "ST_INTERSECTS"
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "abitanti_trattati"
+                    },
+                    "on": [
+                        "a_fgn_trattamento.idgis",
+                        "abitanti_trattati.codice"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE a_fgn_trattamento.d_gestore = 'PUBLIACQUA' AND a_fgn_trattamento.d_ambito IN ('AT3', NULL) AND a_fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
@@ -232,6 +258,8 @@
 
         {"id": "71800", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
         {"id": "71900", "transformation": {"func": "DIRECT", "params": { "field": "denom" }}},
+        {"id": "73300", "transformation": {"func": "DIRECT", "params": { "field": "ae_tot" }}},
+        {"id": "73400", "transformation": {"func": "DIRECT", "params": { "field": "ae_civ" }}},
         {"id": "72300", "transformation": {"func": "DIRECT", "params": { "field": "quota" }},"validations": [{
                     "func": "IF",
                     "params": {
@@ -289,7 +317,7 @@
                 }
             ]},
         {"id": "73200", "transformation": {"func": "DIRECT", "params": { "field": "pot_prog" }}},
-        {"id": "74200", "transformation": {"func": "DIRECT", "params": { "field": "a_vol_att_tratt" }}, "validations": [{
+        {"id": "74200", "transformation": {"func": "DIRECT", "params": { "field": "consumo_ee" }}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "74200",
@@ -366,8 +394,8 @@
         {"id": "102400", "transformation": {"func": "DIRECT", "params": { "field": "sn_strum_mis_port_out" }}},
 
 
-        {"id": "72000", "transformation": {"func": "DIRECT", "params": { "field": "transformed_y_geom"}}},
-        {"id": "72100", "transformation": {"func": "DIRECT", "params": { "field": "transformed_x_geom"}}},
+        {"id": "72000", "transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
+        {"id": "72100", "transformation": { "func": "ROUND", "params": {"field": "transformed_x_geom", "ndigits":  3}}},
 
         {"id": "72500", "transformation": {"func": "LSTRIP", "params": { "field": "cod_comune", "char": "0" }}},
 
