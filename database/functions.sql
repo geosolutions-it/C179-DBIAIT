@@ -2338,7 +2338,7 @@ BEGIN
 		--Populate destination table
 		EXECUTE '
 		INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
-		SELECT ' || v_in_fields[v_t] || ' 
+		SELECT  distinct ' || v_in_fields[v_t] || '
 		FROM ' || v_in_tables[v_t] || ' t
 		LEFT join acq_rete_distrib r
 		  ON r.geom&&t.geom AND st_INTERSECTS(r.geom,t.geom)
@@ -2351,7 +2351,7 @@ BEGIN
 		-- Elementi che intersecano piu' di una rete
 		EXECUTE '
 		INSERT INTO LOG_STANDALONE (id, alg_name, description)
-		SELECT idgis, $1, ''Elemento intersecante piu'''' ('' || count(0) || '') di una rete'' 
+		SELECT idgis, $1, ''Elemento intersecante piu'''' ('' || count(0) || '') di una rete''
 		FROM (
 			SELECT t.idgis
 			FROM ' || v_in_tables[v_t] || ' t

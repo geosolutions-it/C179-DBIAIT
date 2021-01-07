@@ -222,7 +222,6 @@
 
         {"id": "1700","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
         {"id": "1600","transformation": {"func": "DIRECT", "params": {"field": "denominazi"}}},
-        {"id": "3400","transformation": {"func": "DIRECT", "params": {"field": "ids_codice_potab"}}},
 
         {"id": "1000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
         {"id": "1100","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
@@ -320,9 +319,9 @@
                  "field": "cod_opera_inpotab_not_exist",
                  "cond": {
                          "operator": "=",
-                         "value": 1,
-                         "result": "{ volume_medio_prel }",
-                         "else": 0
+                         "value": null,
+                         "result": "0",
+                         "else": "{ volume_medio_prel }"
                      }
                  }
              }
