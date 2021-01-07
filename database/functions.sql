@@ -2024,7 +2024,7 @@ BEGIN
 					end
 				)) avg_potenza
 				FROM ' || v_tables[v_t] || '
-				GROUP BY codice_ato, idx_potenza
+				GROUP BY codice_ato
 			) t
 		) t2
 		WHERE t1.codice_ato = t2.codice_ato;';
