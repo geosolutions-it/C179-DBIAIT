@@ -4,23 +4,24 @@
    "sources":[
       {
          "fields":[
-            {"name":"ext_rel_pompa.codice_ato", "alias":"codice_ato"},
-            {"name":"ext_rel_pompa.d_stato_cons", "alias":"d_stato_cons"},
-            {"name":"ext_rel_pompa.anno_instal", "alias":"anno_instal"},
-            {"name":"ext_rel_pompa.anno_ristr", "alias":"anno_ristr"},
-            {"name":"ext_rel_pompa.potenza", "alias":"potenza"},
-            {"name":"ext_rel_pompa.portata", "alias":"portata"},
-            {"name":"ext_rel_pompa.prevalenza", "alias":"prevalenza"},
-            {"name":"ext_rel_pompa.sn_riserva", "alias":"sn_riserva"},
-            {"name":"ext_rel_pompa.a_anno_instal", "alias":"a_anno_instal"},
-            {"name":"ext_rel_pompa.a_anno_ristr", "alias":"a_anno_ristr"},
-            {"name":"ext_rel_pompa.a_potenza", "alias":"a_potenza"},
-            {"name":"ext_rel_pompa.a_portata", "alias":"a_portata"},
-            {"name":"ext_rel_pompa.a_prevalenza", "alias":"a_prevalenza"}
+            {"name":"archivio_pompe.codice_ato", "alias":"codice_ato"},
+            {"name":"archivio_pompe.d_stato_cons", "alias":"d_stato_cons"},
+            {"name":"archivio_pompe.anno_instal", "alias":"anno_instal"},
+            {"name":"archivio_pompe.anno_ristr", "alias":"anno_ristr"},
+            {"name":"archivio_pompe.potenza", "alias":"potenza"},
+            {"name":"archivio_pompe.portata", "alias":"portata"},
+            {"name":"archivio_pompe.prevalenza", "alias":"prevalenza"},
+            {"name":"archivio_pompe.sn_riserva", "alias":"sn_riserva", "function": "TO_BIT"},
+            {"name":"archivio_pompe.a_anno_instal", "alias":"a_anno_instal"},
+            {"name":"archivio_pompe.a_anno_ristr", "alias":"a_anno_ristr"},
+            {"name":"archivio_pompe.a_potenza", "alias":"a_potenza"},
+            {"name":"archivio_pompe.a_portata", "alias":"a_portata"},
+            {"name":"archivio_pompe.a_prevalenza", "alias":"a_prevalenza"}
          ],
          "table":{
-            "name":"ext_rel_pompa"
-         }
+            "name":"archivio_pompe"
+         },
+         "filter": "WHERE archivio_pompe.tipo_oggetto = 'FGN_IMP_SOLLEV'"
       }
    ],
    "columns":[
