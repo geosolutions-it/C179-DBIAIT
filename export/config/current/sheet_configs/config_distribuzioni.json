@@ -14,7 +14,7 @@
                 { "name": "acq_rete_distrib.a_vol_imm_terzi", "alias": "a_vol_imm_terzi"},
                 { "name": "acq_rete_distrib.a_vol_ceduto", "alias": "a_vol_ceduto"},
                 { "name": "acq_rete_distrib.data_agg", "alias": "data_agg"},
-                { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili"},
+                { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili", "function": "TO_BIT"},
                 { "name": "acq_auth_rete_dist.a_ili", "alias": "a_ili"},
                 { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
                 { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
@@ -51,7 +51,7 @@
                 { "name": "a_acq_rete_distrib.a_vol_imm_terzi", "alias": "a_vol_imm_terzi"},
                 { "name": "a_acq_rete_distrib.a_vol_ceduto", "alias": "a_vol_ceduto"},
                 { "name": "a_acq_rete_distrib.data_agg", "alias": "data_agg"},
-                { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili"},
+                { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili", "function": "TO_BIT"},
                 { "name": "acq_auth_rete_dist.a_ili", "alias": "a_ili"},
                 { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
                 { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
@@ -121,7 +121,7 @@
                 "params": {
                     "field": "99400",
                     "cond": {
-                        "operator": "<>",
+                        "operator": "!=",
                         "value": 0,
                         "result": 2,
                         "else": 1

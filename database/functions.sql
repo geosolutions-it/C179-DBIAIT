@@ -2185,25 +2185,27 @@ BEGIN
 	DELETE FROM addut_com_serv;
 	
 	INSERT into addut_com_serv(ids_codice, id_comune_istat)
-	SELECT tr.codice_ato, (cc.cod_istat::INTEGER)::VARCHAR
-	FROM addut_tronchi tr
-	LEFT JOIN confine_comunale cc 
-		ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom);
-		
+	select DISTINCT t.codice_ato, (c.pro_com::INTEGER)::VARCHAR from (
+		select aa.codice_ato, ac.geom
+		from acq_adduttrice aa, acq_condotta ac 
+		where aa.d_gestore='PUBLIACQUA' and aa.d_ambito IN ('AT3', NULL) and aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		and ac.id_rete = aa.idgis 
+	) t, confine_comunale c
+	where t.geom && c.geom and st_intersects(t.geom, c.geom);
+	
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ADDUT_COM_SERV';
 	
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT idgis, 'ADDUT_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di una rete' 
-	FROM (
-		SELECT tr.idgis, (cc.cod_istat::INTEGER)::VARCHAR
-		FROM addut_tronchi tr
-		LEFT JOIN confine_comunale cc 
-			ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom)
-	) t group by t.idgis having count(0) > 1;
-	--select ids_codice, 'ADDUT_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di una rete'
-	--from addut_com_serv acs 
-	--group by ids_codice
-	--having count(0) > 1;
+	select codice_ato, 'ADDUT_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di un comune'  from (
+	select distinct t.codice_ato, c.pro_com from (
+		select aa.codice_ato, ac.geom
+		from acq_adduttrice aa, acq_condotta ac 
+		where aa.d_gestore='PUBLIACQUA' and aa.d_ambito IN ('AT3', NULL) and aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		and ac.id_rete = aa.idgis 
+	) t, confine_comunale c
+	where t.geom && c.geom and st_intersects(t.geom, c.geom)
+	) t2 group by t2.codice_ato having count(0) > 1;
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -2222,26 +2224,27 @@ BEGIN
 	DELETE FROM collet_com_serv;
 	
 	INSERT into collet_com_serv(ids_codice, id_comune_istat)
-	SELECT tr.codice_ato, (cc.cod_istat::INTEGER)::VARCHAR
-	FROM collett_tronchi tr
-	LEFT JOIN confine_comunale cc 
-		ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom);
+	SELECT distinct t.codice_ato, c.pro_com FROM (
+		SELECT fc.codice_ato, fc2.geom 
+		FROM fgn_collettore fc, fgn_condotta fc2 
+		WHERE fc.d_gestore='PUBLIACQUA' and fc.d_ambito IN ('AT3', NULL) and fc.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		AND fc.idgis=fc2.id_rete
+	) t, confine_comunale c
+	WHERE t.geom && c.geom and st_intersects(t.geom, c.geom);
 	
-	--LOG ANOMALIE (da verificare: qui tronchi che hanno stesso codice_ato vengono fuori perche intersecano piu comuni)
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'COLLET_COM_SERV';
 	
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT idgis, 'COLLET_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di una rete' 
-	FROM (
-		SELECT tr.idgis, (cc.cod_istat::INTEGER)::VARCHAR
-		FROM collett_tronchi tr
-		LEFT JOIN confine_comunale cc 
-			ON tr.geom&&cc.geom AND st_INTERSECTS(tr.geom,cc.geom)
-	) t group by t.idgis having count(0) > 1;
-	--select ids_codice, 'COLLET_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di una rete'
-	--from collet_com_serv acs 
-	--group by ids_codice
-	--having count(0) > 1;
+	SELECT codice_ato, 'COLLET_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di un comune'  from (
+		select distinct t.codice_ato, c.pro_com from (
+		select fc.codice_ato, fc2.geom 
+		from fgn_collettore fc, fgn_condotta fc2 
+		where fc.d_gestore='PUBLIACQUA' and fc.d_ambito IN ('AT3', NULL) and fc.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		and fc.idgis=fc2.id_rete
+		) t, confine_comunale c
+		where t.geom && c.geom and st_intersects(t.geom, c.geom)
+	) t2 group by t2.codice_ato having count(0) > 1;
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -2260,9 +2263,6 @@ $$  LANGUAGE plpgsql
 -- Example:
 -- select DBIAIT_ANALYSIS.populate_impianti_inreti();
 --
--- TODO: vericare se campi e tabelle sono quelli attesi
--- Che valori mettere per il campo id_gestore_fognatura?
---
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_impianti_inreti(
 ) RETURNS BOOLEAN AS $$
 DECLARE
@@ -2272,7 +2272,7 @@ DECLARE
 		'acq_captazione',
 		'acq_captazione',
 		'acq_potabiliz',
-		--'acq_adduttrice',
+		'(select aa.codice_ato, aa.idgis, ac.geom from acq_adduttrice aa, acq_condotta ac where aa.d_gestore = ''PUBLIACQUA'' AND aa.d_ambito IN (''AT3'', NULL) AND aa.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') and ac.d_gestore = ''PUBLIACQUA'' AND ac.d_ambito IN (''AT3'', NULL) AND ac.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') and aa.idgis=ac.id_rete)',
 		'acq_accumulo'
 	];
 	v_tables VARCHAR[] := ARRAY[
@@ -2281,7 +2281,7 @@ DECLARE
 		'POZZI_INRETI',
 		'SORGENTI_INRETI',
 		'POTAB_INRETI',
-		--'ADDUT_INRETI',
+		'ADDUT_INRETI',
 		'ACCUMULI_INRETI'
 	];
 	v_in_fields VARCHAR[] := ARRAY[
@@ -2290,7 +2290,7 @@ DECLARE
 		't.codice_ato, r.codice_ato, 3',
 		't.codice_ato, r.codice_ato, 3',
 		't.codice_ato, r.codice_ato, 3',
-		--'t.codice_ato, r.codice_ato, 3',
+		't.codice_ato, r.codice_ato, 3',
 		't.codice_ato, r.codice_ato, 3'
 	];
 	v_out_fields VARCHAR[] := ARRAY[
@@ -2299,7 +2299,7 @@ DECLARE
 		'ids_codice, ids_codice_rete, id_gestore_rete',
 		'ids_codice, ids_codice_rete, id_gestore_rete',
 		'ids_codice, ids_codice_rete, id_gestore_rete',
-		--'ids_codice, ids_codice_rete, id_gestore_rete',
+		'ids_codice, ids_codice_rete, id_gestore_rete',
 		'ids_codice, ids_codice_rete, id_gestore_rete'
 	];
 	v_filters VARCHAR[] := ARRAY[
@@ -2308,7 +2308,7 @@ DECLARE
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=4',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
-		--'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
+		'',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')'
 	];
 BEGIN
@@ -2325,7 +2325,7 @@ BEGIN
 		FROM ' || v_in_tables[v_t] || ' t
 		LEFT join acq_rete_distrib r
 		  ON r.geom&&t.geom AND st_INTERSECTS(r.geom,t.geom)
-		WHERE r.codice_ato is NOT NULL
+		WHERE r.codice_ato is NOT NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')
 		' || v_filters[v_t];
 		
 		--LOG ANOMALIE
@@ -2340,7 +2340,7 @@ BEGIN
 			FROM ' || v_in_tables[v_t] || ' t
 			LEFT JOIN acq_rete_distrib r 
 				ON r.geom&&t.geom AND st_INTERSECTS(r.geom, t.geom)
-			WHERE r.codice_ato is NOT NULL
+			WHERE r.codice_ato is NOT NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')
 			' || v_filters[v_t] || '
 		) t2 group by t2.idgis having count(0) > 1;' USING v_tables[v_t];
 		
@@ -2351,7 +2351,8 @@ BEGIN
 		FROM ' || v_in_tables[v_t] || ' t
 		LEFT JOIN acq_rete_distrib r 
 			ON r.geom&&t.geom AND st_INTERSECTS(r.geom, t.geom)
-		where r.codice_ato is NULL ' || v_filters[v_t] USING v_tables[v_t];
+		where r.codice_ato is NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') 
+		' || v_filters[v_t] USING v_tables[v_t];
 		
 	END LOOP;
 
@@ -2365,9 +2366,6 @@ $$  LANGUAGE plpgsql
 -- Example:
 -- select DBIAIT_ANALYSIS.populate_accumuli_inadd();
 --
--- TODO: vericare se campi e tabelle sono quelli attesi
--- Che valori mettere per il campo id_gestore_adduzione?
---
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_accumuli_inadd(
 ) RETURNS BOOLEAN AS $$
 DECLARE
@@ -2377,11 +2375,21 @@ BEGIN
 	DELETE FROM ACCUMULI_INADD;
 	
 	INSERT into ACCUMULI_INADD(ids_codice, ids_codice_adduzione, id_gestore_adduzione)
-	select a.codice_ato, c.codice_ato, NULL 
-	from acq_accumulo a left JOIN addut_tronchi c
-	on c.geom&&ST_BUFFER(a.geom, v_tol) and ST_INTERSECTS(c.geom, ST_BUFFER(a.geom, v_tol))
-	WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato NOT IN ('IPR','IAC')
-	AND c.codice_ato is not NULL;
+	SELECT t.codice_ato, ad.codice_ato, 3 from (
+		SELECT distinct aa.codice_ato, ac.id_rete
+		from acq_accumulo aa, acq_condotta ac
+		WHERE aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL) AND aa.d_stato IN ('ATT','FIP','PIF','RIS')
+		and st_buffer(aa.geom, v_tol)&&ac.geom and st_intersects(ac.geom, st_buffer(aa.geom, v_tol))
+	) t, acq_adduttrice ad
+	WHERE t.id_rete=ad.idgis
+	AND ad.d_gestore = 'PUBLIACQUA' AND ad.d_ambito IN ('AT3', NULL) AND ad.d_stato IN ('ATT','FIP','PIF','RIS');
+	
+	--INSERT into ACCUMULI_INADD(ids_codice, ids_codice_adduzione, id_gestore_adduzione)
+	--select a.codice_ato, c.codice_ato, NULL 
+	--from acq_accumulo a left JOIN addut_tronchi c
+	--on c.geom&&ST_BUFFER(a.geom, v_tol) and ST_INTERSECTS(c.geom, ST_BUFFER(a.geom, v_tol))
+	--WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
+	--AND c.codice_ato is not NULL;
 		
 	--LOG ANOMALIE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ACCUMULI_INADD';
@@ -2395,15 +2403,15 @@ BEGIN
 		from ACCUMULI_INADD
 		group by ids_codice having count(0) > 1
 	) t, acq_accumulo a
-	where a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato NOT IN ('IPR','IAC')
+	where a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
 	AND t.ids_codice = a.codice_ato;  
-
+	
 	-- Elementi che non intersecano alcun tronco di adduzione
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)	
 	select idgis, 'ACCUMULI_INADD', 'Elemento non intersecante alcun tronco di adduzione'
 	from acq_accumulo a 
-	where a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato NOT IN ('IPR','IAC')
-	AND not exists(
+	where a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
+	AND NOT EXISTS(
 		select ids_codice
 		from ACCUMULI_INADD t
 		where t.ids_codice = a.codice_ato 
@@ -2414,13 +2422,10 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
-	------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 -- Populate table DEPURATO_INCOLL
 -- Example:
 -- select DBIAIT_ANALYSIS.populate_depurato_incoll();
---
--- TODO: vericare se campi e tabelle sono quelli attesi
--- Che valori mettere per il campo id_gestore_collettore?
 --
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_depurato_incoll(
 ) RETURNS BOOLEAN AS $$
@@ -2431,11 +2436,21 @@ BEGIN
 	DELETE FROM DEPURATO_INCOLL;
 	
 	INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
-	select a.codice_ato, c.codice_ato, NULL 
-	from fgn_trattamento a left JOIN collett_tronchi c
-	on c.geom&&ST_BUFFER(a.geom, v_tol) and ST_INTERSECTS(c.geom, ST_BUFFER(a.geom, v_tol))
-	WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
-	AND c.codice_ato is not NULL;
+	SELECT t.codice_ato, ad.codice_ato, 3 from (
+		SELECT distinct aa.codice_ato, ac.id_rete
+		from fgn_trattamento aa, fgn_condotta ac
+		WHERE aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL) AND aa.d_stato IN ('ATT','FIP','PIF','RIS')
+		and st_buffer(aa.geom, v_tol)&&ac.geom and st_intersects(ac.geom, st_buffer(aa.geom, v_tol))
+	) t, fgn_collettore ad
+	WHERE t.id_rete=ad.idgis
+	AND ad.d_gestore = 'PUBLIACQUA' AND ad.d_ambito IN ('AT3', NULL) AND ad.d_stato IN ('ATT','FIP','PIF','RIS');
+	
+	--INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
+	--select a.codice_ato, c.codice_ato, NULL 
+	--from fgn_trattamento a left JOIN collett_tronchi c
+	--on c.geom&&ST_BUFFER(a.geom, v_tol) and ST_INTERSECTS(c.geom, ST_BUFFER(a.geom, v_tol))
+	--WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
+	--AND c.codice_ato is not NULL;
 		
 	--LOG ANOMALIE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'DEPURATO_INCOLL';
