@@ -1,3 +1,4 @@
+import ast
 import re
 import schema
 
@@ -19,6 +20,7 @@ SUPPORTED_TRANSFORMATIONS = [
     "EXPR",
     "IF",
     "CASE",
+    "ROUND"
 ]
 
 
@@ -79,6 +81,19 @@ class LstripTransformation(BaseTransformation):
 
     def apply(self, row: Dict, **kwargs):
         return str(row.get(self.args["field"], None)).lstrip(self.args["char"])
+
+
+class RoundTransformation(BaseTransformation):
+
+    schema = schema.Schema(
+        {"field": schema.Or(str, float), "ndigits": int}
+    )
+
+    def apply(self, row: Dict, **kwargs):
+        value = row.get(self.args["field"], None)
+        if isinstance(row, str):
+            value = ast.literal_eval(value)
+        return round(value, self.args["ndigits"])
 
 
 class ExpressionTransformation(BaseTransformation):
@@ -208,6 +223,8 @@ class TransformationFactory:
             transformation = CaseTransformation(params)
         elif u_name == "IF":
             transformation = IfTransformation(params)
+        elif u_name == "ROUND":
+            transformation = RoundTransformation(params)
         else:
             raise ExportConfigError(f"Unknown transformation method '{name.upper()}'")
 
