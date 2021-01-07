@@ -397,54 +397,47 @@ BEGIN
 	--LOCALITA
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
-		SELECT s.impianto, s.id_ubic_contatore, l.loc2011 as codice
-		FROM acq_ubic_contatore c, utenza_sap s, localita l
-		WHERE c.id_impianto is not null AND l.geom && c.geom AND ST_INTERSECTS(l.geom, c.geom)
-		AND s.id_ubic_contatore=c.idgis';
-		
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.loc2011 
+		FROM acq_ubic_contatore uc, localita g 
+		where g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+		AND uc.id_impianto is not null';	
 	-- ACQ_RETE_DISTRIB
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
-		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as codice
-		FROM acq_ubic_contatore c, utenza_sap s, acq_rete_distrib g
-		WHERE c.id_impianto is not null AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
-		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
-		AND s.id_ubic_contatore=c.idgis';
-
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
+		from acq_ubic_contatore uc, acq_rete_distrib g 
+		WHERE g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
+		and g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+		AND uc.id_impianto is not null';
 	-- FGN_RETE_RACC
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
-		SELECT s.impianto, s.id_ubic_contatore, g.codice_ato as codice
-		FROM acq_ubic_contatore c, utenza_sap s, fgn_rete_racc g
-		WHERE c.id_impianto is not null AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
-		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
-		AND s.id_ubic_contatore=c.idgis';
-
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
+		from acq_ubic_contatore uc, fgn_rete_racc g 
+		WHERE g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
+		and g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+		AND uc.id_impianto is not null';
 	-- FGN_BACINO + FGN_TRATTAMENTO/FGN_PNT_SCARICO
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
-		select s.impianto, s.id_ubic_contatore, g.codice_ato as codice
-		from acq_ubic_contatore c, utenza_sap s, (
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
+		from acq_ubic_contatore uc, (
 			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
 			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
 			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
-		) g
-		WHERE c.id_impianto is not null 
-		AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
-		AND s.id_ubic_contatore=c.idgis';
+		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+		AND uc.id_impianto is not null';
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
-		select s.impianto, s.id_ubic_contatore, g.codice_ato as codice
-		from acq_ubic_contatore c, utenza_sap s, (
-			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO 
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
+		from acq_ubic_contatore uc, (
+			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
 			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
-		) g
-		WHERE c.id_impianto is not null AND g.geom && c.geom AND ST_INTERSECTS(g.geom, c.geom)
-		AND s.id_ubic_contatore=c.idgis';
-
+		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+		AND uc.id_impianto is not null';
 
 	-- initialize table UTENZA_SERVIZIO.id_ubic_contatore with data from ACQ_UBIC_CONTATORE.idgis
 	EXECUTE '
@@ -2321,7 +2314,7 @@ BEGIN
 		--Populate destination table
 		EXECUTE '
 		INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
-		SELECT ' || v_in_fields[v_t] || ' 
+		SELECT DISTINCT ' || v_in_fields[v_t] || ' 
 		FROM ' || v_in_tables[v_t] || ' t
 		LEFT join acq_rete_distrib r
 		  ON r.geom&&t.geom AND st_INTERSECTS(r.geom,t.geom)
@@ -2375,7 +2368,7 @@ BEGIN
 	DELETE FROM ACCUMULI_INADD;
 	
 	INSERT into ACCUMULI_INADD(ids_codice, ids_codice_adduzione, id_gestore_adduzione)
-	SELECT t.codice_ato, ad.codice_ato, 3 from (
+	SELECT DISTINCT t.codice_ato, ad.codice_ato, 3 from (
 		SELECT distinct aa.codice_ato, ac.id_rete
 		from acq_accumulo aa, acq_condotta ac
 		WHERE aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL) AND aa.d_stato IN ('ATT','FIP','PIF','RIS')
@@ -2436,7 +2429,7 @@ BEGIN
 	DELETE FROM DEPURATO_INCOLL;
 	
 	INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
-	SELECT t.codice_ato, ad.codice_ato, 3 from (
+	SELECT DISTINCT t.codice_ato, ad.codice_ato, 3 from (
 		SELECT distinct aa.codice_ato, ac.id_rete
 		from fgn_trattamento aa, fgn_condotta ac
 		WHERE aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL) AND aa.d_stato IN ('ATT','FIP','PIF','RIS')
@@ -2499,7 +2492,7 @@ BEGIN
 	DELETE FROM SCARICATO_INFOG;
 	
 	INSERT into SCARICATO_INFOG(ids_codice, ids_codice_fognatura, id_gestore_fognatura)
-	SELECT sf.codice_ato, rr.codice_ato, 3
+	SELECT DISTINCT sf.codice_ato, rr.codice_ato, 3
 	FROM fgn_sfioro sf
 	LEFT JOIN fgn_rete_racc rr 
 		ON rr.geom&&sf.geom AND st_INTERSECTS(rr.geom,sf.geom)
