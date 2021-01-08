@@ -64,8 +64,8 @@
                         "name": "fgn_lunghezza_allacci"
                     },
                     "on": [
-                        "a_fgn_rete_racc.idgis",
-                        "fgn_lunghezza_allacci.idgis"
+                        "a_fgn_rete_racc.codice_ato",
+                        "fgn_lunghezza_allacci.codice_ato"
                     ],
                     "cond": "="
                 }, {
@@ -75,7 +75,7 @@
                     },
                     "on": [
                         "a_fgn_rete_racc.codice_ato",
-                        "fgn_vol_utenze.ids_codice_orig_FGN"
+                        "fgn_vol_utenze.ids_codice_orig_fgn"
                     ],
                     "cond": "="
                 }
@@ -132,8 +132,8 @@
                         "name": "fgn_lunghezza_allacci"
                     },
                     "on": [
-                        "fgn_rete_racc.idgis",
-                        "fgn_lunghezza_allacci.idgis"
+                        "fgn_rete_racc.codice_ato",
+                        "fgn_lunghezza_allacci.codice_ato"
                     ],
                     "cond": "="
                 },{
@@ -143,7 +143,7 @@
                     },
                     "on": [
                         "fgn_rete_racc.codice_ato",
-                        "fgn_vol_utenze.ids_codice_orig_FGN"
+                        "fgn_vol_utenze.ids_codice_orig_fgn"
                     ],
                     "cond": "="
                 }
