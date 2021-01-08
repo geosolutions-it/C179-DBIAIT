@@ -6,7 +6,7 @@
             "fields": [
                 { "name": "acq_accumulo.codice_ato", "alias": "codice_ato" },
                 { "name": "acq_accumulo.denom", "alias": "denom"},
-                { "name": "acq_accumulo.quota", "alias": "quota"},
+                { "name": "acq_accumulo.quota", "alias": "quota", "function": "FROM_FLOAT_TO_INT"},
                 { "name": "acq_accumulo.anno_costr", "alias": "anno_costr"},
                 { "name": "acq_accumulo.anno_ristr", "alias": "anno_ristr"},
                 { "name": "acq_accumulo.d_stato_cons", "alias": "d_stato_cons"},
@@ -63,7 +63,7 @@
             "fields": [
                 { "name": "a_acq_accumulo.codice_ato", "alias": "codice_ato" },
                 { "name": "a_acq_accumulo.denom", "alias": "denom"},
-                { "name": "a_acq_accumulo.quota", "alias": "quota"},
+                { "name": "a_acq_accumulo.quota", "alias": "quota", "function": "FROM_FLOAT_TO_INT"},
                 { "name": "a_acq_accumulo.anno_costr", "alias": "anno_costr"},
                 { "name": "a_acq_accumulo.anno_ristr", "alias": "anno_ristr"},
                 { "name": "a_acq_accumulo.d_stato_cons", "alias": "d_stato_cons"},
@@ -220,8 +220,8 @@
             ]
         },
         {"id": "46200","transformation": {"func": "DIRECT", "params": {"field": "data_agg"}}},
-        {"id": "43900","transformation": {"func": "DIRECT", "params": {"field": "transformed_y_geom"}}},
-        {"id": "44000","transformation": {"func": "DIRECT", "params": {"field": "transformed_x_geom"}}},
+        {"id": "43900", "transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
+        {"id": "44000", "transformation": { "func": "ROUND", "params": {"field": "transformed_x_geom", "ndigits":  3}}},
 
         {"id": "44700", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }},
             "validations": [{

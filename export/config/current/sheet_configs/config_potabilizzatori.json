@@ -47,7 +47,7 @@
             {"name":"acq_auth_potab.a_anno_ristr_elmec", "alias":"a_anno_ristr_elmec"},
             {"name":"acq_potabiliz.codice_ato", "alias":"codice_ato"},
             {"name":"acq_potabiliz.denom", "alias":"denom"},
-            {"name":"acq_potabiliz.quota", "alias":"quota"},
+            {"name":"acq_potabiliz.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
             {"name":"acq_potabiliz.d_tipo_trattam", "alias":"d_tipo_trattam"},
             {"name":"acq_potabiliz.anno_costr", "alias":"anno_costr"},
             {"name":"acq_potabiliz.vol_gg_trattabile", "alias":"vol_gg_trattabile"},
@@ -136,7 +136,7 @@
             {"name":"acq_auth_potab.a_anno_ristr_elmec", "alias":"a_anno_ristr_elmec"},
             {"name":"a_acq_potabiliz.codice_ato", "alias":"codice_ato"},
             {"name":"a_acq_potabiliz.denom", "alias":"denom"},
-            {"name":"a_acq_potabiliz.quota", "alias":"quota"},
+            {"name":"a_acq_potabiliz.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
             {"name":"a_acq_potabiliz.d_tipo_trattam", "alias":"d_tipo_trattam"},
             {"name":"a_acq_potabiliz.anno_costr", "alias":"anno_costr"},
             {"name":"a_acq_potabiliz.vol_gg_trattabile", "alias":"vol_gg_trattabile"},
@@ -299,8 +299,8 @@
             ]},
       {"id":"31500", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
 
-      {"id":"31100", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
-      {"id":"31200", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
+      {"id":"31100", "transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
+      {"id":"31200", "transformation": { "func": "ROUND", "params": {"field": "transformed_x_geom", "ndigits":  3}}},
 
       {"id":"31700", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_trattam", "domain_name": "D_T_TRATTAM_POTAB"}}},
       {"id":"32020", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons_civ", "domain_name": "D_STATO_CONS"}}, "validations": [{

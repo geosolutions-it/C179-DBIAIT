@@ -6,7 +6,7 @@
          "fields":[
             {"name":"acq_captazione.codice_ato", "alias":"codice_ato"},
             {"name":"acq_captazione.denom", "alias":"denom"},
-            {"name":"acq_captazione.quota", "alias":"quota"},
+            {"name":"acq_captazione.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
             {"name":"acq_capt_conces.estremi_conces", "alias":"estremi_conces"},
             {"name":"acq_capt_conces.port_potab", "alias":"port_potab"},
             {"name":"acq_capt_conces.port_industr", "alias":"port_industr"},
@@ -100,7 +100,7 @@
          "fields":[
             {"name":"a_acq_captazione.codice_ato", "alias":"codice_ato"},
             {"name":"a_acq_captazione.denom", "alias":"denom"},
-            {"name":"a_acq_captazione.quota", "alias":"quota"},
+            {"name":"a_acq_captazione.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
             {"name":"acq_capt_conces.estremi_conces", "alias":"estremi_conces"},
             {"name":"acq_capt_conces.port_potab", "alias":"port_potab"},
             {"name":"acq_capt_conces.port_industr", "alias":"port_industr"},
@@ -378,8 +378,8 @@
       {"id":"27300", "transformation":{"func":"DIRECT", "params":{"field":"sn_epis_inq"}}},
       {"id":"28200", "transformation":{"func":"DIRECT", "params":{"field":"data_agg"}}},
 
-      {"id":"23900", "transformation":{"func":"DIRECT", "params":{"field":"transformed_y_geom"}}},
-      {"id":"24000", "transformation":{"func":"DIRECT", "params":{"field":"transformed_x_geom"}}},
+      {"id":"23900", "transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
+      {"id":"24000", "transformation": { "func": "ROUND", "params": {"field": "transformed_x_geom", "ndigits":  3}}},
 
       {"id":"25300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons", "domain_name": "D_STATO_CONS"}}, "validations": [{
               "func": "IF",
