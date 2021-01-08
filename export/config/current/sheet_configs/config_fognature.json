@@ -16,7 +16,13 @@
                 {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"},
                 {"name": "fgn_lunghezza_rete.tipo_infr","alias": "tipo_infr"},
                 {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"}
+                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"},
+                {"name": "fgn_lunghezza_allacci.lunghezza_allaccio","alias": "lunghezza_allaccio"},
+                {"name": "abitanti_trattati.lunghezza_allaccio","alias": "lunghezza_allaccio"},
+                {"name": "fgn_lunghezza_allacci.lunghezza_allaccio","alias": "lunghezza_allaccio"},
+                {"name": "fgn_vol_utenze.utenze_prod_auth","alias": "utenze_prod_auth"},
+                {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
+                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"}
             ],
             "table": {
                 "name": "a_fgn_rete_racc"
@@ -42,6 +48,36 @@
                         "fgn_lunghezza_rete.idgis"
                     ],
                     "cond": "="
+                }, {
+                    "type": "left",
+                    "table": {
+                        "name": "abitanti_trattati"
+                    },
+                    "on": [
+                        "a_fgn_rete_racc.idgis",
+                        "abitanti_trattati.idgis"
+                    ],
+                    "cond": "="
+                }, {
+                    "type": "left",
+                    "table": {
+                        "name": "fgn_lunghezza_allacci"
+                    },
+                    "on": [
+                        "a_fgn_rete_racc.idgis",
+                        "fgn_lunghezza_allacci.idgis"
+                    ],
+                    "cond": "="
+                }, {
+                    "type": "left",
+                    "table": {
+                        "name": "fgn_vol_utenze"
+                    },
+                    "on": [
+                        "a_fgn_rete_racc.codice_ato",
+                        "fgn_vol_utenze.ids_codice_orig_FGN"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE a_fgn_rete_racc.d_gestore = 'PUBLIACQUA' AND a_fgn_rete_racc.d_ambito IN ('AT3', NULL) AND a_fgn_rete_racc.d_stato NOT IN ('IPR', 'IAC')"
@@ -60,7 +96,11 @@
                 {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"},
                 {"name": "fgn_lunghezza_rete.tipo_infr","alias": "tipo_infr"},
                 {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"}
+                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"},
+                {"name": "fgn_lunghezza_allacci.lunghezza_allaccio","alias": "lunghezza_allaccio"},
+                {"name": "fgn_vol_utenze.utenze_prod_auth","alias": "utenze_prod_auth"},
+                {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
+                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"}
             ],
             "table": {
                 "name": "fgn_rete_racc"
@@ -86,6 +126,26 @@
                         "fgn_lunghezza_rete.idgis"
                     ],
                     "cond": "="
+                }, {
+                    "type": "left",
+                    "table": {
+                        "name": "fgn_lunghezza_allacci"
+                    },
+                    "on": [
+                        "fgn_rete_racc.idgis",
+                        "fgn_lunghezza_allacci.idgis"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "fgn_vol_utenze"
+                    },
+                    "on": [
+                        "fgn_rete_racc.codice_ato",
+                        "fgn_vol_utenze.ids_codice_orig_FGN"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE fgn_rete_racc.d_gestore = 'PUBLIACQUA' AND fgn_rete_racc.d_ambito IN ('AT3', NULL) AND fgn_rete_racc.d_stato NOT IN ('IPR', 'IAC')"
@@ -95,6 +155,14 @@
         {"id": "101200","transformation": { "func": "CONST", "params": { "value": "B"}}},
 
         {"id": "59500","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
+
+        {"id": "101100","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_allaccio"}}},
+        {"id": "59800","transformation": { "func": "DIRECT", "params": { "field": "utenze_prod_auth"}}},
+        {"id": "101500","transformation": { "func": "DIRECT", "params": { "field": "vol_fatturato"}}},
+        {"id": "59900","transformation": { "func": "DIRECT", "params": { "field": "vol_utenze_auth"}}},
+
+        {"id": "101100","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_allacci"}}},
+
         {"id": "60200","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_dep"}}},
         {"id": "59700","transformation": { "func": "DIRECT", "params": { "field": "lunghezza"}}},
         {"id": "59600","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},

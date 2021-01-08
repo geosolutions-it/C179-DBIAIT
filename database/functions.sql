@@ -1637,6 +1637,14 @@ BEGIN
 	WHERE id_rete is NOT NULL
 	GROUP BY id_rete, codice_ato, tipo_infr;
 
+    --- AGGREGAZIONE PER CODICE ATO PER LA LUNGHEZZA TOTALE ALLACCI
+    INSERT INTO FGN_LUNGHEZZA_ALLACCI(
+        codice_ato, lunghezza_allaccio
+    )
+    SELECT codice_ato, lung_alla_c + lung_alla_i + lung_alla_c_ril + lung_alla_i_ril
+    FROM FGN_ALLACCIO;
+
+
 	--
 	-- LOG ANOMALIES
 	-- TODO: insert into LOG_STANDALONE
@@ -1809,7 +1817,8 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
+
 --------------------------------------------------------------------
 -- Populate data for shape fognatura
 -- (Ref. 6.4. SHAPE FOGNATURA)
@@ -1961,12 +1970,81 @@ BEGIN
 	AND populate_collett_tronchi() 
 	AND populate_lung_rete_fgn()
 	AND determine_fgn_allacci()
+	AND populate_fgn_volumi_utenze()
 	AND populate_fgn_shape();
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;		
+    SET search_path = public, DBIAIT_ANALYSIS;
+
+--------------------------------------------------------------------
+-- Populate data for volumes for FOGNATURA
+-- (Ref. 4.2)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_fgn_volumi_utenze();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_fgn_volumi_utenze(
+) RETURNS BOOLEAN AS $$
+BEGIN
+
+	DELETE FROM FGN_VOL_UTENZE;
+
+	with utenze_autorizzate as (
+        SELECT
+            us2.ids_codice_orig_FGN,
+            count(*) as utenze_prod_auth
+        FROM
+            utenza_sap us
+        LEFT JOIN utenza_servizio us2 ON
+            us.id_ubic_contatore = us2.id_ubic_contatore
+        WHERE
+            us.CATTARIFFA in ('APB_REFIN',
+            'APBLREFIND')
+        GROUP BY
+            us2.ids_codice_orig_FGN),
+        volume_fatturato as (
+        SELECT
+            us2.ids_codice_orig_FGN,
+            sum(VOL_FGN_FATT) as vol_fatturato
+        FROM
+            utenza_sap us
+        LEFT JOIN utenza_servizio us2 ON
+            us.id_ubic_contatore = us2.id_ubic_contatore
+        GROUP BY
+            us2.ids_codice_orig_FGN),
+        volume_utenze_autorizzate as (
+        SELECT
+            us2.ids_codice_orig_FGN,
+            sum(vol_fgn_fatt) as vol_utenze_auth
+        FROM
+            utenza_sap us
+        LEFT JOIN utenza_servizio us2 ON
+            us.id_ubic_contatore = us2.id_ubic_contatore
+        WHERE
+            us.CATTARIFFA in ('APB_REFIN',
+            'APBLREFIND')
+        GROUP BY
+            us2.ids_codice_orig_FGN)
+        INSERT INTO FGN_VOL_UTENZE (ids_codice_orig_FGN, utenze_prod_auth, vol_fatturato, vol_utenze_auth)
+        SELECT
+            volume_fatturato.ids_codice_orig_FGN,
+            utenze_prod_auth,
+            vol_fatturato,
+            vol_utenze_auth
+        FROM
+            volume_fatturato
+        LEFT JOIN utenze_autorizzate ON
+            volume_fatturato.ids_codice_orig_fgn = utenze_autorizzate.ids_codice_orig_fgn
+        LEFT JOIN volume_utenze_autorizzate ON
+            volume_fatturato.ids_codice_orig_fgn = volume_utenze_autorizzate.ids_codice_orig_fgn;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- Populate data into the XXX_POMPE tables 
 --  * POZZI_POMPE
