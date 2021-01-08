@@ -1753,7 +1753,7 @@ BEGIN
 		press_med_ = c.pr_avg,
 		RIPARAZION = c.rip_alla,
 		RIPARAZI_1 = c.rip_rete
-	FROM acq_cond_extr c
+	FROM acq_cond_ext c
 	WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
 	
 	--(protezione_catodica)-> solo DISTRIBUZIONE (ADDUZIONE precedentemente calcolato)
