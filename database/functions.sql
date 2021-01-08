@@ -1976,7 +1976,7 @@ BEGIN
 				ELSE 1::BIT END,
 				p.A_ANNO_INSTAL, p.A_ANNO_RISTR,
 				p.A_POTENZA, p.A_PORTATA, p.A_PREVALENZA				
-			FROM ' || v_in_tables[v_t] || ' c, ARCHIVIO_POMPE p, ALL_DOMAINS d
+			FROM ' || v_in_tables[v_t] || ' c, ARCHIVIO_POMPE p
 			WHERE 
 				' || v_filters[v_t] ||' 
 				and c.d_gestore = ''PUBLIACQUA'' AND c.d_ambito IN (''AT3'', NULL) 
