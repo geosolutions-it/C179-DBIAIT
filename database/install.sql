@@ -820,7 +820,7 @@ alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_BAC	add constraint UTENZA_SERVIZIO_B
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI;
 CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI(
 	codice_ato		VARCHAR(32),
-	lunghezza_allaccio	double precision,
+	lunghezza_allaccio	double precision
 );
 
 -----
