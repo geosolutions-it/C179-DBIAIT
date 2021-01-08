@@ -219,7 +219,19 @@
             ]},
 
         {"id":"49200", "transformation":{"func":"DIRECT", "params":{"field":"sum_potenza"}}},
-        {"id":"50100", "transformation":{"func":"DIRECT", "params":{"field":"avg_idx_potenza"}}},
+        {"id":"50100", "transformation":{
+           "func": "IF",
+           "params": {
+               "field": "avg_idx_potenza",
+               "cond": {
+                       "operator": "=",
+                       "value": null,
+                       "result": "X",
+                       "else": "{ avg_idx_potenza }"
+                   }
+               }
+           }
+        },
 
         {"id": "48900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons_civ", "domain_name": "D_STATO_CONS" }}, "validations": [{
                     "func": "IF",

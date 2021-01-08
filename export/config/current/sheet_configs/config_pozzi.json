@@ -591,7 +591,20 @@
       {"id": "18000","transformation": { "func": "DOMAIN", "params": { "field": "sn_protezione", "domain_name":  "D_AFFIDABILITA"}}},
 
       {"id":"16800", "transformation":{"func":"DIRECT", "params":{"field":"sum_potenza"}}},
-      {"id":"18800", "transformation":{"func":"DIRECT", "params":{"field":"avg_idx_potenza"}}},
+
+      {"id":"18800", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "avg_idx_potenza",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": "X",
+                     "else": "{ avg_idx_potenza }"
+                 }
+             }
+         }
+      },
 
       {"id":"15400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
       {"id":"17100", "transformation":{
@@ -606,7 +619,7 @@
                  }
              }
          }
-      }
+      },
 
    ]
 }

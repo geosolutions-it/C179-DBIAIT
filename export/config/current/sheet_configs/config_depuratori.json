@@ -86,7 +86,9 @@
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
                 { "name": "abitanti_trattati.ae_tot", "alias": "ae_tot"},
-                { "name": "abitanti_trattati.ae_civ", "alias": "ae_civ"}
+                { "name": "abitanti_trattati.ae_civ", "alias": "ae_civ"},
+                {"name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
+                {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"}
             ],
             "table": {
                 "name": "fgn_trattamento"
@@ -113,6 +115,18 @@
                         "fgn_trattamento.geom"
                     ],
                     "cond": "ST_INTERSECTS"
+                },
+
+                {
+                   "type":"left",
+                   "table":{
+                      "name":"stats_pompe"
+                   },
+                   "on":[
+                      "stats_pompe.codice_ato",
+                      "fgn_trattamento.codice_ato"
+                   ],
+                   "cond":"="
                 },
                 {
                     "type": "left",
@@ -210,7 +224,9 @@
                 { "name": "fgn_auth_trattam.consumo_ee", "alias": "consumo_ee"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"}
+                { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
+                {"name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
+                {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"}
             ],
             "table": {
                 "name": "a_fgn_trattamento"
@@ -237,6 +253,17 @@
                         "a_fgn_trattamento.geom"
                     ],
                     "cond": "ST_INTERSECTS"
+                },
+                {
+                   "type":"left",
+                   "table":{
+                      "name":"stats_pompe"
+                   },
+                   "on":[
+                      "stats_pompe.codice_ato",
+                      "a_fgn_trattamento.codice_ato"
+                   ],
+                   "cond":"="
                 },
                 {
                     "type": "left",
