@@ -92,7 +92,11 @@
         }
     ],
     "columns": [
+        {"id": "101200","transformation": { "func": "CONST", "params": { "value": "B"}}},
+
         {"id": "59500","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
+        {"id": "60200","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_dep"}}},
+        {"id": "59700","transformation": { "func": "DIRECT", "params": { "field": "lunghezza"}}},
         {"id": "59600","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
         {"id": "60000","transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena"}}},
         {"id": "60100","transformation": { "func": "DIRECT", "params": { "field": "episodi_allag"}}},

@@ -19,7 +19,8 @@
                 { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
                 { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
                 { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
-                { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"}
+                { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
+                {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"}
             ],
             "table": {
                 "name": "acq_rete_distrib"
@@ -33,6 +34,16 @@
                     "on": [
                         "acq_rete_distrib.idgis",
                         "acq_auth_rete_dist.id_rete_distrib"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "acq_lunghezza_rete"
+                    },
+                    "on": [
+                        "acq_lunghezza_rete.idgis",
+                        "acq_rete_distrib.idgis"
                     ],
                     "cond": "="
                 }
@@ -56,7 +67,8 @@
                 { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
                 { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
                 { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
-                { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"}
+                { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
+                {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"}
             ],
             "table": {
                 "name": "a_acq_rete_distrib"
@@ -72,6 +84,16 @@
                         "acq_auth_rete_dist.id_rete_distrib"
                     ],
                     "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "acq_lunghezza_rete"
+                    },
+                    "on": [
+                        "acq_lunghezza_rete.idgis",
+                        "a_acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE a_acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND a_acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND a_acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
@@ -80,7 +102,11 @@
     "columns": [
         { "id": "53300", "transformation": { "func": "EMPTY", "params": {"field":  null} }},
 
+        {"id": "100500","transformation": { "func": "CONST", "params": { "value": "0"}}},
+
         { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } }},
+        { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tcl" } }},
+
         { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom" } }},
         { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_immesso" } }},
         { "id": "54800", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm_terzi" } }},
