@@ -1743,13 +1743,19 @@ BEGIN
 	--(press_med_eserc, riparazioni_allacci, riparazioni_rete, allacci, lunghezza_allacci)
 	UPDATE ACQ_SHAPE
 	SET 
-		press_med_ = c.pr_avg,
-		RIPARAZION = c.rip_alla,
-		RIPARAZI_1 = c.rip_rete,
 		allacci = coalesce(nr_allacci_ril,0) + coalesce(nr_allacci_sim,0),
 		lunghezza_ = coalesce(lu_allacci_ril,0) + coalesce(lu_allacci_sim,0)
 	FROM acq_cond_altro c
 	WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
+	
+	UPDATE ACQ_SHAPE
+	SET 
+		press_med_ = c.pr_avg,
+		RIPARAZION = c.rip_alla,
+		RIPARAZI_1 = c.rip_rete
+	FROM acq_cond_extr c
+	WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
+	
 	--(protezione_catodica)-> solo DISTRIBUZIONE (ADDUZIONE precedentemente calcolato)
 	UPDATE ACQ_SHAPE
 	SET protezione = 1::BIT
@@ -1907,15 +1913,21 @@ BEGIN
 		AND d.valore_gis = c.d_pavimentaz
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
 	
-	--(allacci, allacci_industriali, lunghezza_allaci, riparazioni_allacci, riparazioni_rete)
+	--(allacci, allacci_industriali, lunghezza_allaci)
 	UPDATE FGN_SHAPE
 	SET 
 		allacci    = coalesce(nr_allacci_c,0) + coalesce(nr_allacci_c_ril,0),
 		allacci_in = coalesce(nr_allacci_i,0) + coalesce(nr_allacci_i_ril,0),
-		lunghezza_ = coalesce(lu_allacci_c,0) + coalesce(lu_allacci_c_ril,0) + coalesce(lu_allacci_i,0) + coalesce(lu_allacci_i_ril,0),
+		lunghezza_ = coalesce(lu_allacci_c,0) + coalesce(lu_allacci_c_ril,0) + coalesce(lu_allacci_i,0) + coalesce(lu_allacci_i_ril,0)
+	FROM fgn_cond_altro c
+	WHERE c.idgis = FGN_SHAPE.ids_codi_1;
+	
+	--(riparazioni_allacci, riparazioni_rete)
+	UPDATE FGN_SHAPE
+	SET 
 		RIPARAZION = c.rip_alla,
 		RIPARAZI_1 = c.rip_rete
-	FROM fgn_cond_altro c
+	FROM FGN_COND_EXT c
 	WHERE c.idgis = FGN_SHAPE.ids_codi_1;
 	
 	--(id_opera_stato)

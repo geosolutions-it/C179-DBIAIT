@@ -216,15 +216,20 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_COND_ALTRO(
 	id_rete			VARCHAR(32),
 	codice_ato		VARCHAR(32),
 	tipo_infr		VARCHAR(100),
+	lu_allacci_ril	double precision,
+	lu_allacci_sim	double precision,
+	nr_allacci_ril	INTEGER,
+	nr_allacci_sim	INTEGER
+);
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_COND_EXT;
+CREATE TABLE DBIAIT_ANALYSIS.ACQ_COND_EXT(
+	idgis			VARCHAR(32),
 	pr_min			double precision,
 	pr_avg			double precision,
 	pr_max			double precision,
 	rip_rete		double precision,
 	rip_alla		double precision,
-	lu_allacci_ril	double precision,
-	lu_allacci_sim	double precision,
-	nr_allacci_ril	INTEGER,
-	nr_allacci_sim	INTEGER
+	PRIMARY KEY(idgis)
 );
 
 --
@@ -325,8 +330,6 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_COND_ALTRO(
 	id_rete				VARCHAR(32),
 	codice_ato			VARCHAR(32),
 	tipo_infr			VARCHAR(100),
-	rip_rete 			double precision,  
-	rip_alla 			double precision,
 	lu_allacci_c		double precision,
 	lu_allacci_c_ril	double precision,
 	lu_allacci_i		double precision,
@@ -336,7 +339,13 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_COND_ALTRO(
 	nr_allacci_i		INTEGER,
 	nr_allacci_i_ril	INTEGER
 );
-
+--
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_COND_EXT;
+CREATE TABLE DBIAIT_ANALYSIS.FGN_COND_EXT(
+	idgis				VARCHAR(32),
+	rip_rete 			double precision,  
+	rip_alla 			double precision
+);
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_SHAPE;
 CREATE TABLE DBIAIT_ANALYSIS.FGN_SHAPE(
