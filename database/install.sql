@@ -832,3 +832,23 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_VOL_UTENZE(
 	vol_fatturato	double precision,
 	vol_utenze_auth	double precision
 );
+-----
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_VOL_UTENZE;
+CREATE TABLE DBIAIT_ANALYSIS.ACQ_VOL_UTENZE(
+	ids_codice_orig_acq		VARCHAR(32),
+    totalCount	INTEGER,
+    countDomestiche	INTEGER,
+    countDomesticheResidente	INTEGER,
+    countDomesticheDiamMin	INTEGER,
+    countCommerciali	INTEGER,
+    countPubblico	INTEGER,
+    countIndustriale	INTEGER,
+    countutenzeconmisuratore	INTEGER,
+    sumVolAcqEro	double precision,
+    sumVolAcqFatt	double precision,
+    sumDomesticheVolFatt	double precision,
+    sumDomesticheResidenteVolFatt	double precision,
+    sumPubblicoeVolFatt	double precision,
+    sumAltroVolFatt	double precision
+);

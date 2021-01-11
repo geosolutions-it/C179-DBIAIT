@@ -1812,6 +1812,7 @@ begin
 	AND populate_addut_tronchi() 
 	AND populate_lung_rete_acq()
 	AND determine_acq_allacci()
+	AND populate_acq_vol_utenze()
 	AND populate_acq_shape();
 END;
 $$  LANGUAGE plpgsql
@@ -1819,6 +1820,209 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 
+--------------------------------------------------------------------
+-- Populate data for volumes for Acquedotto
+-- (Ref. 4.2)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_acq_vol_utenze();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_vol_utenze(
+) RETURNS BOOLEAN AS $$
+BEGIN
+
+	DELETE FROM ACQ_VOL_UTENZE;
+
+	WITH utenze_per_tipo as (
+        SELECT
+            us2.ids_codice_orig_acq,
+            nr_contat_diam_min,
+            us.tipo_uso,
+            us.nr_contat,
+            count(*) as countUtenze,
+            sum(vol_acq_ero) as sumVolAcqEro,
+            sum(vol_acq_fatt) as sumVolAcqFatt
+        FROM
+            utenza_sap us
+        LEFT JOIN utenza_servizio us2 on
+            us.id_ubic_contatore = us2.id_ubic_contatore
+        WHERE
+            us.CATTARIFFA not in ('APB_REFIND',
+            'APBLREFIND',
+            'APBNREFCIV')
+        GROUP BY
+            us2.ids_codice_orig_acq,
+            nr_contat_diam_min,
+            us.tipo_uso,
+            us.nr_contat),
+        utenze_totali as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(countUtenze) as totalCount
+        FROM
+            utenze_per_tipo
+        GROUP BY
+            ids_codice_orig_acq),
+        utenze_domestiche as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(countUtenze) as countDomestiche,
+            sum(sumVolAcqFatt) as sumDomesticheVolFatt
+        FROM
+            utenze_per_tipo
+        WHERE
+            tipo_uso = 'DOMESTICO'
+        GROUP BY
+            ids_codice_orig_acq),
+        utenze_domestiche_residente as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(countUtenze) as countDomesticheResidente,
+            sum(sumVolAcqFatt) as sumDomesticheResidenteVolFatt
+        FROM
+            utenze_per_tipo
+        WHERE
+            tipo_uso = 'DOMESTICO RESIDENTE'
+        GROUP BY
+            ids_codice_orig_acq),
+        utenze_domestiche_diam_min as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(countUtenze) as countDomesticheDiamMin
+        FROM
+            utenze_per_tipo
+        WHERE
+            tipo_uso = 'DOMESTICO'
+            and nr_contat_diam_min >= 1
+        GROUP BY
+            ids_codice_orig_acq),
+        utenze_commerciali as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(countUtenze) as countCommerciali
+        FROM
+            utenze_per_tipo
+        WHERE
+            tipo_uso = 'COMMERCIALE'
+        GROUP BY
+            ids_codice_orig_acq),
+        utenze_pubblico as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(countUtenze) as countPubblico,
+            sum(sumVolAcqFatt) as sumPubblicoeVolFatt
+        FROM
+            utenze_per_tipo
+        WHERE
+            tipo_uso = 'PUBBLICO'
+        GROUP BY
+            ids_codice_orig_acq),
+        utenze_industriale as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(countUtenze) as countIndustriale
+        FROM
+            utenze_per_tipo
+        WHERE
+            tipo_uso = 'INDUSTRIALE'
+        GROUP BY
+            ids_codice_orig_acq),
+        utenze_con_misuratore as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(countUtenze) as countUtenzeConMisuratore
+        FROM
+            utenze_per_tipo
+        WHERE
+            nr_contat >= 1
+        GROUP BY
+            ids_codice_orig_acq),
+        volume_erogato as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(sumVolAcqEro) as sumVolAcqEro
+        FROM
+            utenze_per_tipo
+        GROUP BY
+            ids_codice_orig_acq),
+        volume_fatturato as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(sumVolAcqFatt) as sumVolAcqFatt
+        FROM
+            utenze_per_tipo
+        GROUP BY
+            ids_codice_orig_acq),
+        volume_fatturato_altro as (
+        SELECT
+            ids_codice_orig_acq,
+            sum(sumVolAcqFatt) as sumAltroVolFatt
+        FROM
+            utenze_per_tipo
+        WHERE
+            tipo_uso = 'ALTRO'
+        GROUP BY
+            ids_codice_orig_acq)
+        INSERT INTO
+            ACQ_VOL_UTENZE(ids_codice_orig_acq,
+            totalCount,
+            countDomestiche,
+            countDomesticheResidente,
+            countDomesticheDiamMin,
+            countCommerciali,
+            countPubblico,
+            countIndustriale,
+            countutenzeconmisuratore,
+            sumVolAcqEro,
+            sumVolAcqFatt,
+            sumDomesticheVolFatt,
+            sumDomesticheResidenteVolFatt,
+            sumPubblicoeVolFatt,
+            sumAltroVolFatt)
+        SELECT
+            ut.ids_codice_orig_acq,
+            totalCount,
+            countDomestiche,
+            countDomesticheResidente,
+            countDomesticheDiamMin,
+            countCommerciali,
+            countPubblico,
+            countIndustriale,
+            countutenzeconmisuratore,
+            ve.sumVolAcqEro,
+            vf.sumVolAcqFatt,
+            sumDomesticheVolFatt,
+            sumDomesticheResidenteVolFatt,
+            sumPubblicoeVolFatt,
+            sumAltroVolFatt
+        FROM
+            utenze_totali ut
+        LEFT JOIN utenze_domestiche ud on
+            ut.ids_codice_orig_acq = ud.ids_codice_orig_acq
+        LEFT JOIN utenze_domestiche_residente udr on
+            ut.ids_codice_orig_acq = udr.ids_codice_orig_acq
+        LEFT JOIN utenze_domestiche_diam_min udm on
+            ut.ids_codice_orig_acq = udm.ids_codice_orig_acq
+        LEFT JOIN utenze_commerciali uc on
+            ut.ids_codice_orig_acq = uc.ids_codice_orig_acq
+        LEFT JOIN utenze_pubblico up on
+            ut.ids_codice_orig_acq = up.ids_codice_orig_acq
+        LEFT JOIN utenze_industriale ui on
+            ut.ids_codice_orig_acq = ui.ids_codice_orig_acq
+        LEFT JOIN utenze_con_misuratore ucm on
+            ut.ids_codice_orig_acq = ucm.ids_codice_orig_acq
+        LEFT JOIN volume_erogato ve on
+            ut.ids_codice_orig_acq = ve.ids_codice_orig_acq
+        LEFT JOIN volume_fatturato vf on
+            ut.ids_codice_orig_acq = vf.ids_codice_orig_acq
+        LEFT JOIN volume_fatturato_altro vfa on
+            ut.ids_codice_orig_acq = vfa.ids_codice_orig_acq;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- Populate data for shape fognatura
 -- (Ref. 6.4. SHAPE FOGNATURA)

@@ -20,7 +20,21 @@
                 { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
                 { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
                 { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
-                {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"}
+                { "name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
+                { "name": "acq_vol_utenze.totalcount","alias": "totalcount"},
+                { "name": "acq_vol_utenze.countdomestiche","alias": "countdomestiche"},
+                { "name": "acq_vol_utenze.countdomesticheresidente","alias": "countdomesticheresidente"},
+                { "name": "acq_vol_utenze.countdomestichediammin","alias": "countdomestichediammin"},
+                { "name": "acq_vol_utenze.countcommerciali","alias": "countcommerciali"},
+                { "name": "acq_vol_utenze.countpubblico","alias": "countpubblico"},
+                { "name": "acq_vol_utenze.countindustriale","alias": "countindustriale"},
+                { "name": "acq_vol_utenze.countutenzeconmisuratore","alias": "countutenzeconmisuratore"},
+                { "name": "acq_vol_utenze.sumvolacqero","alias": "sumvolacqero"},
+                { "name": "acq_vol_utenze.sumvolacqfatt","alias": "sumvolacqfatt"},
+                { "name": "acq_vol_utenze.sumdomestichevolfatt","alias": "sumdomestichevolfatt"},
+                { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
+                { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
+                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"}
             ],
             "table": {
                 "name": "acq_rete_distrib"
@@ -46,6 +60,16 @@
                         "acq_rete_distrib.idgis"
                     ],
                     "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "acq_vol_utenze"
+                    },
+                    "on": [
+                        "acq_vol_utenze.ids_codice_orig_acq",
+                        "acq_rete_distrib.codice_ato"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND acq_rete_distrib.d_ambito IN ('AT3', NULL) AND acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
@@ -68,7 +92,21 @@
                 { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
                 { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
                 { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
-                {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"}
+                {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
+                { "name": "acq_vol_utenze.totalcount","alias": "totalcount"},
+                { "name": "acq_vol_utenze.countdomestiche","alias": "countdomestiche"},
+                { "name": "acq_vol_utenze.countdomesticheresidente","alias": "countdomesticheresidente"},
+                { "name": "acq_vol_utenze.countdomestichediammin","alias": "countdomestichediammin"},
+                { "name": "acq_vol_utenze.countcommerciali","alias": "countcommerciali"},
+                { "name": "acq_vol_utenze.countpubblico","alias": "countpubblico"},
+                { "name": "acq_vol_utenze.countindustriale","alias": "countindustriale"},
+                { "name": "acq_vol_utenze.countutenzeconmisuratore","alias": "countutenzeconmisuratore"},
+                { "name": "acq_vol_utenze.sumvolacqero","alias": "sumvolacqero"},
+                { "name": "acq_vol_utenze.sumvolacqfatt","alias": "sumvolacqfatt"},
+                { "name": "acq_vol_utenze.sumdomestichevolfatt","alias": "sumdomestichevolfatt"},
+                { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
+                { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
+                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"}
             ],
             "table": {
                 "name": "a_acq_rete_distrib"
@@ -94,6 +132,16 @@
                         "a_acq_rete_distrib.idgis"
                     ],
                     "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "acq_vol_utenze"
+                    },
+                    "on": [
+                        "acq_vol_utenze.ids_codice_orig_acq",
+                        "a_acq_rete_distrib.codice_ato"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE a_acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND a_acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND a_acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
@@ -106,6 +154,21 @@
 
         { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } }},
         { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tcl" } }},
+
+        { "id": "53800", "transformation": { "func": "direct", "params": { "field": "totalcount" } }},
+        { "id": "53900", "transformation": { "func": "direct", "params": { "field": "countdomestiche" } }},
+        { "id": "54000", "transformation": { "func": "direct", "params": { "field": "countdomesticheresidente" } }},
+        { "id": "54100", "transformation": { "func": "direct", "params": { "field": "countdomestichediammin" } }},
+        { "id": "54200", "transformation": { "func": "direct", "params": { "field": "countcommerciali" } }},
+        { "id": "54300", "transformation": { "func": "direct", "params": { "field": "countpubblico" } }},
+        { "id": "54400", "transformation": { "func": "direct", "params": { "field": "countindustriale" } }},
+        { "id": "54600", "transformation": { "func": "direct", "params": { "field": "countutenzeconmisuratore" } }},
+        { "id": "54700", "transformation": { "func": "direct", "params": { "field": "sumvolacqero" } }},
+        { "id": "100400", "transformation": { "func": "direct", "params": { "field": "sumvolacqfatt" } }},
+        { "id": "100600", "transformation": { "func": "direct", "params": { "field": "sumdomestichevolfatt" } }},
+        { "id": "100700", "transformation": { "func": "direct", "params": { "field": "sumdomesticheresidentevolfatt" } }},
+        { "id": "100800", "transformation": { "func": "direct", "params": { "field": "sumpubblicoevolfatt" } }},
+        { "id": "100900", "transformation": { "func": "direct", "params": { "field": "sumaltrovolfatt" } }},
 
         { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom" } }},
         { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_immesso" } }},
