@@ -809,3 +809,19 @@ alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_FGN	add constraint UTENZA_SERVIZIO_F
 alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_BAC	add constraint UTENZA_SERVIZIO_BAC_pk PRIMARY KEY(ID_UBIC_CONTATORE);
 -----------------------------------------------------------------------------------------------------------------------
 
+--
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI;
+CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI(
+	codice_ato		VARCHAR(32),
+	lunghezza_allaccio	double precision
+);
+
+-----
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_VOL_UTENZE;
+CREATE TABLE DBIAIT_ANALYSIS.FGN_VOL_UTENZE(
+	ids_codice_orig_fgn		VARCHAR(32),
+	utenze_prod_auth	bigint,
+	vol_fatturato	double precision,
+	vol_utenze_auth	double precision
+);

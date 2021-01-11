@@ -56,6 +56,23 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
+    --------------------------------------------------------------------
+-- Convert a float in integer
+-- Example:
+--  select dbiait_analysis.from_float_to_int(9.4) -> 9
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.from_float_to_int(
+	v_number FLOAT,
+	v_default INTEGER DEFAULT 0
+) RETURNS INTEGER AS $$
+BEGIN
+    RETURN v_number::INTEGER;
+EXCEPTION WHEN OTHERS THEN
+	RETURN v_default;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- Etract pro-com part from the localita ISTAT (removing last 5 characters)
 -- Example:
@@ -397,30 +414,30 @@ BEGIN
 	--LOCALITA
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
-		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.loc2011 
-		FROM acq_ubic_contatore uc, localita g 
+		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.loc2011
+		FROM acq_ubic_contatore uc, localita g
 		WHERE (g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom))
 		AND uc.id_impianto is not null';	
 	-- ACQ_RETE_DISTRIB
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
-		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
-		from acq_ubic_contatore uc, acq_rete_distrib g 
+		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
+		from acq_ubic_contatore uc, acq_rete_distrib g
 		WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND uc.id_impianto is not null';
 	-- FGN_RETE_RACC
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
-		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
-		from acq_ubic_contatore uc, fgn_rete_racc g 
+		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
+		from acq_ubic_contatore uc, fgn_rete_racc g
 		WHERE (g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom))
 		AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND uc.id_impianto is not null';
 	-- FGN_BACINO + FGN_TRATTAMENTO/FGN_PNT_SCARICO
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
-		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
+		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore uc, (
 			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
@@ -430,7 +447,7 @@ BEGIN
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
-			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''			
+			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
 		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null';
 
@@ -487,13 +504,13 @@ BEGIN
 
 
 	-- Log duplicated items
-	
+
 	EXECUTE '
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in localita''
 	FROM (
-		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.loc2011 
-		FROM acq_ubic_contatore uc, localita g 
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.loc2011
+		FROM acq_ubic_contatore uc, localita g
 		where g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null
 	) t group by t.id_ubic_contatore having count(0)>1';
@@ -502,8 +519,8 @@ BEGIN
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in acquedotto''
 	FROM(
-		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
-		from acq_ubic_contatore uc, acq_rete_distrib g 
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
+		from acq_ubic_contatore uc, acq_rete_distrib g
 		WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND uc.id_impianto is not null
@@ -513,8 +530,8 @@ BEGIN
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in fognatura''
 	FROM(
-		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
-		from acq_ubic_contatore uc, fgn_rete_racc g 
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
+		from acq_ubic_contatore uc, fgn_rete_racc g
 		WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND uc.id_impianto is not null
@@ -524,7 +541,7 @@ BEGIN
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in bacino''
 	FROM(
-		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice 
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore uc, (
 			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
@@ -534,7 +551,7 @@ BEGIN
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
-			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''			
+			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
 		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null
 	)t group by t.id_ubic_contatore having count(0)>1';
@@ -1620,6 +1637,14 @@ BEGIN
 	WHERE id_rete is NOT NULL
 	GROUP BY id_rete, codice_ato, tipo_infr;
 
+    --- AGGREGAZIONE PER CODICE ATO PER LA LUNGHEZZA TOTALE ALLACCI
+    INSERT INTO FGN_LUNGHEZZA_ALLACCI(
+        codice_ato, lunghezza_allaccio
+    )
+    SELECT codice_ato, lung_alla_c + lung_alla_i + lung_alla_c_ril + lung_alla_i_ril
+    FROM FGN_ALLACCIO;
+
+
 	--
 	-- LOG ANOMALIES
 	-- TODO: insert into LOG_STANDALONE
@@ -1792,7 +1817,8 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
+
 --------------------------------------------------------------------
 -- Populate data for shape fognatura
 -- (Ref. 6.4. SHAPE FOGNATURA)
@@ -1944,12 +1970,81 @@ BEGIN
 	AND populate_collett_tronchi() 
 	AND populate_lung_rete_fgn()
 	AND determine_fgn_allacci()
+	AND populate_fgn_volumi_utenze()
 	AND populate_fgn_shape();
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;		
+    SET search_path = public, DBIAIT_ANALYSIS;
+
+--------------------------------------------------------------------
+-- Populate data for volumes for FOGNATURA
+-- (Ref. 4.2)
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_fgn_volumi_utenze();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_fgn_volumi_utenze(
+) RETURNS BOOLEAN AS $$
+BEGIN
+
+	DELETE FROM FGN_VOL_UTENZE;
+
+	with utenze_autorizzate as (
+        SELECT
+            us2.ids_codice_orig_FGN,
+            count(*) as utenze_prod_auth
+        FROM
+            utenza_sap us
+        LEFT JOIN utenza_servizio us2 ON
+            us.id_ubic_contatore = us2.id_ubic_contatore
+        WHERE
+            us.CATTARIFFA in ('APB_REFIN',
+            'APBLREFIND')
+        GROUP BY
+            us2.ids_codice_orig_FGN),
+        volume_fatturato as (
+        SELECT
+            us2.ids_codice_orig_FGN,
+            sum(VOL_FGN_FATT) as vol_fatturato
+        FROM
+            utenza_sap us
+        LEFT JOIN utenza_servizio us2 ON
+            us.id_ubic_contatore = us2.id_ubic_contatore
+        GROUP BY
+            us2.ids_codice_orig_FGN),
+        volume_utenze_autorizzate as (
+        SELECT
+            us2.ids_codice_orig_FGN,
+            sum(vol_fgn_fatt) as vol_utenze_auth
+        FROM
+            utenza_sap us
+        LEFT JOIN utenza_servizio us2 ON
+            us.id_ubic_contatore = us2.id_ubic_contatore
+        WHERE
+            us.CATTARIFFA in ('APB_REFIN',
+            'APBLREFIND')
+        GROUP BY
+            us2.ids_codice_orig_FGN)
+        INSERT INTO FGN_VOL_UTENZE (ids_codice_orig_FGN, utenze_prod_auth, vol_fatturato, vol_utenze_auth)
+        SELECT
+            volume_fatturato.ids_codice_orig_FGN,
+            utenze_prod_auth,
+            vol_fatturato,
+            vol_utenze_auth
+        FROM
+            volume_fatturato
+        LEFT JOIN utenze_autorizzate ON
+            volume_fatturato.ids_codice_orig_fgn = utenze_autorizzate.ids_codice_orig_fgn
+        LEFT JOIN volume_utenze_autorizzate ON
+            volume_fatturato.ids_codice_orig_fgn = volume_utenze_autorizzate.ids_codice_orig_fgn;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- Populate data into the XXX_POMPE tables 
 --  * POZZI_POMPE

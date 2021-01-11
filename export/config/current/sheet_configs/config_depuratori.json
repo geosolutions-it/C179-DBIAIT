@@ -4,9 +4,9 @@
     "sources": [
         {
             "fields": [
-                { "name": "fgn_trattamento.codice_ato", "alias": "codice_ato"},
+                 { "name": "fgn_trattamento.codice_ato", "alias": "codice_ato"},
                 { "name": "fgn_trattamento.denom", "alias": "denom"},
-                { "name": "fgn_trattamento.quota", "alias": "quota"},
+                { "name": "fgn_trattamento.quota", "alias": "quota", "function":  "FROM_FLOAT_TO_INT"},
                 { "name": "fgn_trattamento.d_corpo_ricet", "alias": "d_corpo_ricet"},
                 { "name": "fgn_trattamento.pot_prog", "alias": "pot_prog"},
                 { "name": "fgn_trattamento.conc_co2_ing", "alias": "conc_co2_ing"},
@@ -18,120 +18,8 @@
                 { "name": "fgn_trattamento.d_stato", "alias": "d_stato"},
                 { "name": "fgn_trattamento.a_anno_costr", "alias": "a_anno_costr"},
                 { "name": "fgn_trattamento.data_agg", "alias": "data_agg"},
-                { "name": "fgn_trattamento.geom", "alias": "transformed_x_geom", "function": "GB_X"},
-                { "name": "fgn_trattamento.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-                { "name": "fgn_trattamento.cod_comune", "alias":"cod_comune"},
                 { "name": "fgn_auth_trattam.anno_ristr_civ", "alias": "anno_ristr_civ"},
-                { "name": "fgn_auth_trattam.d_stato_cons_civ", "alias": "d_stato_cons_civ"},
-                { "name": "fgn_auth_trattam.anno_ristr_elmec", "alias": "anno_ristr_elmec"},
-                { "name": "fgn_auth_trattam.d_stato_cons_elmec", "alias": "d_stato_cons_elmec"},
-                { "name": "fgn_auth_trattam.vol_riutilizzo", "alias": "vol_riutilizzo"},
-                { "name": "fgn_auth_trattam.d_telecont", "alias": "d_telecont"},
-                { "name": "fgn_auth_trattam.sn_319_76", "alias": "sn_319_76", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.potenza_instal", "alias": "potenza_instal"},
-                { "name": "fgn_auth_trattam.ene_auto_prod", "alias": "ene_auto_prod"},
-                { "name": "fgn_auth_trattam.sn_presid", "alias": "sn_presid", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.d_tipo_tratt_acqua", "alias": "d_tipo_tratt_acqua"},
-                { "name": "fgn_auth_trattam.n_linee_acq", "alias": "n_linee_acq"},
-                { "name": "fgn_auth_trattam.sn_biodischi", "alias": "sn_biodischi", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_letti_percol", "alias": "sn_letti_percol", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_equaliz", "alias": "sn_equaliz", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_grig_trad", "alias": "sn_grig_trad", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_grig_spinta", "alias": "sn_grig_spinta", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_dissab", "alias": "sn_dissab", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_disoleat", "alias": "sn_disoleat", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_sedim_prim", "alias": "sn_sedim_prim", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_denitr", "alias": "sn_denitr", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_oss_c_nitri", "alias": "sn_oss_c_nitri", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_oss_s_nitri", "alias": "sn_oss_s_nitri", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_defosf_sim", "alias": "sn_defosf_sim", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_sedim_sec", "alias": "sn_sedim_sec", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_chirif_defos", "alias": "sn_chirif_defos", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_filtr_sab", "alias": "sn_filtr_sab", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.d_ass_carb_att", "alias": "d_ass_carb_att", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_deodor", "alias": "sn_deodor", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_disinf", "alias": "sn_disinf", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.d_tipo_tratt_fanghi", "alias": "d_tipo_tratt_fanghi", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.n_linee_fanghi", "alias": "n_linee_fanghi", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_ispess", "alias": "sn_ispess", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.d_digest_anae", "alias": "d_digest_anae", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_digest_aerob", "alias": "sn_digest_aerob", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_post_ispes", "alias": "sn_post_ispes", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_essic_letto", "alias": "sn_essic_letto", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.d_disidrat", "alias": "d_disidrat", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_essic_term", "alias": "sn_essic_term", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_incen_term", "alias": "sn_incen_term", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.d_dest_fanghi", "alias": "d_dest_fanghi"},
-                { "name": "fgn_auth_trattam.liquami_civili", "alias": "liquami_civili"},
-                { "name": "fgn_auth_trattam.liquami_industr", "alias": "liquami_industr"},
-                { "name": "fgn_auth_trattam.percolati", "alias": "percolati"},
-                { "name": "fgn_auth_trattam.bottini", "alias": "bottini"},
-                { "name": "fgn_auth_trattam.umid_media_res", "alias": "umid_media_res"},
-                { "name": "fgn_auth_trattam.peso_fanghi_prod", "alias": "peso_fanghi_prod"},
-                { "name": "fgn_auth_trattam.trat_fanghi_riutil", "alias": "trat_fanghi_riutil"},
-                { "name": "fgn_auth_trattam.trat_fanghi_sma", "alias": "trat_fanghi_sma"},
-                { "name": "fgn_auth_trattam.trat_fanghi_sma_disc", "alias": "trat_fanghi_sma_disc"},
-                { "name": "fgn_auth_trattam.sn_fitodep", "alias": "sn_fitodep", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_lagunaggio", "alias": "sn_lagunaggio", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.a_anno_ristr_civ", "alias": "a_anno_ristr_civ"},
-                { "name": "fgn_auth_trattam.a_anno_ristr_elmec", "alias": "a_anno_ristr_elmec"},
-                { "name": "fgn_auth_trattam.a_pot_prog", "alias": "a_pot_prog"},
-                { "name": "fgn_auth_trattam.a_carico_att_tot", "alias": "a_carico_att_tot"},
-                { "name": "fgn_auth_trattam.a_carico_civ_att", "alias": "a_carico_civ_att"},
-                { "name": "fgn_auth_trattam.a_conc_co2_ing", "alias": "a_conc_co2_ing"},
-                { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
-                { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
-                { "name": "localita.denominazi", "alias": "denominazi" },
-                { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"}
-            ],
-            "table": {
-                "name": "fgn_trattamento"
-            },
-            "join": [
-                {
-                    "type": "left",
-                    "table": {
-                        "name": "fgn_auth_trattam"
-                    },
-                    "on": [
-                        "fgn_trattamento.idgis",
-                        "fgn_auth_trattam.id_trattamento"
-                    ],
-                    "cond": "="
-                },
-                {
-                    "type": "left",
-                    "table": {
-                        "name": "localita"
-                    },
-                    "on": [
-                        "localita.geom",
-                        "fgn_trattamento.geom"
-                    ],
-                    "cond": "ST_INTERSECTS"
-                }
-            ],
-            "filter": "WHERE fgn_trattamento.d_gestore = 'PUBLIACQUA' AND fgn_trattamento.d_ambito IN ('AT3', NULL) AND fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
-        },
-        {
-            "fields": [
-                { "name": "a_fgn_trattamento.codice_ato", "alias": "codice_ato"},
-                { "name": "a_fgn_trattamento.denom", "alias": "denom"},
-                { "name": "a_fgn_trattamento.quota", "alias": "quota"},
-                { "name": "a_fgn_trattamento.d_corpo_ricet", "alias": "d_corpo_ricet"},
-                { "name": "a_fgn_trattamento.pot_prog", "alias": "pot_prog"},
-                { "name": "a_fgn_trattamento.conc_co2_ing", "alias": "conc_co2_ing"},
-                { "name": "a_fgn_trattamento.conc_co2_usc", "alias": "conc_co2_usc"},
-                { "name": "a_fgn_trattamento.vol_att_tratt", "alias": "vol_att_tratt"},
-                { "name": "a_fgn_trattamento.anno_costr", "alias": "anno_costr"},
-                { "name": "a_fgn_trattamento.sn_terziario", "alias": "sn_terziario", "function": "TO_BIT"},
-                { "name": "a_fgn_trattamento.sn_imhoff", "alias": "sn_imhoff", "function": "TO_BIT"},
-                { "name": "a_fgn_trattamento.d_stato", "alias": "d_stato"},
-                { "name": "a_fgn_trattamento.a_anno_costr", "alias": "a_anno_costr"},
-                { "name": "a_fgn_trattamento.data_agg", "alias": "data_agg"},
-                { "name": "a_fgn_auth_trattam.anno_ristr_civ", "alias": "anno_ristr_civ"},
-                { "name": "a_fgn_trattamento.cod_comune", "alias":"cod_comune"},
+                { "name": "fgn_trattamento.cod_comune", "alias":"cod_comune"},
                 { "name": "fgn_trattamento.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 { "name": "fgn_trattamento.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 { "name": "fgn_auth_trattam.d_stato_cons_civ", "alias": "d_stato_cons_civ"},
@@ -193,9 +81,150 @@
                 { "name": "fgn_auth_trattam.a_conc_co2_ing", "alias": "a_conc_co2_ing"},
                 { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
                 { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
+                { "name": "fgn_auth_trattam.consumo_ee", "alias": "consumo_ee"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
-                { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"}
+                { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
+                { "name": "stats_pompe.sum_potenza", "alias": "sum_potenza"},
+                { "name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"}
+            ],
+            "table": {
+                "name": "fgn_trattamento"
+            },
+            "join": [
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "fgn_auth_trattam"
+                    },
+                    "on": [
+                        "fgn_trattamento.idgis",
+                        "fgn_auth_trattam.id_trattamento"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "localita"
+                    },
+                    "on": [
+                        "localita.geom",
+                        "fgn_trattamento.geom"
+                    ],
+                    "cond": "ST_INTERSECTS"
+                },
+
+                {
+                   "type":"left",
+                   "table":{
+                      "name":"stats_pompe"
+                   },
+                   "on":[
+                      "stats_pompe.codice_ato",
+                      "fgn_trattamento.codice_ato"
+                   ],
+                   "cond":"="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "abitanti_trattati"
+                    },
+                    "on": [
+                        "fgn_trattamento.idgis",
+                        "abitanti_trattati.codice"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE fgn_trattamento.d_gestore = 'PUBLIACQUA' AND fgn_trattamento.d_ambito IN ('AT3', NULL) AND fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
+        },
+        {
+            "fields": [
+                { "name": "a_fgn_trattamento.codice_ato", "alias": "codice_ato"},
+                { "name": "a_fgn_trattamento.denom", "alias": "denom"},
+                { "name": "a_fgn_trattamento.quota", "alias": "quota", "function":  "FROM_FLOAT_TO_INT"},
+                { "name": "a_fgn_trattamento.d_corpo_ricet", "alias": "d_corpo_ricet"},
+                { "name": "a_fgn_trattamento.pot_prog", "alias": "pot_prog"},
+                { "name": "a_fgn_trattamento.conc_co2_ing", "alias": "conc_co2_ing"},
+                { "name": "a_fgn_trattamento.conc_co2_usc", "alias": "conc_co2_usc"},
+                { "name": "a_fgn_trattamento.vol_att_tratt", "alias": "vol_att_tratt"},
+                { "name": "a_fgn_trattamento.anno_costr", "alias": "anno_costr"},
+                { "name": "a_fgn_trattamento.sn_terziario", "alias": "sn_terziario", "function": "TO_BIT"},
+                { "name": "a_fgn_trattamento.sn_imhoff", "alias": "sn_imhoff", "function": "TO_BIT"},
+                { "name": "a_fgn_trattamento.d_stato", "alias": "d_stato"},
+                { "name": "a_fgn_trattamento.a_anno_costr", "alias": "a_anno_costr"},
+                { "name": "a_fgn_trattamento.data_agg", "alias": "data_agg"},
+                { "name": "fgn_auth_trattam.anno_ristr_civ", "alias": "anno_ristr_civ"},
+                { "name": "a_fgn_trattamento.cod_comune", "alias":"cod_comune"},
+                { "name": "a_fgn_trattamento.geom", "alias": "transformed_x_geom", "function": "GB_X"},
+                { "name": "a_fgn_trattamento.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
+                { "name": "fgn_auth_trattam.d_stato_cons_civ", "alias": "d_stato_cons_civ"},
+                { "name": "fgn_auth_trattam.anno_ristr_elmec", "alias": "anno_ristr_elmec"},
+                { "name": "fgn_auth_trattam.d_stato_cons_elmec", "alias": "d_stato_cons_elmec"},
+                { "name": "fgn_auth_trattam.vol_riutilizzo", "alias": "vol_riutilizzo"},
+                { "name": "fgn_auth_trattam.d_telecont", "alias": "d_telecont"},
+                { "name": "fgn_auth_trattam.sn_319_76", "alias": "sn_319_76", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.potenza_instal", "alias": "potenza_instal"},
+                { "name": "fgn_auth_trattam.ene_auto_prod", "alias": "ene_auto_prod"},
+                { "name": "fgn_auth_trattam.sn_presid", "alias": "sn_presid", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.d_tipo_tratt_acqua", "alias": "d_tipo_tratt_acqua"},
+                { "name": "fgn_auth_trattam.n_linee_acq", "alias": "n_linee_acq"},
+                { "name": "fgn_auth_trattam.sn_biodischi", "alias": "sn_biodischi", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_letti_percol", "alias": "sn_letti_percol", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_equaliz", "alias": "sn_equaliz", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_grig_trad", "alias": "sn_grig_trad", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_grig_spinta", "alias": "sn_grig_spinta", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_dissab", "alias": "sn_dissab", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_disoleat", "alias": "sn_disoleat", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_sedim_prim", "alias": "sn_sedim_prim", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_denitr", "alias": "sn_denitr", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_oss_c_nitri", "alias": "sn_oss_c_nitri", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_oss_s_nitri", "alias": "sn_oss_s_nitri", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_defosf_sim", "alias": "sn_defosf_sim", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_sedim_sec", "alias": "sn_sedim_sec", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_chirif_defos", "alias": "sn_chirif_defos", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_filtr_sab", "alias": "sn_filtr_sab", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.d_ass_carb_att", "alias": "d_ass_carb_att"},
+                { "name": "fgn_auth_trattam.sn_deodor", "alias": "sn_deodor", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_disinf", "alias": "sn_disinf", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.d_tipo_tratt_fanghi", "alias": "d_tipo_tratt_fanghi"},
+                { "name": "fgn_auth_trattam.n_linee_fanghi", "alias": "n_linee_fanghi"},
+                { "name": "fgn_auth_trattam.sn_ispess", "alias": "sn_ispess", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.d_digest_anae", "alias": "d_digest_anae"},
+                { "name": "fgn_auth_trattam.sn_digest_aerob", "alias": "sn_digest_aerob", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_post_ispes", "alias": "sn_post_ispes", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_essic_letto", "alias": "sn_essic_letto", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.d_disidrat", "alias": "d_disidrat"},
+                { "name": "fgn_auth_trattam.sn_essic_term", "alias": "sn_essic_term", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_incen_term", "alias": "sn_incen_term", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.d_dest_fanghi", "alias": "d_dest_fanghi"},
+                { "name": "fgn_auth_trattam.liquami_civili", "alias": "liquami_civili"},
+                { "name": "fgn_auth_trattam.liquami_industr", "alias": "liquami_industr"},
+                { "name": "fgn_auth_trattam.percolati", "alias": "percolati"},
+                { "name": "fgn_auth_trattam.bottini", "alias": "bottini"},
+                { "name": "fgn_auth_trattam.umid_media_res", "alias": "umid_media_res"},
+                { "name": "fgn_auth_trattam.peso_fanghi_prod", "alias": "peso_fanghi_prod"},
+                { "name": "fgn_auth_trattam.trat_fanghi_riutil", "alias": "trat_fanghi_riutil"},
+                { "name": "fgn_auth_trattam.trat_fanghi_sma", "alias": "trat_fanghi_sma"},
+                { "name": "fgn_auth_trattam.trat_fanghi_sma_disc", "alias": "trat_fanghi_sma_disc"},
+                { "name": "fgn_auth_trattam.sn_fitodep", "alias": "sn_fitodep", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_lagunaggio", "alias": "sn_lagunaggio", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.a_anno_ristr_civ", "alias": "a_anno_ristr_civ"},
+                { "name": "fgn_auth_trattam.a_anno_ristr_elmec", "alias": "a_anno_ristr_elmec"},
+                { "name": "fgn_auth_trattam.a_pot_prog", "alias": "a_pot_prog"},
+                { "name": "fgn_auth_trattam.a_carico_att_tot", "alias": "a_carico_att_tot"},
+                { "name": "fgn_auth_trattam.a_carico_civ_att", "alias": "a_carico_civ_att"},
+                { "name": "fgn_auth_trattam.a_conc_co2_ing", "alias": "a_conc_co2_ing"},
+                { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
+                { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
+                { "name": "fgn_auth_trattam.consumo_ee", "alias": "consumo_ee"},
+                { "name": "localita.denominazi", "alias": "denominazi" },
+                { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
+                {"name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
+                {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"}
             ],
             "table": {
                 "name": "a_fgn_trattamento"
@@ -222,6 +251,28 @@
                         "a_fgn_trattamento.geom"
                     ],
                     "cond": "ST_INTERSECTS"
+                },
+                {
+                   "type":"left",
+                   "table":{
+                      "name":"stats_pompe"
+                   },
+                   "on":[
+                      "stats_pompe.codice_ato",
+                      "a_fgn_trattamento.codice_ato"
+                   ],
+                   "cond":"="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "abitanti_trattati"
+                    },
+                    "on": [
+                        "a_fgn_trattamento.idgis",
+                        "abitanti_trattati.codice"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE a_fgn_trattamento.d_gestore = 'PUBLIACQUA' AND a_fgn_trattamento.d_ambito IN ('AT3', NULL) AND a_fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
@@ -232,6 +283,8 @@
 
         {"id": "71800", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
         {"id": "71900", "transformation": {"func": "DIRECT", "params": { "field": "denom" }}},
+        {"id": "73300", "transformation": {"func": "DIRECT", "params": { "field": "ae_tot" }}},
+        {"id": "73400", "transformation": {"func": "DIRECT", "params": { "field": "ae_civ" }}},
         {"id": "72300", "transformation": {"func": "DIRECT", "params": { "field": "quota" }},"validations": [{
                     "func": "IF",
                     "params": {
@@ -289,7 +342,7 @@
                 }
             ]},
         {"id": "73200", "transformation": {"func": "DIRECT", "params": { "field": "pot_prog" }}},
-        {"id": "74200", "transformation": {"func": "DIRECT", "params": { "field": "a_vol_att_tratt" }}, "validations": [{
+        {"id": "74200", "transformation": {"func": "DIRECT", "params": { "field": "consumo_ee" }}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "74200",
@@ -366,8 +419,8 @@
         {"id": "102400", "transformation": {"func": "DIRECT", "params": { "field": "sn_strum_mis_port_out" }}},
 
 
-        {"id": "72000", "transformation": {"func": "DIRECT", "params": { "field": "transformed_y_geom"}}},
-        {"id": "72100", "transformation": {"func": "DIRECT", "params": { "field": "transformed_x_geom"}}},
+        {"id": "72000", "transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
+        {"id": "72100", "transformation": { "func": "ROUND", "params": {"field": "transformed_x_geom", "ndigits":  3}}},
 
         {"id": "72500", "transformation": {"func": "LSTRIP", "params": { "field": "cod_comune", "char": "0" }}},
 
