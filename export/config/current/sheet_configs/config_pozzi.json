@@ -605,7 +605,19 @@
              }
          }
       },
-
+    {"id":"19000", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "cod_opera_inpotab_not_exist",
+             "cond": {
+                     "operator": "=",
+                     "value": 0,
+                     "result": "A",
+                     "else": "{ a_volume }"
+                 }
+             }
+         }
+      },
       {"id":"15400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
       {"id":"17100", "transformation":{
          "func": "IF",
