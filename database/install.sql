@@ -443,7 +443,7 @@ CREATE TABLE DBIAIT_ANALYSIS.A_FGN_REL_PROD_IMM(
 	id_produttivo		VARCHAR(32),
 	id_immissione		VARCHAR(32),
 	id_sist_fogn		VARCHAR(32),
-	primary key (id_produttivo, id_immissione)	
+	primary key (id_produttivo, id_immissione)
 );
 
 --
@@ -835,5 +835,25 @@ CREATE TABLE DBIAIT_ANALYSIS.TAB_ISPEZIONI(
 	dt_odl		DATE,
 	tipo_odl	VARCHAR(50),
 	tam			VARCHAR(10),
-	primary key (odl)	
+	primary key (odl)
+);
+-----
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_VOL_UTENZE;
+CREATE TABLE DBIAIT_ANALYSIS.ACQ_VOL_UTENZE(
+	ids_codice_orig_acq		VARCHAR(32),
+    totalCount	INTEGER,
+    countDomestiche	INTEGER,
+    countDomesticheResidente	INTEGER,
+    countDomesticheDiamMin	INTEGER,
+    countCommerciali	INTEGER,
+    countPubblico	INTEGER,
+    countIndustriale	INTEGER,
+    countutenzeconmisuratore	INTEGER,
+    sumVolAcqEro	double precision,
+    sumVolAcqFatt	double precision,
+    sumDomesticheVolFatt	double precision,
+    sumDomesticheResidenteVolFatt	double precision,
+    sumPubblicoeVolFatt	double precision,
+    sumAltroVolFatt	double precision
 );
