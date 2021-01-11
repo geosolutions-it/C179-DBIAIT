@@ -438,19 +438,12 @@ CREATE TABLE DBIAIT_ANALYSIS.A_REL_PROD_CONT(
 );
 
 --
-DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_REL_PROD_IMM;
-CREATE TABLE DBIAIT_ANALYSIS.FGN_REL_PROD_IMM(
-	id_produttivo		VARCHAR(32),
-	id_immissione		VARCHAR(32),
-	id_sist_fogn		VARCHAR(32)
-);
-
---
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.A_FGN_REL_PROD_IMM;
 CREATE TABLE DBIAIT_ANALYSIS.A_FGN_REL_PROD_IMM(
 	id_produttivo		VARCHAR(32),
 	id_immissione		VARCHAR(32),
-	id_sist_fogn		VARCHAR(32)
+	id_sist_fogn		VARCHAR(32),
+	primary key (id_produttivo, id_immissione)	
 );
 
 --
