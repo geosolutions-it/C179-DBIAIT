@@ -17,7 +17,7 @@ begin
     -- run the new version of the procedure
 	perform dbiait_analysis.populate_stats_cloratore();
     --- check if the count of the selected id_rete is still the same
-    SELECT id_rete,counter INTO new_id, new_count FROM DBIAIT_ANALYSIS.stats_cloratore WHERE id_rete='PAARDI00000000001319';
+    SELECT id_rete,counter INTO new_id, new_count FROM DBIAIT_ANALYCrSIS.stats_cloratore WHERE id_rete='PAARDI00000000001319';
     SELECT id_rete,counter INTO stab_id, stab_count FROM pgunit.stats_cloratore WHERE id_rete='PAARDI00000000001319';
     perform test_assertTrue(stab_id, stab_count = new_count );
     -- check if the total rows are the same
