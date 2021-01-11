@@ -438,19 +438,12 @@ CREATE TABLE DBIAIT_ANALYSIS.A_REL_PROD_CONT(
 );
 
 --
-DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_REL_PROD_IMM;
-CREATE TABLE DBIAIT_ANALYSIS.FGN_REL_PROD_IMM(
-	id_produttivo		VARCHAR(32),
-	id_immissione		VARCHAR(32),
-	id_sist_fogn		VARCHAR(32)
-);
-
---
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.A_FGN_REL_PROD_IMM;
 CREATE TABLE DBIAIT_ANALYSIS.A_FGN_REL_PROD_IMM(
 	id_produttivo		VARCHAR(32),
 	id_immissione		VARCHAR(32),
-	id_sist_fogn		VARCHAR(32)
+	id_sist_fogn		VARCHAR(32),
+	primary key (id_produttivo, id_immissione)
 );
 
 --
@@ -815,22 +808,34 @@ alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_LOC	add constraint UTENZA_SERVIZIO_L
 alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_FGN	add constraint UTENZA_SERVIZIO_FGN_pk PRIMARY KEY(ID_UBIC_CONTATORE);
 alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_BAC	add constraint UTENZA_SERVIZIO_BAC_pk PRIMARY KEY(ID_UBIC_CONTATORE);
 -----------------------------------------------------------------------------------------------------------------------
-
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI;
 CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI(
 	codice_ato		VARCHAR(32),
 	lunghezza_allaccio	double precision
 );
-
------
-
+--
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_VOL_UTENZE;
 CREATE TABLE DBIAIT_ANALYSIS.FGN_VOL_UTENZE(
 	ids_codice_orig_fgn		VARCHAR(32),
 	utenze_prod_auth	bigint,
 	vol_fatturato	double precision,
 	vol_utenze_auth	double precision
+);
+--
+-- FASE ADDONS
+--
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.TAB_ISPEZIONI;
+CREATE TABLE DBIAIT_ANALYSIS.TAB_ISPEZIONI(
+	odl			VARCHAR(32),
+	idgis		VARCHAR(32),
+	lu_mista	DOUBLE PRECISION,
+	lu_nera		DOUBLE PRECISION,
+	tipo		VARCHAR(20),
+	dt_odl		DATE,
+	tipo_odl	VARCHAR(50),
+	tam			VARCHAR(10),
+	primary key (odl)
 );
 -----
 
