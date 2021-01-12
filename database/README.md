@@ -1,19 +1,14 @@
 ### Database
 This folder contains initial SQL script to install database schemas.
 
-### Run procedure with unittest
-In order to have more control on the changes, is usefull to use the unittest developed with [pgUnit](https://github.com/adrianandrei-ca/pgunit).
-Follow the instruction [here](https://github.com/adrianandrei-ca/pgunit) for the local installation
-
-In order to install the tests, execute as script the file `unittest.sql`
-
-Before start
+Unittest for procedure
 --
 
 Some preliminary actions are needed in order to run the unittests.
 1) create a copy of the database, with a name like `unittest_pa`
 2) run the `install.sql` and `functions.sql`  
 3) Import the dump for the stabbed data
+4) install [pgUnit](https://github.com/adrianandrei-ca/pgunit).
 4) run the `unittest.sql`
 
 
