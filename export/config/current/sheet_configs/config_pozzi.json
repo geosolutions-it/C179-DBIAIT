@@ -48,7 +48,8 @@
             {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"},
-            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"}
+            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
+            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -117,7 +118,8 @@
                  "on": [
                      "accorp_codice_denom.codice_accorp",
                      "acq_captazione.idgis"
-                 ]
+                 ],
+                 "cond": "="
             }
          ],
          "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3"
@@ -168,7 +170,8 @@
             {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"},
-            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"}
+            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
+            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -235,10 +238,10 @@
                      "name": "accorp_codice_denom"
                  },
                  "on": [
-                     "accorp_codice_denom.codice_accorp",
-                     "acq_captazione.idgis"
+                     "accorp_codice_denom.id_captazione",
+                     "a_acq_captazione.idgis"
                  ],
-                 "cond": "ST_INTERSECTS"
+                 "cond": "="
             }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.sub_funzione = 3"
