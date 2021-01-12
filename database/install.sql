@@ -390,7 +390,9 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE(
 	tipo_infr		VARCHAR(100),
 	lunghezza 		double precision,
 	lunghezza_dep 	double precision,
-	id_refluo_trasportato INTEGER
+	id_refluo_trasportato INTEGER,
+	lung_rete_mista 	double precision,
+	lung_rete_nera 	double precision
 );
 
 --
