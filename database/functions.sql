@@ -1058,14 +1058,8 @@ BEGIN
 				select c.idgis 
 				FROM 
 					fgn_condotta c,
-					fgn_bacino b, ' || v_join_table || ' r
-				where b.sub_funzione = 3
-				and c.id_rete = r.idgis
-				and c.geom && b.geom 
-				and st_intersects(c.geom, b.geom)
-				and r.d_stato in (''ATT'',''FIP'')
-				and (r.d_ambito is null or r.d_ambito = ''AT3'')
-				and r.d_gestore = ''PUBLIACQUA''
+					fgn_trattamento d
+				where c.sist_acq_dep = d.business_id
 			) t WHERE t.idgis = ' || v_table || '.idgis		
 		);
 	';
@@ -1113,7 +1107,13 @@ BEGIN
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT idgis, ''' || v_table || ''', ''Campo recapito non valorizzato'' 
 	FROM ' || v_table || ' WHERE recapito is NULL';
-	
+
+	-- LOG
+	DELETE FROM LOG_STANDALONE WHERE alg_name = v_table;
+	EXECUTE '
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT idgis, ''' || v_table || ''', ''Campo id_rete vuoto''
+	FROM ' || v_table || ' WHERE recapito is NULL';
 	RETURN TRUE;
 
 END;
@@ -2034,52 +2034,57 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_fgn_shape(
 BEGIN
 
 	DELETE FROM FGN_SHAPE;
-	
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_fgn_shape(
+) RETURNS BOOLEAN AS $$
+BEGIN
+
+	DELETE FROM FGN_SHAPE;
+
 	INSERT INTO FGN_SHAPE(
 		 tipo_rete
-		,ids_codice	
-		,ids_codi_1	
-		,id_materia	
-		,idx_materi	
-		,diametro	
-		,idx_diamet	
-		,anno		
-		,idx_anno	
-		,lunghez_1	
-		,idx_lunghe	
-		,id_conserv	
-		,id_refluo_	
-		,funziona_g 
+		,ids_codice
+		,ids_codi_1
+		,id_materia
+		,idx_materi
+		,diametro
+		,idx_diamet
+		,anno
+		,idx_anno
+		,lunghez_1
+		,idx_lunghe
+		,id_conserv
+		,id_refluo_
+		,funziona_g
 		,recapito
 		,geom
 	)
-	SELECT 
-		'FOGNATURA', codice_ato, idgis, to_integer(id_materiale), idx_materiale, 
-		to_integer(diametro), idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, to_integer(id_conservazione), 
-		id_refluo_trasportato::INTEGER, funziona_gravita, recapito, geom 
+	SELECT
+		'FOGNATURA', codice_ato, idgis, to_integer(id_materiale), idx_materiale,
+		to_integer(diametro), idx_diametro, anno, idx_anno, round(cast(lunghezza as numeric), 6), idx_lunghezza, to_integer(id_conservazione),
+		id_refluo_trasportato::INTEGER, funziona_gravita, recapito, geom
 	FROM FOGNAT_TRONCHI
 	UNION ALL
-	SELECT 
-		'COLLETTORE', codice_ato, idgis, to_integer(id_materiale), idx_materiale, 
-		to_integer(diametro), idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, to_integer(id_conservazione), 
-		0 id_refluo_trasportato, funziona_gravita, recapito, geom 
+	SELECT
+		'COLLETTORE', codice_ato, idgis, to_integer(id_materiale), idx_materiale,
+		to_integer(diametro), idx_diametro, anno, idx_anno, ROUND(cast(lunghezza as numeric), 6), idx_lunghezza, to_integer(id_conservazione),
+		id_refluo_trasportato::INTEGER, funziona_gravita, recapito, geom
 	FROM COLLETT_TRONCHI;
-	
-	-- (comune_nome, id_comune_istat)	
+
+	-- (comune_nome, id_comune_istat)
 	UPDATE FGN_SHAPE
-	SET comune_nom = t.denom, id_comune_ = t.cod_istat
+	SET comune_nom = t.denom, id_comune_ = t.pro_com
 	FROM (
-		SELECT c.idgis, cc.denom, cc.cod_istat 
+		SELECT c.idgis, cc.denom, cc.pro_com
 		FROM fgn_condotta c, confine_comunale cc
-		WHERE c.cod_comune = cc.pro_com_tx 
+		WHERE c.cod_comune = cc.pro_com_tx
 		--LIMIT 10
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
-	
+
 	--(funziona_gravita)
 	UPDATE FGN_SHAPE
 	SET funziona_g = t.valore_netsic
 	FROM (
-		SELECT c.idgis, d.valore_netsic 
+		SELECT c.idgis, d.valore_netsic
 		FROM fgn_condotta c, all_domains d
 		WHERE d.dominio_gis = 'D_T_SCORRIM'
 		AND d.valore_gis = c.d_funzionam
@@ -2091,16 +2096,16 @@ BEGIN
 		,prof_final = t.quota_fn_rel
 		,idx_profon = CASE WHEN t.quota_in_rel = 0 and t.quota_fn_rel = 0 THEN 'X' ELSE 'A' END
 	FROM (
-		SELECT 
-			c.idgis, 
-			CASE 
+		SELECT
+			c.idgis,
+			CASE
 				WHEN c.d_tipo_sezione IN ('RET','REC') THEN
 					'RETTANGOLARE'
 				WHEN c.d_tipo_sezione IN ('CIR','CIS','CIC') THEN
-					'CIRCOLARE' 
+					'CIRCOLARE'
 				WHEN c.d_tipo_sezione IN ('OVO','VIG','OVS','OVC') THEN
 					'OVOIDALE'
-				ELSE 'ALTRO'
+				ELSE null
 			END sezione,
 			coalesce(quota_in_rel,0) quota_in_rel,
 			coalesce(quota_fn_rel,0) quota_fn_rel
@@ -2111,48 +2116,50 @@ BEGIN
 	SET copertura = t.valore_netsic
 	FROM (
 		SELECT c.idgis, d.valore_netsic
-		FROM fgn_condotta c, all_domains d 
-		WHERE COALESCE(c.d_pavimentaz,'SCO') in ('SCO','ALT') 
+		FROM fgn_condotta c, all_domains d
+		WHERE COALESCE(c.d_pavimentaz,'SCO') in ('SCO','ALT')
 		AND d.dominio_gis = 'D_UBICAZIONE'
 		AND d.valore_gis = COALESCE(c.d_ubicazione,'SCO')
+		and d.valore_netsic !='ASFALTO SIMILI'
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
 	UPDATE FGN_SHAPE
 	SET copertura = t.valore_netsic
 	FROM (
 		SELECT c.idgis, d.valore_netsic
-		FROM fgn_condotta c, all_domains d 
-		WHERE COALESCE(c.d_pavimentaz,'SCO') NOT IN ('SCO','ALT') 
+		FROM fgn_condotta c, all_domains d
+		WHERE COALESCE(c.d_pavimentaz,'SCO') NOT IN ('SCO','ALT')
 		AND d.dominio_gis = 'D_MAT_PAVIMENT'
 		AND d.valore_gis = c.d_pavimentaz
+		and d.valore_netsic !='ASFALTO SIMILI'
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
-	
+
 	--(allacci, allacci_industriali, lunghezza_allaci)
 	UPDATE FGN_SHAPE
-	SET 
+	SET
 		allacci    = coalesce(nr_allacci_c,0) + coalesce(nr_allacci_c_ril,0),
 		allacci_in = coalesce(nr_allacci_i,0) + coalesce(nr_allacci_i_ril,0),
 		lunghezza_ = coalesce(lu_allacci_c,0) + coalesce(lu_allacci_c_ril,0) + coalesce(lu_allacci_i,0) + coalesce(lu_allacci_i_ril,0)
 	FROM fgn_cond_altro c
 	WHERE c.idgis = FGN_SHAPE.ids_codi_1;
-	
+
 	--(riparazioni_allacci, riparazioni_rete)
 	UPDATE FGN_SHAPE
-	SET 
+	SET
 		RIPARAZION = c.rip_alla,
 		RIPARAZI_1 = c.rip_rete
 	FROM FGN_COND_EXT c
 	WHERE c.idgis = FGN_SHAPE.ids_codi_1;
-	
+
 	--(id_opera_stato)
 	UPDATE FGN_SHAPE
 	SET id_opera_s = t.valore_netsic
 	FROM (
-		SELECT c.idgis, d.valore_netsic 
+		SELECT c.idgis, d.valore_netsic
 		FROM fgn_condotta c, all_domains d
 		WHERE d.dominio_gis = 'D_STATO'
 		AND d.valore_gis = c.d_stato
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
-	
+
 
 	RETURN TRUE;
 END;
@@ -2160,6 +2167,7 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
+
 --------------------------------------------------------------------
 -- Populate data for FOGNATURA
 -- (Ref. 6.1, 6.2, 6.3, 6.4, 6.5, 7.2)
