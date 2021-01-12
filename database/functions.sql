@@ -197,7 +197,7 @@ BEGIN
 	SELECT 
 		p.anno as anno_rif, 
 		l.pro_com,
-		loc2011 as id_localita_istat, 
+		id_localita_istat, 
 		--loc.popres as popres_before, 
 		ROUND(loc.popres*(p.pop_res/l.popres)) popres 
 	FROM LOCALITA loc,
@@ -280,7 +280,7 @@ BEGIN
 				sum(perc)
 		END
 	FROM (
-		SELECT codice_ato, loc2011 as id_localita_istat, popres, 100*ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc 
+		SELECT codice_ato, id_localita_istat, popres, 100*ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc 
 		FROM ACQ_RETE_DISTRIB r, LOCALITA l
 		WHERE r.D_GESTORE = 'PUBLIACQUA' AND COALESCE(r.D_AMBITO, 'AT3')='AT3' 
 		AND r.D_STATO NOT IN ('IPR','IAC')
@@ -414,7 +414,7 @@ BEGIN
 	--LOCALITA
 	EXECUTE '
 		INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
-		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.loc2011
+		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.id_localita_istat
 		FROM acq_ubic_contatore uc, localita g
 		WHERE (g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom))
 		AND uc.id_impianto is not null';	
@@ -509,7 +509,7 @@ BEGIN
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in localita''
 	FROM (
-		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.loc2011
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.id_localita_istat
 		FROM acq_ubic_contatore uc, localita g
 		where g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null

@@ -721,26 +721,23 @@ CREATE TABLE DBIAIT_ANALYSIS.SCARICATO_INFOG(
 -- 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.localita;
 CREATE TABLE DBIAIT_ANALYSIS.localita(
-    objectid bigint,
-    cod_istat double precision,
-    cod_reg double precision,
-    cod_pro double precision,
-    pro_com double precision,
-    loc2011 double precision,
-    loc double precision,
-    tipo_loc double precision,
-    denominazi character varying(100),
-    altitudine character varying(10),
-    centro_cl bigint,
-    popres double precision,
-    maschi double precision,
-    famiglie double precision,
-    abitazioni double precision,
-    edifici double precision,
-    d_ambito character varying(3),
-    idloc character varying(50),
-    shape_leng double precision,
-    shape_area double precision
+    id_localita_istat 	VARCHAR(20),
+	cod_istat 			VARCHAR(10),
+    cod_reg 			VARCHAR(5),
+    cod_pro 			VARCHAR(5),
+    pro_com 			INTEGER,
+    loc					VARCHAR(5),
+    tipo_loc			VARCHAR(5),
+    denominazi 			VARCHAR(100),
+    altitudine 			DOUBLE PRECISION,
+    centro_cl 			VARCHAR(5),
+    popres 				INTEGER,
+    maschi 				INTEGER,
+    famiglie 			INTEGER,
+    abitazioni 			INTEGER,
+    edifici 			INTEGER,
+    d_ambito 			VARCHAR(3),
+	PRIMARY KEY (id_localita_istat)
 );
 SELECT AddGeometryColumn ('dbiait_analysis', 'localita', 'geom', 25832, 'MULTIPOLYGON', 2);
 
