@@ -193,16 +193,17 @@ BEGIN
     
 	DELETE FROM POP_RES_LOC;
 
-	INSERT INTO POP_RES_LOC(anno_rif, pro_com, id_localita_istat, popres)
+	INSERT INTO POP_RES_LOC(anno_rif, data_rif, pro_com, id_localita_istat, popres)
 	SELECT 
-		p.anno as anno_rif, 
+		p.anno_rif, 
+		p.data_rif,
 		l.pro_com,
 		id_localita_istat, 
 		--loc.popres as popres_before, 
 		ROUND(loc.popres*(p.pop_res/l.popres)) popres 
 	FROM LOCALITA loc,
 	(
-		SELECT anno, pro_com, pop_res 
+		SELECT anno_rif, data_rif, pro_com, pop_res 
 		FROM POP_RES_COMUNE 
 	) p,
 	(

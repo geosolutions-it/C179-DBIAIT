@@ -27,6 +27,7 @@ CREATE TABLE DBIAIT_ANALYSIS.POP_RES_LOC (
 	pro_com 	VARCHAR(8) NOT NULL,
 	id_localita_istat VARCHAR(20) NOT NULL,
 	anno_rif INTEGER NOT NULL,
+	data_rif DATE,
 	popres	INTEGER NOT NULL,
 	PRIMARY KEY(id_localita_istat)
 );
@@ -47,7 +48,8 @@ CREATE TABLE DBIAIT_ANALYSIS.POP_RES_COMUNE (
 	PRO_COM 	VARCHAR(8),
 	DENOM 		VARCHAR(100),
 	POP_RES 	INTEGER,
-	anno 		INTEGER,
+	anno_rif 	INTEGER,
+	data_rif 	DATE,
 	D_AMBITO 	VARCHAR(8),
 	perc_acq 	double precision,
 	pop_ser_acq INTEGER,
