@@ -857,3 +857,11 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_VOL_UTENZE(
     sumPubblicoeVolFatt	double precision,
     sumAltroVolFatt	double precision
 );
+
+-----
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACCORP_CODICE_DENOM;
+CREATE TABLE DBIAIT_ANALYSIS.ACCORP_CODICE_DENOM(
+	codice_accorp		VARCHAR(32),
+    denominazioe	VARCHAR(200)
+);
