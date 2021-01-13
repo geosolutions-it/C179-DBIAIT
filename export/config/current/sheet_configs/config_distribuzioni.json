@@ -188,7 +188,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9800"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9800"
                 }
             ]},
         { "id": "55300", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } }},

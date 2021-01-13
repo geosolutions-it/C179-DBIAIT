@@ -38,7 +38,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field greater than ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field greater than ref_year"
                 }
             ]},
         {"id": "81400","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}, "validations": [{
@@ -52,7 +52,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field greater than ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field greater than ref_year"
                 }
             ]},
         {"id": "81500","transformation": { "func": "DIRECT", "params": { "field": "potenza" }}},
@@ -75,7 +75,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not A or X"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field is not A or X"
                 }
             ]},
         {"id": "82000","transformation": { "func": "DIRECT", "params": { "field": "a_anno_ristr" }}, "validations": [{
@@ -89,7 +89,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field is not A"
                 }
             ]},
         {"id": "82100","transformation": { "func": "DIRECT", "params": { "field": "a_potenza" }}},

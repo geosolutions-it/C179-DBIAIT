@@ -202,7 +202,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not lower than ID 24600"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not lower than ID 24600"
           }
       ]},
 
@@ -219,7 +219,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value is not 0"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: value is not 0"
           }
       ]},
       {"id":"24300", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
@@ -234,7 +234,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is lower than ID 26200"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is lower than ID 26200"
           }
       ]},
       {"id":"24700", "transformation":{"func":"DIRECT", "params":{"field":"port_industr"}}},
@@ -252,7 +252,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not valid for the ref_year selected"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Value is not valid for year ref_year"
           }
       ]},
       {"id":"25200", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}},"validations": [{
@@ -266,7 +266,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not valid for the ref_year selected"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Value is not valid for year ref_year"
           }
       ]},
       {"id":"25500", "transformation":{"func":"DIRECT", "params":{"field":"utilizzo_annuo"}}, "validations": [{
@@ -290,7 +290,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value not permitted"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Value not permitted"
           }
       ]},
       {"id":"25600", "transformation":{"func":"DIRECT", "params":{"field":"sn_cunic_presa"}}},
@@ -313,7 +313,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is lower than 0"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is lower than 0"
           }
       ]},
       {"id":"26300", "transformation":{"func":"DIRECT", "params":{"field":"port_uti_max"}}, "validations": [{
@@ -332,7 +332,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}"
           }
       ]},
       {"id":"26400", "transformation":{"func":"DIRECT", "params":{"field":"port_uti_min"}}, "validations": [{
@@ -351,7 +351,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field does not match the specifications"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field does not match the specifications"
           }
       ]},
       {"id":"26600", "transformation":{"func":"DIRECT", "params":{"field":"sn_strum_mis_port"}}},
@@ -371,7 +371,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field value not permitted for that ref_year"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field value not permitted for that ref_year"
           }
       ]},
       {"id":"27200", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_clor"}}},
@@ -392,7 +392,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is lower than 3"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Value is lower than 3"
           }
       ]},
       {"id":"25400", "transformation":{"func":"DOMAIN", "params":{"field":"d_utilizzo", "domain_name": "D_UTILIZZO_OPERA"}}, "validations": [{
@@ -412,7 +412,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is lower than 3"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Value is lower than 3"
           }
       ]},
       {"id":"26500", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
@@ -427,7 +427,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 1"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is 1"
           }
       ]},
       {"id":"27400", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
@@ -448,7 +448,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not A or X"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not A or X"
           }
       ]},
       {"id":"27600", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}},"validations": [{
@@ -462,7 +462,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not A"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not A"
           }
       ]},
       {"id":"27700", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume", "domain_name": "D_AFFIDABILITA"}},"validations": [{
@@ -487,7 +487,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not A or C"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not A or C"
           }
       ]},
       {"id":"27900", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_es", "domain_name": "D_AFFIDABILITA"}},"validations": [{
@@ -500,7 +500,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not A or C"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not A or C"
           }
       ]},
       {"id":"28000", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_uti_max", "domain_name": "D_AFFIDABILITA"}},"validations": [{
@@ -526,7 +526,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not A or C"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not A or C"
           }
       ]},
       {"id":"28100", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_uti_min", "domain_name": "D_AFFIDABILITA"}},"validations": [{
@@ -552,7 +552,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not A or C"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not A or C"
           }
       ]},
 

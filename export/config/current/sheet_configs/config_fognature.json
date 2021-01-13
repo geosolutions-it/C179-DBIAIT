@@ -179,7 +179,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not 0"
                 }
             ]},
         {"id": "60300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port"}}},

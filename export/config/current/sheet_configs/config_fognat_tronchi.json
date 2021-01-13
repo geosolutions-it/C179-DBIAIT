@@ -54,7 +54,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not 0"
                 }
             ]},
       {"id": "61700","transformation": { "func": "DIRECT", "params": { "field": "diametro"}}, "validations": [{
@@ -68,7 +68,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is greater than 2002 or is None"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is greater than 2002 or is None"
                 }
             ]},
       {"id": "61500","transformation": { "func": "DOMAIN", "params": { "field": "d_materiale", "domain_name":  "D_MATERIALE_IDR"}}, "validations": [{
@@ -82,7 +82,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is greater than 2014 or is None"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is greater than 2014 or is None"
                 }
             ]},
       {"id": "61600","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name":  "D_STATO_CONS"}}},
@@ -108,7 +108,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is lower than the ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field is lower than the ref_year"
                 }
             ]
       },

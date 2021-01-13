@@ -66,7 +66,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is null"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is null"
                 }
             ]},
         {"id": "56700", "transformation": {"func": "DOMAIN", "params": { "field": "id_conservazione", "domain_name": "D_STATO_CONS" }}},
@@ -82,7 +82,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is null"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is null"
                 }
             ]},
 
@@ -108,7 +108,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field greater than ref_year"
                 }
             ]},
         {"id": "57100", "transformation": {"func": "DIRECT", "params": { "field": "id_materiale" }}},
