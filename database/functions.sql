@@ -1113,7 +1113,7 @@ BEGIN
 	EXECUTE '
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT idgis, ''' || v_table || ''', ''Campo id_rete vuoto''
-	FROM ' || v_table || ' WHERE recapito is NULL';
+	FROM ' || v_table || ' WHERE id_rete is NULL';
 	RETURN TRUE;
 
 END;
