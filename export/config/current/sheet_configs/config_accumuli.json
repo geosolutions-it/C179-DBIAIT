@@ -132,8 +132,8 @@
                         "field": "44500",
                         "cond": [{
                             "or": [
-                                {"operator": ">=", "value": "{REF_YEAR}"},
-                                {"operator": "!=", "value": 9999}
+                                {"operator": "<=", "value": "{REF_YEAR}"},
+                                {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
@@ -187,9 +187,9 @@
                             ]
                         },
                         {
-                            "and": [
-                                {"operator": ">=", "value": "{REF_YEAR}"},
-                                {"operator": "!=", "value": 9999}
+                            "or": [
+                                {"operator": "<=", "value": "{REF_YEAR}"},
+                                {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
@@ -209,9 +209,9 @@
                             ]
                         },
                         {
-                            "and": [
+                            "or": [
                                 {"operator": ">=", "value": 2020},
-                                {"operator": "!=", "value": 9800}
+                                {"operator": "=", "value": 9800}
                             ]
                         }]
                     },
@@ -281,7 +281,7 @@
                         },
                         {
                             "and": [
-                                {"lookup": "{44500}" ,"operator": ">=", "value": "{REF_YEAR}"},
+                                {"lookup": "{44500}" ,"operator": ">=", "value": 2002},
                                 {"lookup": "{44500}" ,"operator": "!=", "value": 9999},
                                 {"operator": "=", "value": "A"}
                             ]
@@ -297,7 +297,7 @@
                     "params": {
                         "field": "46000",
                         "cond": [{
-                            "and": [
+                            "or": [
                                 {"lookup": "{44600}" ,"operator": ">=", "value": 2002},
                                 {"operator": "=", "value": "A"}
                             ]
