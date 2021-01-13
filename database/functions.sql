@@ -1162,7 +1162,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_lung_rete_fgn(
 BEGIN
 
 	DELETE FROM FGN_LUNGHEZZA_RETE;
-	
+
 	-- FOGNATURA
 	INSERT INTO FGN_LUNGHEZZA_RETE(
 		idgis,
@@ -1172,30 +1172,25 @@ BEGIN
 		lunghezza_dep,
 		id_refluo_trasportato
 	)
-	select 
-		idgis_rete, codice_ato, 'FOGNATURA', sum(lunghezza) lung, 
-		sum(
-			case when recapito IS NOT NULL 
-				or t.idgis_bac is not NULL
-			then lunghezza 
-			else 0 end
-		) lung_tlc,
-		case when sum(id_rt) = 0 then 2 else 1 end
-	from (
-		select 
-			distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
-			case when 
-				recapito IS NOT NULL or bc.idgis is not NULL
-				then lunghezza 
-			else 0 end lung_tlc 
-		FROM
-		  FOGNAT_TRONCHI as ft
-		LEFT JOIN
-		  FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
-		WHERE idgis_rete is not NULL
-	) t 
-	GROUP BY t.codice_ato, t.idgis_rete;
-	
+	select
+	    idgis_rete, codice_ato, 'FOGNATURA', sum(lunghezza) lung,
+	    sum(lung_dep) lung_tlc,
+	    case when sum(id_rt) = 0 then 2 else 1 end
+    from (
+        select
+            distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,
+            case when
+                ft.depurazione::integer = 1
+                then lunghezza
+            else 0 end lung_dep
+        FROM
+          FOGNAT_TRONCHI as ft
+        LEFT JOIN -- Non join secca?
+          FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
+        WHERE idgis_rete is not NULL
+    ) t
+    GROUP BY t.codice_ato, t.idgis_rete;
+
 	-- COLLETTORE
 	INSERT INTO FGN_LUNGHEZZA_RETE(
 		idgis,
@@ -1205,37 +1200,32 @@ BEGIN
 		lunghezza_dep,
 		id_refluo_trasportato
 	)
-	select 
-		idgis_rete, codice_ato, 'COLLETTORE', sum(lunghezza) lung, 
-		sum(
-			case when recapito IS NOT NULL 
-				or t.idgis_bac is not NULL
-			then lunghezza 
-			else 0 end
-		) lung_tlc,
-		case when sum(id_rt) = 0 then 2 else 1 end
+	select
+		idgis_rete, codice_ato, 'COLLETTORE', sum(lunghezza) lung,
+        sum(lung_dep) lung_tlc,
+        case when sum(id_rt) = 0 then 2 else 1 end
 	from (
-		select 
-			distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
-			case when 
-				recapito IS NOT NULL or bc.idgis is not NULL
-				then lunghezza 
-			else 0 end lung_tlc 
-		FROM
+		 select
+            distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,
+            case when
+                ft.depurazione::integer = 1
+                then lunghezza
+            else 0 end lung_dep
+        FROM
 		  COLLETT_TRONCHI as ft
 		LEFT JOIN
 		  FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
-		WHERE idgis_rete is not NULL  
-	) t 
+		WHERE idgis_rete is not NULL
+	) t
 	GROUP BY t.codice_ato, t.idgis_rete;
-	
+
 	RETURN TRUE;
-	
+
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- determine number and length of allacci ACQ
 -- (Ref. 7.1. ACQUEDOTTO)
