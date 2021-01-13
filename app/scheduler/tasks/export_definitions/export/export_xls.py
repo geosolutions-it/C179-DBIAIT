@@ -124,7 +124,7 @@ class ExportXls(ExportBase):
                 sheet_row = {}
 
                 for column in sheet["columns"]:
-                    message = "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Error: {E}" if not column['warning'] else column['warning']
+                    message = "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Error: {E}" if not column['warning'] else column['warning']
                     try:
                         transformed_value = column["transformer"].apply(
                             row=raw_data_row, domains=all_domains
@@ -134,10 +134,7 @@ class ExportXls(ExportBase):
                     except TypeError as e:
                         transformed_value = None
                     except Exception as e:
-                        warning_log = message or "Foglio: {SHEET}, Riga:{ROW}, {CODICE_ATO}, Campo: {FIELD}: Transformation error"
-
-                        if '{CODICE_ATO}' not in warning_log:
-                            warning_log = warning_log.replace(", Campo: ", ", Codice_ato: {CODICE_ATO}, Campo: ")
+                        warning_log = message or "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Transformation error"
 
                         warning_to_log = (
                             warning_log.replace("{SHEET}", sheet["sheet"])
@@ -145,7 +142,7 @@ class ExportXls(ExportBase):
                             .replace("{FIELD}", column.get("alias", column['id']))
                             .replace("{CODICE_ATO}", raw_data_row.get("codice_ato", ""))
                             .replace("{E}", e.args[0].strip('\n'))
-                            .replace("ref_year", str(self.ref_year or datetime.today().year))
+                            .replace("{REF_YEAR}", str(self.ref_year or datetime.today().year))
                         )
 
                         if '{custom:' in warning_log:
@@ -175,16 +172,13 @@ class ExportXls(ExportBase):
                                 # )
                                 # {custom:codice_ato} ->
 
-                                warning_log = message or "Foglio: {SHEET}, Riga:{ROW}, {CODICE_ATO}, Campo: {FIELD}: Validation error"
-
-                                if '{CODICE_ATO}' not in warning_log:
-                                    warning_log = warning_log.replace(", Campo: ", ", Codice_ato: {CODICE_ATO}, Campo: ")
+                                warning_log = message or "Foglio: {SHEET}, Riga:{ROW}, Codice ato: {CODICE_ATO}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Validation error"
 
                                 warning_to_log = warning_log.replace("{SHEET}", sheet["sheet"])\
                                     .replace("{ROW}", str(first_empty_row))\
                                     .replace("{FIELD}", column.get("alias", column['id']))\
                                     .replace("{CODICE_ATO}", raw_data_row.get("codice_ato", ""))\
-                                    .replace("ref_year", str(self.ref_year or datetime.today().year))
+                                    .replace("{REF_YEAR}", str(self.ref_year or datetime.today().year))
 
                                 if '{custom:' in warning_log:
                                     re_pattern = re.compile('.*{custom:(.*)},')

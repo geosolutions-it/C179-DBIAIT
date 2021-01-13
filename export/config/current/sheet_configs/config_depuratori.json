@@ -297,7 +297,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field is 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is 0"
                 }
             ]},
         {"id": "72400", "transformation": {"func": "DIRECT", "params": { "field": "denominazi" }}},
@@ -312,7 +312,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9999"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9999"
                 }
             ]},
         {"id": "72800", "transformation": {"func": "DIRECT", "params": { "field": "anno_ristr_civ" }}, "validations": [{
@@ -326,7 +326,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9800"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9800"
                 }
             ]},
         {"id": "73000", "transformation": {"func": "DIRECT", "params": { "field": "anno_ristr_elmec" }}, "validations": [{
@@ -340,7 +340,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field greater than ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
                 }
             ]},
         {"id": "73200", "transformation": {"func": "DIRECT", "params": { "field": "pot_prog" }}},
@@ -355,7 +355,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field is not greater than 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not greater than 0"
                 }
             ]},
         {"id": "73500", "transformation": {"func": "DIRECT", "params": { "field": "conc_co2_ing" }}},
@@ -375,7 +375,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field is not 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not 0"
                 }
             ]},
         {"id": "74600", "transformation": {"func": "DIRECT", "params": { "field": "n_linee_acq" }}},
@@ -441,7 +441,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field is not greater than 3"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not greater than 3"
                 }
             ]},
         {"id": "73100", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons_elmec", "domain_name": "D_STATO_CONS" }}, "validations": [{
@@ -455,7 +455,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: field is not greater than 3"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not greater than 3"
                 }
             ]},
         {"id": "73900", "transformation": {"func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" }}},
@@ -482,7 +482,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not X or A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not X or A"
                 }
             ]},
         {"id": "79200", "transformation": {"func": "DOMAIN", "params": { "field": "a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA" }}, "validations": [{
@@ -496,7 +496,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not A"
                 }
             ]},
         {"id": "79300", "transformation": {"func": "DOMAIN", "params": { "field": "a_anno_ristr_elmec", "domain_name": "D_AFFIDABILITA" }}, "validations": [{
@@ -510,7 +510,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: Field is not A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not A"
                 }
             ]},
         {"id": "79400", "transformation": {"func": "DOMAIN", "params": { "field": "a_pot_prog", "domain_name": "D_AFFIDABILITA" }}},

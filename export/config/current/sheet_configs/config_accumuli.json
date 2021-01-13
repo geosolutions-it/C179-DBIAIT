@@ -137,7 +137,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: year not valid}"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: year not valid}"
                 }
             ]
         },
@@ -154,7 +154,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: must be greater than 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: must be greater than 0"
                 }
             ]
         },
@@ -169,7 +169,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: must be greater than 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: must be greater than 0"
                 }
             ]
         },
@@ -193,7 +193,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: unexpected value"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: unexpected value"
                 }
             ]
         },
@@ -215,7 +215,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: unexpected value"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: unexpected value"
                 }
             ]
         },
@@ -235,7 +235,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: value lower than 3 or ref year not valid"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value lower than 3 or ref year not valid"
                 }
             ]
         },
@@ -262,7 +262,7 @@
                         }
                         ]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: value is 1"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is 1"
                 }
             ]
         },
@@ -287,7 +287,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: value is not A or X"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not A or X"
                 }
             ]
         },
@@ -303,7 +303,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Campo: {FIELD}: value is not A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not A"
                 }
             ]
         },
