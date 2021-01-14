@@ -34,7 +34,8 @@
                 { "name": "acq_vol_utenze.sumdomestichevolfatt","alias": "sumdomestichevolfatt"},
                 { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
                 { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
-                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"}
+                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"},
+                { "name": "stats_cloratore.counter","alias": "count_cloratori"}
             ],
             "table": {
                 "name": "acq_rete_distrib"
@@ -68,6 +69,17 @@
                     "on": [
                         "acq_vol_utenze.ids_codice_orig_acq",
                         "acq_rete_distrib.codice_ato"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "stats_cloratore"
+                    },
+                    "on": [
+                        "acq_rete_distrib.id_gis",
+                        "stats_cloratore.id_rete"
                     ],
                     "cond": "="
                 }
@@ -106,7 +118,8 @@
                 { "name": "acq_vol_utenze.sumdomestichevolfatt","alias": "sumdomestichevolfatt"},
                 { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
                 { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
-                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"}
+                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"},
+                { "name": "stats_cloratore.counter","alias": "count_cloratori"}
             ],
             "table": {
                 "name": "a_acq_rete_distrib"
@@ -140,6 +153,17 @@
                     "on": [
                         "acq_vol_utenze.ids_codice_orig_acq",
                         "a_acq_rete_distrib.codice_ato"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "stats_cloratore"
+                    },
+                    "on": [
+                        "a_acq_rete_distrib.id_gis",
+                        "stats_cloratore.id_rete"
                     ],
                     "cond": "="
                 }

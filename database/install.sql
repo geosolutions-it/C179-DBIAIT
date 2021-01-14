@@ -856,3 +856,9 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_VOL_UTENZE(
     sumPubblicoeVolFatt	double precision,
     sumAltroVolFatt	double precision
 );
+--
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.STATS_CLORATORE;
+CREATE TABLE DBIAIT_ANALYSIS.STATS_CLORATORE(
+	id_rete		VARCHAR(32),
+	counter	bigint
+);

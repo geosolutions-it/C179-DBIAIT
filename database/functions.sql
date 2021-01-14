@@ -3007,3 +3007,31 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
 
+--------
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_stats_cloratore(
+) RETURNS BOOLEAN AS $$
+BEGIN
+    -- truncate old table
+	DELETE FROM stats_cloratore;
+
+    -- run procedure
+	INSERT INTO stats_cloratore (id_rete, counter)
+	SELECT
+		id_rete,
+		count(*) as cc
+	FROM
+		acq_condotta ac,
+		acq_cloratore ac2
+	WHERE
+		st_intersects(ac.geom,
+		ac2.geom)
+	GROUP BY
+		id_rete;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+
