@@ -119,6 +119,7 @@
     ],
     "columns": [
         {"id": "44400","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
+        {"id": "44400","transformation": {"func": "DECODE_COM", "params": { "field": "cod_comune" }}},
         {"id": "44100","transformation": {"func": "CONST", "params": {"value": "3003"}}},
         {"id": "44300","transformation": {"func": "DIRECT", "params": {"field": "denominazi"}}},
 

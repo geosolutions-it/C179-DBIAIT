@@ -76,3 +76,18 @@ def translate_schema_to_db_alias(schema: str):
         )
 
     return db_aliases[0]
+
+
+def translate_schema_to_enum(schema: str):
+    """
+    Function returningenum based on the selected schema.
+    """
+    db_aliases = [key for key, value in settings.DATABASE_SCHEMAS.items() if value == schema]
+
+    if len(db_aliases) != 1:
+        raise SchedulingParametersError(
+            f'Error while translating schema "{schema}" to enum from settings.DATABASE_SCHEMAS'
+        )
+    return settings.DATABASE_SCHEMAS.get(db_aliases[0])
+
+
