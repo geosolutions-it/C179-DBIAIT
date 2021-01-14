@@ -1,3 +1,23 @@
+-- PLACE HERE THE UNITTESTS
+CREATE OR REPLACE function dbiait_analysis.run_unittests() returns void as $$
+DECLARE
+begin
+    -- run the new version of the procedure
+	perform dbiait_analysis.test_populate_lung_rete_fgn();
+	perform dbiait_analysis.test_populate_stats_cloratore();
+	perform dbiait_analysis.test_populate_fgn_shape();
+	perform dbiait_analysis.test_populate_schema_acq();
+    -- ADD HERE A NEW PERFORM WITH YOUR UNITTEST
+  	--- example: perform dbiait_analysis.my_new_shiny_test();
+
+END;
+$$ LANGUAGE plpgsql;
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+-- TEST POPULATE STATS CLORATORE
+--------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_populate_stats_cloratore() returns void as $$
 DECLARE
   new_id varchar;
@@ -14,6 +34,9 @@ begin
 END;
 $$ LANGUAGE plpgsql;
 
+--------------------------------------------------------------------------------------------
+-- TEST POPULATE LUNG RETE FGN
+--------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_populate_lung_rete_fgn() returns void as $$
 DECLARE
   dummy_int bigint;
@@ -51,6 +74,9 @@ begin
 END;
 $$ LANGUAGE plpgsql;
 
+--------------------------------------------------------------------------------------------
+-- TEST POPULATE FGN SHAPE
+--------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_populate_fgn_shape() returns void as $$
 DECLARE
   dummy_int bigint;
@@ -96,6 +122,39 @@ begin
 END;
 $$ LANGUAGE plpgsql;
 
-select dbiait_analysis.test_populate_lung_rete_fgn();
-select dbiait_analysis.test_populate_stats_cloratore();
-select dbiait_analysis.test_populate_fgn_shape();
+--------------------------------------------------------------------------------------------
+-- TEST POPULATE SCHEMA ACQ (ACQUEDOTTISTICO)
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_populate_schema_acq() returns void as $$
+DECLARE
+  cod_schema varchar;
+  denom_schema varchar;
+  error varchar;
+
+begin
+    -- run the new version of the procedure
+	perform dbiait_analysis.populate_schema_acq();
+
+--- check if the output of the selected idgis is the expected
+    SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001299';
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected 1 ma trovata ' || cod_schema , '1' = cod_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected foo_denominazione ma trovata ' || denom_schema , 'foo_denominazione' = denom_schema );
+
+    --- check if the output of the selected idgis is the expected
+    SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001426';
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected 2;3 ma trovata ' || cod_schema , '2;3' = cod_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected bar_denominazione;foobar_denominazione ma trovata ' || denom_schema , 'bar_denominazione;foobar_denominazione' = denom_schema );
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------
+-- RUN ALL TESTS
+--------------------------------------------------------------------------------------------
+select dbiait_analysis.run_unittests()
