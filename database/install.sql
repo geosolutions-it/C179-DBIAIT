@@ -857,3 +857,21 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_VOL_UTENZE(
     sumPubblicoeVolFatt	double precision,
     sumAltroVolFatt	double precision
 );
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.area_poe;
+CREATE TABLE DBIAIT_ANALYSIS.area_poe
+(
+    codice_schema_acq varchar(32),
+    denominazione_schema_acq character varying(100)
+);
+SELECT AddGeometryColumn ('dbiait_analysis', 'area_poe', 'geom', 25832, 'MULTIPOLYGON', 2);
+
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.schema_acq;
+CREATE TABLE DBIAIT_ANALYSIS.schema_acq(
+	codice_area_poe		VARCHAR(32),
+    tipo_infr	VARCHAR(100),
+	codice_schema_acq		text,
+    denominazione_schema_acq	text,
+    primary key (codice_area_poe, tipo_infr)
+);

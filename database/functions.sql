@@ -3006,3 +3006,54 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
 
+-------------------------------------------------------------------------------------------------------
+-- Create the schema acquedottistico for impianti/reti
+--
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.populate_schema_acq()
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_schema_acq(
+) RETURNS BOOLEAN AS $$
+BEGIN
+
+	DELETE FROM schema_acq;
+
+	WITH
+	    all_reti as(
+            SELECT idgis, 'acq_rete' tipo_infr, geom FROM acq_rete_distrib ard
+            UNION ALL
+            SELECT idgis, 'fgn_rete' tipo_infr, geom FROM fgn_rete_racc frr),
+        all_impianti as(
+            SELECT idgis, 'fgn_imp' tipo_infr, geom FROM fgn_imp_sollev fis)
+    INSERT INTO schema_acq(codice_area_poe, tipo_infr, codice_schema_acq, denominazione_schema_acq)
+    SELECT
+        xx.codice_schema_acq codice_schema_acq,
+        xx.tipo_infr tipo_infr,
+        string_agg(xx.denominazione_schema_acq, ';') denominazione_schema_acq,
+        string_agg(xx.idgis, ';') idgis_rete
+    FROM
+        (
+        SELECT
+            ap.codice_schema_acq,
+            ap.denominazione_schema_acq,
+            ar.idgis,
+            ar.tipo_infr
+        FROM
+            area_poe ap
+        LEFT JOIN (
+            SELECT idgis, tipo_infr, geom FROM all_reti
+            UNION ALL
+            SELECT idgis, tipo_infr, geom FROM all_impianti
+         ) ar on
+         ST_INTERSECTS(ar.geom,
+         ap.geom)) xx
+    GROUP BY
+        codice_schema_acq, tipo_infr;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+
+
