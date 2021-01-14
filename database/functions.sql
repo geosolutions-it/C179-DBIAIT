@@ -143,7 +143,7 @@ CREATE OR REPLACE FUNCTION public.TO_BIT(
 	v_value VARCHAR
 ) RETURNS BIT AS $$
 	SELECT 
-		case when UPPER(v_value) IN ('SI','YES', 'S', 'Y') then 1::BIT
+		case when UPPER(v_value) IN ('SI','YES', 'S', 'Y', '1') then 1::BIT
 		else 0::BIT
 		end;
 $$  LANGUAGE sql;	
