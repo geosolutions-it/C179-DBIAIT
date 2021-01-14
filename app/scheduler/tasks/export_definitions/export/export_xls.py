@@ -42,7 +42,7 @@ class ExportXls(ExportBase):
         step = 1
 
         # fetch all_domains info
-        all_domains = Domains()
+        all_domains = Domains(schema=settings.DATABASE_SCHEMAS.get(self.orm_task.schema), year=self.ref_year)
 
         # load seed *.xlsx file
         seed_path = settings.EXPORT_XLS_SEED_FILE.substitute()
