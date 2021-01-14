@@ -27,6 +27,7 @@ CREATE TABLE DBIAIT_ANALYSIS.POP_RES_LOC (
 	pro_com 	VARCHAR(8) NOT NULL,
 	id_localita_istat VARCHAR(20) NOT NULL,
 	anno_rif INTEGER NOT NULL,
+	data_rif DATE,
 	popres	INTEGER NOT NULL,
 	PRIMARY KEY(id_localita_istat)
 );
@@ -47,7 +48,8 @@ CREATE TABLE DBIAIT_ANALYSIS.POP_RES_COMUNE (
 	PRO_COM 	VARCHAR(8),
 	DENOM 		VARCHAR(100),
 	POP_RES 	INTEGER,
-	anno 		INTEGER,
+	anno_rif 	INTEGER,
+	data_rif 	DATE,
 	D_AMBITO 	VARCHAR(8),
 	perc_acq 	double precision,
 	pop_ser_acq INTEGER,
@@ -388,7 +390,9 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE(
 	tipo_infr		VARCHAR(100),
 	lunghezza 		double precision,
 	lunghezza_dep 	double precision,
-	id_refluo_trasportato INTEGER
+	id_refluo_trasportato INTEGER,
+	lung_rete_mista 	double precision,
+	lung_rete_nera 	double precision
 );
 
 --
@@ -757,6 +761,19 @@ CREATE TABLE DBIAIT_ANALYSIS.confine_comunale
 );
 SELECT AddGeometryColumn ('dbiait_analysis', 'confine_comunale', 'geom', 25832, 'MULTIPOLYGON', 2);
 ---------------------------------------------------------------------------------------------------
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.DECOD_COM;
+CREATE TABLE DBIAIT_ANALYSIS.DECOD_COM(
+    pro_com_acc 	INTEGER,
+	denom_com_acc 	VARCHAR(100),
+    pro_com 		INTEGER,
+    denom_com 		VARCHAR(100),
+	PRIMARY KEY (pro_com)
+);
+INSERT INTO DBIAIT_ANALYSIS.DECOD_COM(pro_com_acc, denom_com_acc, pro_com, denom_com) VALUES (48054, 'Barberino Tavarnelle',  48003, 'Barberino Val D''Elsa');
+INSERT INTO DBIAIT_ANALYSIS.DECOD_COM(pro_com_acc, denom_com_acc, pro_com, denom_com) VALUES (48054, 'Barberino Tavarnelle',  48045, 'Tavarnelle Val di Pesa');
+INSERT INTO DBIAIT_ANALYSIS.DECOD_COM(pro_com_acc, denom_com_acc, pro_com, denom_com) VALUES (47024, 'San Marcello Piteglio', 47019, 'San Marcello Pistoiese');
+INSERT INTO DBIAIT_ANALYSIS.DECOD_COM(pro_com_acc, denom_com_acc, pro_com, denom_com) VALUES (47024, 'San Marcello Piteglio', 47015, 'Piteglio');
+---------------------------------------------------------------------------------------------------
 alter table DBIAIT_ANALYSIS.confine_comunale add constraint confine_comunale_uq UNIQUE(pro_com);
 alter table DBIAIT_ANALYSIS.pop_res_comune   add constraint pop_res_comune_pk PRIMARY KEY(pro_com);
 alter table DBIAIT_ANALYSIS.utenza_sap       add constraint utenza_sap_pk PRIMARY KEY(impianto);
@@ -853,4 +870,19 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_VOL_UTENZE(
     sumDomesticheResidenteVolFatt	double precision,
     sumPubblicoeVolFatt	double precision,
     sumAltroVolFatt	double precision
+);
+--
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.STATS_CLORATORE;
+CREATE TABLE DBIAIT_ANALYSIS.STATS_CLORATORE(
+	id_rete		VARCHAR(32),
+	counter	bigint
+);
+
+-----
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACCORP_CODICE_DENOM;
+CREATE TABLE DBIAIT_ANALYSIS.ACCORP_CODICE_DENOM(
+	id_captazione VARCHAR(32),
+	codice_accorp		VARCHAR(32),
+    denominazione	VARCHAR(200)
 );

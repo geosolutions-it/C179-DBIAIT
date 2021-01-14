@@ -177,9 +177,28 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public;	
+    SET search_path = public;
 --------------------------------------------------------------------
--- Populate data into the POP_RES_LOC table using information 
+-- Decode a municipal code to obtain the code of grouped municipal
+-- This function uses the internal table "decod_com"
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.decode_municipal(
+	v_pro_com INTEGER
+) RETURNS INTEGER AS $$
+DECLARE
+	v_result INTEGER;
+BEGIN
+	SELECT coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
+	INTO v_result
+	FROM (select v_pro_com as cod_comune) c
+	LEFT JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com;
+	RETURN v_result;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
+-- Populate data into the POP_RES_LOC table using information
 -- from LOCALITA ISTAT (2011) - (Ref. 2.3. LOCALITA ISTAT)
 -- OUT: BOOLEAN
 -- Example:
@@ -193,16 +212,17 @@ BEGIN
     
 	DELETE FROM POP_RES_LOC;
 
-	INSERT INTO POP_RES_LOC(anno_rif, pro_com, id_localita_istat, popres)
+	INSERT INTO POP_RES_LOC(anno_rif, data_rif, pro_com, id_localita_istat, popres)
 	SELECT 
-		p.anno as anno_rif, 
+		p.anno_rif,
+		p.data_rif,
 		l.pro_com,
 		id_localita_istat, 
 		--loc.popres as popres_before, 
 		ROUND(loc.popres*(p.pop_res/l.popres)) popres 
 	FROM LOCALITA loc,
 	(
-		SELECT anno, pro_com, pop_res 
+		SELECT anno_rif, data_rif, pro_com, pop_res
 		FROM POP_RES_COMUNE 
 	) p,
 	(
@@ -1170,26 +1190,40 @@ BEGIN
 		tipo_infr,
 		lunghezza,
 		lunghezza_dep,
-		id_refluo_trasportato
+		id_refluo_trasportato,
+		lung_rete_mista,
+		lung_rete_nera
 	)
+    with lunghezza_reti as (
+	    select
+            idgis,
+            sum(lu_mista) as lu_mista,
+            sum(lu_nera) as lu_nera
+        from
+            tab_ispezioni
+        group by
+            1)
 	select
-	    idgis_rete, codice_ato, 'FOGNATURA', sum(lunghezza) lung,
-	    sum(lung_dep) lung_tlc,
-	    case when sum(id_rt) = 0 then 2 else 1 end
-    from (
-        select
-            distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,
-            case when
+		idgis_rete, codice_ato, 'FOGNATURA',
+		sum(lunghezza) lung,
+		sum(lung_dep) lung_tlc,
+		case when sum(id_rt) = 0 then 2 else 1 end,
+		lu_mista,
+		lu_nera
+	from (
+		select
+			distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,
+			case when
                 ft.depurazione::integer = 1
                 then lunghezza
             else 0 end lung_dep
-        FROM
-          FOGNAT_TRONCHI as ft
-        LEFT JOIN -- Non join secca?
-          FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
-        WHERE idgis_rete is not NULL
-    ) t
-    GROUP BY t.codice_ato, t.idgis_rete;
+		FROM
+		  FOGNAT_TRONCHI as ft
+		LEFT JOIN
+		  FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
+		WHERE idgis_rete is not NULL
+	) t  left join lunghezza_reti as lr on t.idgis_rete = lr.idgis
+	GROUP BY t.codice_ato, t.idgis_rete, lu_mista, lu_nera;
 
 	-- COLLETTORE
 	INSERT INTO FGN_LUNGHEZZA_RETE(
@@ -1198,12 +1232,16 @@ BEGIN
 		tipo_infr,
 		lunghezza,
 		lunghezza_dep,
-		id_refluo_trasportato
+		id_refluo_trasportato,
+		lung_rete_mista,
+		lung_rete_nera
 	)
 	select
 		idgis_rete, codice_ato, 'COLLETTORE', sum(lunghezza) lung,
-        sum(lung_dep) lung_tlc,
-        case when sum(id_rt) = 0 then 2 else 1 end
+		sum(lung_dep) lung_tlc,
+		case when sum(id_rt) = 0 then 2 else 1 end,
+		null as lung_rete_mista,
+		null as lung_rete_nera
 	from (
 		 select
             distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,
@@ -1689,9 +1727,15 @@ BEGIN
 	UPDATE ACQ_SHAPE
 	SET comune_nom = t.denom, id_comune_ = t.cod_istat
 	FROM (
-		SELECT c.idgis, cc.denom, cc.cod_istat 
-		FROM acq_condotta c, confine_comunale cc
-		WHERE c.cod_comune = cc.pro_com_tx 
+		--SELECT c.idgis, cc.denom, cc.cod_istat
+		--FROM acq_condotta c, confine_comunale cc
+		--WHERE c.cod_comune = cc.pro_com_tx
+		SELECT c.idgis, cc.denom, cc.cod_istat
+		FROM (
+			select c.idgis, coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
+			from acq_condotta c left JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com
+		) c, confine_comunale cc
+		WHERE c.cod_comune = cc.pro_com
 		--LIMIT 10
 	) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
 	-- (tipo_acqua)
@@ -2059,9 +2103,15 @@ BEGIN
 	UPDATE FGN_SHAPE
 	SET comune_nom = t.denom, id_comune_ = t.pro_com
 	FROM (
+		--SELECT c.idgis, cc.denom, cc.cod_istat
+		--FROM fgn_condotta c, confine_comunale cc
+		--WHERE c.cod_comune = cc.pro_com_tx
 		SELECT c.idgis, cc.denom, cc.pro_com
-		FROM fgn_condotta c, confine_comunale cc
-		WHERE c.cod_comune = cc.pro_com_tx
+		FROM (
+			select c.idgis, coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
+			from fgn_condotta c left JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com
+		) c, confine_comunale cc
+		WHERE c.cod_comune = cc.pro_com
 		--LIMIT 10
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
 
@@ -2997,5 +3047,33 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+
+--------
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_stats_cloratore(
+) RETURNS BOOLEAN AS $$
+BEGIN
+    -- truncate old table
+	DELETE FROM stats_cloratore;
+
+    -- run procedure
+	INSERT INTO stats_cloratore (id_rete, counter)
+	SELECT
+		id_rete,
+		count(*) as cc
+	FROM
+		acq_condotta ac,
+		acq_cloratore ac2
+	WHERE
+		st_intersects(ac.geom,
+		ac2.geom)
+	GROUP BY
+		id_rete;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 

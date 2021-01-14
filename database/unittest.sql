@@ -1,3 +1,56 @@
+CREATE OR REPLACE function dbiait_analysis.test_populate_stats_cloratore() returns void as $$
+DECLARE
+  new_id varchar;
+  new_count bigint;
+begin
+    -- run the new version of the procedure
+	perform dbiait_analysis.populate_stats_cloratore();
+    --- check if the count of the selected id_rete is still the same
+    SELECT id_rete,counter INTO new_id, new_count FROM dbiait_analysis.stats_cloratore WHERE id_rete='PAARDI00000000001319';
+    perform test_assertTrue(new_id, 5 = new_count );
+    -- check if the total rows are the same
+    SELECT count(*) INTO new_count FROM DBIAIT_ANALYSIS.stats_cloratore;
+    perform test_assertTrue('numero totale di righe è cambiato', 43 = new_count );
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE function dbiait_analysis.test_populate_lung_rete_fgn() returns void as $$
+DECLARE
+  dummy_int bigint;
+  dummy_string varchar;
+  dummy_decimal decimal;
+  dummy_decimal2 decimal;
+  dummy_decimal_expected decimal;
+  dummy_decimal_actual decimal;
+begin
+    -- run the new version of the procedure
+	PERFORM dbiait_analysis.populate_lung_rete_fgn();
+
+	-- ASSERTION TESTS START FROM HERE
+
+    --- given a selected idgis, the value should be the expected
+    SELECT lung_rete_mista, lung_rete_nera into dummy_decimal, dummy_decimal2 FROM dbiait_analysis.fgn_lunghezza_rete flr WHERE idgis ='PAFRRC00000000001908';
+	PERFORM test_assertTrue('Check rete mista sia 15', dummy_decimal = 15 );
+    PERFORM test_assertTrue('Check rete nera sia 20', dummy_decimal2 = 20 );
+
+    --- given a selected idgis, the value should be the expected
+    SELECT lung_rete_mista, lung_rete_nera into dummy_decimal, dummy_decimal2 FROM dbiait_analysis.fgn_lunghezza_rete flr WHERE idgis ='PAFRRC00000000001273';
+	PERFORM test_assertTrue('Check rete mista sia 0', dummy_decimal = 0 );
+    PERFORM test_assertTrue('Check rete nera sia 10', dummy_decimal2 = 10 );
+
+   --- for FOGNATURA the field 'lung_dep' should be the same as the sum of 'lunghezza' in fognat_tronchi with depurazione =1
+    SELECT round(cast(sum(lunghezza) as numeric), 9) into dummy_decimal_expected from dbiait_analysis.fognat_tronchi where depurazione='1';
+    SELECT round(cast(sum(lunghezza_dep) as numeric), 9) into dummy_decimal_actual from dbiait_analysis.FGN_LUNGHEZZA_RETE where tipo_infr='FOGNATURA';
+    PERFORM test_assertTrue('Check: la lunghezza_dep è uguale alla lunghezza delle fognat_tronchi', dummy_decimal_expected = dummy_decimal_actual);
+
+   --- for COLLETTORE the field 'lung_dep' should be the same as the sum of 'lunghezza' in fognat_tronchi with depurazione =1
+    SELECT round(cast(sum(lunghezza) as numeric), 9) into dummy_decimal_expected  from dbiait_analysis.COLLETT_TRONCHI where depurazione='1' and idgis_rete is not null;
+    SELECT round(cast(sum(lunghezza_dep) as numeric), 9) into dummy_decimal_actual  from dbiait_analysis.FGN_LUNGHEZZA_RETE where tipo_infr='COLLETTORE';
+    PERFORM test_assertTrue('Check: la lunghezza_dep è uguale alla lunghezza dei collettori', dummy_decimal_expected = dummy_decimal_actual);
+
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE function dbiait_analysis.test_populate_fgn_shape() returns void as $$
 DECLARE
   dummy_int bigint;
@@ -43,31 +96,6 @@ begin
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE function dbiait_analysis.test_populate_lung_rete_fgn() returns void as $$
-DECLARE
-  dummy_int bigint;
-  dummy_string varchar;
-  dummy_decimal_expected decimal;
-  dummy_decimal_actual decimal;
-begin
-    -- run the new version of the procedure
-	PERFORM dbiait_analysis.populate_lung_rete_fgn();
-
-	-- ASSERTION TESTS START FROM HERE
-
-   --- for FOGNATURA the field 'lung_dep' should be the same as the sum of 'lunghezza' in fognat_tronchi with depurazione =1
-    SELECT round(cast(sum(lunghezza) as numeric), 9) into dummy_decimal_expected from dbiait_analysis.fognat_tronchi where depurazione='1';
-    SELECT round(cast(sum(lunghezza_dep) as numeric), 9) into dummy_decimal_actual from dbiait_analysis.FGN_LUNGHEZZA_RETE where tipo_infr='FOGNATURA';
-    PERFORM test_assertTrue('Check: la lunghezza_dep è uguale alla lunghezza delle fognat_tronchi', dummy_decimal_expected = dummy_decimal_actual);
-
-   --- for COLLETTORE the field 'lung_dep' should be the same as the sum of 'lunghezza' in fognat_tronchi with depurazione =1
-    SELECT round(cast(sum(lunghezza) as numeric), 9) into dummy_decimal_expected  from dbiait_analysis.COLLETT_TRONCHI where depurazione='1' and idgis_rete is not null;
-    SELECT round(cast(sum(lunghezza_dep) as numeric), 9) into dummy_decimal_actual  from dbiait_analysis.FGN_LUNGHEZZA_RETE where tipo_infr='COLLETTORE';
-    PERFORM test_assertTrue('Check: la lunghezza_dep è uguale alla lunghezza dei collettori', dummy_decimal_expected = dummy_decimal_actual);
-
-END;
-$$ LANGUAGE plpgsql;
-
-
-select dbiait_analysis.test_populate_fgn_shape();
 select dbiait_analysis.test_populate_lung_rete_fgn();
+select dbiait_analysis.test_populate_stats_cloratore();
+select dbiait_analysis.test_populate_fgn_shape();
