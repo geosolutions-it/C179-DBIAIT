@@ -1112,8 +1112,8 @@ BEGIN
 	DELETE FROM LOG_STANDALONE WHERE alg_name = v_table;
 	EXECUTE '
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT idgis, ''' || v_table || ''', ''Campo id_rete vuoto''
-	FROM ' || v_table || ' WHERE id_rete is NULL';
+	SELECT idgis, ''' || v_table || ''', ''Campo idgis_rete vuoto''
+	FROM ' || v_table || ' WHERE idgis_rete is NULL';
 	RETURN TRUE;
 
 END;
