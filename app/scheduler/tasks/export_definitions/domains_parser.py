@@ -9,10 +9,10 @@ class Domains:
 
     def __init__(self, schema=Schema.ANALYSIS, year=None):
         self.schema = schema
-        self.fetch_domains()
-        self.table = "{self.schema}.all_domains"
-        if year is not None:
+        self.table = f"{self.schema}.all_domains"
+        if year:
             self.table += f"_{year}"
+        self.fetch_domains()
 
     @property
     def data(self):

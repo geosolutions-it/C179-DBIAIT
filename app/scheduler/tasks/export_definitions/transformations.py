@@ -9,6 +9,7 @@ from sympy.parsing.sympy_parser import parse_expr
 from app.scheduler.utils import COMPARISON_OPERATORS_MAPPING
 
 from .domains_parser import Domains
+from .municipalities_parser import Municipalities
 from .exceptions import ExportConfigError
 
 SUPPORTED_TRANSFORMATIONS = [
@@ -16,6 +17,7 @@ SUPPORTED_TRANSFORMATIONS = [
     "CONST",
     "DIRECT",
     "DOMAIN",
+    "DECODE_COM",
     "LSTRIP",
     "EXPR",
     "IF",
@@ -68,9 +70,18 @@ class DomainTransformation(BaseTransformation):
 
     schema = schema.Schema({"field": str, "domain_name": str})
 
-    def apply(self, row: Dict, domains: Domains):
+    def apply(self, row: Dict, domains: Domains, municipalities: Municipalities):
         field_value = row.get(self.args["field"], None)
         return domains.translate(self.args["domain_name"], field_value)
+
+
+class DecodeComTransformation(BaseTransformation):
+
+    schema = schema.Schema({"field": str})
+
+    def apply(self, row: Dict, domains: Domains, municipalities: Municipalities):
+        field_value = row.get(self.args["field"], None)
+        return municipalities.translate_code(field_value)
 
 
 class LstripTransformation(BaseTransformation):
@@ -215,6 +226,8 @@ class TransformationFactory:
             transformation = DirectTransformation(params)
         elif u_name == "DOMAIN":
             transformation = DomainTransformation(params)
+        elif u_name == "DECODE_COM":
+            transformation = DecodeComTransformation(params)
         elif u_name == "LSTRIP":
             transformation = LstripTransformation(params)
         elif u_name == "EXPR":
