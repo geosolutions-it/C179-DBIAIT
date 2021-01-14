@@ -217,7 +217,7 @@ BEGIN
 		p.anno_rif,
 		p.data_rif,
 		l.pro_com,
-		id_localita_istat, 
+		id_localita_istat,
 		--loc.popres as popres_before, 
 		ROUND(loc.popres*(p.pop_res/l.popres)) popres 
 	FROM LOCALITA loc,
@@ -300,7 +300,7 @@ BEGIN
 				sum(perc)
 		END
 	FROM (
-		SELECT codice_ato, id_localita_istat, popres, 100*ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc 
+		SELECT codice_ato, id_localita_istat, popres, 100*ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc
 		FROM ACQ_RETE_DISTRIB r, LOCALITA l
 		WHERE r.D_GESTORE = 'PUBLIACQUA' AND COALESCE(r.D_AMBITO, 'AT3')='AT3' 
 		AND r.D_STATO NOT IN ('IPR','IAC')
@@ -3076,4 +3076,58 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
+
+-------------------------------------------------------------------------------------------------------
+-- Create the schema acquedottistico for impianti/reti
+--
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.populate_schema_acq()
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_schema_acq(
+) RETURNS BOOLEAN AS $$
+BEGIN
+
+	DELETE FROM schema_acq;
+
+	WITH
+	    all_reti as(
+            SELECT idgis, geom FROM acq_rete_distrib ard),
+        all_impianti as(
+            SELECT idgis, geom FROM acq_captazione fis
+            UNION ALL
+            SELECT idgis, geom FROM acq_accumulo acq
+            UNION ALL
+            SELECT idgis, geom FROM acq_potabiliz ap
+            UNION ALL
+            SELECT idgis, geom FROM acq_pompaggio acp)
+    INSERT INTO schema_acq(idgis, codice_schema_acq, denominazione_schema_acq)
+    SELECT
+        ot.idgis idgis,
+        string_agg(ot.codice_schema_acq, ';') codice_schema_acq,
+        string_agg(ot.denominazione_schema_acq, ';') denominazione_schema_acq
+    FROM
+        (
+        SELECT
+            ap.codice_schema_acq,
+            ap.denominazione_schema_acq,
+            ar.idgis
+        FROM
+            area_poe ap
+        JOIN (
+            SELECT idgis, geom FROM all_reti
+            UNION ALL
+            SELECT idgis, geom FROM all_impianti
+            ORDER BY idgis desc
+         ) ar on
+         ST_INTERSECTS(ar.geom,
+         ap.geom)) ot
+    GROUP BY
+        idgis;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+
 
