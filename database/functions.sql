@@ -1190,32 +1190,46 @@ BEGIN
 		tipo_infr,
 		lunghezza,
 		lunghezza_dep,
-		id_refluo_trasportato
+		id_refluo_trasportato,
+		lung_rete_mista,
+		lung_rete_nera
 	)
-	select 
-		idgis_rete, codice_ato, 'FOGNATURA', sum(lunghezza) lung, 
+    with lunghezza_reti as (
+	    select
+            idgis,
+            sum(lu_mista) as lu_mista,
+            sum(lu_nera) as lu_nera
+        from
+            tab_ispezioni
+        group by
+            1)
+	select
+		idgis_rete, codice_ato, 'FOGNATURA',
+		sum(lunghezza) lung,
 		sum(
-			case when recapito IS NOT NULL 
+			case when recapito IS NOT NULL
 				or t.idgis_bac is not NULL
-			then lunghezza 
+			then lunghezza
 			else 0 end
 		) lung_tlc,
-		case when sum(id_rt) = 0 then 2 else 1 end
+		case when sum(id_rt) = 0 then 2 else 1 end,
+		lu_mista,
+		lu_nera
 	from (
-		select 
-			distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
-			case when 
+		select
+			distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,
+			case when
 				recapito IS NOT NULL or bc.idgis is not NULL
-				then lunghezza 
-			else 0 end lung_tlc 
+				then lunghezza
+			else 0 end lung_tlc
 		FROM
 		  FOGNAT_TRONCHI as ft
 		LEFT JOIN
 		  FGN_BACINO as bc ON (ft.geom&&bc.geom and ST_INTERSECTS(ft.geom, bc.geom) and bc.sub_funzione=3)
 		WHERE idgis_rete is not NULL
-	) t 
-	GROUP BY t.codice_ato, t.idgis_rete;
-	
+	) t  left join lunghezza_reti as lr on t.idgis_rete = lr.idgis
+	GROUP BY t.codice_ato, t.idgis_rete, lu_mista, lu_nera;
+
 	-- COLLETTORE
 	INSERT INTO FGN_LUNGHEZZA_RETE(
 		idgis,
@@ -1223,17 +1237,21 @@ BEGIN
 		tipo_infr,
 		lunghezza,
 		lunghezza_dep,
-		id_refluo_trasportato
+		id_refluo_trasportato,
+		lung_rete_mista,
+		lung_rete_nera
 	)
-	select 
-		idgis_rete, codice_ato, 'COLLETTORE', sum(lunghezza) lung, 
+	select
+		idgis_rete, codice_ato, 'COLLETTORE', sum(lunghezza) lung,
 		sum(
-			case when recapito IS NOT NULL 
+			case when recapito IS NOT NULL
 				or t.idgis_bac is not NULL
-			then lunghezza 
+			then lunghezza
 			else 0 end
 		) lung_tlc,
-		case when sum(id_rt) = 0 then 2 else 1 end
+		case when sum(id_rt) = 0 then 2 else 1 end,
+		null as lung_rete_mista,
+		null as lung_rete_nera
 	from (
 		select 
 			distinct on (ft.idgis, codice_ato) ft.idgis, ft.recapito, bc.idgis as idgis_bac, idgis_rete, codice_ato, lunghezza, case when id_refluo_trasportato <> '1' then 0 else 1 end id_rt,	  
