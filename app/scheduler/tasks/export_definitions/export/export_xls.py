@@ -192,7 +192,7 @@ class ExportXls(ExportBase):
                             self.logger.error(
                                 f"Validation: Error occurred during validation of column with "
                                 f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}': "
-                                f"{type(e).__name__}: {e}."
+                                f"{type(e).__name__}: {e.args[0]}.".strip("\n")
                             )
                 # insert sheet_row into excel
                 for column_id, value in sheet_row.items():
@@ -209,7 +209,7 @@ class ExportXls(ExportBase):
                         self.logger.error(
                             f"Excel Config: Error occurred during inserting value to the column with "
                             f"ID '{column_id}' in row '{first_empty_row}' in sheet '{sheet['sheet']}': "
-                            f"{type(e).__name__}: {e}."
+                            f"{type(e).__name__}: {e.args[0]}.".strip("\n")
                         )
 
                 first_empty_row += 1
