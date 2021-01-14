@@ -133,6 +133,7 @@ class XlsExportConfig(BaseExportConfig):
             )
             column.update({
                     "transformer": transformer,
+                    "alias": transformation["params"].get("field", None),
                     "warning": transformation.get("warning", None)
                 })
 

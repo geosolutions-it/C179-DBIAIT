@@ -151,7 +151,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is 0"
                 }
             ]},
       {"id":"64400", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}, "validations": [{
@@ -160,12 +160,12 @@
                         "field": "64400",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator":  "!=", "value": 9999}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is lower than the ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is lower than the {REF_YEAR}"
                 }
             ]},
       {"id":"64500", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_civ"}}, "validations": [{
@@ -174,12 +174,12 @@
                         "field": "64500",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator":  "!=", "value": 9800}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9800}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is lower than the ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is lower than the {REF_YEAR}"
                 }
             ]},
       {"id":"64700", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_elmec"}}, "validations": [{
@@ -188,12 +188,12 @@
                         "field": "64700",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator":  "!=", "value": 9800}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9800}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is lower than the ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is lower than the {REF_YEAR}"
                 }
             ]},
       {"id":"65100", "transformation":{"func":"DIRECT", "params":{"field":"sn_sgrigliat"}}},
@@ -231,7 +231,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is lower than 3"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field field is lower than 3"
                 }
             ]},
       {"id":"64800", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons_elmec", "domain_name": "D_STATO_CONS"}}},
@@ -254,7 +254,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is lower than 3"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field field is lower than 3"
                 }
             ]},
       {"id":"65700", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
@@ -268,7 +268,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is lower than 3"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field field is lower than 3"
                 }
             ]},
       {"id":"65800", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_elmec", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
@@ -282,7 +282,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is lower than 3"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field field is lower than 3"
                 }
             ]},
 

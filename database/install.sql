@@ -27,6 +27,7 @@ CREATE TABLE DBIAIT_ANALYSIS.POP_RES_LOC (
 	pro_com 	VARCHAR(8) NOT NULL,
 	id_localita_istat VARCHAR(20) NOT NULL,
 	anno_rif INTEGER NOT NULL,
+	data_rif DATE,
 	popres	INTEGER NOT NULL,
 	PRIMARY KEY(id_localita_istat)
 );
@@ -47,7 +48,8 @@ CREATE TABLE DBIAIT_ANALYSIS.POP_RES_COMUNE (
 	PRO_COM 	VARCHAR(8),
 	DENOM 		VARCHAR(100),
 	POP_RES 	INTEGER,
-	anno 		INTEGER,
+	anno_rif 	INTEGER,
+	data_rif 	DATE,
 	D_AMBITO 	VARCHAR(8),
 	perc_acq 	double precision,
 	pop_ser_acq INTEGER,
@@ -388,7 +390,9 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE(
 	tipo_infr		VARCHAR(100),
 	lunghezza 		double precision,
 	lunghezza_dep 	double precision,
-	id_refluo_trasportato INTEGER
+	id_refluo_trasportato INTEGER,
+	lung_rete_mista 	double precision,
+	lung_rete_nera 	double precision
 );
 
 --
@@ -721,26 +725,23 @@ CREATE TABLE DBIAIT_ANALYSIS.SCARICATO_INFOG(
 -- 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.localita;
 CREATE TABLE DBIAIT_ANALYSIS.localita(
-    objectid bigint,
-    cod_istat double precision,
-    cod_reg double precision,
-    cod_pro double precision,
-    pro_com double precision,
-    loc2011 double precision,
-    loc double precision,
-    tipo_loc double precision,
-    denominazi character varying(100),
-    altitudine character varying(10),
-    centro_cl bigint,
-    popres double precision,
-    maschi double precision,
-    famiglie double precision,
-    abitazioni double precision,
-    edifici double precision,
-    d_ambito character varying(3),
-    idloc character varying(50),
-    shape_leng double precision,
-    shape_area double precision
+    id_localita_istat 	VARCHAR(20),
+	cod_istat 			VARCHAR(10),
+    cod_reg 			VARCHAR(5),
+    cod_pro 			VARCHAR(5),
+    pro_com 			INTEGER,
+    loc					VARCHAR(5),
+    tipo_loc			VARCHAR(5),
+    denominazi 			VARCHAR(100),
+    altitudine 			DOUBLE PRECISION,
+    centro_cl 			VARCHAR(5),
+    popres 				INTEGER,
+    maschi 				INTEGER,
+    famiglie 			INTEGER,
+    abitazioni 			INTEGER,
+    edifici 			INTEGER,
+    d_ambito 			VARCHAR(3),
+	PRIMARY KEY (id_localita_istat)
 );
 SELECT AddGeometryColumn ('dbiait_analysis', 'localita', 'geom', 25832, 'MULTIPOLYGON', 2);
 
@@ -759,6 +760,19 @@ CREATE TABLE DBIAIT_ANALYSIS.confine_comunale
 	PRIMARY KEY(pro_com)
 );
 SELECT AddGeometryColumn ('dbiait_analysis', 'confine_comunale', 'geom', 25832, 'MULTIPOLYGON', 2);
+---------------------------------------------------------------------------------------------------
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.DECOD_COM;
+CREATE TABLE DBIAIT_ANALYSIS.DECOD_COM(
+    pro_com_acc 	INTEGER,
+	denom_com_acc 	VARCHAR(100),
+    pro_com 		INTEGER,
+    denom_com 		VARCHAR(100),
+	PRIMARY KEY (pro_com)
+);
+INSERT INTO DBIAIT_ANALYSIS.DECOD_COM(pro_com_acc, denom_com_acc, pro_com, denom_com) VALUES (48054, 'Barberino Tavarnelle',  48003, 'Barberino Val D''Elsa');
+INSERT INTO DBIAIT_ANALYSIS.DECOD_COM(pro_com_acc, denom_com_acc, pro_com, denom_com) VALUES (48054, 'Barberino Tavarnelle',  48045, 'Tavarnelle Val di Pesa');
+INSERT INTO DBIAIT_ANALYSIS.DECOD_COM(pro_com_acc, denom_com_acc, pro_com, denom_com) VALUES (47024, 'San Marcello Piteglio', 47019, 'San Marcello Pistoiese');
+INSERT INTO DBIAIT_ANALYSIS.DECOD_COM(pro_com_acc, denom_com_acc, pro_com, denom_com) VALUES (47024, 'San Marcello Piteglio', 47015, 'Piteglio');
 ---------------------------------------------------------------------------------------------------
 alter table DBIAIT_ANALYSIS.confine_comunale add constraint confine_comunale_uq UNIQUE(pro_com);
 alter table DBIAIT_ANALYSIS.pop_res_comune   add constraint pop_res_comune_pk PRIMARY KEY(pro_com);
@@ -856,6 +870,21 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_VOL_UTENZE(
     sumDomesticheResidenteVolFatt	double precision,
     sumPubblicoeVolFatt	double precision,
     sumAltroVolFatt	double precision
+);
+--
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.STATS_CLORATORE;
+CREATE TABLE DBIAIT_ANALYSIS.STATS_CLORATORE(
+	id_rete		VARCHAR(32),
+	counter	bigint
+);
+
+-----
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACCORP_CODICE_DENOM;
+CREATE TABLE DBIAIT_ANALYSIS.ACCORP_CODICE_DENOM(
+	id_captazione VARCHAR(32),
+	codice_accorp		VARCHAR(32),
+    denominazione	VARCHAR(200)
 );
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.area_poe;

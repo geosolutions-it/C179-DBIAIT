@@ -235,7 +235,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is 0"
                 }
             ]},
         {"id": "1800","transformation": { "func": "DIRECT", "params": { "field": "bacino"}}},
@@ -251,7 +251,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is 0"
                 }
             ]},
         {"id": "2300","transformation": { "func": "DIRECT", "params": { "field": "port_industr"}}},

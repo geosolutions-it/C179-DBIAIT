@@ -47,7 +47,9 @@
             { "name": "acq_auth_capt.consumo_ee", "alias": "consumo_ee"},
             {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
-            {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"}
+            {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"},
+            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
+            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -107,6 +109,17 @@
                      "acq_captazione.geom"
                  ],
                  "cond": "ST_INTERSECTS"
+            },
+            {
+                 "type": "left",
+                 "table": {
+                     "name": "accorp_codice_denom"
+                 },
+                 "on": [
+                     "accorp_codice_denom.codice_accorp",
+                     "acq_captazione.idgis"
+                 ],
+                 "cond": "="
             }
          ],
          "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3"
@@ -156,7 +169,9 @@
             { "name": "acq_auth_capt.consumo_ee", "alias": "consumo_ee"},
             {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
-            {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"}
+            {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"},
+            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
+            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -216,6 +231,17 @@
                      "a_acq_captazione.geom"
                  ],
                  "cond": "ST_INTERSECTS"
+            },
+            {
+                 "type": "left",
+                 "table": {
+                     "name": "accorp_codice_denom"
+                 },
+                 "on": [
+                     "accorp_codice_denom.id_captazione",
+                     "a_acq_captazione.idgis"
+                 ],
+                 "cond": "="
             }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.sub_funzione = 3"
@@ -232,7 +258,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field not lower than ID 15600"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field not lower than ID 15600"
           }
       ]},
 
@@ -250,7 +276,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value is not 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not 0"
                 }
             ]},
       {"id":"15500", "transformation":{"func":"DIRECT", "params":{"field":"estremi_conces"}}},
@@ -264,7 +290,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is lower than the value in field 17200"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is lower than the value in field 17200"
           }
       ]},
       {"id":"15700", "transformation":{"func":"DIRECT", "params":{"field":"port_industr"}}},
@@ -276,13 +302,13 @@
               "params": {
                   "field": "16100",
                   "cond": [{
-                      "and": [
+                      "or": [
                         {"operator": "<=", "value": "{REF_YEAR}"},
-                        {"operator": "!=", "value": 9999}
+                        {"operator": "=", "value": 9999}
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not valid for the ref_year selected"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not valid for year {REF_YEAR}"
           }
       ]},
       {"id":"16200", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}, "validations": [{
@@ -290,13 +316,13 @@
               "params": {
                   "field": "16200",
                   "cond": [{
-                      "and": [
+                      "or": [
                         {"operator": "<=", "value": "{REF_YEAR}"},
-                        {"operator": "!=", "value": 9800}
+                        {"operator": "=", "value": 9800}
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not valid for the ref_year selected"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not valid for year {REF_YEAR}"
           }
       ]},
       {"id":"16500", "transformation":{"func":"DIRECT", "params":{"field":"utilizzo_annuo"}}, "validations": [{
@@ -320,7 +346,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is lower than 3"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is lower than 3"
           }
       ]},
       {"id":"16600", "transformation":{"func":"DIRECT", "params":{"field":"prof_pozzo"}}},
@@ -341,7 +367,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is lower than 0"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is lower than 0"
           }
       ]},
       {"id":"17300", "transformation":{"func":"DIRECT", "params":{"field":"port_uti_max"}}},
@@ -361,7 +387,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field not lower than ID 15600"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field not lower than ID 15600"
           }
       ]},
       {"id":"17600", "transformation":{"func":"DIRECT", "params":{"field":"sn_strum_mis_port"}}},
@@ -375,13 +401,13 @@
                         {"operator": "=", "value": 9800}
                       ]
                   },{
-                      "and": [
+                      "or": [
                         {"operator": "<=", "value": "{REF_YEAR}"},
-                        {"operator": "!=", "value": 9999}
+                        {"operator": "=", "value": 9999}
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value 1 is not permitted or ref_year"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value 1 is not permitted or {REF_YEAR}"
           }
       ]},
       {"id":"18300", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr_clor"}}, "validations": [{
@@ -394,13 +420,13 @@
                         {"operator": "=", "value": 9800}
                       ]
                   },{
-                      "and": [
+                      "or": [
                         {"operator": "<=", "value": "{REF_YEAR}"},
-                        {"operator": "!=", "value": 9800}
+                        {"operator": "=", "value": 9800}
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value 1 is not permitted or ref_year"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value 1 is not permitted or {REF_YEAR}"
           }
       ]},
       {"id":"18400", "transformation":{"func":"DIRECT", "params":{"field":"sn_epis_inq"}}},
@@ -420,7 +446,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is lower than 3"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is lower than 3"
           }
       ]},
       {"id":"16400", "transformation":{"func":"DOMAIN", "params":{"field":"d_utilizzo", "domain_name": "D_UTILIZZO_OPERA"}}, "validations": [{
@@ -440,7 +466,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is lower than 3"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is lower than 3"
           }
       ]},
       {"id":"17500", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
@@ -455,7 +481,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value 1 is not permitted"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value 1 is not permitted"
           }
       ]},
       {"id":"18500", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
@@ -476,7 +502,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not A or X"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not A or X"
           }
       ]},
       {"id":"18700", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
@@ -490,7 +516,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not A"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not A"
           }
       ]},
       {"id":"18900", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
@@ -515,7 +541,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not A or C"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not A or C"
           }
       ]},
       {"id":"19100", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_es", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
@@ -528,7 +554,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not A or C"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not A or C"
           }
       ]},
       {"id":"19200", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_uti_max", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
@@ -554,7 +580,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not A or C"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not A or C"
           }
       ]},
       {"id":"19300", "transformation":{"func":"DOMAIN", "params":{"field":"a_port_uti_min", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
@@ -580,7 +606,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is not A or C"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not A or C"
           }
       ]},
 
