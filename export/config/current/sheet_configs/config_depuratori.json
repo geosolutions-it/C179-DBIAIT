@@ -87,7 +87,9 @@
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
                 { "name": "stats_pompe.sum_potenza", "alias": "sum_potenza"},
-                { "name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"}
+                { "name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
+                { "name":"abitanti_trattati.ae_tot", "alias": "ae_tot"},
+                { "name":"abitanti_trattati.ae_civ", "alias": "ae_civ"}
             ],
             "table": {
                 "name": "fgn_trattamento"
@@ -134,7 +136,7 @@
                     },
                     "on": [
                         "fgn_trattamento.idgis",
-                        "abitanti_trattati.codice"
+                        "abitanti_trattati.idgis"
                     ],
                     "cond": "="
                 }
@@ -225,8 +227,10 @@
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
-                {"name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
-                {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"}
+                { "name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
+                { "name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
+                { "name":"abitanti_trattati.ae_tot", "alias": "ae_tot"},
+                { "name":"abitanti_trattati.ae_civ", "alias": "ae_civ"}
             ],
             "table": {
                 "name": "a_fgn_trattamento"
@@ -272,7 +276,7 @@
                     },
                     "on": [
                         "a_fgn_trattamento.idgis",
-                        "abitanti_trattati.codice"
+                        "abitanti_trattati.idgis"
                     ],
                     "cond": "="
                 }
