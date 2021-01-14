@@ -26,11 +26,11 @@ DECLARE
 begin
 ```
 - Execution of the procedure
-```
+```sql
 perform dbiait_analysis.populate_stats_cloratore();
 ```
 - Definition of the assertions 
-```
+```sql
 -- run the new version of the procedure
 perform dbiait_analysis.populate_stats_cloratore();
 --- check if the count of the selected id_rete is still the same
@@ -41,12 +41,12 @@ SELECT count(*) INTO new_count FROM DBIAIT_ANALYSIS.stats_cloratore;
 perform test_assertTrue('numero totale di righe è cambiato', 43 = new_count );
 ```
 - run the test:
-```
-select dbiait_analysis.test_populate_stats_cloratore();
+```sql
+select dbiait_analysis.run_unittests();
 ```
 Here is a complete example:
 
-```
+```sql
 CREATE OR REPLACE function dbiait_analysis.test_populate_stats_cloratore() returns void as $$
 DECLARE
   new_id varchar;
@@ -63,5 +63,14 @@ begin
 END;
 $$ LANGUAGE plpgsql;
 
-select dbiait_analysis.test_populate_stats_cloratore();
+select dbiait_analysis.run_unittests();
 ```
+
+Add a new unittest:
+--
+In order to add a new unit test, is required to:
+- Create the procedure of the test and paste it at the end of the file (just before the `dbiait_analysis.run_unittests`)
+- Add at the beginning of the file in the procedure named `dbiait_analysis.run_unittests()` a new row the the `perform`
+ need to run the procedure
+ - run all the unittests with `select dbiait_analysis.run_unittests();`
+ 

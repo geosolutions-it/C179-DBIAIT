@@ -3091,35 +3091,38 @@ BEGIN
 
 	WITH
 	    all_reti as(
-            SELECT idgis, 'acq_rete' tipo_infr, geom FROM acq_rete_distrib ard
-            UNION ALL
-            SELECT idgis, 'fgn_rete' tipo_infr, geom FROM fgn_rete_racc frr),
+            SELECT idgis, geom FROM acq_rete_distrib ard),
         all_impianti as(
-            SELECT idgis, 'fgn_imp' tipo_infr, geom FROM fgn_imp_sollev fis)
-    INSERT INTO schema_acq(codice_area_poe, tipo_infr, codice_schema_acq, denominazione_schema_acq)
+            SELECT idgis, geom FROM acq_captazione fis
+            UNION ALL
+            SELECT idgis, geom FROM acq_accumulo acq
+            UNION ALL
+            SELECT idgis, geom FROM acq_potabiliz ap
+            UNION ALL
+            SELECT idgis, geom FROM acq_pompaggio acp)
+    INSERT INTO schema_acq(idgis, codice_schema_acq, denominazione_schema_acq)
     SELECT
-        xx.codice_schema_acq codice_schema_acq,
-        xx.tipo_infr tipo_infr,
-        string_agg(xx.denominazione_schema_acq, ';') denominazione_schema_acq,
-        string_agg(xx.idgis, ';') idgis_rete
+        ot.idgis idgis,
+        string_agg(ot.codice_schema_acq, ';') codice_schema_acq,
+        string_agg(ot.denominazione_schema_acq, ';') denominazione_schema_acq
     FROM
         (
         SELECT
             ap.codice_schema_acq,
             ap.denominazione_schema_acq,
-            ar.idgis,
-            ar.tipo_infr
+            ar.idgis
         FROM
             area_poe ap
-        LEFT JOIN (
-            SELECT idgis, tipo_infr, geom FROM all_reti
+        JOIN (
+            SELECT idgis, geom FROM all_reti
             UNION ALL
-            SELECT idgis, tipo_infr, geom FROM all_impianti
+            SELECT idgis, geom FROM all_impianti
+            ORDER BY idgis desc
          ) ar on
          ST_INTERSECTS(ar.geom,
-         ap.geom)) xx
+         ap.geom)) ot
     GROUP BY
-        codice_schema_acq, tipo_infr;
+        idgis;
 
 	RETURN TRUE;
 END;
