@@ -82,6 +82,7 @@
                 { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
                 { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
                 { "name": "fgn_auth_trattam.consumo_ee", "alias": "consumo_ee"},
+                { "name": "fgn_auth_trattam.a_potenza_instal", "alias": "a_potenza_instal"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
@@ -220,6 +221,7 @@
                 { "name": "fgn_auth_trattam.a_conc_co2_usc", "alias": "a_conc_co2_usc"},
                 { "name": "fgn_auth_trattam.a_vol_att_tratt", "alias": "a_vol_att_tratt"},
                 { "name": "fgn_auth_trattam.consumo_ee", "alias": "consumo_ee"},
+                { "name": "fgn_auth_trattam.a_potenza_instal", "alias": "a_potenza_instal"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_in", "alias": "sn_strum_mis_port_in", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
@@ -423,6 +425,8 @@
         {"id": "72100", "transformation": { "func": "ROUND", "params": {"field": "transformed_x_geom", "ndigits":  3}}},
 
         {"id": "72500", "transformation": {"func": "LSTRIP", "params": { "field": "cod_comune", "char": "0" }}},
+
+        {"id":"80000", "transformation":{"func":"DOMAIN", "params":{"field":"a_potenza_instal", "domain_name": "D_AFFIDABILITA"}}},
 
 
         {"id": "72600", "transformation": {"func": "DOMAIN", "params": { "field": "d_corpo_ricet", "domain_name": "D_CORPO_RICET" }}},

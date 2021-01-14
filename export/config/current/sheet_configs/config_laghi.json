@@ -602,19 +602,8 @@
                 }
             ]},
         {"id": "12900","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA" }}},
-        {"id": "12500","transformation": {
-            "func": "IF",
-            "params": {
-                "field": "denominazi",
-                "cond": {
-                        "operator": "=",
-                        "value": "0",
-                        "result": "A",
-                        "else": "{ a_volume }"
-                    }
-                }
-            }
-        },
+        {"id":"12500", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume", "domain_name": "D_AFFIDABILITA"}}},
+
         {"id":"10400", "transformation":{
              "func": "IF",
              "params": {
