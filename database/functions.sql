@@ -177,7 +177,26 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public;	
+    SET search_path = public;
+--------------------------------------------------------------------
+-- Decode a municipal code to obtain the code of grouped municipal
+-- This function uses the internal table "decod_com"
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.decode_municipal(
+	v_pro_com INTEGER
+) RETURNS INTEGER AS $$
+DECLARE
+	v_result INTEGER;	
+BEGIN
+	SELECT coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
+	INTO v_result
+	FROM (select v_pro_com as cod_comune) c 
+	LEFT JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com;
+	RETURN v_result;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- Populate data into the POP_RES_LOC table using information 
 -- from LOCALITA ISTAT (2011) - (Ref. 2.3. LOCALITA ISTAT)
@@ -1718,9 +1737,15 @@ BEGIN
 	UPDATE ACQ_SHAPE
 	SET comune_nom = t.denom, id_comune_ = t.cod_istat
 	FROM (
+		--SELECT c.idgis, cc.denom, cc.cod_istat 
+		--FROM acq_condotta c, confine_comunale cc
+		--WHERE c.cod_comune = cc.pro_com_tx 
 		SELECT c.idgis, cc.denom, cc.cod_istat 
-		FROM acq_condotta c, confine_comunale cc
-		WHERE c.cod_comune = cc.pro_com_tx 
+		FROM (
+			select c.idgis, coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
+			from acq_condotta c left JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com
+		) c, confine_comunale cc
+		WHERE c.cod_comune = cc.pro_com
 		--LIMIT 10
 	) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
 	-- (tipo_acqua)
@@ -2088,9 +2113,15 @@ BEGIN
 	UPDATE FGN_SHAPE
 	SET comune_nom = t.denom, id_comune_ = t.cod_istat
 	FROM (
+		--SELECT c.idgis, cc.denom, cc.cod_istat 
+		--FROM fgn_condotta c, confine_comunale cc
+		--WHERE c.cod_comune = cc.pro_com_tx 
 		SELECT c.idgis, cc.denom, cc.cod_istat 
-		FROM fgn_condotta c, confine_comunale cc
-		WHERE c.cod_comune = cc.pro_com_tx 
+		FROM (
+			select c.idgis, coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
+			from fgn_condotta c left JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com
+		) c, confine_comunale cc
+		WHERE c.cod_comune = cc.pro_com
 		--LIMIT 10
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
 	
@@ -3023,5 +3054,33 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+
+--------
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_stats_cloratore(
+) RETURNS BOOLEAN AS $$
+BEGIN
+    -- truncate old table
+	DELETE FROM stats_cloratore;
+
+    -- run procedure
+	INSERT INTO stats_cloratore (id_rete, counter)
+	SELECT
+		id_rete,
+		count(*) as cc
+	FROM
+		acq_condotta ac,
+		acq_cloratore ac2
+	WHERE
+		st_intersects(ac.geom,
+		ac2.geom)
+	GROUP BY
+		id_rete;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 
