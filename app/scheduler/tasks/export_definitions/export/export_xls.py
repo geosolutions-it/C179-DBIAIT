@@ -7,8 +7,9 @@ from openpyxl.utils import cell
 from django.conf import settings
 from django.db import connections, ProgrammingError
 
-from app.scheduler.utils import dictfetchall, translate_schema_to_db_alias
+from app.scheduler.utils import dictfetchall, translate_schema_to_db_alias, translate_schema_to_enum
 from app.scheduler.tasks.export_definitions.domains_parser import Domains
+from app.scheduler.tasks.export_definitions.municipalities_parser import Municipalities
 from app.scheduler.tasks.export_definitions.config_scraper import XlsExportConfig
 
 from .export_base import ExportBase
@@ -42,7 +43,8 @@ class ExportXls(ExportBase):
         step = 1
 
         # fetch all_domains info
-        all_domains = Domains()
+        all_domains = Domains(schema=translate_schema_to_enum(self.orm_task.schema), year=self.ref_year)
+        municipalities = Municipalities(schema=translate_schema_to_enum(self.orm_task.schema), year=self.ref_year)
 
         # load seed *.xlsx file
         seed_path = settings.EXPORT_XLS_SEED_FILE.substitute()
@@ -125,7 +127,7 @@ class ExportXls(ExportBase):
                     warning_log = "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: {E}" if not column['warning'] else column['warning']
                     try:
                         transformed_value = column["transformer"].apply(
-                            row=raw_data_row, domains=all_domains
+                            row=raw_data_row, domains=all_domains, municipalities=municipalities
                         )
                     except KeyError as e:
                         transformed_value = None
