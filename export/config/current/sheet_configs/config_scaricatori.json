@@ -189,7 +189,7 @@
                               {"operator":  "=", "value": "X"}
                             ]
                         },{
-                            "and": [
+                            "or": [
                               {"lookup": "{83700}","operator": ">=", "value": 2002},
                               {"lookup": "{83700}","operator": "!=", "value": 9999},
                               {"operator":  "=", "value": "A"}

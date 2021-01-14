@@ -78,7 +78,7 @@
                         "name": "stats_cloratore"
                     },
                     "on": [
-                        "acq_rete_distrib.id_gis",
+                        "acq_rete_distrib.idgis",
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="
@@ -162,7 +162,7 @@
                         "name": "stats_cloratore"
                     },
                     "on": [
-                        "a_acq_rete_distrib.id_gis",
+                        "a_acq_rete_distrib.idgis",
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="

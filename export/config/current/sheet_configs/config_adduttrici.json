@@ -51,7 +51,7 @@
                         "name": "stats_cloratore"
                     },
                     "on": [
-                        "acq_adduttrice.id_gis",
+                        "acq_adduttrice.idgis",
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="
@@ -108,7 +108,7 @@
                         "name": "stats_cloratore"
                     },
                     "on": [
-                        "a_acq_adduttrice.id_gis",
+                        "a_acq_adduttrice.idgis",
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="
