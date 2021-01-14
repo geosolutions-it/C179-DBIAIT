@@ -130,7 +130,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field is 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field field is 0"
                 }
             ]},
       {"id":"83700", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}, "validations": [{
@@ -139,12 +139,12 @@
                         "field": "83700",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator":  "!=", "value": 9999}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
                 }
             ]},
       {"id":"83800", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}, "validations": [{
@@ -153,12 +153,12 @@
                         "field": "83800",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator":  "!=", "value": 9800}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9800}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
                 }
             ]},
       {"id":"84000", "transformation":{"func":"DIRECT", "params":{"field":"n_ae"}}},
@@ -196,7 +196,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
                 }
             ]},
       {"id":"85100", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
@@ -210,7 +210,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value is not A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not A"
                 }
             ]},
 

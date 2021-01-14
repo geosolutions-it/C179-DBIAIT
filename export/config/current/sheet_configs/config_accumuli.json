@@ -133,12 +133,12 @@
                         "field": "44500",
                         "cond": [{
                             "or": [
-                                {"operator": ">=", "value": "{REF_YEAR}"},
-                                {"operator": "!=", "value": 9999}
+                                {"operator": "<=", "value": "{REF_YEAR}"},
+                                {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: year not valid}"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: year not valid}"
                 }
             ]
         },
@@ -155,7 +155,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: must be greater than 0"
                 }
             ]
         },
@@ -170,7 +170,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: must be greater than 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: must be greater than 0"
                 }
             ]
         },
@@ -188,13 +188,13 @@
                             ]
                         },
                         {
-                            "and": [
-                                {"operator": ">=", "value": "{REF_YEAR}"},
-                                {"operator": "!=", "value": 9999}
+                            "or": [
+                                {"operator": "<=", "value": "{REF_YEAR}"},
+                                {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: unexpected value"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: unexpected value"
                 }
             ]
         },
@@ -210,13 +210,13 @@
                             ]
                         },
                         {
-                            "and": [
+                            "or": [
                                 {"operator": ">=", "value": 2020},
-                                {"operator": "!=", "value": 9800}
+                                {"operator": "=", "value": 9800}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: unexpected value"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: unexpected value"
                 }
             ]
         },
@@ -236,7 +236,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value lower than 3 or ref year not valid"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value lower than 3 or ref year: {REF_YEAR} not valid"
                 }
             ]
         },
@@ -263,7 +263,7 @@
                         }
                         ]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value is 1"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is 1"
                 }
             ]
         },
@@ -282,13 +282,13 @@
                         },
                         {
                             "and": [
-                                {"lookup": "{44500}" ,"operator": ">=", "value": "{REF_YEAR}"},
+                                {"lookup": "{44500}" ,"operator": ">=", "value": 2002},
                                 {"lookup": "{44500}" ,"operator": "!=", "value": 9999},
                                 {"operator": "=", "value": "A"}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value is not A or X"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not A or X"
                 }
             ]
         },
@@ -298,13 +298,13 @@
                     "params": {
                         "field": "46000",
                         "cond": [{
-                            "and": [
+                            "or": [
                                 {"lookup": "{44600}" ,"operator": ">=", "value": 2002},
                                 {"operator": "=", "value": "A"}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: value is not A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not A"
                 }
             ]
         },

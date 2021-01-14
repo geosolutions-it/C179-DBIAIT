@@ -133,7 +133,7 @@
                         "cond": [{
                             "or": [
                               {"operator": "<=", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9999}
+                              {"operator": "=", "value": 9999}
                             ]
                         },
                         {
@@ -143,7 +143,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9800"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9800"
                 }
             ]},
         { "id": "40200", "transformation": { "func": "DIRECT",  "params": { "field": "anno_ristr_clor" } }},
@@ -162,7 +162,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value 1 is not permitted"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value 1 is not permitted"
                 }
             ]},
         {"id":"40300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},

@@ -33,12 +33,12 @@
                         "field": "66600",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator":  "!=", "value": 9999}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
                 }
             ]},
       {"id":"66700", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}, "validations": [{
@@ -47,12 +47,12 @@
                         "field": "66700",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator":  "!=", "value": 9800}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9800}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field greater than ref_year"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
                 }
             ]},
       {"id":"66800", "transformation":{"func":"DIRECT", "params":{"field":"potenza"}}},
@@ -75,7 +75,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not X or A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not X or A"
                 }
             ]},
         {"id":"67300", "transformation":{"func":"DIRECT", "params":{"field":"a_anno_ristr"}}, "validations": [{
@@ -89,7 +89,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not A"
                 }
             ]},
       {"id":"67400", "transformation":{"func":"DIRECT", "params":{"field":"a_potenza"}}},

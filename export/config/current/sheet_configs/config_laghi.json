@@ -231,7 +231,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is 0"
                 }
             ]},
         {"id": "8800","transformation": { "func": "DIRECT", "params": { "field": "bacino" }}},
@@ -247,7 +247,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not greater than 10500"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not greater than 10500"
                 }
             ]},
         {"id": "9300","transformation": { "func": "DIRECT", "params": { "field": "port_industr" }}},
@@ -260,12 +260,12 @@
                         "field": "9700",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9999}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9999"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9999"
                 }
             ]},
         {"id": "9800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }},"validations": [{
@@ -274,12 +274,12 @@
                         "field": "9800",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9800}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9800}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9999"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9999"
                 }
             ]},
         {"id": "10100","transformation": { "func": "DIRECT", "params": { "field": "utilizzo_annuo" }}, "validations": [{
@@ -303,7 +303,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not continuo or occasionale"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not continuo or occasionale"
                 }
             ]},
         {"id": "10200","transformation": { "func": "DIRECT", "params": { "field": "area_bac_affer" }}},
@@ -323,7 +323,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not valid"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not valid"
                 }
             ]},
         {"id": "10600","transformation": { "func": "DIRECT", "params": { "field": "port_uti_max" }}, "validations": [{
@@ -342,7 +342,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not valid"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not valid"
                 }
             ]},
         {"id": "10700","transformation": { "func": "DIRECT", "params": { "field": "port_uti_min" }},"validations": [{
@@ -361,7 +361,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not valid"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not valid"
                 }
             ]},
         {"id": "10800","transformation": { "func": "DIRECT", "params": { "field": "port_deriv" }}},
@@ -381,12 +381,12 @@
                             ]
                         },{
                             "or": [
-                              {"operator": ">", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9999}
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field error"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field error"
                 }
             ]},
         {"id": "11900","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor" }},"validations": [{
@@ -400,12 +400,12 @@
                             ]
                         },{
                             "or": [
-                              {"operator": ">", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9800}
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9800}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field field error"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field field error"
                 }
             ]},
         {"id": "13000","transformation": { "func": "DIRECT", "params": { "field": "data_agg" }}},
@@ -420,7 +420,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not lower than the field 9200"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not lower than the field 9200"
                 }
             ]},
 
@@ -436,7 +436,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is lower than 3"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is lower than 3"
                 }
             ]},
         {"id": "10000","transformation": { "func": "DOMAIN", "params": { "field": "d_utilizzo", "domain_name": "D_UTILIZZO_OPERA" }}, "validations": [{
@@ -456,7 +456,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not continuo or occasionale"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not continuo or occasionale"
                 }
             ]},
         {"id": "11200","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" }}},
@@ -471,7 +471,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is 1"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is 1"
                 }
             ]},
         {"id": "12000","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" }}},
@@ -493,7 +493,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not A or X"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not A or X"
                 }
             ]},
         {"id": "12300","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -507,7 +507,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not A"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not A"
                 }
             ]},
         {"id": "12400","transformation": { "func": "DOMAIN", "params": { "field": "a_volume", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -533,7 +533,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: One or more condition are failing"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: One or more condition are failing"
                 }
             ]},
         {"id": "12600","transformation": { "func": "DOMAIN", "params": { "field": "a_port_es", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -546,7 +546,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not equal to ID 12400"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not equal to ID 12400"
                 }
             ]},
         {"id": "12700","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_max", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -572,7 +572,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: One or more condition are failing"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: One or more condition are failing"
                 }
             ]},
         {"id": "12800","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_min", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -598,7 +598,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: One or more condition are failing"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: One or more condition are failing"
                 }
             ]},
         {"id": "12900","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA" }}},

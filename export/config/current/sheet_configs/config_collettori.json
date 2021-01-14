@@ -108,7 +108,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9800"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9800"
                 }
             ]},
         { "id": "68500", "transformation": { "func": "DIRECT", "params": { "field": "vol_idraulici" } } },
@@ -123,7 +123,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: field is not 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not 0"
                 }
             ]},
         { "id": "68700", "transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena" } } },
