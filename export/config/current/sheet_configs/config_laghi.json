@@ -260,8 +260,8 @@
                         "field": "9700",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9999}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
@@ -274,8 +274,8 @@
                         "field": "9800",
                         "cond": [{
                             "or": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9800}
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9800}
                             ]
                         }]
                     },
@@ -381,8 +381,8 @@
                             ]
                         },{
                             "or": [
-                              {"operator": ">", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9999}
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
@@ -400,8 +400,8 @@
                             ]
                         },{
                             "or": [
-                              {"operator": ">", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9800}
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9800}
                             ]
                         }]
                     },

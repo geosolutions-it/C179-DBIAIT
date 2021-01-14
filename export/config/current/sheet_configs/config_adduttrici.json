@@ -109,7 +109,7 @@
                         "cond": [{
                             "or": [
                               {"operator": "<=", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9999}
+                              {"operator": "=", "value": 9999}
                             ]
                         },
                         {

@@ -65,7 +65,7 @@
                     "params": {
                         "field": "41200",
                         "cond": [{
-                            "and": [
+                            "or": [
                               {"lookup": "{41500}" ,"operator": ">=", "value": 2014},
                               {"operator":  "!=", "value": null}
                             ]
@@ -82,7 +82,7 @@
                     "params": {
                         "field": "41400",
                         "cond": [{
-                            "and": [
+                            "or": [
                               {"lookup": "{41500}" ,"operator": ">=", "value": 2002},
                               {"operator":  "!=", "value": null}
                             ]
@@ -108,9 +108,9 @@
                     "params": {
                         "field": "41400",
                         "cond": [{
-                            "and": [
+                            "or": [
                               {"operator": "<=", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9999}
+                              {"operator": "=", "value": 9999}
                             ]
                         }]
                     },

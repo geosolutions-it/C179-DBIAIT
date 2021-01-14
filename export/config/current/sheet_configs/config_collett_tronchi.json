@@ -113,9 +113,9 @@
                     "params": {
                         "field": "70200",
                         "cond": [{
-                            "and": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9999}
+                            "or": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9999}
                             ]
                         }]
                     },

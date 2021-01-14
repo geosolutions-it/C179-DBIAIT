@@ -32,9 +32,9 @@
                     "params": {
                         "field": "50800",
                         "cond": [{
-                            "and": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator":  "!=", "value": 9999}
+                            "or": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9999}
                             ]
                         }]
                     },
@@ -46,9 +46,9 @@
                     "params": {
                         "field": "50900",
                         "cond": [{
-                            "and": [
-                              {"operator": ">=", "value": "{REF_YEAR}"},
-                              {"operator":  "!=", "value": 9800}
+                            "or": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9800}
                             ]
                         }]
                     },
