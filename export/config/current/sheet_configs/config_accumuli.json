@@ -210,7 +210,7 @@
                         },
                         {
                             "and": [
-                                {"operator": ">=", "value": 2020},
+                                {"operator": ">=", "value": "{REF_YEAR}"},
                                 {"operator": "!=", "value": 9800}
                             ]
                         }]
