@@ -3118,9 +3118,9 @@ BEGIN
             UNION ALL
             SELECT idgis, geom FROM all_impianti
             ORDER BY idgis desc
-         ) ar on
-         ST_INTERSECTS(ar.geom,
-         ap.geom)) ot
+         ) ar ON
+         ap.geom && ar.geom AND
+         ST_INTERSECTS(ap.geom, ar.geom)) ot
     GROUP BY
         idgis;
 
