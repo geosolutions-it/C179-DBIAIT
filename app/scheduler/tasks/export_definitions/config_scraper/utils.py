@@ -4,8 +4,7 @@ import schema
 from pypika import JoinType
 
 from app.scheduler.utils import COMPARISON_OPERATORS_MAPPING
-from .sql_functions import SUPPORTED_SQL_FUNCTIONS, SQL_SPATIAL_JOIN_MAPPING
-
+from .sql_functions import SUPPORTED_SQL_FUNCTIONS, SQL_SPATIAL_JOIN_MAPPING, SUPPORTED_SQL_CASTS
 
 JOIN_TYPES = [join_type.name.upper() for join_type in JoinType]
 
@@ -32,6 +31,9 @@ config_sources_schema = schema.Or(
                 schema.Optional("alias"): schema.And(str, len),
                 schema.Optional("function"): schema.And(
                     str, lambda f: f.upper() in SUPPORTED_SQL_FUNCTIONS
+                ),
+                schema.Optional("cast"): schema.And(
+                    str, lambda f: True if 'VARCHAR' in f.upper() else f.upper() in SUPPORTED_SQL_CASTS
                 ),
             }
         ],

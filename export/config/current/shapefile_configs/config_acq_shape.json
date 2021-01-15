@@ -18,7 +18,7 @@
                 {"name": "acq_shape.idx_anno", "alias": "idx_anno"},
                 {"name": "acq_shape.lunghez_1", "alias": "lunghezza"},
                 {"name": "acq_shape.idx_lunghe", "alias": "idx_lung"},
-                {"name": "acq_shape.id_conserv", "alias": "id_conserv"},
+                {"name": "acq_shape.id_conserv", "alias": "id_conserv", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_shape.tipo_rete", "alias": "tipo_rete"},
                 {"name": "acq_shape.tipo_acqua", "alias": "tipo_acqua"},
                 {"name": "acq_shape.funziona_g", "alias": "funz_grav"},
