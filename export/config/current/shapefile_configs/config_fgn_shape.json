@@ -22,7 +22,7 @@
                 {"name": "fgn_shape.id_conserv", "alias": "id_conserv", "cast": "INTEGER"},
                 {"name": "fgn_shape.tipo_rete", "alias": "tipo_rete", "cast": "VARCHAR(16)"},
                 {"name": "fgn_shape.id_refluo_", "alias": "id_refluo", "cast": "INTEGER"},
-                {"name": "fgn_shape.funziona_g", "alias": "funz_grav", "function": "TO_BIT", "cast": "BIT"},
+                {"name": "fgn_shape.funziona_g", "alias": "funz_grav", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "fgn_shape.recapito", "alias": "recapito", "cast": "VARCHAR(32)"},
                 {"name": "fgn_shape.copertura", "alias": "copertura", "cast": "VARCHAR(16)"},
                 {"name": "fgn_shape.prof_inizi", "alias": "prof_inizi", "cast": "DOUBLE PRECISION"},
