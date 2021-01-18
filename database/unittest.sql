@@ -7,6 +7,7 @@ begin
 	perform dbiait_analysis.test_populate_stats_cloratore();
 	perform dbiait_analysis.test_populate_fgn_shape();
 	perform dbiait_analysis.test_populate_schema_acq();
+    perform dbiait_analysis.test_populate_ubic_allaccio();
     -- ADD HERE A NEW PERFORM WITH YOUR UNITTEST
   	--- example: perform dbiait_analysis.my_new_shiny_test();
 
@@ -148,9 +149,26 @@ begin
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE function dbiait_analysis.test_populate_ubic_allaccio() returns void as $$
+DECLARE
+  sn_alla varchar;
+  id_rete varchar;
+  new_count bigint;
+begin
+    -- run the new version of the procedure
+	perform dbiait_analysis.populate_ubic_allaccio();
+    --- check if the count of the selected id_rete is still the same
+    SELECT acq_sn_alla,acq_idrete into sn_alla,id_rete FROM dbiait_analysis.ubic_allaccio ua WHERE id_ubic_contatore ='PAAUCO00000001907206';
+    perform test_assertTrue('ID_rete wrong, expected PAARDI00000000001511 but found ' || id_rete, 'PAARDI00000000001511' = id_rete );
+    perform test_assertTrue('sn_alla wrong, expected SI but found ' || sn_alla, 'SI' = sn_alla );
+    --- check if the count of the selected id_rete is still the same
+    SELECT acq_sn_alla,acq_idrete into sn_alla,id_rete FROM dbiait_analysis.ubic_allaccio ua WHERE id_ubic_contatore ='PAAUCO00000002080963';
+    perform test_assertTrue('ID_rete wrong, expected PAARDI00000000001441 but found ' || id_rete, 'PAARDI00000000001441' = id_rete );
+    perform test_assertTrue('sn_alla wrong, expected SI but found ' || sn_alla, 'NO' = sn_alla );
+    -- check if the total rows are the same
 
-
-
+END;
+$$ LANGUAGE plpgsql;
 
 
 
