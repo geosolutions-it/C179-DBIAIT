@@ -3131,3 +3131,115 @@ $$  LANGUAGE plpgsql
     SET search_path = public, DBIAIT_ANALYSIS;
 
 
+-------------------------------------------------------------------------------------------------------
+-- Calcola la tabella ubic_allaccio partendo da acq_allacci #221
+--
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.populate_ubic_allaccio()
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_ubic_allaccio(
+) RETURNS BOOLEAN AS $$
+begin
+	DELETE FROM ubic_contatori_cass_cont;
+	DELETE FROM ubic_allaccio;
+
+
+	-- AGGIUNTA TUTTI GLI UBIC_CONTATORI DISPONIBILI
+	insert into ubic_contatori_cass_cont
+	select
+		distinct id_ubic_contatore, id_cass_cont
+	from
+		acq_ubic_contatore as auc
+	join acq_contatore ac on
+		auc.idgis = ac.id_ubic_contatore
+	where
+		auc.id_impianto is not null
+		and ac.tariffa not in ('APB_REFIND',
+		'APBLREFIND',
+		'APBNREFCIV',
+		'APBHSUBDIS',
+		'COPDCI0000',
+		'COPDIN0000');
+
+	insert
+		into
+		ubic_allaccio(id_ubic_contatore,
+		acq_sn_alla,
+		acq_idrete)
+	select
+		id_ubic_contatore, null, null
+	from
+		ubic_contatori_cass_cont;
+
+--	UPDATE VALORE CHE MATCHANO LA TAB ACQ_ALLACCIO
+	update ubic_allaccio
+	set acq_sn_alla = xx.acq_sn_alla, acq_idrete=xx.id_rete
+	from (
+	select
+		c.id_ubic_contatore,
+		case
+			when aa.id_cassetta is not null then 'SI'
+			else null
+		end acq_sn_alla,
+		case
+			when aca.id_rete is not null then aca.id_rete
+			else null
+		end id_rete
+	from
+		ubic_contatori_cass_cont c
+	join acq_allaccio aa on
+		c.id_cass_cont = aa.id_cassetta
+	join acq_cond_altro aca on
+		aca.idgis = aa.id_condotta) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
+
+	--- STEP 2: SETTAGGIO A SI PER GLI ID CHE MATCHANO UTENZA DEFALCO
+	update
+		ubic_allaccio
+	set
+		acq_sn_alla = 'SI',
+		acq_idrete = xx.idgis_defalco
+	from
+		(select
+			id_ubic_contatore,
+			idgis_defalco
+		from
+			ubic_contatori_cass_cont
+		join utenza_defalco on
+			id_ubic_contatore = utenza_defalco.idgis_defalco) xx
+	where
+		ubic_allaccio.id_ubic_contatore = xx.id_ubic_contatore;
+
+	-- TODO mettere log stand-alone (vedi spec)
+
+	--- STEP 3 JOIN SPAZIALE
+	update
+		ubic_allaccio
+	set
+		acq_sn_alla = 'NO',
+		acq_idrete = yy.acq_idrete
+	from
+		(select
+			distinct auc.idgis id_ubic_contatore,
+			ard.idgis acq_idrete
+		from
+			acq_ubic_contatore auc
+		join acq_rete_distrib ard on
+			st_INTERSECTS(ard.geom,
+			auc.geom)
+		where
+			auc.idgis in (
+			select
+				id_ubic_contatore
+				from
+					ubic_allaccio ua
+				where
+					acq_sn_alla is null
+			)) yy
+	where
+		ubic_allaccio.id_ubic_contatore = yy.id_ubic_contatore;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
