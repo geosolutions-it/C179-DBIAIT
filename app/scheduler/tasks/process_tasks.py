@@ -172,6 +172,24 @@ class GraphTemp(BaseProcessTask):
         pass
 
 
+class PuntiClorazione(BaseProcessTask):
+    algorithm = u"populate_stats_cloratore"
+    name = u"Punti Clorazione su rete e adduzione"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
+class SchemaAcquedottistico(BaseProcessTask):
+    algorithm = u"populate_schema_acq"
+    name = u"Schema Acquedottistico"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
 process_mapper = {
     u"Generazione grafo (rete idrica e fognaria)": Networks,
     u"In attesa del grafo": GraphTemp,
@@ -183,5 +201,7 @@ process_mapper = {
     u"Abitanti equivalenti trattati da depuratori o scarico diretto": AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto,
     u"Archivi pompe": ArchiviPompe,
     u"Acquedotto": Acquedotto,
-    u"Fognatura": Fognatura
+    u"Fognatura": Fognatura,
+    u"Punti Clorazione su rete e adduzione": PuntiClorazione,
+    u"Schema Acquedottistico": SchemaAcquedottistico
 }

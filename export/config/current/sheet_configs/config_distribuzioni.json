@@ -34,7 +34,8 @@
                 { "name": "acq_vol_utenze.sumdomestichevolfatt","alias": "sumdomestichevolfatt"},
                 { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
                 { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
-                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"}
+                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"},
+                { "name": "stats_cloratore.counter","alias": "count_cloratori"}
             ],
             "table": {
                 "name": "acq_rete_distrib"
@@ -68,6 +69,17 @@
                     "on": [
                         "acq_vol_utenze.ids_codice_orig_acq",
                         "acq_rete_distrib.codice_ato"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "stats_cloratore"
+                    },
+                    "on": [
+                        "acq_rete_distrib.idgis",
+                        "stats_cloratore.id_rete"
                     ],
                     "cond": "="
                 }
@@ -106,7 +118,8 @@
                 { "name": "acq_vol_utenze.sumdomestichevolfatt","alias": "sumdomestichevolfatt"},
                 { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
                 { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
-                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"}
+                { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"},
+                { "name": "stats_cloratore.counter","alias": "count_cloratori"}
             ],
             "table": {
                 "name": "a_acq_rete_distrib"
@@ -140,6 +153,17 @@
                     "on": [
                         "acq_vol_utenze.ids_codice_orig_acq",
                         "a_acq_rete_distrib.codice_ato"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "stats_cloratore"
+                    },
+                    "on": [
+                        "a_acq_rete_distrib.idgis",
+                        "stats_cloratore.id_rete"
                     ],
                     "cond": "="
                 }
@@ -188,7 +212,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9800"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9800"
                 }
             ]},
         { "id": "55300", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } }},

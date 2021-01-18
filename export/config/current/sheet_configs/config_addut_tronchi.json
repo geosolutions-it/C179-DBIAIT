@@ -65,13 +65,13 @@
                     "params": {
                         "field": "41200",
                         "cond": [{
-                            "and": [
+                            "or": [
                               {"lookup": "{41500}" ,"operator": ">=", "value": 2014},
                               {"operator":  "!=", "value": null}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 2014 and the value is null"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is 2014 and the value is null"
                 }
             ]
         },
@@ -82,13 +82,13 @@
                     "params": {
                         "field": "41400",
                         "cond": [{
-                            "and": [
+                            "or": [
                               {"lookup": "{41500}" ,"operator": ">=", "value": 2002},
                               {"operator":  "!=", "value": null}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is 2002 and the value is null"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is 2002 and the value is null"
                 }
             ]},
 
@@ -108,13 +108,13 @@
                     "params": {
                         "field": "41400",
                         "cond": [{
-                            "and": [
+                            "or": [
                               {"operator": "<=", "value": "{REF_YEAR}"},
-                              {"operator": "!=", "value": 9999}
+                              {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Value is minor of the ref_year and is not 9999"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9999"
                 }
             ]},
 

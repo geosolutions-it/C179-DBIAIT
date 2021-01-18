@@ -1,4 +1,6 @@
 import pathlib
+import re
+
 import openpyxl
 
 from datetime import datetime
@@ -7,8 +9,9 @@ from openpyxl.utils import cell
 from django.conf import settings
 from django.db import connections, ProgrammingError
 
-from app.scheduler.utils import dictfetchall, translate_schema_to_db_alias
+from app.scheduler.utils import dictfetchall, translate_schema_to_db_alias, translate_schema_to_enum
 from app.scheduler.tasks.export_definitions.domains_parser import Domains
+from app.scheduler.tasks.export_definitions.municipalities_parser import Municipalities
 from app.scheduler.tasks.export_definitions.config_scraper import XlsExportConfig
 
 from .export_base import ExportBase
@@ -42,7 +45,8 @@ class ExportXls(ExportBase):
         step = 1
 
         # fetch all_domains info
-        all_domains = Domains()
+        all_domains = Domains(schema=translate_schema_to_enum(self.orm_task.schema), year=self.ref_year)
+        municipalities = Municipalities(schema=translate_schema_to_enum(self.orm_task.schema), year=self.ref_year)
 
         # load seed *.xlsx file
         seed_path = settings.EXPORT_XLS_SEED_FILE.substitute()
@@ -58,8 +62,8 @@ class ExportXls(ExportBase):
                 self.execute_pre_process(pre_process)
             except Exception as e:
                 self.logger.error(
-                    f"Procedure '{pre_process}' called by sheet '{sheet['sheet']}' FAILED with:\n"
-                    f"{type(e).__name__}: {e}.\n"
+                    f"Procedure '{pre_process}' called by sheet '{sheet['sheet']}' FAILED with: "
+                    f"{type(e).__name__}: {e}. "
                     f"Skipping '{sheet['sheet']}' sheet generation."
                 )
                 continue
@@ -109,8 +113,8 @@ class ExportXls(ExportBase):
                         cursor.execute(source)
                     except ProgrammingError as e:
                         self.logger.error(
-                            f"Fetching source for sheet '{sheet['sheet']}' failed with:\n"
-                            f"{type(e).__name__}: {e}.\n"
+                            f"Fetching source for sheet '{sheet['sheet']}' failed with: "
+                            f"{type(e).__name__}: {e}. "
                             f"Source: '{source}'."
                         )
                         continue
@@ -122,20 +126,35 @@ class ExportXls(ExportBase):
                 sheet_row = {}
 
                 for column in sheet["columns"]:
-                    warning_log = "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: {E}" if not column['warning'] else column['warning']
+                    message = "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Error: {E}" if not column['warning'] else column['warning']
                     try:
                         transformed_value = column["transformer"].apply(
-                            row=raw_data_row, domains=all_domains
+                            row=raw_data_row, domains=all_domains, municipalities=municipalities
                         )
                     except KeyError as e:
                         transformed_value = None
                     except TypeError as e:
                         transformed_value = None
                     except Exception as e:
-                        message = (
-                            warning_log.replace("{SHEET}", sheet["sheet"]).replace("{ROW}", str(first_empty_row)).replace("{FIELD}", column['id']).replace("{E}", e.args[0])
+                        warning_log = message or "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Transformation error"
+
+                        warning_to_log = (
+                            warning_log.replace("{SHEET}", sheet["sheet"])
+                            .replace("{ROW}", str(first_empty_row))
+                            .replace("{FIELD}", column.get("alias", column['id']))
+                            .replace("{CODICE_ATO}", raw_data_row.get("codice_ato", ""))
+                            .replace("{E}", e.args[0].strip('\n'))
+                            .replace("{REF_YEAR}", str(self.ref_year or datetime.today().year))
                         )
-                        self.logger.error(message)
+
+                        if '{custom:' in warning_log:
+                            re_pattern = re.compile('.*{custom:(.*)},')
+                            custom_field_name = re.match(re_pattern, message.lower()).group(1)
+                            custom_field_value = raw_data_row.get(custom_field_name, "")
+                            warning_to_log = warning_to_log.replace("{custom:" + custom_field_name + "},",
+                                                                    f"{custom_field_name.upper()}: {custom_field_value},")
+
+                        self.logger.error(warning_to_log)
                         #  self.logger.error(
                         #      f"Trasformazione: Error occurred during transformation of column with "
                         #      f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
@@ -150,27 +169,32 @@ class ExportXls(ExportBase):
                         try:
                             if not validator["validator"].validate(sheet_row, self.ref_year):
                                 message = validator.get("warning", "")
-                                column_letter = coord_id_mapping.get(
-                                    str(column["id"]), None
-                                )
+                                # column_letter = coord_id_mapping.get(
+                                #     str(column["id"]), None
+                                # )
+                                # {custom:codice_ato} ->
 
-                                if message:
-                                    message = (
-                                        message.replace("{SHEET}", sheet["sheet"])
-                                        .replace("{ROW}", str(first_empty_row))
-                                        .replace("{FIELD}", column_letter)
-                                    )
-                                    self.logger.error(message)
-                                else:
-                                    self.logger.error(
-                                        f"Validation failed for cell '{column_letter}{first_empty_row}' "
-                                        f"in the '{sheet['sheet']}' sheet."
-                                    )
+                                warning_log = message or "Foglio: {SHEET}, Riga:{ROW}, Codice ato: {CODICE_ATO}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Validation error"
+
+                                warning_to_log = warning_log.replace("{SHEET}", sheet["sheet"])\
+                                    .replace("{ROW}", str(first_empty_row))\
+                                    .replace("{FIELD}", column.get("alias", column['id']))\
+                                    .replace("{CODICE_ATO}", raw_data_row.get("codice_ato", ""))\
+                                    .replace("{REF_YEAR}", str(self.ref_year or datetime.today().year))
+
+                                if '{custom:' in warning_log:
+                                    re_pattern = re.compile('.*{custom:(.*)},')
+                                    custom_field_name = re.match(re_pattern, message.lower()).group(1)
+                                    custom_field_value = raw_data_row.get(custom_field_name, "")
+                                    warning_to_log = warning_to_log.replace("{custom:" + custom_field_name + "},", f"{custom_field_name.upper()}: {custom_field_value},")
+
+                                self.logger.warning(warning_to_log)
+
                         except Exception as e:
                             self.logger.error(
                                 f"Validation: Error occurred during validation of column with "
-                                f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
-                                f"{type(e).__name__}: {e}.\n"
+                                f"ID '{column['id']}' in row '{first_empty_row}' in sheet '{sheet['sheet']}': "
+                                f"{type(e).__name__}: {e.args[0]}.".strip("\n")
                             )
                 # insert sheet_row into excel
                 for column_id, value in sheet_row.items():
@@ -186,8 +210,8 @@ class ExportXls(ExportBase):
                     except Exception as e:
                         self.logger.error(
                             f"Excel Config: Error occurred during inserting value to the column with "
-                            f"ID '{column_id}' in row '{first_empty_row}' in sheet '{sheet['sheet']}':\n"
-                            f"{type(e).__name__}: {e}.\n"
+                            f"ID '{column_id}' in row '{first_empty_row}' in sheet '{sheet['sheet']}': "
+                            f"{type(e).__name__}: {e.args[0]}.".strip("\n")
                         )
 
                 first_empty_row += 1

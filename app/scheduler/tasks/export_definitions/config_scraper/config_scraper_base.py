@@ -1,5 +1,6 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pypika import Query, Table, Field, JoinType
+from pypika.functions import Cast
 
 from app.scheduler.utils import COMPARISON_OPERATORS_MAPPING
 from app.scheduler.tasks.export_definitions.exceptions import ExportConfigError
@@ -34,23 +35,32 @@ class BaseExportConfig:
                     function = field.get("function", None)
 
                     if function is None:
-                        fields.append(
-                            Field(
+                        value = Field(
                                 field["name"].split(".")[1],
                                 table=Table(field["name"].split(".")[0]),
                             ).as_(field.get("alias", field["name"]))
-                        )
+
+                        if cast_is_required(field):
+                            value = Cast(value, field.get("cast", None))\
+                                .as_(field.get("alias", field["name"]))
+
+                        fields.append(value)
 
                     else:
                         f = Field(
                             field["name"].split(".")[1],
                             table=Table(field["name"].split(".")[0]),
-                        )
-                        fields.append(
-                            SQL_FUNCTION_MAPPING[function](f).as_(
+                        ).as_(field.get("alias", field["name"]))
+
+                        func = SQL_FUNCTION_MAPPING[function](f).as_(
                                 field.get("alias", field["name"])
-                            )
-                        )
+                            ).as_(field.get("alias", field["name"]))
+
+                        if cast_is_required(field):
+                            func = Cast(func, field.get("cast", None))\
+                                .as_(field.get("alias", field["name"]))
+
+                        fields.append(func)
 
                 query = Query.from_(table)
 
@@ -107,6 +117,10 @@ class BaseExportConfig:
                 sql_sources.append(str(query))
 
         return sql_sources
+
+
+def cast_is_required(field: dict) -> bool:
+    return True if field.get("cast", None) else False
 
 
 class ExportConfigIterator:

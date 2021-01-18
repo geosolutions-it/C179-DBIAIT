@@ -22,7 +22,9 @@
                 {"name": "fgn_lunghezza_allacci.lunghezza_allaccio","alias": "lunghezza_allaccio"},
                 {"name": "fgn_vol_utenze.utenze_prod_auth","alias": "utenze_prod_auth"},
                 {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
-                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"}
+                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"},
+                {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista"},
+                {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera"}
             ],
             "table": {
                 "name": "a_fgn_rete_racc"
@@ -100,7 +102,9 @@
                 {"name": "fgn_lunghezza_allacci.lunghezza_allaccio","alias": "lunghezza_allaccio"},
                 {"name": "fgn_vol_utenze.utenze_prod_auth","alias": "utenze_prod_auth"},
                 {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
-                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"}
+                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"},
+                {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista"},
+                {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera"}
             ],
             "table": {
                 "name": "fgn_rete_racc"
@@ -179,7 +183,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET} - Riga: {ROW}, Campo: {FIELD}: Field is not 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not 0"
                 }
             ]},
         {"id": "60300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port"}}},
