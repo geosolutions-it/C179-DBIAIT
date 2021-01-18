@@ -904,3 +904,28 @@ CREATE TABLE DBIAIT_ANALYSIS.schema_acq(
     denominazione_schema_acq	text,
     primary key (codice_area_poe, tipo_infr)
 );
+
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.acq_allaccio;
+CREATE TABLE DBIAIT_ANALYSIS.acq_allaccio(
+	id_cassetta		VARCHAR(32),
+    id_condotta     VARCHAR(32),
+    id_derivazione     VARCHAR(32),
+    lungh_all     DOUBLE PRECISION,
+    tipo     VARCHAR(100)
+
+);
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_contatori_cass_cont;
+CREATE TABLE DBIAIT_ANALYSIS.ubic_contatori_cass_cont(
+    id_ubic_contatore     VARCHAR(32),
+    id_cass_cont     VARCHAR(32)
+);
+
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_allaccio;
+CREATE TABLE DBIAIT_ANALYSIS.ubic_allaccio(
+    id_ubic_contatore     VARCHAR(32),
+    acq_sn_alla     VARCHAR(32),
+    acq_idrete     VARCHAR(32)
+);
