@@ -3285,3 +3285,79 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
+
+
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_allaccio_v2(
+) RETURNS BOOLEAN AS $$
+begin
+
+	DELETE FROM acq_allaccio;
+
+	insert into acq_allaccio
+	SELECT id_cassetta,id_condotta, id_derivazione,
+	(sum(lung_alla) + sum(lung_alla_ril)) lungh_all, case when sum(lung_alla) > 0 then 'SIMULATO' else 'REALE' end as tipo
+	FROM (
+		-- 1) Realmente mappati
+		SELECT z.id_cassetta, z.id_condotta, z.id_derivazione, ac.sub_funzione,
+			0 nr_allacci, 0 lung_alla, z.cnt nr_allacci_ril, z.leng lung_alla_ril
+		FROM acq_condotta ac,
+		(
+			SELECT id_cass_cont id_cassetta, id_condotta,id_derivazione, count(0) cnt, sum(leng) leng
+			FROM (
+				SELECT d.id_condotta,id_derivazione,id_cass_cont, st_length(c.geom) leng
+				FROM acq_derivazione d, acq_condotta c,
+				(
+					select distinct on(cc.idgis) cc.id_derivazione, uc.id_cass_cont
+					from acq_cass_cont cc, acq_ubic_contatore uc
+					where uc.ID_IMPIANTO is not null
+					and uc.idgis not in (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999')
+					and uc.id_cass_cont = cc.idgis
+				) cc
+				WHERE
+					d.idgis = cc.id_derivazione
+					and c.sub_funzione = 3
+					and c.geom&&st_buffer(d.geom, snap_tolerance())
+					and st_intersects(c.geom, st_buffer(d.geom, snap_tolerance()))
+			) t GROUP BY t.id_condotta, t.id_derivazione, t.id_cass_cont
+		) z
+		WHERE ac.idgis = z.id_condotta
+		AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null)
+		AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL)
+		AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null)
+		AND (ac.D_GESTORE = 'PUBLIACQUA')
+		AND ac.SUB_FUNZIONE in (1, 4)
+		UNION ALL
+		-- 2) SIMULAZIONE ALLACCIO
+		SELECT z.id_cassetta, z.id_condotta, z.id_derivazione, ac.sub_funzione,
+			z.cnt nr_allacci, z.leng lung_alla, 0 nr_allacci_ril, 0 lung_alla_ril
+		FROM acq_condotta ac,
+		(
+			SELECT cc.id_cass_cont id_cassetta, d.id_condotta, cc.id_derivazione, count(0) cnt, sum(CASE WHEN st_length(l.geom)>50 THEN 50 ELSE st_length(l.geom) END) leng
+			FROM acq_deriv_auto d, acq_link_deriv l,
+			(
+					select distinct on(cc.idgis) cc.idgis, cc.id_derivazione , uc.id_cass_cont
+					from acq_cass_cont_auto cc, acq_ubic_contatore uc
+					where uc.ID_IMPIANTO is not null
+					and uc.idgis not in (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999')
+					and uc.id_cass_cont = cc.idgis
+			) cc
+			WHERE
+				d.idgis=cc.id_derivazione
+				and l.id_derivazione = d.idgis
+				and l.id_cass_cont = cc.idgis
+			group by d.id_condotta, cc.id_derivazione, cc.id_cass_cont
+		) z
+		WHERE ac.idgis = z.id_condotta
+		AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null)
+		AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL)
+		AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null)
+		AND (ac.D_GESTORE = 'PUBLIACQUA')
+		AND ac.SUB_FUNZIONE in (1, 4)
+	) x GROUP BY id_cassetta, id_condotta, id_derivazione, sub_funzione;
+
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
