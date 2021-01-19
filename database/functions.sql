@@ -2089,13 +2089,13 @@ BEGIN
 	)
 	SELECT
 		'FOGNATURA', codice_ato, idgis, to_integer(id_materiale), idx_materiale,
-		to_integer(diametro), idx_diametro, anno, idx_anno, round(cast(lunghezza as numeric), 6), idx_lunghezza, to_integer(id_conservazione),
+		to_integer(diametro), idx_diametro, anno, idx_anno, lunghezza*1000 , idx_lunghezza, to_integer(id_conservazione),
 		id_refluo_trasportato::INTEGER, funziona_gravita, recapito, geom
 	FROM FOGNAT_TRONCHI
 	UNION ALL
 	SELECT
 		'COLLETTORE', codice_ato, idgis, to_integer(id_materiale), idx_materiale,
-		to_integer(diametro), idx_diametro, anno, idx_anno, ROUND(cast(lunghezza as numeric), 6), idx_lunghezza, to_integer(id_conservazione),
+		to_integer(diametro), idx_diametro, anno, idx_anno, lunghezza*1000, idx_lunghezza, to_integer(id_conservazione),
 		id_refluo_trasportato::INTEGER, funziona_gravita, recapito, geom
 	FROM COLLETT_TRONCHI;
 
@@ -3140,11 +3140,16 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_ubic_allaccio(
 ) RETURNS BOOLEAN AS $$
 begin
+
+	-- PULIZIA PRECENTI CALCOLAZIONI E LOG STAND-ALONE
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ubic_allaccio';
 	DELETE FROM ubic_contatori_cass_cont;
 	DELETE FROM ubic_allaccio;
 
 
-	-- AGGIUNTA TUTTI GLI UBIC_CONTATORI DISPONIBILI
+	-- AGGIUNTA TUTTI GLI UBIC_CONTATORI DISPONIBILI SECONDO I FILTRI FORNITI
+	-- UTILIZZO DI UNA TABELLA DI SISTEMA PER EVITARE DI RIFARE LA SELECT CON I FILTRI
+	-- PER LE QUERY SUCCESSIVE, COSI' ACCELLERIAMO L'ESECUZIONE DEL PROCESSO
 	insert into ubic_contatori_cass_cont
 	select
 		distinct id_ubic_contatore, id_cass_cont
@@ -3161,6 +3166,7 @@ begin
 		'COPDCI0000',
 		'COPDIN0000');
 
+	-- INSERIMENTO DGLI ALLACCI NELLA TABELLA FINALE DI UBIC_ALLACCIO
 	insert
 		into
 		ubic_allaccio(id_ubic_contatore,
@@ -3171,74 +3177,76 @@ begin
 	from
 		ubic_contatori_cass_cont;
 
---	UPDATE VALORE CHE MATCHANO LA TAB ACQ_ALLACCIO COMPRESI I PARENT DEFALCO
+	-- UPDATE ID_RETE E ACQ_SN_ALLA PER GLI ID_UBIC_CONTATORE
+	-- CHE MATCHANO LA TABELLA ACQ_ALLACCIO E TUTTI PARENT DEFALCO ATTIVI
 	update ubic_allaccio
 	set acq_sn_alla = xx.acq_sn_alla, acq_idrete=xx.id_rete
 	from (
-        with defalco_parent as (select
-            distinct id_ubic_contatore,
-            id_cass_cont
-        from
-            ubic_contatori_cass_cont
-        join utenza_defalco on
-            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999')
-        select
-            c.id_ubic_contatore,
-            case
-                when aa.id_cassetta is not null then 'SI'
-                else null
-            end acq_sn_alla,
-            case
-                when aca.id_rete is not null then aca.id_rete
-                else null
-            end id_rete
-        from
-            (select id_ubic_contatore, id_cass_cont from ubic_contatori_cass_cont
-            union all
-            select * from defalco_parent) c
-        join acq_allaccio aa on
-            c.id_cass_cont = aa.id_cassetta
-        join acq_cond_altro aca on
-            aca.idgis = aa.id_condotta
-    ) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
+	with defalco_parent as (select
+		distinct id_ubic_contatore,
+		id_cass_cont
+	from
+		ubic_contatori_cass_cont
+	join utenza_defalco on
+		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999')
+	select
+		c.id_ubic_contatore,
+		case
+			when aa.id_cassetta is not null then 'SI'
+			else null
+		end acq_sn_alla,
+		case
+			when aca.id_rete is not null then aca.id_rete
+			else null
+		end id_rete
+	from
+		(select id_ubic_contatore, id_cass_cont from ubic_contatori_cass_cont
+		union all
+		select * from defalco_parent) c
+	join acq_allaccio aa on
+		c.id_cass_cont = aa.id_cassetta
+	join acq_cond_altro aca on
+		aca.idgis = aa.id_condotta) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
 
-	--- STEP 2: SETTAGGIO A SI PER GLI ID CHE MATCHANO UTENZA DIVISIONALE (CHILD DEFALCO) CON IDRETE DEL PARENT DEFALCO
+	-- UPDATE ID_RETE E ACQ_SN_ALLA PER GLI ID_UBIC_CONTATORE
+	-- PER TUTTI I DIVISIONALI (CHILD) DEFALCO ASSEGNANDO ID_RETE DEL PARENT
 	update ubic_allaccio
 	set acq_sn_alla = xx.acq_sn_alla, acq_idrete=xx.acq_idrete
 	from (
-        with defalco_parent as (select
-            distinct id_ubic_contatore id_defalco
-        from
-            ubic_contatori_cass_cont
-        join utenza_defalco on
-            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999'),
-        defalco_divisionali as (
-        select
-            distinct ud.idgis_divisionale,
-            ud.idgis_defalco
-        from utenza_defalco ud
-        join defalco_parent dp on ud.idgis_defalco =dp.id_defalco)
-        select dd.idgis_divisionale id_ubic_contatore,
-        case
-                when aa.acq_idrete is not null then 'SI'
-                else null
-            end acq_sn_alla,
-            case
-                when aa.acq_idrete is not null then aa.acq_idrete
-            else null
-            end  acq_idrete
-        from defalco_divisionali dd
-        inner join ubic_allaccio aa on aa.id_ubic_contatore = dd.idgis_defalco
-    ) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
+	with defalco_parent as (select
+		distinct id_ubic_contatore id_defalco
+	from
+		ubic_contatori_cass_cont
+	join utenza_defalco on
+		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999'),
+	defalco_divisionali as (
+	select
+		distinct ud.idgis_divisionale,
+		ud.idgis_defalco
+	from utenza_defalco ud
+	join defalco_parent dp on ud.idgis_defalco =dp.id_defalco)
+	select dd.idgis_divisionale id_ubic_contatore,
+	case
+			when aa.acq_idrete is not null then 'SI'
+			else null
+		end acq_sn_alla,
+		case
+			when aa.acq_idrete is not null then aa.acq_idrete
+		else null
+		end  acq_idrete
+	from defalco_divisionali dd
+	inner join ubic_allaccio aa on aa.id_ubic_contatore = dd.idgis_defalco) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
+
+	select count(*) from ubic_allaccio ua where acq_idrete is null
+
+	-- AGGIUNTO NEL LOG STAND_ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO ID_RETE VUORO
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT id_ubic_contatore, 'ubic_allaccio', 'Contatore non allacciato alla rete acquedotto'
+	FROM ubic_allaccio where acq_idrete is null;
 
 
-	-- TODO mettere log stand-alone (vedi spec)
-	-- EXECUTE 'INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	--	SELECT id_ubic_contatore, ''ubic_allaccio'', ''ontatore non allacciato alla rete acquedotto''
-	--	FROM ubic_allaccio where acq_idrete is null';
-
-
-	--- STEP 3 JOIN SPAZIALE
+	-- RECUPERO INFORMAZIONE ID_RETE DELLA RETE DI DISTRIBUZIONE PER GLI
+	-- ID_UBIC_CONTATORE I QUALI NON HANNO UNA RELAZIONE DIRETTA CON I CONTATORI
 	update
 		ubic_allaccio
 	set
@@ -3264,6 +3272,13 @@ begin
 			)) yy
 	where
 		ubic_allaccio.id_ubic_contatore = yy.id_ubic_contatore;
+
+	-- INSERIMENTO NEL LOG STAND-ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO
+	-- ID_RETE NULLO
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT id_ubic_contatore, 'ubic_allaccio', 'Contatore non allacciato ad acquedotto e fuori rete distribuzione'
+	FROM ubic_allaccio where acq_idrete is null;
+
 
 	RETURN TRUE;
 END;

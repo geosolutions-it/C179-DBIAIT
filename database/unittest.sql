@@ -162,8 +162,8 @@ begin
     perform test_assertTrue('ID_rete wrong, expected PAARDI00000000001511 but found ' || id_rete, 'PAARDI00000000001511' = id_rete );
     perform test_assertTrue('sn_alla wrong, expected SI but found ' || sn_alla, 'SI' = sn_alla );
     --- check if the count of the selected id_rete is still the same
-    SELECT acq_sn_alla,acq_idrete into sn_alla,id_rete FROM dbiait_analysis.ubic_allaccio ua WHERE id_ubic_contatore ='PAAUCO00000002080963';
-    perform test_assertTrue('ID_rete wrong, expected PAARDI00000000001441 but found ' || id_rete, 'PAARDI00000000001441' = id_rete );
+    SELECT acq_sn_alla,acq_idrete into sn_alla,id_rete FROM dbiait_analysis.ubic_allaccio ua WHERE id_ubic_contatore ='PAAUCO00000002073907';
+    perform test_assertTrue('ID_rete wrong, expected PAARDI00000000001511 but found ' || id_rete, 'PAARDI00000000001511' = id_rete );
     perform test_assertTrue('sn_alla wrong, expected SI but found ' || sn_alla, 'NO' = sn_alla );
     -- check if the total rows are the same
 

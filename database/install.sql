@@ -905,16 +905,17 @@ CREATE TABLE DBIAIT_ANALYSIS.schema_acq(
     primary key (codice_area_poe, tipo_infr)
 );
 
-
-DROP TABLE IF EXISTS DBIAIT_ANALYSIS.acq_allaccio;
-CREATE TABLE DBIAIT_ANALYSIS.acq_allaccio(
-	id_cassetta		VARCHAR(32),
-    id_condotta     VARCHAR(32),
-    id_derivazione     VARCHAR(32),
-    lungh_all     DOUBLE PRECISION,
-    tipo     VARCHAR(100)
-
-);
+-- to decide the table rename
+--ALTER TABLE acq_allaccio RENAME TO acq_lung_allaccio_group;
+--DROP TABLE IF EXISTS DBIAIT_ANALYSIS.acq_allaccio;
+--CREATE TABLE DBIAIT_ANALYSIS.acq_allaccio(
+--	  id_cassetta		VARCHAR(32),
+--    id_condotta     VARCHAR(32),
+--    id_derivazione     VARCHAR(32),
+--    lungh_all     DOUBLE PRECISION,
+--    tipo     VARCHAR(100)
+--
+--);
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_contatori_cass_cont;
 CREATE TABLE DBIAIT_ANALYSIS.ubic_contatori_cass_cont(
