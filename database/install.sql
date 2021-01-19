@@ -929,3 +929,15 @@ CREATE TABLE DBIAIT_ANALYSIS.ubic_allaccio(
     acq_sn_alla     VARCHAR(32),
     acq_idrete     VARCHAR(32)
 );
+
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.utenza_defalco;
+CREATE TABLE DBIAIT_ANALYSIS.utenza_defalco(
+    imp_defalco     bigint,
+    imp_divisionale     bigint,
+    idgis_defalco     VARCHAR(32),
+    idgis_divisionale     VARCHAR(32),
+    dt_iniz_val     date,
+    dt_fine_val     date,
+    annotazioni     text
+);

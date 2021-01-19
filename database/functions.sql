@@ -3171,45 +3171,72 @@ begin
 	from
 		ubic_contatori_cass_cont;
 
---	UPDATE VALORE CHE MATCHANO LA TAB ACQ_ALLACCIO
+--	UPDATE VALORE CHE MATCHANO LA TAB ACQ_ALLACCIO COMPRESI I PARENT DEFALCO
 	update ubic_allaccio
 	set acq_sn_alla = xx.acq_sn_alla, acq_idrete=xx.id_rete
 	from (
-	select
-		c.id_ubic_contatore,
-		case
-			when aa.id_cassetta is not null then 'SI'
-			else null
-		end acq_sn_alla,
-		case
-			when aca.id_rete is not null then aca.id_rete
-			else null
-		end id_rete
-	from
-		ubic_contatori_cass_cont c
-	join acq_allaccio aa on
-		c.id_cass_cont = aa.id_cassetta
-	join acq_cond_altro aca on
-		aca.idgis = aa.id_condotta) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
+        with defalco_parent as (select
+            distinct id_ubic_contatore,
+            id_cass_cont
+        from
+            ubic_contatori_cass_cont
+        join utenza_defalco on
+            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999')
+        select
+            c.id_ubic_contatore,
+            case
+                when aa.id_cassetta is not null then 'SI'
+                else null
+            end acq_sn_alla,
+            case
+                when aca.id_rete is not null then aca.id_rete
+                else null
+            end id_rete
+        from
+            (select id_ubic_contatore, id_cass_cont from ubic_contatori_cass_cont
+            union all
+            select * from defalco_parent) c
+        join acq_allaccio aa on
+            c.id_cass_cont = aa.id_cassetta
+        join acq_cond_altro aca on
+            aca.idgis = aa.id_condotta
+    ) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
 
-	--- STEP 2: SETTAGGIO A SI PER GLI ID CHE MATCHANO UTENZA DEFALCO
-	update
-		ubic_allaccio
-	set
-		acq_sn_alla = 'SI',
-		acq_idrete = xx.idgis_defalco
-	from
-		(select
-			id_ubic_contatore,
-			idgis_defalco
-		from
-			ubic_contatori_cass_cont
-		join utenza_defalco on
-			id_ubic_contatore = utenza_defalco.idgis_defalco) xx
-	where
-		ubic_allaccio.id_ubic_contatore = xx.id_ubic_contatore;
+	--- STEP 2: SETTAGGIO A SI PER GLI ID CHE MATCHANO UTENZA DIVISIONALE (CHILD DEFALCO) CON IDRETE DEL PARENT DEFALCO
+	update ubic_allaccio
+	set acq_sn_alla = xx.acq_sn_alla, acq_idrete=xx.acq_idrete
+	from (
+        with defalco_parent as (select
+            distinct id_ubic_contatore id_defalco
+        from
+            ubic_contatori_cass_cont
+        join utenza_defalco on
+            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999'),
+        defalco_divisionali as (
+        select
+            distinct ud.idgis_divisionale,
+            ud.idgis_defalco
+        from utenza_defalco ud
+        join defalco_parent dp on ud.idgis_defalco =dp.id_defalco)
+        select dd.idgis_divisionale id_ubic_contatore,
+        case
+                when aa.acq_idrete is not null then 'SI'
+                else null
+            end acq_sn_alla,
+            case
+                when aa.acq_idrete is not null then aa.acq_idrete
+            else null
+            end  acq_idrete
+        from defalco_divisionali dd
+        inner join ubic_allaccio aa on aa.id_ubic_contatore = dd.idgis_defalco
+    ) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
+
 
 	-- TODO mettere log stand-alone (vedi spec)
+	-- EXECUTE 'INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	--	SELECT id_ubic_contatore, ''ubic_allaccio'', ''ontatore non allacciato alla rete acquedotto''
+	--	FROM ubic_allaccio where acq_idrete is null';
+
 
 	--- STEP 3 JOIN SPAZIALE
 	update
@@ -3233,7 +3260,7 @@ begin
 				from
 					ubic_allaccio ua
 				where
-					acq_sn_alla is null
+					acq_idrete is null
 			)) yy
 	where
 		ubic_allaccio.id_ubic_contatore = yy.id_ubic_contatore;
