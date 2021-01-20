@@ -1417,7 +1417,7 @@ BEGIN
 	-- INSERT INTO ACQ_ALLACCIO CON AGGREGAZIONE NECESSARIA
 	INSERT INTO acq_allaccio
     SELECT id_cassetta,id_condotta, id_derivazione,
-        (sum(lung_alla) + sum(lung_alla_ril)) lungh_all, case when sum(lung_alla) > 0 then 'SIMULATO' else 'REALE' end as tipo
+        (sum(lung_alla) + sum(lung_alla_ril)) lungh_all, case when sum(lung_alla) > 0 then 'SIMULATO' else 'RILEVATO' end as tipo
     FROM support_acq_allacci
     GROUP BY id_cassetta, id_condotta, id_derivazione, sub_funzione;
 
