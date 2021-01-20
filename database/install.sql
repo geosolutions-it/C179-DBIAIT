@@ -898,9 +898,8 @@ SELECT AddGeometryColumn ('dbiait_analysis', 'area_poe', 'geom', 25832, 'MULTIPO
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.schema_acq;
 CREATE TABLE DBIAIT_ANALYSIS.schema_acq(
-	codice_area_poe		VARCHAR(32),
-    tipo_infr	VARCHAR(100),
+    idgis       VARCHAR(32),
 	codice_schema_acq		text,
     denominazione_schema_acq	text,
-    primary key (codice_area_poe, tipo_infr)
+    primary key (idgis)
 );
