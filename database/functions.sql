@@ -1296,14 +1296,32 @@ BEGIN
                 select distinct on(cc.idgis) cc.id_derivazione, uc.id_cass_cont
                 from acq_cass_cont cc, acq_ubic_contatore uc
                 where uc.ID_IMPIANTO is not null
-                and uc.idgis not in (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999')
+                and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
                 and uc.id_cass_cont = cc.idgis
             ) cc
             WHERE
                 d.idgis = cc.id_derivazione
                 and c.sub_funzione = 3
-                and c.geom&&st_buffer(d.geom, v_tol)
-                and st_intersects(c.geom, st_buffer(d.geom, v_tol))
+                and c.geom&&st_buffer(d.geom, snap_tolerance())
+                and st_intersects(c.geom, st_buffer(d.geom, snap_tolerance()))
+        ) t GROUP BY t.id_condotta, t.id_derivazione, t.id_cass_cont
+        union ALL
+        SELECT id_cass_cont id_cassetta, id_condotta,id_derivazione, count(0) cnt, 0 leng
+        FROM (
+            SELECT d.id_condotta,id_derivazione,id_cass_cont, 0 leng
+            FROM acq_derivazione d, acq_condotta c,
+            (
+                select distinct on(cc.idgis) cc.id_derivazione, uc.id_cass_cont
+                from acq_cass_cont cc, acq_ubic_contatore uc
+                where uc.ID_IMPIANTO is not null
+                and EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                and uc.id_cass_cont = cc.idgis
+            ) cc
+            WHERE
+                d.idgis = cc.id_derivazione
+                and c.sub_funzione = 3
+                and c.geom&&st_buffer(d.geom, snap_tolerance())
+                and st_intersects(c.geom, st_buffer(d.geom, snap_tolerance()))
         ) t GROUP BY t.id_condotta, t.id_derivazione, t.id_cass_cont
     ) z
     WHERE ac.idgis = z.id_condotta
@@ -1315,7 +1333,7 @@ BEGIN
     UNION ALL
     -- 2) SIMULAZIONE ALLACCIO
     SELECT z.id_cassetta, z.id_condotta, z.id_derivazione, ac.sub_funzione,
-        z.cnt nr_allacci, z.leng lung_alla, 0 nr_allacci_ril, 0 lung_alla_ril
+        sum(z.cnt) nr_allacci, sum(z.leng) lung_alla, 0 nr_allacci_ril, 0 lung_alla_ril
     FROM acq_condotta ac,
     (
         SELECT cc.id_cass_cont id_cassetta, d.id_condotta, cc.id_derivazione, count(0) cnt, sum(CASE WHEN st_length(l.geom)>50 THEN 50 ELSE st_length(l.geom) END) leng
@@ -1324,7 +1342,7 @@ BEGIN
                 select distinct on(cc.idgis) cc.idgis, cc.id_derivazione , uc.id_cass_cont
                 from acq_cass_cont_auto cc, acq_ubic_contatore uc
                 where uc.ID_IMPIANTO is not null
-                and uc.idgis not in (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999')
+                and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
                 and uc.id_cass_cont = cc.idgis
         ) cc
         WHERE
@@ -1332,13 +1350,31 @@ BEGIN
             and l.id_derivazione = d.idgis
             and l.id_cass_cont = cc.idgis
         group by d.id_condotta, cc.id_derivazione, cc.id_cass_cont
+        UNION ALL
+        SELECT ss.id_cass_cont id_cassetta, d.id_condotta, ss.id_derivazione, count(0) cnt, 0 leng
+        FROM acq_deriv_auto d, acq_link_deriv l,
+        (
+                select distinct on(cc.idgis) cc.idgis, cc.id_derivazione , uc.id_cass_cont
+                from acq_cass_cont_auto cc, acq_ubic_contatore uc
+                where uc.ID_IMPIANTO is not null
+                and EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                and uc.id_cass_cont = cc.idgis
+        ) ss
+        WHERE
+            d.idgis=ss.id_derivazione
+            and l.id_derivazione = d.idgis
+            and l.id_cass_cont = ss.idgis
+        group by d.id_condotta, ss.id_derivazione, ss.id_cass_cont
     ) z
     WHERE ac.idgis = z.id_condotta
     AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null)
     AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL)
     AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null)
     AND (ac.D_GESTORE = 'PUBLIACQUA')
-    AND ac.SUB_FUNZIONE in (1, 4);
+    AND ac.SUB_FUNZIONE in (1, 4)
+	group by z.id_cassetta,z.id_condotta, z.id_derivazione, ac.sub_funzione;
+   -- PAACCA00000001630138
+
 
     UPDATE ACQ_COND_ALTRO
     SET
@@ -1355,26 +1391,26 @@ BEGIN
                 END tipo_infr,
             sum(nr_allacci) nr_allacci_sim, sum(lung_alla) lu_allacci_sim,
             sum(nr_allacci_ril) nr_allacci_ril, sum(lung_alla_ril) lu_allacci_ril
-        FROM (select * from support_acq_allacci)xx group by id_condotta,sub_funzione
+        FROM (select * from support_acq_allacci) xx group by id_condotta,sub_funzione
     ) w WHERE w.idgis = ACQ_COND_ALTRO.idgis;
-	
+
 	--Aggiornamento codice ATO (su DISTRIBUZIONI)
 	UPDATE ACQ_COND_ALTRO
 	SET codice_ato = t.codice_ato
 	FROM ACQ_RETE_DISTRIB t
-	WHERE t.idgis = ACQ_COND_ALTRO.id_rete 
+	WHERE t.idgis = ACQ_COND_ALTRO.id_rete
 	AND ACQ_COND_ALTRO.tipo_infr = 'DISTRIBUZIONI';
 	--Aggiornamento codice ATO (su ADDUZIONI)
 	UPDATE ACQ_COND_ALTRO
 	SET codice_ato = t.codice_ato
 	FROM ACQ_ADDUTTRICE t
-	WHERE t.idgis = ACQ_COND_ALTRO.id_rete 
+	WHERE t.idgis = ACQ_COND_ALTRO.id_rete
 	AND ACQ_COND_ALTRO.tipo_infr = 'ADDUZIONI';
-	
+
 	--GROUP BY x ACQ_LUNGHEZZA_ALLACCI
 	INSERT INTO acq_lunghezza_allacci(idgis, codice_ato, tipo_infr, nr_allacci_ril, lung_alla_ril, nr_allacci, lung_alla)
-	SELECT id_rete, codice_ato, tipo_infr, sum(nr_allacci_ril), sum(lu_allacci_ril)/1000, sum(nr_allacci_sim), sum(lu_allacci_sim)/1000 
-	FROM ACQ_COND_ALTRO 
+	SELECT id_rete, codice_ato, tipo_infr, sum(nr_allacci_ril), sum(lu_allacci_ril)/1000, sum(nr_allacci_sim), sum(lu_allacci_sim)/1000
+	FROM ACQ_COND_ALTRO
 	WHERE id_rete is NOT NULL
 	GROUP BY id_rete, codice_ato, tipo_infr;
 
@@ -1384,42 +1420,42 @@ BEGIN
         (sum(lung_alla) + sum(lung_alla_ril)) lungh_all, case when sum(lung_alla) > 0 then 'SIMULATO' else 'REALE' end as tipo
     FROM support_acq_allacci
     GROUP BY id_cassetta, id_condotta, id_derivazione, sub_funzione;
-	
+
 	--ANOMALIES 1
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT idgis, 'ACQUEDOTTO', 'Derivazione che non interseca la condotta di rete indicata nella derivazione (per problemi di snap)' 
-	FROM acq_derivazione ad 
+	SELECT idgis, 'ACQUEDOTTO', 'Derivazione che non interseca la condotta di rete indicata nella derivazione (per problemi di snap)'
+	FROM acq_derivazione ad
 	where EXISTS(
-		SELECT c.idgis 
+		SELECT c.idgis
 		from acq_condotta c
-		WHERE (c.D_AMBITO = 'AT3' OR c.D_AMBITO IS null) 
-		AND (c.D_STATO = 'ATT' OR c.D_STATO = 'FIP' OR c.D_STATO IS NULL) 
-		AND (c.SN_FITTIZIA = 'NO' OR c.SN_FITTIZIA IS null) 
-		AND (c.D_GESTORE = 'PUBLIACQUA') 
-		AND c.SUB_FUNZIONE in (1, 4)				
+		WHERE (c.D_AMBITO = 'AT3' OR c.D_AMBITO IS null)
+		AND (c.D_STATO = 'ATT' OR c.D_STATO = 'FIP' OR c.D_STATO IS NULL)
+		AND (c.SN_FITTIZIA = 'NO' OR c.SN_FITTIZIA IS null)
+		AND (c.D_GESTORE = 'PUBLIACQUA')
+		AND c.SUB_FUNZIONE in (1, 4)
 		AND c.idgis=ad.id_condotta
 	)
 	AND NOT EXISTS(
-		SELECT d.idgis 
+		SELECT d.idgis
 		FROM acq_derivazione d, acq_condotta c
 		WHERE d.id_condotta = c.idgis
-		
-		AND (c.D_AMBITO = 'AT3' OR c.D_AMBITO IS null) 
-		AND (c.D_STATO = 'ATT' OR c.D_STATO = 'FIP' OR c.D_STATO IS NULL) 
-		AND (c.SN_FITTIZIA = 'NO' OR c.SN_FITTIZIA IS null) 
-		AND (c.D_GESTORE = 'PUBLIACQUA') 
+
+		AND (c.D_AMBITO = 'AT3' OR c.D_AMBITO IS null)
+		AND (c.D_STATO = 'ATT' OR c.D_STATO = 'FIP' OR c.D_STATO IS NULL)
+		AND (c.SN_FITTIZIA = 'NO' OR c.SN_FITTIZIA IS null)
+		AND (c.D_GESTORE = 'PUBLIACQUA')
 		AND c.SUB_FUNZIONE in (1, 4)
-				
+
 		AND c.geom&&ST_BUFFER(d.geom, v_tol)
 		AND st_intersects(c.geom,ST_BUFFER(d.geom, v_tol))
 		AND d.idgis=ad.idgis
 	);
 	-- ANOMALIES 2
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT idgis, 'ACQUEDOTTO', 'Derivazione che interseca la condotta di rete ma non interseca alcuna condotta di allacciamento' 
-	FROM acq_derivazione ad 
+	SELECT idgis, 'ACQUEDOTTO', 'Derivazione che interseca la condotta di rete ma non interseca alcuna condotta di allacciamento'
+	FROM acq_derivazione ad
 	WHERE NOT EXISTS(
-		SELECT d.idgis 
+		SELECT d.idgis
 		FROM acq_derivazione d, acq_condotta c
 		WHERE c.sub_funzione = 3
 		AND c.geom&&ST_BUFFER(d.geom, v_tol)
@@ -1429,24 +1465,24 @@ BEGIN
 
 	--ANOMALIES 3
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	select idgis, 'ACQUEDOTTO', 'Utenza che non risulta allacciata a nessuna rete'  
-	from acq_ubic_contatore uc 
-	where uc.ID_IMPIANTO is not null and 
+	select idgis, 'ACQUEDOTTO', 'Utenza che non risulta allacciata a nessuna rete'
+	from acq_ubic_contatore uc
+	where uc.ID_IMPIANTO is not null and
 	uc.sorgente IS null and EXISTS(
 		select idgis from (
 			SELECT idgis FROM acq_cass_cont acc where id_derivazione is null
 			union ALL
 			SELECT idgis FROM acq_cass_cont_auto acc where id_derivazione is null
-		) t where t.idgis = uc.id_cass_cont 
+		) t where t.idgis = uc.id_cass_cont
 	);
 
 	RETURN TRUE;
-	
+
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- determine number and length of allacci FGN
 -- (Ref. 7.2. FOGNATURA)
