@@ -14,6 +14,6 @@
    ],
    "columns":[
       {"id": "71100","transformation": {"func": "DIRECT", "params": {"field": "ids_codice"}}},
-      {"id": "71300","transformation": {"func": "DIRECT", "params": {"field": "id_comune_istat"}}}
+      {"id": "71300","transformation": {"func": "DECODE_COM", "params": { "field": "id_comune_istat" }}}
    ]
 }

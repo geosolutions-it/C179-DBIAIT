@@ -6,8 +6,10 @@
         {
             "fields": [
                 {"name":"acq_captazione.geom", "alias": "geom"},
-                {"name":"acq_captazione.geom", "alias": "x_proj", "function": "ST_ROUND_X"},
-                {"name":"acq_captazione.geom", "alias": "y_proj", "function": "ST_ROUND_Y"},
+
+                {"name":"acq_captazione.x_proj", "alias": "x_proj", "cast": "NUMERIC(18,6)"},
+                {"name":"acq_captazione.y_proj", "alias": "y_proj", "cast": "NUMERIC(18,6)"},
+
                 {"name":"acq_captazione.codice_ato","alias": "codice_ato"}
             ],
             "table": {
@@ -18,8 +20,10 @@
         {
             "fields": [
                 {"name":"a_acq_captazione.geom", "alias": "geom"},
-                {"name":"a_acq_captazione.geom", "alias": "x_proj", "function": "ST_ROUND_X"},
-                {"name":"a_acq_captazione.geom", "alias": "y_proj", "function": "ST_ROUND_Y"},
+
+                {"name":"a_acq_captazione.x_proj", "alias": "x_proj", "cast": "NUMERIC(18,6)"},
+                {"name":"a_acq_captazione.y_proj", "alias": "y_proj", "cast": "NUMERIC(18,6)"},
+
                 {"name":"a_acq_captazione.codice_ato","alias": "codice_ato"}
             ],
             "table": {

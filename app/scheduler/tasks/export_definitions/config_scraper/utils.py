@@ -33,7 +33,7 @@ config_sources_schema = schema.Or(
                     str, lambda f: f.upper() in SUPPORTED_SQL_FUNCTIONS
                 ),
                 schema.Optional("cast"): schema.And(
-                    str, lambda f: True if 'VARCHAR' in f.upper() else f.upper() in SUPPORTED_SQL_CASTS
+                    str, lambda f: True if 'VARCHAR' in f.upper() or 'NUMERIC' in f.upper() else f.upper() in SUPPORTED_SQL_CASTS
                 ),
             }
         ],
