@@ -905,17 +905,17 @@ CREATE TABLE DBIAIT_ANALYSIS.schema_acq(
     primary key (codice_area_poe, tipo_infr)
 );
 
--- to decide the table rename
---ALTER TABLE acq_allaccio RENAME TO acq_lung_allaccio_group;
---DROP TABLE IF EXISTS DBIAIT_ANALYSIS.acq_allaccio;
---CREATE TABLE DBIAIT_ANALYSIS.acq_allaccio(
---	  id_cassetta		VARCHAR(32),
---    id_condotta     VARCHAR(32),
---    id_derivazione     VARCHAR(32),
---    lungh_all     DOUBLE PRECISION,
---    tipo     VARCHAR(100)
---
---);
+ALTER TABLE acq_allaccio RENAME TO acq_lunghezza_allacci;
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.acq_allaccio;
+CREATE TABLE DBIAIT_ANALYSIS.acq_allaccio(
+    id_cassetta       VARCHAR(32),
+    id_condotta     VARCHAR(32),
+    id_derivazione     VARCHAR(32),
+    lungh_all     DOUBLE PRECISION,
+    tipo     VARCHAR(100)
+
+);
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_contatori_cass_cont;
 CREATE TABLE DBIAIT_ANALYSIS.ubic_contatori_cass_cont(
@@ -941,4 +941,16 @@ CREATE TABLE DBIAIT_ANALYSIS.utenza_defalco(
     dt_iniz_val     date,
     dt_fine_val     date,
     annotazioni     text
+);
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.support_acq_allacci;
+CREATE TABLE DBIAIT_ANALYSIS.support_acq_allacci(
+	id_cassetta			VARCHAR(32),
+	id_condotta			VARCHAR(32),
+	id_derivazione			VARCHAR(32),
+	sub_funzione		INTEGER,
+	nr_allacci	INTEGER,
+	lung_alla	double precision,
+	nr_allacci_ril	INTEGER,
+	lung_alla_ril	double precision
 );
