@@ -1320,8 +1320,8 @@ BEGIN
             WHERE
                 d.idgis = cc.id_derivazione
                 and c.sub_funzione = 3
-                and c.geom&&st_buffer(d.geom, snap_tolerance())
-                and st_intersects(c.geom, st_buffer(d.geom, snap_tolerance()))
+                and c.geom&&st_buffer(d.geom, v_tol)
+                and st_intersects(c.geom, st_buffer(d.geom, v_tol))
         ) t GROUP BY t.id_condotta, t.id_derivazione, t.id_cass_cont
     ) z
     WHERE ac.idgis = z.id_condotta
@@ -1419,6 +1419,11 @@ BEGIN
     SELECT id_cassetta,id_condotta, id_derivazione,
         (sum(lung_alla) + sum(lung_alla_ril)) lungh_all, case when sum(lung_alla) > 0 then 'SIMULATO' else 'RILEVATO' end as tipo
     FROM support_acq_allacci
+    WHERE id_cassetta in (select distinct on(cc.idgis) uc.id_cass_cont
+	    from acq_cass_cont_auto cc, acq_ubic_contatore uc
+	    where uc.ID_IMPIANTO is not null
+	    and not EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+	    and uc.id_cass_cont = cc.idgis)
     GROUP BY id_cassetta, id_condotta, id_derivazione, sub_funzione;
 
 	--ANOMALIES 1
@@ -1743,127 +1748,157 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_shape(
 BEGIN
 	
 	DELETE FROM ACQ_SHAPE;
-	
-	INSERT INTO ACQ_SHAPE(
-		 tipo_rete 
-		,ids_codice
-		,ids_codi_1
-		,id_materia
-		,idx_materi
-		,diametro  
-		,idx_diamet
-		,anno	  
-		,idx_anno  
-		,lunghez_1 
-		,idx_lunghe
-		,id_conserv
-		,gestione_p 
-		,id_tipo_te
-		,protezione
-		,geom
-	)
-	SELECT 
-		'ADDUZIONE', codice_ato, idgis, id_materiale, idx_materiale, diametro, idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, id_conservazione, pressione, id_tipo_telecon, protezione_catodica, geom 
-	FROM addut_tronchi
-	UNION ALL
-	SELECT 
-		'DISTRIBUZIONE', codice_ato, idgis, id_materiale, idx_materiale, diametro, idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, id_conservazione, pressione, id_tipo_telecon, 0::BIT protezione_catodica, geom 
-	FROM distrib_tronchi;
-	
-	-- (comune_nome, id_comune_istat)	
-	UPDATE ACQ_SHAPE
-	SET comune_nom = t.denom, id_comune_ = t.cod_istat
-	FROM (
-		--SELECT c.idgis, cc.denom, cc.cod_istat
-		--FROM acq_condotta c, confine_comunale cc
-		--WHERE c.cod_comune = cc.pro_com_tx
-		SELECT c.idgis, cc.denom, cc.cod_istat
-		FROM (
-			select c.idgis, coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
-			from acq_condotta c left JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com
-		) c, confine_comunale cc
-		WHERE c.cod_comune = cc.pro_com
-		--LIMIT 10
-	) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
-	-- (tipo_acqua)
-	UPDATE ACQ_SHAPE
-	SET tipo_acqua = t.valore_netsic
-	FROM (
-		SELECT c.idgis, d.valore_netsic 
-		FROM acq_condotta c, all_domains d
-		WHERE d.dominio_gis = 'D_T_ACQUA_IDR'
-		AND d.valore_gis = c.d_tipo_acqua
-	) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
-	--(funziona_gravita)
-	UPDATE ACQ_SHAPE
-	SET funziona_g = t.valore_netsic
-	FROM (
-		SELECT c.idgis, d.valore_netsic 
-		FROM acq_condotta c, all_domains d
-		WHERE d.dominio_gis = 'D_T_SCORRIM'
-		AND d.valore_gis = c.d_funzionam
-	) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
-	--(copertura)
-	UPDATE ACQ_SHAPE
-	SET copertura = t.valore_netsic
-	FROM (
-		SELECT c.idgis, d.valore_netsic
-		FROM acq_condotta c, all_domains d 
-		WHERE COALESCE(c.d_pavimentaz,'SCO') in ('SCO','ALT') 
-		AND d.dominio_gis = 'D_UBICAZIONE'
-		AND d.valore_gis = COALESCE(c.d_ubicazione,'SCO')
-	) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
-	UPDATE ACQ_SHAPE
-	SET copertura = t.valore_netsic
-	FROM (
-		SELECT c.idgis, d.valore_netsic
-		FROM acq_condotta c, all_domains d 
-		WHERE COALESCE(c.d_pavimentaz,'SCO') NOT IN ('SCO','ALT') 
-		AND d.dominio_gis = 'D_MAT_PAVIMENT'
-		AND d.valore_gis = c.d_pavimentaz
-	) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
-	--(profondita, idx_profon)
-	UPDATE ACQ_SHAPE
-	SET 
-		profondita = c.prof_media, 
-		idx_profon = case when c.prof_media <> 0 THEN 'A' ELSE 'X' END
-	FROM acq_condotta c
-	WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
-	--(press_med_eserc, riparazioni_allacci, riparazioni_rete, allacci, lunghezza_allacci)
-	UPDATE ACQ_SHAPE
-	SET 
-		allacci = coalesce(nr_allacci_ril,0) + coalesce(nr_allacci_sim,0),
-		lunghezza_ = coalesce(lu_allacci_ril,0) + coalesce(lu_allacci_sim,0)
-	FROM acq_cond_altro c
-	WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
-	
-	UPDATE ACQ_SHAPE
-	SET 
-		press_med_ = c.pr_avg,
-		RIPARAZION = c.rip_alla,
-		RIPARAZI_1 = c.rip_rete
-	FROM acq_cond_ext c
-	WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
-	
-	--(protezione_catodica)-> solo DISTRIBUZIONE (ADDUZIONE precedentemente calcolato)
-	UPDATE ACQ_SHAPE
-	SET protezione = 1::BIT
-	FROM acq_condotta c
-	WHERE c.id_sist_prot_cat is not null 
-		AND c.idgis = ACQ_SHAPE.ids_codi_1;
-	
-	--(utenze_misuratore)
-	-- TODO: ?????
-	
-	--(id_opera_stato)
-	UPDATE ACQ_SHAPE
-	SET id_opera_s = t.valore_netsic
-	FROM (
-		SELECT c.idgis, d.valore_netsic 
-		FROM acq_condotta c, all_domains d
-		WHERE d.dominio_gis = 'D_STATO'
-		AND d.valore_gis = c.d_stato
-	) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
+
+    INSERT INTO ACQ_SHAPE(
+         tipo_rete
+        ,ids_codice
+        ,ids_codi_1
+        ,id_materia
+        ,idx_materi
+        ,diametro
+        ,idx_diamet
+        ,anno
+        ,idx_anno
+        ,lunghez_1
+        ,idx_lunghe
+        ,id_conserv
+        ,gestione_p
+        ,id_tipo_te
+        ,protezione
+        ,geom
+    )
+    SELECT
+        'ADDUZIONE', codice_ato, idgis, id_materiale, idx_materiale, diametro, idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, id_conservazione, pressione, id_tipo_telecon, protezione_catodica, geom
+    FROM addut_tronchi
+    UNION ALL
+    SELECT
+        'DISTRIBUZIONE', codice_ato, idgis, id_materiale, idx_materiale, diametro, idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, id_conservazione, pressione, id_tipo_telecon, 0::BIT protezione_catodica, geom
+    FROM distrib_tronchi;
+
+    -- (comune_nome, id_comune_istat)
+    UPDATE ACQ_SHAPE
+    SET comune_nom = t.denom, id_comune_ = t.cod_istat
+    FROM (
+        --SELECT c.idgis, cc.denom, cc.cod_istat
+        --FROM acq_condotta c, confine_comunale cc
+        --WHERE c.cod_comune = cc.pro_com_tx
+        SELECT c.idgis, cc.denom, cc.cod_istat
+        FROM (
+            select c.idgis, coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
+            from acq_condotta c left JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com
+        ) c, confine_comunale cc
+        WHERE c.cod_comune = cc.pro_com
+        --LIMIT 10
+    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
+    -- (tipo_acqua)
+    UPDATE ACQ_SHAPE
+    SET tipo_acqua = t.valore_netsic
+    FROM (
+        SELECT c.idgis, d.valore_netsic
+        FROM acq_condotta c, all_domains d
+        WHERE d.dominio_gis = 'D_T_ACQUA_IDR'
+        AND d.valore_gis = c.d_tipo_acqua
+    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
+    --(funziona_gravita)
+    UPDATE ACQ_SHAPE
+    SET funziona_g = t.valore_netsic
+    FROM (
+        SELECT c.idgis, d.valore_netsic
+        FROM acq_condotta c, all_domains d
+        WHERE d.dominio_gis = 'D_T_SCORRIM'
+        AND d.valore_gis = c.d_funzionam
+    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
+    --(copertura)
+    UPDATE ACQ_SHAPE
+    SET copertura = t.valore_netsic
+    FROM (
+        SELECT c.idgis, d.valore_netsic
+        FROM acq_condotta c, all_domains d
+        WHERE COALESCE(c.d_pavimentaz,'SCO') in ('SCO','ALT')
+        AND d.dominio_gis = 'D_UBICAZIONE'
+        AND d.valore_gis = COALESCE(c.d_ubicazione,'SCO')
+    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
+    UPDATE ACQ_SHAPE
+    SET copertura = t.valore_netsic
+    FROM (
+        SELECT c.idgis, d.valore_netsic
+        FROM acq_condotta c, all_domains d
+        WHERE COALESCE(c.d_pavimentaz,'SCO') NOT IN ('SCO','ALT')
+        AND d.dominio_gis = 'D_MAT_PAVIMENT'
+        AND d.valore_gis = c.d_pavimentaz
+    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
+    --(profondita, idx_profon)
+    UPDATE ACQ_SHAPE
+    SET
+        profondita = c.prof_media,
+        idx_profon = case when c.prof_media <> 0 THEN 'A' ELSE 'X' END
+    FROM acq_condotta c
+    WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
+    --(press_med_eserc, riparazioni_allacci, riparazioni_rete, allacci, lunghezza_allacci)
+
+    UPDATE ACQ_SHAPE
+    SET
+        allacci = counter,
+        lunghezza_ = lung
+    FROM (select id_condotta, count(*) as counter,sum(lungh_all) as lung from acq_allaccio group by 1) c
+    WHERE c.id_condotta = ACQ_SHAPE.ids_codi_1;
+
+    UPDATE ACQ_SHAPE
+    SET
+        press_med_ = c.pr_avg,
+        RIPARAZION = c.rip_alla,
+        RIPARAZI_1 = c.rip_rete
+    FROM acq_cond_ext c
+    WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
+
+    --(protezione_catodica)-> solo DISTRIBUZIONE (ADDUZIONE precedentemente calcolato)
+    UPDATE ACQ_SHAPE
+    SET protezione = 1::BIT
+    FROM acq_condotta c
+    WHERE c.id_sist_prot_cat is not null
+        AND c.idgis = ACQ_SHAPE.ids_codi_1;
+
+    --(utenze_misuratore)
+    update
+        acq_shape
+    set
+        utenze_misuratore = counter
+    from
+        (
+        select
+            ids_codi_1,
+            count(*) as counter
+        from
+            acq_shape as2
+        join acq_allaccio aa on
+            as2.ids_codi_1 = aa.id_condotta
+        join acq_ubic_contatore auc on
+            auc.id_cass_cont = aa.id_cassetta
+        join utenza_sap us on
+            auc.idgis = us.id_ubic_contatore
+        where
+            us.cattariffa not in ('APB_REFIND',
+            'APBLREFIND',
+            'APBNREFCIV',
+            'APBHSUBDIS',
+            'COPDCI0000',
+            'COPDIN0000')
+            and nr_contat >1
+        group by
+            1) g
+    where
+        acq_shape.ids_codi_1 = g.ids_codi_1;
+
+
+    --(id_opera_stato)
+    UPDATE ACQ_SHAPE
+    SET id_opera_s = t.valore_netsic
+    FROM (
+        SELECT c.idgis, d.valore_netsic
+        FROM acq_condotta c, all_domains d
+        WHERE d.dominio_gis = 'D_STATO'
+        AND d.valore_gis = c.d_stato
+    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
 	
 	-- LOG ANOMALIES
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ACQ_SHAPE';
@@ -1895,7 +1930,8 @@ begin
 	AND determine_acq_allacci()
 	AND populate_acq_vol_utenze()
 	AND populate_acq_shape()
-	AND populate_ubic_allaccio();
+	AND populate_ubic_allaccio()
+	and populate_utenze_distribuzioni_adduttrici();
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -3332,3 +3368,116 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
 
+
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_utenze_distribuzioni_adduttrici(
+) RETURNS BOOLEAN AS $$
+begin
+
+	delete from utenze_distribuzioni_adduttrici;
+
+	insert into utenze_distribuzioni_adduttrici
+	with utenze_dirette as (
+	select
+		id_ubic_contatore,
+		tipo_uso
+	from
+		utenza_sap us
+	where
+		cattariffa not in ('APB_REFIND',
+		'APBLREFIND',
+		'APBNREFCIV',
+		'APBHSUBDIS')),
+	utenze_condominiali as (
+	select
+		id_ubic_contatore,
+		tipo_uso
+	from
+		utenza_sap us
+	where
+		cattariffa not in ('APB_CONDOM','APB_CONMIS')),
+	utenze_indirette as (
+	select
+		id_ubic_contatore,
+		tipo_uso,
+		u_ab
+	from
+		utenza_sap us
+	where
+		cattariffa not in ('APB_REFIND',
+		'APBLREFIND',
+		'APBNREFCIV',
+		'APBHSUBDIS')),
+	utenze_misuratore as (
+	select
+		id_ubic_contatore,
+		nr_contat
+	from
+		utenza_sap us
+	where
+		nr_contat > 1 and cattariffa not in ('APB_REFIND',
+		'APBLREFIND',
+		'APBNREFCIV',
+		'APBHSUBDIS')),
+	volume_utenze as (
+	select
+		id_ubic_contatore,
+		vol_acq_ero,
+		vol_acq_fatt
+	from
+		utenza_sap us
+	where
+		cattariffa not in ('APB_REFIND',
+		'APBLREFIND',
+		'APBNREFCIV',
+		'APBHSUBDIS')),
+	n_allacci as (select id_rete, count(*) as n_allacci
+	from acq_allaccio aa
+	join acq_cond_altro aca
+	on aa.id_condotta =aca.idgis
+	join acq_rete_distrib ard
+	on ard.idgis=aca.id_rete
+	WHERE ard.d_gestore = 'PUBLIACQUA' AND ard.d_ambito IN ('AT3', NULL) AND ard.d_stato NOT IN ('IPR','IAC') group by 1)
+	select
+		ua.acq_idrete,
+		count(ud.id_ubic_contatore) as nr_utenze_dirette,
+		sum(case when ud.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then 1 else 0 end) nr_utenze_dir_dom_e_residente,
+		sum(case when ud.tipo_uso = 'DOMESTICO RESIDENTE' then 1 else 0 end) nr_utenze_dir_residente,
+		count(uc.id_ubic_contatore) as nr_utenze_condominiali,
+		sum(uind.u_ab) as nr_utenze_indir_indirette,
+		sum(case when uind.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then u_ab else 0 end) nr_utenze_indir_domestici,
+		sum(case when uind.tipo_uso = 'DOMESTICO RESIDENTE' then u_ab else 0 end) nr_utenze_indir_residente,
+		count(um.nr_contat) as nr_utenze_misuratore,
+		sum(vu.vol_acq_ero) volume_erogato,
+		sum(vu.vol_acq_fatt) volume_fatturato,
+		nal.nr_allacci
+	from
+		acq_rete_distrib ard
+	join ubic_allaccio ua on
+		ard.idgis = ua.acq_idrete
+	LEFT JOIN utenze_dirette ud on
+		ud.id_ubic_contatore = ua.id_ubic_contatore
+	LEFT JOIN utenze_condominiali uc on
+		uc.id_ubic_contatore = ua.id_ubic_contatore
+	LEFT JOIN utenze_indirette uind on
+		uind.id_ubic_contatore = ua.id_ubic_contatore
+	LEFT JOIN utenze_misuratore um on
+		um.id_ubic_contatore = ua.id_ubic_contatore
+	LEFT JOIN volume_utenze vu on
+		vu.id_ubic_contatore = ua.id_ubic_contatore
+	LEFT JOIN n_allacci nal on
+		nal.id_rete = ard.idgis
+	where
+		ard.d_gestore = 'PUBLIACQUA'
+		and ard.d_ambito in ('AT3',
+		null)
+		and ard.d_stato not in ('IPR',
+		'IAC')
+	group by
+		acq_idrete, n_allacci;
+
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
