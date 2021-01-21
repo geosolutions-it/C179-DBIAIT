@@ -970,3 +970,49 @@ CREATE TABLE DBIAIT_ANALYSIS.utenze_distribuzioni_adduttrici(
 	volume_fatturato double precision,
 	nr_allacci integer
 );
+
+ALTER TABLE fgn_lunghezza_allacci RENAME TO fgn_lunghezza_allacci_cod_ato;
+
+ALTER TABLE FGN_ALLACCIO RENAME TO fgn_lunghezza_allacci;
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.fgn_allaccio;
+CREATE TABLE DBIAIT_ANALYSIS.fgn_allaccio(
+    id_fossa       VARCHAR(20),
+    id_condotta     VARCHAR(20),
+    id_immissione     VARCHAR(20),
+    lungh_all     DOUBLE PRECISION,
+    tipo     VARCHAR(10),
+    industriale     VARCHAR(2)
+
+);
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.support_fgn_allacci;
+CREATE TABLE DBIAIT_ANALYSIS.support_fgn_allacci(
+	id_fossa_settica			VARCHAR(20),
+	id_condotta			VARCHAR(20),
+	id_immissione			VARCHAR(20),
+	tipo			VARCHAR(20),
+	lu_allacci_c        DOUBLE PRECISION,
+	lu_allacci_c_ril        DOUBLE PRECISION,
+	lu_allacci_i        DOUBLE PRECISION,
+	lu_allacci_i_ril        DOUBLE PRECISION,
+	nr_allacci_c        INTEGER,
+	nr_allacci_c_ril        INTEGER,
+	nr_allacci_i        INTEGER,
+	nr_allacci_i_ril        INTEGER
+);
+
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_f_allaccio;
+CREATE TABLE DBIAIT_ANALYSIS.ubic_f_allaccio(
+    id_ubic_contatore     VARCHAR(20),
+    fgn_sn_alla     VARCHAR(2),
+    fgn_idrete     VARCHAR(20)
+);
+
+-- support table
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_contatori_fgn;
+CREATE TABLE DBIAIT_ANALYSIS.ubic_contatori_fgn(
+    id_fossa_settica     VARCHAR(32),
+    id_fossa     VARCHAR(32)
+);

@@ -1503,206 +1503,236 @@ BEGIN
 
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'FOGNATURA';
 	DELETE FROM FGN_ALLACCIO;
+	DELETE FROM SUPPORT_FGN_ALLACCI;
+	DELETE FROM FGN_LUNGHEZZA_ALLACCI_cod_ato;
 
-	UPDATE FGN_COND_ALTRO
-	SET 
-		 lu_allacci_c	  = w.lu_allacci_c
-		,lu_allacci_c_ril = w.lu_allacci_c_ril
-		,lu_allacci_i	  = w.lu_allacci_i
-		,lu_allacci_i_ril = w.lu_allacci_i_ril
-		,nr_allacci_c	  = w.nr_allacci_c
-		,nr_allacci_c_ril = w.nr_allacci_c_ril
-		,nr_allacci_i	  = w.nr_allacci_i
-		,nr_allacci_i_ril = w.nr_allacci_i_ril
-	FROM (
-		SELECT 
-			 sum(lu_allacci_c) as lu_allacci_c
-			,sum(lu_allacci_c_ril) as lu_allacci_c_ril
-			,sum(lu_allacci_i) as lu_allacci_i
-			,sum(lu_allacci_i_ril) as lu_allacci_i_ril
-			,sum(nr_allacci_c) as nr_allacci_c
-			,sum(nr_allacci_c_ril) as nr_allacci_c_ril
-			,sum(nr_allacci_i) as nr_allacci_i
-			,sum(nr_allacci_i_ril) as nr_allacci_i_ril
-			,x.idgis
-		FROM (
-			-- 1) Realmente mappati (utenze civili)
-			SELECT ac.idgis, ac.id_rete, ac.sub_funzione,
-				0 lu_allacci_c, z.leng lu_allacci_c_ril, 
-				0 lu_allacci_i, 0 lu_allacci_i_ril, 
-				0 nr_allacci_c, z.cnt nr_allacci_c_ril, 
-				0 nr_allacci_i, 0 nr_allacci_i_ril
-			FROM fgn_condotta ac,
-			(
-				SELECT id_condotta, count(0) cnt, sum(leng) leng 
-				FROM (
-					SELECT d.id_condotta, st_length(c.geom) leng 
-					FROM fgn_immissione d, fgn_condotta c,
-					(
-						select distinct on(fs.idgis) fs.id_immissione 
-						from fgn_fossa_settica fs, 
-						(	
-							select us.cattariffa, uct.id_fossa_settica, uct.id_impianto, uct.sorgente, uct.idgis
-							from utenza_sap us, acq_ubic_contatore uct
-							where us.id_ubic_contatore = uct.idgis
-							AND us.cattariffa NOT IN ('APB_REFIND','APBLREFIND')
-						) uc
-						where 
-						uc.ID_IMPIANTO is not null and uc.sorgente IS null and 
-						uc.id_fossa_settica = fs.idgis 
-					) cc
-					WHERE 
-						d.idgis = cc.id_immissione 
-						and c.sub_funzione = 0
-						and c.geom&&st_buffer(d.geom, v_tol)
-						and st_intersects(c.geom, st_buffer(d.geom, v_tol))
-				) t GROUP BY t.id_condotta
-			) z
-			WHERE ac.idgis = z.id_condotta	
-			AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null) 
-			AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL) 
-			AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null) 
-			AND (ac.D_GESTORE = 'PUBLIACQUA') AND ac.SUB_FUNZIONE in (1,2)
-			AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
-		
-			UNION ALL
-			-- 2) Realmente mappati (utenze industriali)
-			
-			SELECT ac.idgis, ac.id_rete, ac.sub_funzione,
-				0 lu_allacci_c, 0 lu_allacci_c_ril, 
-				0 lu_allacci_i, z.leng lu_allacci_i_ril, 
-				0 nr_allacci_c, 0 nr_allacci_c_ril, 
-				0 nr_allacci_i, z.cnt nr_allacci_i_ril
-			FROM fgn_condotta ac,
-			(
-				SELECT id_condotta, count(0) cnt, sum(leng) leng 
-				FROM (
-					SELECT d.id_condotta, st_length(c.geom) leng 
-					FROM fgn_immissione d, fgn_condotta c,
-					(
-						select distinct prod_imm.id_immissione 
-						from (
-							select * from acq_contatore c,
-							(
-								select * from rel_prod_cont
-								union all
-								select * from a_rel_prod_cont	
-							) pc
-							where c.idgis = pc.idgis_contatore
-						) prod_cont, 
-						(	
-							select us.cattariffa, uct.id_fossa_settica, uct.id_impianto, uct.sorgente, uct.idgis
-							from utenza_sap us, acq_ubic_contatore uct
-							where us.id_ubic_contatore = uct.idgis
-							AND us.cattariffa IN ('APB_REFIND','APBLREFIND')
-							--and uct.idgis = 'PAAUCO00000002082051'
-						) uc, 
-						(
-							select id_produttivo, id_immissione from fgn_rel_prod_imm 
-							union all
-							select id_produttivo, id_immissione from a_fgn_rel_prod_imm
-						) prod_imm
-						where 
-						uc.ID_IMPIANTO is not null and uc.sorgente IS null and 
-						prod_cont.id_ubic_contatore = uc.idgis and
-						prod_imm.id_produttivo = prod_cont.idgis_produttivo 
-					) cc
-					WHERE 
-						d.idgis = cc.id_immissione 
-						and c.sub_funzione = 0
-						and c.geom&&st_buffer(d.geom, v_tol)
-						and st_intersects(c.geom, st_buffer(d.geom, v_tol))
-				) t GROUP BY t.id_condotta
-			) z
-			WHERE ac.idgis = z.id_condotta	
-			AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null) 
-			AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL) 
-			AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null) 
-			AND (ac.D_GESTORE = 'PUBLIACQUA') AND ac.SUB_FUNZIONE in (1,2)
-			AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
-					
-			UNION ALL
-			-- 3) SIMULAZIONE ALLACCIO (CIVILI)
-			SELECT ac.idgis, ac.id_rete, ac.sub_funzione
-				,z.leng lu_allacci_c, 0 lu_allacci_c_ril, 
-				0 lu_allacci_i, 0 lu_allacci_i_ril, 
-				z.cnt nr_allacci_c, 0 nr_allacci_c_ril, 
-				0 nr_allacci_i, 0 nr_allacci_i_ril
-			FROM fgn_condotta ac,
-			(
-				SELECT d.id_condotta, count(0) cnt, sum(ST_LENGTH(i.geom)) leng
-				FROM fgn_immiss_auto d, fgn_link_imm i,
-				(
-						select distinct on(fs.idgis) fs.idgis, fs.id_immissione 
-						from fgn_fossa_settica fs, 
-						(
-							select us.cattariffa, uct.id_fossa_settica, uct.id_impianto, uct.sorgente, uct.idgis
-							from utenza_sap us, acq_ubic_contatore uct
-							where us.id_ubic_contatore = uct.idgis
-							AND us.cattariffa NOT IN ('APB_REFIND','APBLREFIND')
-						) uc
-						where uc.ID_IMPIANTO is not null and uc.sorgente IS null
-						and uc.id_fossa_settica = fs.idgis 
-						--and uc.idgis='PAAUCO00000002095624'
-				) cc
-				WHERE 
-					d.idgis = cc.id_immissione
-					and i.id_fossa_settica = cc.idgis
-					and i.id_immissione = cc.id_immissione
-				group by d.id_condotta
+    INSERT INTO support_fgn_allacci
+    SELECT
+        x.id_fossa_settica,
+        x.id_condotta,
+        x.id_immissione,
+        tipo,
+        sum(lu_allacci_c) as lu_allacci_c,
+        sum(lu_allacci_c_ril) as lu_allacci_c_ril,
+        sum(lu_allacci_i) as lu_allacci_i,
+        sum(lu_allacci_i_ril) as lu_allacci_i_ril,
+        sum(nr_allacci_c) as nr_allacci_c,
+        sum(nr_allacci_c_ril) as nr_allacci_c_ril,
+        sum(nr_allacci_i) as nr_allacci_i,
+        sum(nr_allacci_i_ril) as nr_allacci_i_ril
+    FROM (
+        -- 1) Realmente mappati (utenze civili)
+        SELECT ac.idgis as id_condotta, z.id_fossa_settica, z.id_immissione, ac.id_rete, 'RILEVATO' tipo,  ac.sub_funzione,
+            0 lu_allacci_c, z.leng lu_allacci_c_ril,
+            0 lu_allacci_i, 0 lu_allacci_i_ril,
+            0 nr_allacci_c, z.cnt nr_allacci_c_ril,
+            0 nr_allacci_i, 0 nr_allacci_i_ril
+        FROM fgn_condotta ac,
+        (
+            SELECT id_condotta, id_fossa_settica, id_immissione, count(0) cnt, sum(leng) leng
+            FROM (
+                SELECT d.id_condotta, id_fossa_settica, id_immissione, st_length(c.geom) leng
+                FROM fgn_immissione d, fgn_condotta c,
+                (
+                    select distinct on(fs.idgis) fs.id_immissione, id_fossa_settica
+                    from fgn_fossa_settica fs,
+                    (
+                        select uct.id_fossa_settica, uct.id_impianto, uct.idgis
+                        from utenza_sap us, acq_ubic_contatore uct
+                        where us.id_ubic_contatore = uct.idgis
+                        AND us.cattariffa NOT IN ('APB_REFIND','APBLREFIND')
+                    ) uc
+                    where
+                    uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale) and
+                    uc.id_fossa_settica = fs.idgis
+                ) cc
+                WHERE
+                    d.idgis = cc.id_immissione
+                    and c.sub_funzione = 0
+                    and c.geom&&st_buffer(d.geom, snap_tolerance())
+                    and st_intersects(c.geom, st_buffer(d.geom, snap_tolerance()))
+            ) t GROUP BY t.id_condotta, t.id_fossa_settica, t.id_immissione
+        ) z
+        WHERE ac.idgis = z.id_condotta
+        AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null)
+        AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL)
+        AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null)
+        AND (ac.D_GESTORE = 'PUBLIACQUA') AND ac.SUB_FUNZIONE in (1,2)
+        AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
 
-			) z
-			WHERE ac.idgis = z.id_condotta	
-			AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null) 
-			AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL) 
-			AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null) 
-			AND (ac.D_GESTORE = 'PUBLIACQUA') AND ac.SUB_FUNZIONE in (1,2)
-			AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
-			
-			UNION ALL
-			
-			-- 3) SIMULAZIONE ALLACCIO (INDUSTRIALI)
-			SELECT ac.idgis, ac.id_rete, ac.sub_funzione
-				,0 lu_allacci_c, 0 lu_allacci_c_ril, 
-				z.leng lu_allacci_i, 0 lu_allacci_i_ril, 
-				0 nr_allacci_c, 0 nr_allacci_c_ril, 
-				z.cnt nr_allacci_i, 0 nr_allacci_i_ril
-			FROM fgn_condotta ac,
-			(
-				SELECT d.id_condotta, count(0) cnt, sum(ST_LENGTH(i.geom)) leng
-				FROM fgn_immiss_auto d, fgn_link_imm i,
-				(
-						select distinct on(fs.idgis) fs.idgis, fs.id_immissione 
-						from fgn_fossa_settica fs, 
-						(
-							select us.cattariffa, uct.id_fossa_settica, uct.id_impianto, uct.sorgente, uct.idgis
-							from utenza_sap us, acq_ubic_contatore uct
-							where us.id_ubic_contatore = uct.idgis
-							AND us.cattariffa IN ('APB_REFIND','APBLREFIND')
-						) uc
-						where uc.ID_IMPIANTO is not null and uc.sorgente IS null
-						and uc.id_fossa_settica = fs.idgis 
-						--and uc.idgis='PAAUCO00000002095624'
-				) cc
-				WHERE 
-					d.idgis = cc.id_immissione
-					and i.id_fossa_settica = cc.idgis
-					and i.id_immissione = cc.id_immissione
-				group by d.id_condotta
+        UNION ALL
+        -- 2) Realmente mappati (utenze industriali)
 
-			) z
-			WHERE ac.idgis = z.id_condotta	
-			AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null) 
-			AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL) 
-			AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null) 
-			AND (ac.D_GESTORE = 'PUBLIACQUA') AND ac.SUB_FUNZIONE in (1,2)
-			AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
-		) x GROUP BY x.idgis
-	) w WHERE w.idgis = FGN_COND_ALTRO.idgis;
+        SELECT ac.idgis id_condotta, id_immissione, id_fossa_settica, ac.id_rete, 'RILEVATO' tipo, ac.sub_funzione,
+            0 lu_allacci_c, 0 lu_allacci_c_ril,
+            0 lu_allacci_i, z.leng lu_allacci_i_ril,
+            0 nr_allacci_c, 0 nr_allacci_c_ril,
+            0 nr_allacci_i, z.cnt nr_allacci_i_ril
+        FROM fgn_condotta ac,
+        (
+            SELECT id_condotta, id_immissione, id_fossa_settica, count(0) cnt, sum(leng) leng
+            FROM (
+                SELECT d.id_condotta, id_immissione, id_fossa_settica, st_length(c.geom) leng
+                FROM fgn_immissione d, fgn_condotta c,
+                (
+                    select distinct prod_imm.id_immissione, id_fossa_settica
+                    from (
+                        select * from acq_contatore c,
+                        (
+                            select * from rel_prod_cont
+                            union all
+                            select * from a_rel_prod_cont
+                        ) pc
+                        where c.idgis = pc.idgis_contatore
+                    ) prod_cont,
+                    (
+                        select uct.id_fossa_settica, uct.id_impianto, uct.idgis
+                        from utenza_sap us, acq_ubic_contatore uct
+                        where us.id_ubic_contatore = uct.idgis
+                        AND us.cattariffa IN ('APB_REFIND','APBLREFIND')
+                        --and uct.idgis = 'PAAUCO00000002082051'
+                    ) uc,
+                    (
+                        select id_produttivo, id_immissione from fgn_rel_prod_imm
+                        union all
+                        select id_produttivo, id_immissione from a_fgn_rel_prod_imm
+                    ) prod_imm
+                    where
+                    uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale) and
+                    prod_cont.id_ubic_contatore = uc.idgis and
+                    prod_imm.id_produttivo = prod_cont.idgis_produttivo
+                ) cc
+                WHERE
+                    d.idgis = cc.id_immissione
+                    and c.sub_funzione = 0
+                    and c.geom&&st_buffer(d.geom, snap_tolerance())
+                    and st_intersects(c.geom, st_buffer(d.geom, snap_tolerance()))
+            ) t GROUP BY t.id_condotta, id_immissione, id_fossa_settica
+        ) z
+        WHERE ac.idgis = z.id_condotta
+        AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null)
+        AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL)
+        AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null)
+        AND (ac.D_GESTORE = 'PUBLIACQUA') AND ac.SUB_FUNZIONE in (1,2)
+        AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
+
+        UNION ALL
+        -- 3) SIMULAZIONE ALLACCIO (CIVILI)
+        SELECT ac.idgis id_condotta, z.id_fossa_settica, z.id_immissione, ac.id_rete,'SIMULATO' as tipo, ac.sub_funzione
+            ,z.leng lu_allacci_c, 0 lu_allacci_c_ril,
+            0 lu_allacci_i, 0 lu_allacci_i_ril,
+            z.cnt nr_allacci_c, 0 nr_allacci_c_ril,
+            0 nr_allacci_i, 0 nr_allacci_i_ril
+        FROM fgn_condotta ac,
+        (
+            SELECT d.id_condotta, cc.id_fossa_settica, cc.id_immissione, count(0) cnt, sum(ST_LENGTH(i.geom)) leng
+            FROM fgn_immiss_auto d, fgn_link_imm i,
+            (
+                    select distinct on(fs.idgis) fs.idgis, uc.id_fossa_settica, fs.id_immissione
+                    from fgn_fossa_settica fs,
+                    (
+                        select uct.id_fossa_settica, uct.id_impianto, uct.idgis
+                        from utenza_sap us, acq_ubic_contatore uct
+                        where us.id_ubic_contatore = uct.idgis
+                        AND us.cattariffa NOT IN ('APB_REFIND','APBLREFIND')
+                    ) uc
+                    where uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                    and uc.id_fossa_settica = fs.idgis
+                    --and uc.idgis='PAAUCO00000002095624'
+            ) cc
+            WHERE
+                d.idgis = cc.id_immissione
+                and i.id_fossa_settica = cc.idgis
+                and i.id_immissione = cc.id_immissione
+            group by d.id_condotta, cc.id_fossa_settica, cc.id_immissione
+
+        ) z
+        WHERE ac.idgis = z.id_condotta
+        AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null)
+        AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL)
+        AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null)
+        AND (ac.D_GESTORE = 'PUBLIACQUA') AND ac.SUB_FUNZIONE in (1,2)
+        AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
+
+        UNION ALL
+
+        -- 3) SIMULAZIONE ALLACCIO (INDUSTRIALI)
+        SELECT ac.idgis id_condotta,z.id_fossa_settica, z.id_immissione, ac.id_rete, 'SIMULATO' as tipo, ac.sub_funzione
+            ,0 lu_allacci_c, 0 lu_allacci_c_ril,
+            z.leng lu_allacci_i, 0 lu_allacci_i_ril,
+            0 nr_allacci_c, 0 nr_allacci_c_ril,
+            z.cnt nr_allacci_i, 0 nr_allacci_i_ril
+        FROM fgn_condotta ac,
+        (
+            SELECT d.id_condotta,cc.id_fossa_settica, cc.id_immissione, count(0) cnt, sum(ST_LENGTH(i.geom)) leng
+            FROM fgn_immiss_auto d, fgn_link_imm i,
+            (
+                    select distinct on(fs.idgis) fs.idgis, uc.id_fossa_settica id_fossa_settica, fs.id_immissione
+                    from fgn_fossa_settica fs,
+                    (
+                        select uct.id_fossa_settica, uct.id_impianto, uct.idgis
+                        from utenza_sap us, acq_ubic_contatore uct
+                        where us.id_ubic_contatore = uct.idgis
+                        AND us.cattariffa IN ('APB_REFIND','APBLREFIND')
+                    ) uc
+                    where uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                    and uc.id_fossa_settica = fs.idgis
+                    --and uc.idgis='PAAUCO00000002095624'
+            ) cc
+            WHERE
+                d.idgis = cc.id_immissione
+                and i.id_fossa_settica = cc.idgis
+                and i.id_immissione = cc.id_immissione
+            group by d.id_condotta, cc.id_fossa_settica, cc.id_immissione
+
+        ) z
+        WHERE ac.idgis = z.id_condotta
+        AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null)
+        AND (ac.D_STATO = 'ATT' OR ac.D_STATO = 'FIP' OR ac.D_STATO IS NULL)
+        AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null)
+        AND (ac.D_GESTORE = 'PUBLIACQUA') AND ac.SUB_FUNZIONE in (1,2)
+        AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
+    ) x GROUP BY x.id_condotta, x.id_fossa_settica, id_immissione, tipo;
+
+    UPDATE FGN_COND_ALTRO
+    SET
+         lu_allacci_c	  = w.lu_allacci_c
+        ,lu_allacci_c_ril = w.lu_allacci_c_ril
+        ,lu_allacci_i	  = w.lu_allacci_i
+        ,lu_allacci_i_ril = w.lu_allacci_i_ril
+        ,nr_allacci_c	  = w.nr_allacci_c
+        ,nr_allacci_c_ril = w.nr_allacci_c_ril
+        ,nr_allacci_i	  = w.nr_allacci_i
+        ,nr_allacci_i_ril = w.nr_allacci_i_ril
+    FROM (
+        SELECT
+             sum(lu_allacci_c) as lu_allacci_c
+            ,sum(lu_allacci_c_ril) as lu_allacci_c_ril
+            ,sum(lu_allacci_i) as lu_allacci_i
+            ,sum(lu_allacci_i_ril) as lu_allacci_i_ril
+            ,sum(nr_allacci_c) as nr_allacci_c
+            ,sum(nr_allacci_c_ril) as nr_allacci_c_ril
+            ,sum(nr_allacci_i) as nr_allacci_i
+            ,sum(nr_allacci_i_ril) as nr_allacci_i_ril
+            ,x.idgis
+        FROM (
+            select
+                lu_allacci_c,
+                lu_allacci_c_ril,
+                lu_allacci_i,
+                lu_allacci_i_ril,
+                nr_allacci_c,
+                nr_allacci_c_ril,
+                nr_allacci_i,
+                nr_allacci_i_ril,
+                id_condotta as idgis
+            from
+                support_fgn_allacci) x GROUP BY x.idgis
+    ) w WHERE w.idgis = FGN_COND_ALTRO.idgis;
 
 
 	--
-	INSERT INTO FGN_ALLACCIO(
+	INSERT INTO FGN_LUNGHEZZA_ALLACCI(
 		idgis, codice_ato, tipo_infr, 
 		nr_allacci_c, lung_alla_c, 
 		nr_allacci_i, lung_alla_i, 
@@ -1719,11 +1749,58 @@ BEGIN
 	GROUP BY id_rete, codice_ato, tipo_infr;
 
     --- AGGREGAZIONE PER CODICE ATO PER LA LUNGHEZZA TOTALE ALLACCI
-    INSERT INTO FGN_LUNGHEZZA_ALLACCI(
+    INSERT INTO FGN_LUNGHEZZA_ALLACCI_cod_ato(
         codice_ato, lunghezza_allaccio
     )
     SELECT codice_ato, lung_alla_c + lung_alla_i + lung_alla_c_ril + lung_alla_i_ril
-    FROM FGN_ALLACCIO;
+    FROM FGN_LUNGHEZZA_ALLACCI;
+
+    INSERT INTO fgn_allaccio
+    with is_industriale as (
+    select
+        distinct on
+        (cc.idgis) uc.id_fossa_settica,
+        ac.d_tipo_utenza
+    from
+        fgn_fossa_settica cc
+    join acq_ubic_contatore uc on
+        cc.idgis = uc.id_fossa_settica
+    join acq_contatore ac on
+        ac.id_ubic_contatore = uc.idgis
+    where
+        uc.ID_IMPIANTO is not null
+        and not exists (
+        select
+            distinct idgis_divisionale
+        from
+            utenza_defalco
+        where
+            dt_fine_val = '31-12-9999'
+            and uc.idgis = idgis_divisionale))
+    select
+        sfa.id_fossa_settica id_fossa,
+        id_condotta,
+        id_immissione,
+        (sum(lu_allacci_c) + sum(lu_allacci_c_ril) + sum(lu_allacci_i)+ sum(lu_allacci_i_ril)) lung_all,
+        tipo,
+        case when d_tipo_utenza = 'IND' then 'SI' else 'NO' end as industriale
+    from
+        support_fgn_allacci sfa
+        join is_industriale is_ind on sfa.id_fossa_settica = is_ind.id_fossa_settica
+    where
+        exists (
+        select
+            id_fossa_settica
+        from
+            is_industriale ind
+        where
+            ind.id_fossa_settica = sfa.id_fossa_settica )
+    group by
+        sfa.id_fossa_settica,
+        id_condotta,
+        id_immissione,
+        tipo,
+        d_tipo_utenza;
 
 
 	--
@@ -2304,6 +2381,7 @@ BEGIN
 	AND populate_lung_rete_fgn()
 	AND determine_fgn_allacci()
 	AND populate_fgn_volumi_utenze()
+	AND populate_ubic_f_allaccio()
 	AND populate_fgn_shape();
 END;
 $$  LANGUAGE plpgsql
@@ -3483,6 +3561,156 @@ begin
 		nal.id_rete = ard.idgis
 	GROUP BY
 		ua.acq_idrete, nr_allacci;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+
+
+-------------------------------------------------------------------------------------------------------
+-- Calcola la tabella ubic_f_allaccio partendo da acq_allacci #221
+--
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.populate_ubic_f_allaccio()
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_ubic_f_allaccio(
+) RETURNS BOOLEAN AS $$
+begin
+
+	-- PULIZIA PRECENTI CALCOLAZIONI E LOG STAND-ALONE
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ubic_f_allaccio';
+	DELETE FROM ubic_contatori_fgn;
+	DELETE FROM ubic_f_allaccio;
+
+
+	-- AGGIUNTA TUTTI GLI UBIC_CONTATORI DISPONIBILI SECONDO I FILTRI FORNITI
+	-- UTILIZZO DI UNA TABELLA DI SISTEMA PER EVITARE DI RIFARE LA SELECT CON I FILTRI
+	-- PER LE QUERY SUCCESSIVE, COSI' ACCELLERIAMO L'ESECUZIONE DEL PROCESSO
+	insert into ubic_contatori_fgn
+	select
+		distinct idgis, id_fossa
+	from
+		acq_ubic_contatore as auc
+	join fgn_allaccio fa on
+		auc.id_fossa_settica = fa.id_fossa
+	where
+		auc.id_impianto is not null;
+
+	-- INSERIMENTO DGLI ALLACCI NELLA TABELLA FINALE DI ubic_f_allaccio
+	insert
+		into
+		ubic_f_allaccio(id_ubic_contatore,
+		fgn_sn_alla,
+		fgn_idrete)
+	select
+		id_ubic_contatore, null, null
+	from
+		ubic_contatori_fgn;
+
+	-- UPDATE ID_RETE E ACQ_SN_ALLA PER GLI ID_UBIC_CONTATORE
+	-- CHE MATCHANO LA TABELLA fgn_allaccio E TUTTI PARENT DEFALCO ATTIVI
+	update ubic_f_allaccio
+	set fgn_sn_alla = xx.fgn_sn_alla, fgn_idrete=xx.id_rete
+	from (
+	with defalco_parent as (select
+		distinct id_ubic_contatore,
+		id_fossa
+	from
+		ubic_contatori_fgn
+	join utenza_defalco on
+		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999')
+	select
+		c.id_ubic_contatore,
+		case
+			when aa.id_fossa is not null then 'SI'
+			else null
+		end fgn_sn_alla,
+		case
+			when aca.id_rete is not null then aca.id_rete
+			else null
+		end id_rete
+	from
+		(select id_ubic_contatore, id_fossa from ubic_contatori_fgn
+		union all
+		select id_ubic_contatore, id_fossa from defalco_parent) c
+	join fgn_allaccio aa on
+		c.id_fossa = aa.id_fossa
+	join fgn_cond_altro aca on
+		aca.idgis = aa.id_condotta) xx where ubic_f_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
+
+	-- UPDATE ID_RETE E ACQ_SN_ALLA PER GLI ID_UBIC_CONTATORE
+	-- PER TUTTI I DIVISIONALI (CHILD) DEFALCO ASSEGNANDO ID_RETE DEL PARENT
+	update ubic_f_allaccio
+	set fgn_sn_alla = xx.fgn_sn_alla, fgn_idrete=xx.id_rete
+	from (
+	with defalco_parent as (select
+		distinct id_ubic_contatore id_defalco
+	from
+		ubic_contatori_fgn
+	join utenza_defalco on
+		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999'),
+	defalco_divisionali as (
+	select
+		distinct ud.idgis_divisionale,
+		ud.idgis_defalco
+	from utenza_defalco ud
+	join defalco_parent dp on ud.idgis_defalco =dp.id_defalco)
+	select dd.idgis_divisionale id_ubic_contatore,
+	case
+			when aa.fgn_idrete is not null then 'SI'
+			else null
+		end fgn_sn_alla,
+		case
+			when aa.fgn_idrete is not null then aa.fgn_idrete
+		else null
+		end  id_rete
+	from defalco_divisionali dd
+	inner join ubic_f_allaccio aa on aa.id_ubic_contatore = dd.idgis_defalco) xx where ubic_f_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
+
+	-- AGGIUNTO NEL LOG STAND_ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO ID_RETE VUORO
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT ufa.id_ubic_contatore, 'ubic_f_allaccio', 'Contatore servito da Fognatura non allacciato'
+	from ubic_f_allaccio ufa
+	join utenza_sap us on ufa.id_ubic_contatore = us.id_ubic_contatore
+	where fgn_idrete is null and esente_fog = 0;
+
+
+	-- RECUPERO INFORMAZIONE ID_RETE DELLA RETE DI DISTRIBUZIONE PER GLI
+	-- ID_UBIC_CONTATORE I QUALI NON HANNO UNA RELAZIONE DIRETTA CON I CONTATORI
+	update
+		ubic_f_allaccio
+	set
+		fgn_sn_alla = 'NO',
+		fgn_idrete = yy.fgn_idrete
+	from
+		(select
+			distinct auc.idgis id_ubic_contatore,
+			ard.idgis fgn_idrete
+		from
+			acq_ubic_contatore auc
+		join fgn_rete_all ard on
+			st_INTERSECTS(ard.geom,
+			auc.geom)
+		where
+			auc.idgis in (
+			select
+				id_ubic_contatore
+				from
+					ubic_f_allaccio ua
+				where
+					fgn_idrete is null
+			)) yy
+	where
+		ubic_f_allaccio.id_ubic_contatore = yy.id_ubic_contatore;
+
+	-- INSERIMENTO NEL LOG STAND-ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO
+	-- ID_RETE NULLO
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT id_ubic_contatore, 'ubic_f_allaccio', 'Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
+	FROM ubic_f_allaccio where fgn_idrete is null;
+
 
 	RETURN TRUE;
 END;
