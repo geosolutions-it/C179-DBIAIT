@@ -1417,13 +1417,14 @@ BEGIN
 	-- INSERT INTO ACQ_ALLACCIO CON AGGREGAZIONE NECESSARIA
 	INSERT INTO acq_allaccio
     SELECT id_cassetta,id_condotta, id_derivazione,
-        (sum(lung_alla) + sum(lung_alla_ril)) lungh_all, case when sum(lung_alla) > 0 then 'SIMULATO' else 'RILEVATO' end as tipo
+        (sum(lung_alla) + sum(lung_alla_ril)) lungh_all, case when sum(lung_alla) > 0 then 'SIMULATO' else 'RILEVATO' end as tipo,
+        (sum(nr_allacci_ril) + sum(nr_allacci)) nr_cassette
     FROM support_acq_allacci
     WHERE id_cassetta in (select distinct on(cc.idgis) uc.id_cass_cont
-	    from acq_cass_cont_auto cc, acq_ubic_contatore uc
-	    where uc.ID_IMPIANTO is not null
-	    and not EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
-	    and uc.id_cass_cont = cc.idgis)
+        from acq_cass_cont_auto cc, acq_ubic_contatore uc
+        where uc.ID_IMPIANTO is not null
+        and not EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+        and uc.id_cass_cont = cc.idgis)
     GROUP BY id_cassetta, id_condotta, id_derivazione, sub_funzione;
 
 	--ANOMALIES 1
@@ -1836,11 +1837,12 @@ BEGIN
     WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
     --(press_med_eserc, riparazioni_allacci, riparazioni_rete, allacci, lunghezza_allacci)
 
+    -- AGGIUNTA COUNTER E LUGHEZZE
     UPDATE ACQ_SHAPE
     SET
         allacci = counter,
         lunghezza_ = lung
-    FROM (select id_condotta, count(*) as counter,sum(lungh_all) as lung from acq_allaccio group by 1) c
+    FROM (select id_condotta, sum(nr_cassette) as counter,sum(lungh_all) as lung from acq_allaccio group by 1) c
     WHERE c.id_condotta = ACQ_SHAPE.ids_codi_1;
 
     UPDATE ACQ_SHAPE
@@ -3374,70 +3376,83 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_utenze_distribuzioni_adduttr
 begin
 
 	delete from utenze_distribuzioni_adduttrici;
-
-	insert into utenze_distribuzioni_adduttrici
-	with utenze_dirette as (
-	select
-		id_ubic_contatore,
-		tipo_uso
-	from
-		utenza_sap us
-	where
-		cattariffa not in ('APB_REFIND',
-		'APBLREFIND',
-		'APBNREFCIV',
-		'APBHSUBDIS')),
-	utenze_condominiali as (
-	select
-		id_ubic_contatore,
-		tipo_uso
-	from
-		utenza_sap us
-	where
-		cattariffa not in ('APB_CONDOM','APB_CONMIS')),
-	utenze_indirette as (
-	select
-		id_ubic_contatore,
-		tipo_uso,
-		u_ab
-	from
-		utenza_sap us
-	where
-		cattariffa not in ('APB_REFIND',
-		'APBLREFIND',
-		'APBNREFCIV',
-		'APBHSUBDIS')),
-	utenze_misuratore as (
-	select
-		id_ubic_contatore,
-		nr_contat
-	from
-		utenza_sap us
-	where
-		nr_contat > 1 and cattariffa not in ('APB_REFIND',
-		'APBLREFIND',
-		'APBNREFCIV',
-		'APBHSUBDIS')),
-	volume_utenze as (
-	select
-		id_ubic_contatore,
-		vol_acq_ero,
-		vol_acq_fatt
-	from
-		utenza_sap us
-	where
-		cattariffa not in ('APB_REFIND',
-		'APBLREFIND',
-		'APBNREFCIV',
-		'APBHSUBDIS')),
-	n_allacci as (select id_rete, count(*) as n_allacci
-	from acq_allaccio aa
-	join acq_cond_altro aca
-	on aa.id_condotta =aca.idgis
-	join acq_rete_distrib ard
-	on ard.idgis=aca.id_rete
-	WHERE ard.d_gestore = 'PUBLIACQUA' AND ard.d_ambito IN ('AT3', NULL) AND ard.d_stato NOT IN ('IPR','IAC') group by 1)
-	select
+    insert into utenze_distribuzioni_adduttrici
+    with utenze_dirette as (
+        SELECT
+            id_ubic_contatore,
+            tipo_uso
+        FROM
+            utenza_sap us
+        where
+            cattariffa not in ('APB_REFIND',
+            'APBLREFIND',
+            'APBNREFCIV',
+            'APBHSUBDIS')),
+        utenze_condominiali as (
+        SELECT
+            id_ubic_contatore,
+            tipo_uso
+        FROM
+            utenza_sap us
+        where
+            cattariffa not in ('APB_CONDOM','APB_CONMIS')),
+        utenze_indirette as (
+        SELECT
+            id_ubic_contatore,
+            tipo_uso,
+            u_ab
+        FROM
+            utenza_sap us
+        where
+            cattariffa not in ('APB_REFIND',
+            'APBLREFIND',
+            'APBNREFCIV',
+            'APBHSUBDIS')),
+        utenze_misuratore as (
+        SELECT
+            id_ubic_contatore,
+            nr_contat
+        FROM
+            utenza_sap us
+        where
+            nr_contat > 1 and cattariffa not in ('APB_REFIND',
+            'APBLREFIND',
+            'APBNREFCIV',
+            'APBHSUBDIS')),
+        volume_utenze as (
+        SELECT
+            id_ubic_contatore,
+            vol_acq_ero,
+            vol_acq_fatt
+        FROM
+            utenza_sap us
+        where
+            cattariffa not in ('APB_REFIND',
+            'APBLREFIND',
+            'APBNREFCIV',
+            'APBHSUBDIS')),
+        n_allacci as (select id_rete, count(*) as nr_allacci
+            FROM acq_allaccio aa
+            join acq_cond_altro aca
+            on aa.id_condotta =aca.idgis
+            join acq_rete_distrib ard
+            on ard.idgis=aca.id_rete
+            WHERE ard.d_gestore = 'PUBLIACQUA' AND ard.d_ambito IN ('AT3', NULL) AND ard.d_stato NOT IN ('IPR','IAC') group by 1
+        ),
+        distrib_and_addr as (
+            SELECT distinct ua.acq_idrete, idgis
+            FROM
+                (SELECT distinct idgis, d_gestore,d_ambito, d_stato from acq_rete_distrib union all SELECT distinct idgis, d_gestore,d_ambito, d_stato from acq_adduttrice) ard
+            join ubic_allaccio ua on
+                ard.idgis = ua.acq_idrete
+            where
+                ard.d_gestore = 'PUBLIACQUA'
+                and ard.d_ambito in ('AT3',
+                null)
+                and ard.d_stato not in ('IPR',
+                'IAC')
+        )
+	SELECT
 		ua.acq_idrete,
 		count(ud.id_ubic_contatore) as nr_utenze_dirette,
 		sum(case when ud.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then 1 else 0 end) nr_utenze_dir_dom_e_residente,
@@ -3450,9 +3465,9 @@ begin
 		sum(vu.vol_acq_ero) volume_erogato,
 		sum(vu.vol_acq_fatt) volume_fatturato,
 		nal.nr_allacci
-	from
-		acq_rete_distrib ard
-	join ubic_allaccio ua on
+	FROM
+		distrib_and_addr ard
+	JOIN ubic_allaccio ua on
 		ard.idgis = ua.acq_idrete
 	LEFT JOIN utenze_dirette ud on
 		ud.id_ubic_contatore = ua.id_ubic_contatore
@@ -3466,15 +3481,8 @@ begin
 		vu.id_ubic_contatore = ua.id_ubic_contatore
 	LEFT JOIN n_allacci nal on
 		nal.id_rete = ard.idgis
-	where
-		ard.d_gestore = 'PUBLIACQUA'
-		and ard.d_ambito in ('AT3',
-		null)
-		and ard.d_stato not in ('IPR',
-		'IAC')
-	group by
-		acq_idrete, n_allacci;
-
+	GROUP BY
+		ua.acq_idrete, nr_allacci;
 
 	RETURN TRUE;
 END;

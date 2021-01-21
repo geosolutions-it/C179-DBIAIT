@@ -913,10 +913,10 @@ CREATE TABLE DBIAIT_ANALYSIS.acq_allaccio(
     id_condotta     VARCHAR(32),
     id_derivazione     VARCHAR(32),
     lungh_all     DOUBLE PRECISION,
-    tipo     VARCHAR(100)
+    tipo     VARCHAR(100),
+    nr_cassette     INTEGER
 
 );
-
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_contatori_cass_cont;
 CREATE TABLE DBIAIT_ANALYSIS.ubic_contatori_cass_cont(
     id_ubic_contatore     VARCHAR(32),
