@@ -954,3 +954,19 @@ CREATE TABLE DBIAIT_ANALYSIS.support_acq_allacci(
 	nr_allacci_ril	INTEGER,
 	lung_alla_ril	double precision
 );
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.utenze_distribuzioni_adduttrici;
+CREATE TABLE DBIAIT_ANALYSIS.utenze_distribuzioni_adduttrici(
+	id_rete			VARCHAR(32),
+	nr_utenze_dirette			INTEGER,
+	nr_utenze_dir_dom_e_residente			INTEGER,
+	nr_utenze_dir_residente		INTEGER,
+	nr_utenze_condominiali	INTEGER,
+	nr_utenze_indir_indirette 	INTEGER,
+	nr_utenze_indir_domestici	INTEGER,
+	nr_utenze_indir_residente	INTEGER,
+	nr_utenze_misuratore integer,
+	volume_erogato double precision,
+	volume_fatturato double precision,
+	nr_allacci integer
+);
