@@ -1,6 +1,8 @@
 import math
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.db.models import Q, ObjectDoesNotExist
 
 from app.scheduler import exceptions
@@ -128,5 +130,12 @@ class FreezeTask(BaseTask):
 
         setattr(orm_task, 'progress', 100)
         orm_task.save()
+
+        # grand permissions to specific roles
+        print(f"Granting permissions to: {', '.join(settings.DBIAIT_FRZ_SELECT_ROLES + settings.DBIAIT_FRZ_UID_ROLES + settings.DBIAIT_FRZ_ADMIN_ROLES)}")
+        with connection.cursor() as cursor:
+            cursor.execute(f"GRANT SELECT ON ALL TABLES IN SCHEMA dbiait_freeze TO {' '.join(settings.DBIAIT_FRZ_SELECT_ROLES)};")
+            cursor.execute(f"GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA dbiait_freeze TO {' '.join(settings.DBIAIT_FRZ_UID_ROLES)};")
+            cursor.execute(f"GRANT ADMINISTRATOR ON ALL TABLES IN SCHEMA dbiait_freeze TO {' '.join(settings.DBIAIT_FRZ_ADMIN_ROLES)};")
 
         print(f"Finished FREEZE execution of of year: {ref_year}")
