@@ -1016,3 +1016,12 @@ CREATE TABLE DBIAIT_ANALYSIS.ubic_contatori_fgn(
     id_fossa_settica     VARCHAR(32),
     id_fossa     VARCHAR(32)
 );
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.utenze_fognature_collettori;
+CREATE TABLE DBIAIT_ANALYSIS.utenze_fognature_collettori(
+	id_rete			VARCHAR(32),
+	nr_utenze_totali			INTEGER,
+	nr_utenze_industriali			INTEGER,
+	volume_utenze_industriali double precision,
+	volume_utenze_totali double precision
+);
