@@ -2342,11 +2342,21 @@ BEGIN
 	--(allacci, allacci_industriali, lunghezza_allaci)
 	UPDATE FGN_SHAPE
 	SET
-		allacci    = coalesce(nr_allacci_c,0) + coalesce(nr_allacci_c_ril,0),
-		allacci_in = coalesce(nr_allacci_i,0) + coalesce(nr_allacci_i_ril,0),
-		lunghezza_ = coalesce(lu_allacci_c,0) + coalesce(lu_allacci_c_ril,0) + coalesce(lu_allacci_i,0) + coalesce(lu_allacci_i_ril,0)
-	FROM fgn_cond_altro c
-	WHERE c.idgis = FGN_SHAPE.ids_codi_1;
+		allacci    = nr_allacci,
+		allacci_in = nr_allacci_ind,
+		lunghezza_ = lunghezza
+	FROM (select
+        ids_codi_1,
+        sum(lungh_all) as lunghezza,
+        sum(case when fa.industriale = 'NO' then 1 else 0 end) as nr_allacci,
+        sum(case when fa.industriale = 'SI' then 1 else 0 end) as nr_allacci_ind
+    from
+        fgn_shape fs
+    join fgn_allaccio fa on
+        fs.ids_codi_1 = fa.id_condotta
+    group by
+        1) c
+    WHERE c.ids_codi_1 = FGN_SHAPE.ids_codi_1;
 
 	--(riparazioni_allacci, riparazioni_rete)
 	UPDATE FGN_SHAPE
