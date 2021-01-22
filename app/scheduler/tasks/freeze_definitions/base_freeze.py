@@ -21,6 +21,7 @@ class BaseFreezeDefinition:
         self.config_filename = settings.EXPORT_CONF_FILE
         self.shp_file = settings.SHAPEFILE_EXPORT_CONFIG
         self.netsic_file = settings.EXPORT_XLS_SEED_FILE
+        self.db_folder = settings.DATABASE_FOLDER
         self.export_folder = f"{settings.EXPORT_FOLDER}/freeze/"
 
     def _year_config_file_exists(self, ref_year):
@@ -38,8 +39,10 @@ class BaseFreezeDefinition:
     def _create_year_folder(self, ref_year):
         try:
             export_folder = f"{settings.EXPORT_FOLDER}/config/{ref_year}"
-            if not os.path.exists(export_folder):
-                os.makedirs(export_folder, exist_ok=True)
+            self._create_folder(export_folder)
+
+            database_folder = f"{settings.EXPORT_FOLDER}/config/{ref_year}/database"
+            self._create_folder(database_folder)
 
             conf_filename = ntpath.basename(self.config_filename.substitute())
             shp_file = ntpath.basename(self.shp_file.substitute())
@@ -48,9 +51,18 @@ class BaseFreezeDefinition:
             copy(self.config_filename.substitute(), f"{export_folder}/{conf_filename}")
             copy(self.shp_file.substitute(), f"{export_folder}/{shp_file}")
             copy(self.netsic_file.substitute(), f"{export_folder}/{netsic_file}")
+            copy(f"{self.db_folder}/functions.sql", f"{database_folder}/functions.sql")
+            copy(f"{self.db_folder}/install.sql", f"{database_folder}/install.sql")
+            copy(f"{self.db_folder}/unittest.sql", f"{database_folder}/unittest.sql")
+
             return True
         except Exception as e:
             raise e
+
+    def _create_folder(self, folder_name):
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name, exist_ok=True)
+        return
 
     def _handle_sheet_files(self, ref_year):
         output_path = f"{settings.EXPORT_FOLDER}/config/{ref_year}/sheet_configs/"
