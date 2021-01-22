@@ -1421,10 +1421,11 @@ BEGIN
         (sum(nr_allacci_ril) + sum(nr_allacci)) nr_cassette
     FROM support_acq_allacci
     WHERE id_cassetta in (select distinct on(cc.idgis) uc.id_cass_cont
-        from acq_cass_cont_auto cc, acq_ubic_contatore uc
+        from acq_cass_cont_auto cc join acq_ubic_contatore uc on uc.id_cass_cont = cc.idgis
+        join acq_contatore ac on uc.idgis =ac.id_ubic_contatore
         where uc.ID_IMPIANTO is not null
         and not EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
-        and uc.id_cass_cont = cc.idgis)
+        and ac.tariffa not in ('APB_REFIND', 'APBLREFIND', 'APBNREFCIV', 'APBHSUBDIS', 'COPDCI0000', 'COPDIN0000'))
     GROUP BY id_cassetta, id_condotta, id_derivazione, sub_funzione;
 
 	--ANOMALIES 1
@@ -1949,7 +1950,7 @@ BEGIN
     update
         acq_shape
     set
-        utenze_misuratore = counter
+        UTENZE_MIS = counter
     from
         (
         select
@@ -3396,29 +3397,30 @@ begin
 	update ubic_allaccio
 	set acq_sn_alla = xx.acq_sn_alla, acq_idrete=xx.acq_idrete
 	from (
-	with defalco_parent as (select
-		distinct id_ubic_contatore id_defalco
-	from
-		ubic_contatori_cass_cont
-	join utenza_defalco on
-		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999'),
-	defalco_divisionali as (
-	select
-		distinct ud.idgis_divisionale,
-		ud.idgis_defalco
-	from utenza_defalco ud
-	join defalco_parent dp on ud.idgis_defalco =dp.id_defalco)
-	select dd.idgis_divisionale id_ubic_contatore,
-	case
-			when aa.acq_idrete is not null then 'SI'
-			else null
-		end acq_sn_alla,
-		case
-			when aa.acq_idrete is not null then aa.acq_idrete
-		else null
-		end  acq_idrete
-	from defalco_divisionali dd
-	inner join ubic_allaccio aa on aa.id_ubic_contatore = dd.idgis_defalco) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
+        with defalco_parent as (select
+            distinct id_ubic_contatore id_defalco
+        from
+            ubic_contatori_cass_cont
+        join utenza_defalco on
+            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999'),
+        defalco_divisionali as (
+        select
+            distinct ud.idgis_divisionale,
+            ud.idgis_defalco
+        from utenza_defalco ud
+        join defalco_parent dp on ud.idgis_defalco =dp.id_defalco)
+        select dd.idgis_divisionale id_ubic_contatore,
+        case
+                when aa.acq_idrete is not null then 'SI'
+                else null
+            end acq_sn_alla,
+            case
+                when aa.acq_idrete is not null then aa.acq_idrete
+            else null
+            end  acq_idrete
+        from defalco_divisionali dd
+        inner join ubic_allaccio aa on aa.id_ubic_contatore = dd.idgis_defalco
+    ) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
 
 	-- AGGIUNTO NEL LOG STAND_ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO ID_RETE VUORO
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
@@ -3538,15 +3540,18 @@ begin
         ),
         distrib_and_addr as (
             SELECT distinct ua.acq_idrete, idgis
-            FROM
-                (SELECT distinct idgis, d_gestore,d_ambito, d_stato from acq_rete_distrib union all SELECT distinct idgis, d_gestore,d_ambito, d_stato from acq_adduttrice) ard
-            join ubic_allaccio ua on
+            FROM (
+                SELECT distinct idgis, d_gestore,d_ambito, d_stato FROM acq_rete_distrib
+                UNION ALL
+                SELECT distinct idgis, d_gestore,d_ambito, d_stato from acq_adduttrice
+            ) ard
+            JOIN ubic_allaccio ua ON
                 ard.idgis = ua.acq_idrete
-            where
+            WHERE
                 ard.d_gestore = 'PUBLIACQUA'
-                and ard.d_ambito in ('AT3',
+                AND ard.d_ambito IN ('AT3',
                 null)
-                and ard.d_stato not in ('IPR',
+                AND ard.d_stato NOT IN ('IPR',
                 'IAC')
         )
 	SELECT
@@ -3598,7 +3603,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_ubic_f_allaccio(
 ) RETURNS BOOLEAN AS $$
 begin
 
-	-- PULIZIA PRECENTI CALCOLAZIONI E LOG STAND-ALONE
+    -- PULIZIA PRECENTI CALCOLAZIONI E LOG STAND-ALONE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UBIC_F_ALLACCIO';
 	DELETE FROM ubic_contatori_fgn;
 	DELETE FROM ubic_f_allaccio;
@@ -3729,8 +3734,6 @@ begin
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UBIC_F_ALLACCIO', 'Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
 	FROM ubic_f_allaccio where fgn_idrete is null;
-
-
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql

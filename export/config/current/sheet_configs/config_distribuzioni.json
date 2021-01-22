@@ -198,6 +198,8 @@
 
         {"id": "100500","transformation": { "func": "CONST", "params": { "value": "0"}}},
 
+        { "id": "-1", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
+
         { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } }},
         { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tcl" } }},
 
