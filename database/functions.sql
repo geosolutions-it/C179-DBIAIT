@@ -1302,8 +1302,8 @@ BEGIN
             WHERE
                 d.idgis = cc.id_derivazione
                 and c.sub_funzione = 3
-                and c.geom&&st_buffer(d.geom, snap_tolerance())
-                and st_intersects(c.geom, st_buffer(d.geom, snap_tolerance()))
+                and c.geom&&st_buffer(d.geom, v_tol)
+                and st_intersects(c.geom, st_buffer(d.geom, v_tol))
         ) t GROUP BY t.id_condotta, t.id_derivazione, t.id_cass_cont
         union ALL
         SELECT id_cass_cont id_cassetta, id_condotta,id_derivazione, count(0) cnt, 0 leng
@@ -1550,8 +1550,8 @@ BEGIN
                 WHERE
                     d.idgis = cc.id_immissione
                     and c.sub_funzione = 0
-                    and c.geom&&st_buffer(d.geom, snap_tolerance())
-                    and st_intersects(c.geom, st_buffer(d.geom, snap_tolerance()))
+                    and c.geom&&st_buffer(d.geom, v_tol)
+                    and st_intersects(c.geom, st_buffer(d.geom, v_tol))
             ) t GROUP BY t.id_condotta, t.id_fossa_settica, t.id_immissione
         ) z
         WHERE ac.idgis = z.id_condotta
@@ -1606,8 +1606,8 @@ BEGIN
                 WHERE
                     d.idgis = cc.id_immissione
                     and c.sub_funzione = 0
-                    and c.geom&&st_buffer(d.geom, snap_tolerance())
-                    and st_intersects(c.geom, st_buffer(d.geom, snap_tolerance()))
+                    and c.geom&&st_buffer(d.geom, v_tol)
+                    and st_intersects(c.geom, st_buffer(d.geom, v_tol))
             ) t GROUP BY t.id_condotta, id_immissione, id_fossa_settica
         ) z
         WHERE ac.idgis = z.id_condotta
