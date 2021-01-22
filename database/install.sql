@@ -971,7 +971,12 @@ CREATE TABLE DBIAIT_ANALYSIS.utenze_distribuzioni_adduttrici(
 	nr_allacci integer
 );
 
-ALTER TABLE fgn_lunghezza_allacci RENAME TO fgn_lunghezza_allacci_cod_ato;
+ALTER TABLE fgn_lunghezza_allacci RENAME TO FGN_LUNGHEZZA_ALLACCI_id_rete;
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI_id_rete;
+CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI_id_rete(
+    id_rete     VARCHAR(32),
+    lunghezza_allaccio     double precision
+);
 
 ALTER TABLE FGN_ALLACCIO RENAME TO fgn_lunghezza_allacci;
 

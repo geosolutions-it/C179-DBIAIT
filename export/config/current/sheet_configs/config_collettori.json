@@ -15,7 +15,11 @@
                 { "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
                 { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" , "function": "TO_BIT"},
                 { "name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"}
+                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"},
+                {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
+                {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"}
             ],
             "table": {
                 "name": "fgn_collettore"
@@ -42,6 +46,16 @@
                         "fgn_lunghezza_rete.codice_ato"
                     ],
                     "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_fognature_collettori"
+                    },
+                    "on": [
+                        "fgn_collettore.idgis",
+                        "utenze_fognature_collettori.id_rete"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE fgn_collettore.d_gestore = 'PUBLIACQUA' AND fgn_collettore.d_ambito IN ('AT3', NULL) AND fgn_collettore.d_stato NOT IN ('IPR','IAC')"
@@ -59,7 +73,11 @@
                 { "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
                 { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port", "function": "TO_BIT" },
                 { "name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"}
+                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"},
+                {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
+                {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"}
             ],
             "table": {
                 "name": "a_fgn_collettore"
@@ -84,6 +102,16 @@
                     "on": [
                         "a_fgn_collettore.codice_ato",
                         "fgn_lunghezza_rete.codice_ato"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_fognature_collettori"
+                    },
+                    "on": [
+                        "a_fgn_collettore.idgis",
+                        "utenze_fognature_collettori.id_rete"
                     ],
                     "cond": "="
                 }

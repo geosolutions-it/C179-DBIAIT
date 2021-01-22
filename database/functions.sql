@@ -1504,7 +1504,8 @@ BEGIN
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'FOGNATURA';
 	DELETE FROM FGN_ALLACCIO;
 	DELETE FROM SUPPORT_FGN_ALLACCI;
-	DELETE FROM FGN_LUNGHEZZA_ALLACCI_cod_ato;
+	DELETE FROM FGN_LUNGHEZZA_ALLACCI_id_rete;
+	DELETE FROM FGN_LUNGHEZZA_ALLACCI;
 
     INSERT INTO support_fgn_allacci
     SELECT
@@ -1748,12 +1749,19 @@ BEGIN
 	WHERE id_rete is NOT NULL
 	GROUP BY id_rete, codice_ato, tipo_infr;
 
-    --- AGGREGAZIONE PER CODICE ATO PER LA LUNGHEZZA TOTALE ALLACCI
-    INSERT INTO FGN_LUNGHEZZA_ALLACCI_cod_ato(
-        codice_ato, lunghezza_allaccio
+    --- AGGREGAZIONE PER IDRETE ATO PER LA LUNGHEZZA TOTALE ALLACCI
+    INSERT INTO FGN_LUNGHEZZA_ALLACCI_id_rete(
+        id_rete, lunghezza_allaccio
     )
-    SELECT codice_ato, lung_alla_c + lung_alla_i + lung_alla_c_ril + lung_alla_i_ril
-    FROM FGN_LUNGHEZZA_ALLACCI;
+    select fca.id_rete, sum(fa.lungh_all)/1000 lungh
+    from fgn_allaccio fa
+    join fgn_cond_altro fca
+    on fa.id_condotta = fca.idgis
+    join fgn_rete_racc frc
+    on frc.idgis =fca.id_rete
+    WHERE frc.d_gestore = 'PUBLIACQUA' AND frc.d_ambito IN ('AT3', NULL) AND frc.d_stato NOT IN ('IPR','IAC')
+    group by id_rete;
+
 
     INSERT INTO fgn_allaccio
     with is_industriale as (
