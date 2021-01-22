@@ -62,7 +62,7 @@ class ExportShp(ExportBase):
 
         self.starting_progress = self.orm_task.progress
         self.configure_file_logger()
-        self.logger.info("Exporting shapefile...")
+        # self.logger.info("Exporting shapefile...")
 
         qgs, processing, gdal_utils, is_windows = initQgis()
 

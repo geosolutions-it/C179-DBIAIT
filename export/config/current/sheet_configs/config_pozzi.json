@@ -645,6 +645,7 @@
          }
       },
       {"id":"15400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
+      {"id":"15400", "transformation": {"func":"DECODE_COM", "params": { "field": "cod_comune" }}},
       {"id":"17100", "transformation":{
          "func": "IF",
          "params": {

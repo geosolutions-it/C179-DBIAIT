@@ -8,6 +8,7 @@ from django.db.models import Q, ObjectDoesNotExist
 from app.scheduler import exceptions
 from app.scheduler.models import GeoPackage, Task
 from app.scheduler.utils import Schema, TaskType, TaskStatus
+from django.db import connection
 
 from .base_task import BaseTask, trace_it
 from .import_definitions.base_import import initQgis
@@ -130,5 +131,10 @@ class ImportTask(BaseTask):
 
         setattr(orm_task, 'progress', 100)
         orm_task.save()
+
+        # grant role to specific users after import status
+        print(f"Granting permissions to: {', '.join(settings.DBIAIT_ANL_SELECT_ROLES)}")
+        with connection.cursor() as cursor:
+            cursor.execute(f"GRANT SELECT ON ALL TABLES IN SCHEMA dbiait_analysis TO {' '.join(settings.DBIAIT_ANL_SELECT_ROLES)};")
 
         print(f"Finished IMPORT execution of package from: {gpkg_path}")
