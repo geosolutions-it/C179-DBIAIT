@@ -3795,3 +3795,26 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
+
+-------------------------------------------------------------------------------------------------------
+-- Associa i codici di accorpamento per idgis sulle captazioni #222
+--
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.populate_codice_capt_accorp()
+
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_codice_capt_accorp(
+) RETURNS BOOLEAN AS $$
+begin
+
+    insert into support_codice_capt_accorp
+    select ac.idgis,codice_accorp_capt codice, acc2.denom from acq_capt_conces acc
+    join acq_captazione ac
+    on ac.idgis=acc.id_captazione
+    join ACQ_CAPT_ACCORPAM acc2 on codice_accorp_capt=codice_acc;
+
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;

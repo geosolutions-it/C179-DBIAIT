@@ -44,8 +44,8 @@
             {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
-            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
+            {"name": "support_codice_capt_accorp.codice_accorp","alias": "codice_accorp"},
+            {"name": "support_codice_capt_accorp.denominazione","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -98,11 +98,11 @@
             {
                  "type": "left",
                  "table": {
-                     "name": "accorp_codice_denom"
+                     "name": "support_codice_capt_accorp"
                  },
                  "on": [
                    "acq_captazione.idgis",
-                   "accorp_codice_denom.id_captazione"
+                   "support_codice_capt_accorp.idgis"
                  ],
                  "cond": "="
             }
@@ -151,8 +151,8 @@
             {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
-            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
+            {"name": "support_codice_capt_accorp.codice_accorp","alias": "codice_accorp"},
+            {"name": "support_codice_capt_accorp.denominazione","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -205,11 +205,11 @@
             {
                  "type": "left",
                  "table": {
-                     "name": "accorp_codice_denom"
+                     "name": "support_codice_capt_accorp"
                  },
                  "on": [
-                     "accorp_codice_denom.id_captazione",
-                     "a_acq_captazione.idgis"
+                   "acq_captazione.idgis",
+                   "support_codice_capt_accorp.idgis"
                  ],
                  "cond": "="
             }

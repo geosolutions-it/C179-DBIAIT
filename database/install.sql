@@ -1017,4 +1017,11 @@ CREATE TABLE DBIAIT_ANALYSIS.utenze_fognature_collettori(
 	nr_utenze_industriali			INTEGER,
 	volume_utenze_industriali double precision,
 	volume_utenze_totali double precision
+););
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.support_codice_capt_accorp;
+CREATE TABLE DBIAIT_ANALYSIS.support_codice_capt_accorp(
+	idgis			VARCHAR(32),
+	codice_accorp_capt			VARCHAR(32),
+	denom			VARCHAR(100)
 );
