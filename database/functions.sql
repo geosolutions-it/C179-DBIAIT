@@ -2381,6 +2381,7 @@ BEGIN
 	AND populate_lung_rete_fgn()
 	AND determine_fgn_allacci()
 	AND populate_fgn_volumi_utenze()
+	and populate_utenze_fognature_collettori()
 	AND populate_ubic_f_allaccio()
 	AND populate_fgn_shape();
 END;
@@ -3711,6 +3712,62 @@ begin
 	SELECT id_ubic_contatore, 'ubic_f_allaccio', 'Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
 	FROM ubic_f_allaccio where fgn_idrete is null;
 
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+
+-------------------------------------------------------------------------------------------------------
+-- Calcola la tabella utenze_fognature_collettori per il volume delle utenze industriali #222
+--
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.populate_utenze_fognature_collettori()
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_utenze_fognature_collettori(
+) RETURNS BOOLEAN AS $$
+begin
+
+	DELETE FROM utenze_fognature_collettori;
+
+    INSERT INTO utenze_fognature_collettori
+	WITH utenze AS (
+		SELECT
+			DISTINCT ufa.fgn_idrete,
+			esente_fog,
+			cattariffa,
+			vol_fgn_fatt,
+			vol_fgn_ero
+		FROM
+			(
+			SELECT
+				DISTINCT idgis
+			FROM
+				fgn_rete_racc frr
+			WHERE frr.d_gestore = 'PUBLIACQUA' AND frr.d_ambito IN ('AT3', NULL) AND frr.d_stato NOT IN ('IPR','IAC')
+		union all
+			SELECT
+				DISTINCT idgis
+			FROM
+				fgn_collettore fc
+			WHERE fc.d_gestore = 'PUBLIACQUA' AND fc.d_ambito IN ('AT3', NULL) AND fc.d_stato NOT IN ('IPR','IAC')
+		) f
+		JOIN ubic_f_allaccio ufa ON
+			f.idgis = ufa.fgn_idrete
+		JOIN utenza_sap us ON
+			ufa.id_ubic_contatore = us.id_ubic_contatore
+	)
+	SELECT
+		fgn_idrete,
+		SUM(CASE WHEN ut.esente_fog = 0 THEN 1 ELSE 0 END) nr_utenze_totali,
+		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') THEN 1 ELSE 0 END) utenze_industriali,
+		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') THEN vol_fgn_fatt ELSE 0 END) volume_utenze_industriali,
+		SUM(CASE WHEN ut.esente_fog = 0 THEN vol_fgn_fatt ELSE 0 END) volume_utenze_totali
+	FROM
+		utenze ut
+	GROUP BY
+		fgn_idrete;
 
 	RETURN TRUE;
 END;
