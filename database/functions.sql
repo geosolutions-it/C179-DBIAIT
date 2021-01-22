@@ -43,7 +43,7 @@ $$  LANGUAGE plpgsql;
 -- Convert a string into an integer
 -- Example:
 --  select dbiait_analysis.to_integer('9')
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.to_integer(
+CREATE OR REPLACE FUNCTION public.to_integer(
 	v_number VARCHAR,
 	v_default INTEGER DEFAULT 0
 ) RETURNS INTEGER AS $$
@@ -60,7 +60,7 @@ $$  LANGUAGE plpgsql
 -- Convert a float in integer
 -- Example:
 --  select dbiait_analysis.from_float_to_int(9.4) -> 9
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.from_float_to_int(
+CREATE OR REPLACE FUNCTION public.from_float_to_int(
 	v_number FLOAT,
 	v_default INTEGER DEFAULT 0
 ) RETURNS INTEGER AS $$
@@ -3325,7 +3325,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_ubic_allaccio(
 begin
 
 	-- PULIZIA PRECENTI CALCOLAZIONI E LOG STAND-ALONE
-	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ubic_allaccio';
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UBIC_ALLACCIO';
 	DELETE FROM ubic_contatori_cass_cont;
 	DELETE FROM ubic_allaccio;
 
@@ -3422,7 +3422,7 @@ begin
 
 	-- AGGIUNTO NEL LOG STAND_ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO ID_RETE VUORO
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT id_ubic_contatore, 'ubic_allaccio', 'Contatore non allacciato alla rete acquedotto'
+	SELECT id_ubic_contatore, 'UBIC_ALLACCIO', 'Contatore non allacciato alla rete acquedotto'
 	FROM ubic_allaccio where acq_idrete is null;
 
 
@@ -3457,7 +3457,7 @@ begin
 	-- INSERIMENTO NEL LOG STAND-ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO
 	-- ID_RETE NULLO
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT id_ubic_contatore, 'ubic_allaccio', 'Contatore non allacciato ad acquedotto e fuori rete distribuzione'
+	SELECT id_ubic_contatore, 'UBIC_ALLACCIO', 'Contatore non allacciato ad acquedotto e fuori rete distribuzione'
 	FROM ubic_allaccio where acq_idrete is null;
 
 
@@ -3599,7 +3599,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_ubic_f_allaccio(
 begin
 
 	-- PULIZIA PRECENTI CALCOLAZIONI E LOG STAND-ALONE
-	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ubic_f_allaccio';
+	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UBIC_F_ALLACCIO';
 	DELETE FROM ubic_contatori_fgn;
 	DELETE FROM ubic_f_allaccio;
 
@@ -3690,7 +3690,7 @@ begin
 
 	-- AGGIUNTO NEL LOG STAND_ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO ID_RETE VUORO
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT ufa.id_ubic_contatore, 'ubic_f_allaccio', 'Contatore servito da Fognatura non allacciato'
+	SELECT ufa.id_ubic_contatore, 'UBIC_F_ALLACCIO', 'Contatore servito da Fognatura non allacciato'
 	from ubic_f_allaccio ufa
 	join utenza_sap us on ufa.id_ubic_contatore = us.id_ubic_contatore
 	where fgn_idrete is null and esente_fog = 0;
@@ -3727,7 +3727,7 @@ begin
 	-- INSERIMENTO NEL LOG STAND-ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO
 	-- ID_RETE NULLO
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT id_ubic_contatore, 'ubic_f_allaccio', 'Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
+	SELECT id_ubic_contatore, 'UBIC_F_ALLACCIO', 'Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
 	FROM ubic_f_allaccio where fgn_idrete is null;
 
 
