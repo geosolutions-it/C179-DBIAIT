@@ -136,6 +136,6 @@ class FreezeTask(BaseTask):
         with connection.cursor() as cursor:
             cursor.execute(f"GRANT SELECT ON ALL TABLES IN SCHEMA dbiait_freeze TO {' '.join(settings.DBIAIT_FRZ_SELECT_ROLES)};")
             cursor.execute(f"GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA dbiait_freeze TO {' '.join(settings.DBIAIT_FRZ_UID_ROLES)};")
-            cursor.execute(f"GRANT ADMINISTRATOR ON ALL TABLES IN SCHEMA dbiait_freeze TO {' '.join(settings.DBIAIT_FRZ_ADMIN_ROLES)};")
+            cursor.execute(f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA dbiait_freeze TO {' '.join(settings.DBIAIT_FRZ_ADMIN_ROLES)};")
 
         print(f"Finished FREEZE execution of of year: {ref_year}")
