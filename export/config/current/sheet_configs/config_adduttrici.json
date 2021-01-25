@@ -174,7 +174,7 @@
             "transformation":{
                 "func": "IF",
                 "params": {
-                    "field": "98800",
+                    "field": "lunghezza_tlc",
                     "cond": {
                         "operator": "!=",
                         "value": 0,

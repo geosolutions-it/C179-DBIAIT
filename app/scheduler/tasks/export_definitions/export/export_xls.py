@@ -94,7 +94,7 @@ class ExportXls(ExportBase):
                 )
 
             # get the index of the first empty excel row
-            first_empty_row = max(len(col) for col in excel_ws.iter_cols()) + 1
+            first_empty_row = 4
 
             with connections[
                 translate_schema_to_db_alias(self.orm_task.schema)
@@ -142,7 +142,7 @@ class ExportXls(ExportBase):
                             warning_log.replace("{SHEET}", sheet["sheet"])
                             .replace("{ROW}", str(first_empty_row))
                             .replace("{FIELD}", column.get("alias", column['id']))
-                            .replace("{CODICE_ATO}", raw_data_row.get("codice_ato", ""))
+                            .replace("{CODICE_ATO}", raw_data_row.get("codice_ato", "") or "")
                             .replace("{E}", e.args[0].strip('\n'))
                             .replace("{REF_YEAR}", str(self.ref_year or datetime.today().year))
                         )
@@ -179,7 +179,7 @@ class ExportXls(ExportBase):
                                 warning_to_log = warning_log.replace("{SHEET}", sheet["sheet"])\
                                     .replace("{ROW}", str(first_empty_row))\
                                     .replace("{FIELD}", column.get("alias", column['id']))\
-                                    .replace("{CODICE_ATO}", raw_data_row.get("codice_ato", ""))\
+                                    .replace("{CODICE_ATO}", raw_data_row.get("codice_ato", "") or "")\
                                     .replace("{REF_YEAR}", str(self.ref_year or datetime.today().year))
 
                                 if '{custom:' in warning_log:

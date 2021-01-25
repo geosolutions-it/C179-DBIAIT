@@ -36,7 +36,8 @@
                 { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
                 { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
                 { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"},
-                { "name": "stats_cloratore.counter","alias": "count_cloratori"}
+                { "name": "stats_cloratore.counter","alias": "count_cloratori"},
+                { "name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza"}
             ],
             "table": {
                 "name": "acq_rete_distrib"
@@ -131,7 +132,8 @@
                 { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
                 { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
                 { "name": "acq_vol_utenze.sumaltrovolfatt","alias": "sumaltrovolfatt"},
-                { "name": "stats_cloratore.counter","alias": "count_cloratori"}
+                { "name": "stats_cloratore.counter","alias": "count_cloratori"},
+                { "name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza"}
             ],
             "table": {
                 "name": "a_acq_rete_distrib"
@@ -194,14 +196,13 @@
         }
     ],
     "columns": [
-        { "id": "53300", "transformation": { "func": "EMPTY", "params": {"field":  null} }},
 
         {"id": "100500","transformation": { "func": "CONST", "params": { "value": "0"}}},
 
         { "id": "-1", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
 
         { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } }},
-        { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tcl" } }},
+        { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
 
         { "id": "53800", "transformation": { "func": "direct", "params": { "field": "nr_utenze_dirette" } }},
         { "id": "53900", "transformation": { "func": "direct", "params": { "field": "nr_utenze_dir_dom_e_residente" } }},
@@ -211,9 +212,9 @@
         { "id": "54300", "transformation": { "func": "direct", "params": { "field": "nr_utenze_indir_domestici" } }},
         { "id": "54400", "transformation": { "func": "direct", "params": { "field": "nr_utenze_indir_residente" } }},
         { "id": "99100", "transformation": { "func": "direct", "params": { "field": "nr_allacci" } }},
-        { "id": "54600", "transformation": { "func": "direct", "params": { "field": "nr_utenze_misuratore" } }},
-        { "id": "54700", "transformation": { "func": "direct", "params": { "field": "volume_erogato" } }},
-        { "id": "100400", "transformation": { "func": "direct", "params": { "field": "volume_fatturato" } }},
+        { "id": "54600", "transformation": { "func": "direct", "params": { "field": "volume_erogato" } }},
+        { "id": "54700", "transformation": { "func": "direct", "params": { "field": "volume_fatturato" } }},
+        { "id": "100400", "transformation": { "func": "direct", "params": { "field": "nr_utenze_misuratore" } }},
         { "id": "100600", "transformation": { "func": "direct", "params": { "field": "sumdomestichevolfatt" } }},
         { "id": "100700", "transformation": { "func": "direct", "params": { "field": "sumdomesticheresidentevolfatt" } }},
         { "id": "100800", "transformation": { "func": "direct", "params": { "field": "sumpubblicoevolfatt" } }},

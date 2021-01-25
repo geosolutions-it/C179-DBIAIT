@@ -26,7 +26,7 @@
    ],
    "columns":[
       {"id":"66300", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
-      {"id":"66500", "transformation":{"func":"DIRECT", "params":{"field":"d_stato_cons"}}},
+      {"id":"66500", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons", "domain_name": "D_STATO_CONS"}}},
       {"id":"66600", "transformation":{"func":"DIRECT", "params":{"field":"anno_instal"}}, "validations": [{
                     "func": "IF",
                     "params": {
@@ -59,7 +59,7 @@
       {"id":"66900", "transformation":{"func":"DIRECT", "params":{"field":"portata"}}},
       {"id":"67000", "transformation":{"func":"DIRECT", "params":{"field":"prevalenza"}}},
       {"id":"67100", "transformation":{"func":"DIRECT", "params":{"field":"sn_riserva"}}},
-      {"id":"67200", "transformation":{"func":"DIRECT", "params":{"field":"a_anno_instal"}}, "validations": [{
+      {"id":"67200", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_instal", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "67200",
@@ -78,7 +78,7 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not X or A"
                 }
             ]},
-        {"id":"67300", "transformation":{"func":"DIRECT", "params":{"field":"a_anno_ristr"}}, "validations": [{
+        {"id":"67300", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "67300",
@@ -92,8 +92,8 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not A"
                 }
             ]},
-      {"id":"67400", "transformation":{"func":"DIRECT", "params":{"field":"a_potenza"}}},
-      {"id":"67500", "transformation":{"func":"DIRECT", "params":{"field":"a_portata"}}},
-      {"id":"67600", "transformation":{"func":"DIRECT", "params":{"field":"a_prevalenza"}}}
+      {"id":"67400", "transformation":{"func":"DOMAIN", "params":{"field":"a_potenza", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"67500", "transformation":{"func":"DOMAIN", "params":{"field":"a_portata", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"67600", "transformation":{"func":"DOMAIN", "params":{"field":"a_prevalenza", "domain_name": "D_AFFIDABILITA"}}}
    ]
 }

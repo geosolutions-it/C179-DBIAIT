@@ -1750,20 +1750,6 @@ BEGIN
 	WHERE id_rete is NOT NULL
 	GROUP BY id_rete, codice_ato, tipo_infr;
 
-    --- AGGREGAZIONE PER IDRETE ATO PER LA LUNGHEZZA TOTALE ALLACCI
-    INSERT INTO FGN_LUNGHEZZA_ALLACCI_id_rete(
-        id_rete, lunghezza_allaccio
-    )
-    select fca.id_rete, sum(fa.lungh_all)/1000 lungh
-    from fgn_allaccio fa
-    join fgn_cond_altro fca
-    on fa.id_condotta = fca.idgis
-    join fgn_rete_racc frc
-    on frc.idgis =fca.id_rete
-    WHERE frc.d_gestore = 'PUBLIACQUA' AND frc.d_ambito IN ('AT3', NULL) AND frc.d_stato NOT IN ('IPR','IAC')
-    group by id_rete;
-
-
     INSERT INTO fgn_allaccio
     with is_industriale as (
     select
@@ -1811,6 +1797,18 @@ BEGIN
         tipo,
         d_tipo_utenza;
 
+    --- AGGREGAZIONE PER IDRETE ATO PER LA LUNGHEZZA TOTALE ALLACCI
+    INSERT INTO FGN_LUNGHEZZA_ALLACCI_id_rete(
+        id_rete, lunghezza_allaccio
+    )
+    select fca.id_rete, sum(fa.lungh_all)/1000 lungh
+    from fgn_allaccio fa
+    join fgn_cond_altro fca
+    on fa.id_condotta = fca.idgis
+    join fgn_rete_racc frc
+    on frc.idgis =fca.id_rete
+    WHERE frc.d_gestore = 'PUBLIACQUA' AND frc.d_ambito IN ('AT3', NULL) AND frc.d_stato NOT IN ('IPR','IAC')
+    group by id_rete;
 
 	--
 	-- LOG ANOMALIES
@@ -1855,11 +1853,11 @@ BEGIN
         ,geom
     )
     SELECT
-        'ADDUZIONE', codice_ato, idgis, id_materiale, idx_materiale, diametro, idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, id_conservazione, pressione, id_tipo_telecon, protezione_catodica, geom
+        'ADDUZIONE', codice_ato, idgis, id_materiale, idx_materiale, diametro, idx_diametro, anno, idx_anno, lunghezza*1000, idx_lunghezza, id_conservazione, pressione, id_tipo_telecon, protezione_catodica, geom
     FROM addut_tronchi
     UNION ALL
     SELECT
-        'DISTRIBUZIONE', codice_ato, idgis, id_materiale, idx_materiale, diametro, idx_diametro, anno, idx_anno, lunghezza, idx_lunghezza, id_conservazione, pressione, id_tipo_telecon, 0::BIT protezione_catodica, geom
+        'DISTRIBUZIONE', codice_ato, idgis, id_materiale, idx_materiale, diametro, idx_diametro, anno, idx_anno, lunghezza*1000, idx_lunghezza, id_conservazione, pressione, id_tipo_telecon, 0::BIT protezione_catodica, geom
     FROM distrib_tronchi;
 
     -- (comune_nome, id_comune_istat)
@@ -1927,7 +1925,7 @@ BEGIN
     UPDATE ACQ_SHAPE
     SET
         allacci = counter,
-        lunghezza_ = lung
+        lunghezza_ = lung*1000
     FROM (select id_condotta, sum(nr_cassette) as counter,sum(lungh_all) as lung from acq_allaccio group by 1) c
     WHERE c.id_condotta = ACQ_SHAPE.ids_codi_1;
 
