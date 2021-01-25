@@ -48,8 +48,8 @@
             {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"},
-            {"name": "support_codice_capt_accorp.codice_accorp","alias": "codice_accorp"},
-            {"name": "support_codice_capt_accorp.denominazione","alias": "accorp_denominazione"}
+            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
+            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -170,8 +170,8 @@
             {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"},
-            {"name": "support_codice_capt_accorp.codice_accorp","alias": "codice_accorp"},
-            {"name": "support_codice_capt_accorp.denominazione","alias": "accorp_denominazione"}
+            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
+            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -180,10 +180,10 @@
             {
                "type":"left",
                "table":{
-                  "name":"acq_capt_conces"
+                  "name":"a_acq_capt_conces"
                },
                "on":[
-                  "a_acq_capt_concess.id_captazione",
+                  "a_acq_capt_conces.id_captazione",
                   "a_acq_captazione.idgis"
                ],
                "cond":"="
@@ -279,6 +279,10 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not 0"
                 }
             ]},
+
+      {"id":"-2", "transformation":{"func":"DIRECT", "params":{"field":"codice_accorp"}}},
+      {"id":"-3", "transformation":{"func":"DIRECT", "params":{"field":"accorp_denominazione"}}},
+
       {"id":"15500", "transformation":{"func":"DIRECT", "params":{"field":"estremi_conces"}}},
       {"id":"15600", "transformation":{"func":"DIRECT", "params":{"field":"port_potab"}}, "validations": [{
               "func": "IF",
