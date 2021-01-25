@@ -286,8 +286,7 @@
                 }
             ]},
 
-      {"id":"64000", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
-
-      {"id":"64300", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}}
+      {"id": "64000", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
+      {"id": "64300","transformation": {"func": "DECODE_COM", "params": { "field": "cod_comune" }}}
    ]
 }

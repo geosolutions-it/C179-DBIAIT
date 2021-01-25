@@ -217,7 +217,7 @@
       {"id":"83200", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
       {"id":"85200", "transformation":{"func":"CONST", "params":{"value":"C"}}},
 
-      {"id":"83500", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
+      {"id": "83500","transformation": {"func": "DECODE_COM", "params": { "field": "cod_comune" }}},
 
       {"id":"83900", "transformation":{"func":"CASE", "params":{"field":"d_materiale", "cond": [
          {"case": "WHEN", "operator": "=", "value": "MUR", "result": "1"},

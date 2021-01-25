@@ -120,6 +120,7 @@
     "columns": [
         { "id": "40500", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
         { "id": "98900", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
+        { "id": "-2", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
 
         { "id": "39400", "transformation": { "func": "DIRECT",  "params": { "field": "codice_ato" } }},
         { "id": "39500", "transformation": { "func": "DIRECT",  "params": { "field": "denom" } }},

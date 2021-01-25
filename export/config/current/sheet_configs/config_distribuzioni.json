@@ -21,16 +21,17 @@
                 { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
                 { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
                 { "name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
-                { "name": "acq_vol_utenze.totalcount","alias": "totalcount"},
-                { "name": "acq_vol_utenze.countdomestiche","alias": "countdomestiche"},
-                { "name": "acq_vol_utenze.countdomesticheresidente","alias": "countdomesticheresidente"},
-                { "name": "acq_vol_utenze.countdomestichediammin","alias": "countdomestichediammin"},
-                { "name": "acq_vol_utenze.countcommerciali","alias": "countcommerciali"},
-                { "name": "acq_vol_utenze.countpubblico","alias": "countpubblico"},
-                { "name": "acq_vol_utenze.countindustriale","alias": "countindustriale"},
-                { "name": "acq_vol_utenze.countutenzeconmisuratore","alias": "countutenzeconmisuratore"},
-                { "name": "acq_vol_utenze.sumvolacqero","alias": "sumvolacqero"},
-                { "name": "acq_vol_utenze.sumvolacqfatt","alias": "sumvolacqfatt"},
+                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_residente","alias": "nr_utenze_dir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_condominiali","alias": "nr_utenze_condominiali"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_indirette","alias": "nr_utenze_indir_indirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_domestici","alias": "nr_utenze_indir_domestici"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_residente","alias": "nr_utenze_indir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_misuratore","alias": "nr_utenze_misuratore"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_allacci","alias": "nr_allacci"},
                 { "name": "acq_vol_utenze.sumdomestichevolfatt","alias": "sumdomestichevolfatt"},
                 { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
                 { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
@@ -71,6 +72,16 @@
                         "acq_rete_distrib.codice_ato"
                     ],
                     "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_distribuzioni_adduttrici"
+                    },
+                    "on": [
+                        "utenze_distribuzioni_adduttrici.id_rete",
+                        "acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
                 },
                 {
                     "type": "left",
@@ -105,16 +116,17 @@
                 { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
                 { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
                 {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
-                { "name": "acq_vol_utenze.totalcount","alias": "totalcount"},
-                { "name": "acq_vol_utenze.countdomestiche","alias": "countdomestiche"},
-                { "name": "acq_vol_utenze.countdomesticheresidente","alias": "countdomesticheresidente"},
-                { "name": "acq_vol_utenze.countdomestichediammin","alias": "countdomestichediammin"},
-                { "name": "acq_vol_utenze.countcommerciali","alias": "countcommerciali"},
-                { "name": "acq_vol_utenze.countpubblico","alias": "countpubblico"},
-                { "name": "acq_vol_utenze.countindustriale","alias": "countindustriale"},
-                { "name": "acq_vol_utenze.countutenzeconmisuratore","alias": "countutenzeconmisuratore"},
-                { "name": "acq_vol_utenze.sumvolacqero","alias": "sumvolacqero"},
-                { "name": "acq_vol_utenze.sumvolacqfatt","alias": "sumvolacqfatt"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_residente","alias": "nr_utenze_dir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_condominiali","alias": "nr_utenze_condominiali"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_indirette","alias": "nr_utenze_indir_indirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_domestici","alias": "nr_utenze_indir_domestici"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_residente","alias": "nr_utenze_indir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_misuratore","alias": "nr_utenze_misuratore"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_allacci","alias": "nr_allacci"},
                 { "name": "acq_vol_utenze.sumdomestichevolfatt","alias": "sumdomestichevolfatt"},
                 { "name": "acq_vol_utenze.sumdomesticheresidentevolfatt","alias": "sumdomesticheresidentevolfatt"},
                 { "name": "acq_vol_utenze.sumpubblicoevolfatt","alias": "sumpubblicoevolfatt"},
@@ -155,6 +167,16 @@
                         "a_acq_rete_distrib.codice_ato"
                     ],
                     "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_distribuzioni_adduttrici"
+                    },
+                    "on": [
+                        "utenze_distribuzioni_adduttrici.id_rete",
+                        "a_acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
                 },
                 {
                     "type": "left",
@@ -176,19 +198,22 @@
 
         {"id": "100500","transformation": { "func": "CONST", "params": { "value": "0"}}},
 
+        { "id": "-1", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
+
         { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } }},
         { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tcl" } }},
 
-        { "id": "53800", "transformation": { "func": "direct", "params": { "field": "totalcount" } }},
-        { "id": "53900", "transformation": { "func": "direct", "params": { "field": "countdomestiche" } }},
-        { "id": "54000", "transformation": { "func": "direct", "params": { "field": "countdomesticheresidente" } }},
-        { "id": "54100", "transformation": { "func": "direct", "params": { "field": "countdomestichediammin" } }},
-        { "id": "54200", "transformation": { "func": "direct", "params": { "field": "countcommerciali" } }},
-        { "id": "54300", "transformation": { "func": "direct", "params": { "field": "countpubblico" } }},
-        { "id": "54400", "transformation": { "func": "direct", "params": { "field": "countindustriale" } }},
-        { "id": "54600", "transformation": { "func": "direct", "params": { "field": "countutenzeconmisuratore" } }},
-        { "id": "54700", "transformation": { "func": "direct", "params": { "field": "sumvolacqero" } }},
-        { "id": "100400", "transformation": { "func": "direct", "params": { "field": "sumvolacqfatt" } }},
+        { "id": "53800", "transformation": { "func": "direct", "params": { "field": "nr_utenze_dirette" } }},
+        { "id": "53900", "transformation": { "func": "direct", "params": { "field": "nr_utenze_dir_dom_e_residente" } }},
+        { "id": "54000", "transformation": { "func": "direct", "params": { "field": "nr_utenze_dir_residente" } }},
+        { "id": "54100", "transformation": { "func": "direct", "params": { "field": "nr_utenze_condominiali" } }},
+        { "id": "54200", "transformation": { "func": "direct", "params": { "field": "nr_utenze_indir_indirette" } }},
+        { "id": "54300", "transformation": { "func": "direct", "params": { "field": "nr_utenze_indir_domestici" } }},
+        { "id": "54400", "transformation": { "func": "direct", "params": { "field": "nr_utenze_indir_residente" } }},
+        { "id": "99100", "transformation": { "func": "direct", "params": { "field": "nr_allacci" } }},
+        { "id": "54600", "transformation": { "func": "direct", "params": { "field": "nr_utenze_misuratore" } }},
+        { "id": "54700", "transformation": { "func": "direct", "params": { "field": "volume_erogato" } }},
+        { "id": "100400", "transformation": { "func": "direct", "params": { "field": "volume_fatturato" } }},
         { "id": "100600", "transformation": { "func": "direct", "params": { "field": "sumdomestichevolfatt" } }},
         { "id": "100700", "transformation": { "func": "direct", "params": { "field": "sumdomesticheresidentevolfatt" } }},
         { "id": "100800", "transformation": { "func": "direct", "params": { "field": "sumpubblicoevolfatt" } }},

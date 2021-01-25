@@ -139,6 +139,7 @@
         {"id": "48300","transformation": { "func": "CONST",  "params": { "value": "3003"}}},
 
         {"id": "48600","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
+        {"id": "48600","transformation": {"func": "DECODE_COM", "params": {"field": "cod_comune"}}},
 
         {"id": "47900","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
         {"id": "48000","transformation": { "func": "DIRECT", "params": { "field": "denom" }}},

@@ -221,6 +221,7 @@
         {"id": "4900","transformation": { "func": "DOMAIN", "params": { "field": "sn_protezione", "domain_name":  "D_AFFIDABILITA"}}},
 
         {"id": "1700","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
+        {"id": "1700","transformation": {"func": "DECODE_COM", "params": {"field": "cod_comune"}}},
         {"id": "1600","transformation": {"func": "DIRECT", "params": {"field": "denominazi"}}},
 
         {"id": "1000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},

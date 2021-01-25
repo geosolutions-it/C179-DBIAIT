@@ -6,12 +6,12 @@
         {
             "fields": [
                 {"name": "acq_shape.geom", "alias": "geom"},
-                {"name": "acq_shape.ids_codice", "alias": "cod_rete", "cast": "VARCHAR(32)"},
-                {"name": "acq_shape.comune_nom", "alias": "comune_nom", "cast": "VARCHAR(32)"},
-                {"name": "acq_shape.id_comune_", "alias": "comune_cod", "cast": "INTEGER"},
-                {"name": "acq_shape.ids_codi_1", "alias": "cod_tratto", "cast": "VARCHAR(16)"},
-                {"name": "acq_shape.id_materia", "alias": "id_mater", "cast": "INTEGER"},
-                {"name": "acq_shape.idx_materi", "alias": "idx_mater", "cast": "VARCHAR(2)"},
+                {"name": "acq_shape.ids_codice", "alias": "COD_RETE", "cast": "VARCHAR(32)"},
+                {"name": "acq_shape.comune_nom", "alias": "COMUNE_NOM", "cast": "VARCHAR(32)"},
+                {"name": "acq_shape.id_comune_", "alias": "COMUNE_COD", "cast": "INTEGER"},
+                {"name": "acq_shape.ids_codi_1", "alias": "COD_TRATTO", "cast": "VARCHAR(20)"},
+                {"name": "acq_shape.id_materia", "alias": "ID_MATER", "cast": "INTEGER"},
+                {"name": "acq_shape.idx_materi", "alias": "IDX_MATER", "cast": "VARCHAR(2)"},
                 {"name": "acq_shape.diametro", "alias": "diametro", "cast": "INTEGER"},
                 {"name": "acq_shape.idx_diamet", "alias": "idx_diamet", "cast": "VARCHAR(2)"},
                 {"name": "acq_shape.anno", "alias": "anno", "cast": "INTEGER"},
