@@ -9,7 +9,7 @@
                 {"name": "acq_shape.ids_codice", "alias": "COD_RETE", "cast": "VARCHAR(32)"},
                 {"name": "acq_shape.comune_nom", "alias": "COMUNE_NOM", "cast": "VARCHAR(32)"},
                 {"name": "acq_shape.id_comune_", "alias": "COMUNE_COD", "cast": "INTEGER"},
-                {"name": "acq_shape.ids_codi_1", "alias": "COD_TRATTO", "cast": "VARCHAR(16)"},
+                {"name": "acq_shape.ids_codi_1", "alias": "COD_TRATTO", "cast": "VARCHAR(20)"},
                 {"name": "acq_shape.id_materia", "alias": "ID_MATER", "cast": "INTEGER"},
                 {"name": "acq_shape.idx_materi", "alias": "IDX_MATER", "cast": "VARCHAR(2)"},
                 {"name": "acq_shape.diametro", "alias": "diametro", "cast": "INTEGER"},

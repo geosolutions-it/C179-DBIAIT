@@ -165,7 +165,7 @@ class Networks(BaseProcessTask):
 
 class GraphTemp(BaseProcessTask):
     algorithm = u"populate_temp_graph_tables"
-    name = u"In attesa del grafo"
+    name = u"Tabelle di relazione"
 
     @classmethod
     def process_pre_send(cls):
@@ -201,7 +201,7 @@ class CodiceDenominazione(BaseProcessTask):
 
 process_mapper = {
     u"Generazione grafo (rete idrica e fognaria)": Networks,
-    u"In attesa del grafo": GraphTemp,
+    u"Tabelle di relazione": GraphTemp,
     u"Località Istat": LocalitaIstat,
     u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalita,
     u"Popolazione residente Istat per comune": PopolazioneResidenteIstatPerComune,
