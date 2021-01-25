@@ -49,9 +49,9 @@
                 {"name": "acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 {"name": "laghi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
-                {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
-                {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
-                {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"}
+                {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT"},
+                {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT"},
+                {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT"}
             ],
             "table": {
                 "name": "acq_captazione"
@@ -151,9 +151,9 @@
                 {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 {"name":"laghi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
-                {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
-                {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
-                {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"}
+                {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT"},
+                {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT"},
+                {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT"}
             ],
             "table": {
                 "name": "a_acq_captazione"
@@ -210,9 +210,9 @@
     "columns": [
         {"id": "8400","transformation": { "func": "CONST", "params": {"value": "3003"}}},
 
-        {"id": "11400","transformation": { "func": "DOMAIN", "params": { "field": "sn_tut_ass", "domain_name":  "D_AFFIDABILITA"}}},
-        {"id": "11500","transformation": { "func": "DOMAIN", "params": { "field": "sn_rispetto", "domain_name":  "D_AFFIDABILITA"}}},
-        {"id": "11600","transformation": { "func": "DOMAIN", "params": { "field": "sn_protezione", "domain_name":  "D_AFFIDABILITA"}}},
+        {"id": "11400","transformation": { "func": "DIRECT", "params": { "field": "sn_tut_ass"}}},
+        {"id": "11500","transformation": { "func": "DIRECT", "params": { "field": "sn_rispetto"}}},
+        {"id": "11600","transformation": { "func": "DIRECT", "params": { "field": "sn_protezione"}}},
 
         {"id": "8700","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
         {"id": "8700","transformation": {"func": "DECODE_COM", "params": { "field": "cod_comune" }}},

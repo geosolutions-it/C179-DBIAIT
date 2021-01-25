@@ -31,7 +31,7 @@
                 {"name": "fgn_shape.allacci", "alias": "allacci", "cast": "INTEGER"},
                 {"name": "fgn_shape.allacci_in", "alias": "allac_indu", "cast": "INTEGER"},
                 {"name": "fgn_shape.lunghezza_", "alias": "lung_allac", "cast": "DOUBLE PRECISION"},
-                {"name": "fgn_shape.riparazion", "alias": "rip_allac", "cast": "INTEGER"},
+                {"name": "fgn_shape.riparazion", "alias": "rip_allacc", "cast": "INTEGER"},
                 {"name": "fgn_shape.riparazi_1", "alias": "rip_rete", "cast": "INTEGER"},
                 {"name": "fgn_shape.id_opera_s", "alias": "id_op_stat", "cast": "INTEGER"}
             ],
