@@ -44,8 +44,8 @@
             {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
-            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
+            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
+            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -98,11 +98,11 @@
             {
                  "type": "left",
                  "table": {
-                     "name": "accorp_codice_denom"
+                     "name": "support_codice_capt_accorp"
                  },
                  "on": [
                    "acq_captazione.idgis",
-                   "accorp_codice_denom.id_captazione"
+                   "support_codice_capt_accorp.idgis"
                  ],
                  "cond": "="
             }
@@ -151,8 +151,8 @@
             {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
-            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
+            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
+            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -161,10 +161,10 @@
             {
                "type":"left",
                "table":{
-                  "name":"acq_capt_conces"
+                  "name":"a_acq_capt_conces"
                },
                "on":[
-                  "acq_capt_conces.id_captazione",
+                  "a_acq_capt_conces.id_captazione",
                   "a_acq_captazione.idgis"
                ],
                "cond":"="
@@ -205,11 +205,11 @@
             {
                  "type": "left",
                  "table": {
-                     "name": "accorp_codice_denom"
+                     "name": "support_codice_capt_accorp"
                  },
                  "on": [
-                     "accorp_codice_denom.id_captazione",
-                     "a_acq_captazione.idgis"
+                   "a_acq_captazione.idgis",
+                   "support_codice_capt_accorp.idgis"
                  ],
                  "cond": "="
             }
@@ -233,6 +233,10 @@
       ]},
 
       {"id":"23700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
+
+      {"id":"-2", "transformation":{"func":"DIRECT", "params":{"field":"codice_accorp"}}},
+      {"id":"-3", "transformation":{"func":"DIRECT", "params":{"field":"accorp_denominazione"}}},
+
       {"id":"26100", "transformation":{"func":"DIRECT", "params":{"field":"ids_codice_potab"}}},
       {"id":"23800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
       {"id":"24200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}, "validations": [{
@@ -588,6 +592,7 @@
       {"id":"26900", "transformation":{"func":"CONST", "params":{"value":"0"}}},
 
       {"id":"24400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
+      {"id":"24400", "transformation": {"func":"DECODE_COM", "params": { "field": "cod_comune" }}},
 
       {"id":"27800", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume", "domain_name": "D_AFFIDABILITA"}}},
 

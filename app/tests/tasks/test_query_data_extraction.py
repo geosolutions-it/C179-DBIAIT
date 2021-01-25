@@ -188,6 +188,15 @@ class ExportConfigTest(SimpleTestCase):
         self.assertMultiLineEqual(expected_a_scaricatori_query, actual[0][0])
         self.assertMultiLineEqual(expected_scaricatori_query, actual[0][1])
 
+    def test_pozzi_queries_should_be_the_expected_ones(self):
+        actual = [
+            sorted(x["sql_sources"]) for x in self.all_sql_query if x["sheet"] == "Pozzi"
+        ]
+        # expect to have 3 query
+        self.assertEqual(2, len(actual[0]))
+        self.assertMultiLineEqual(expected_a_scaricatori_query, actual[0][0])
+        self.assertMultiLineEqual(expected_scaricatori_query, actual[0][1])
+
     def test_sollev_pompe_queries_should_be_the_expected_ones(self):
         actual = [
             sorted(x["sql_sources"]) for x in self.all_sql_query if x["sheet"] == "Sollev_pompe"

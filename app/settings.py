@@ -17,7 +17,7 @@ import ldap
 from app.utils import TemplateWithDefaults
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
-APP_VERSION = '1.4.0 (14/01/2021)'
+APP_VERSION = '1.4.0 (18/01/2021)'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -269,6 +269,7 @@ FTP_FOLDER = os.getenv("FTP_FOLDER", BASE_DIR)
 
 # Directory from which geopackage, import configuration and domains.csv files are imported
 IMPORT_FOLDER = os.getenv("IMPORT_FOLDER", os.path.join(FTP_FOLDER, "import"))
+DATABASE_FOLDER = os.getenv("DATABASE_FOLDER", os.path.join(FTP_FOLDER, "database"))
 IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'config', "layers.json"))
 IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
 
@@ -302,3 +303,13 @@ PASSWORD_HASHERS = (
 SECURE_SSL_REDIRECT = ast.literal_eval(os.environ.get('SECURE_SSL_REDIRECT', 'False'))
 SESSION_COOKIE_SECURE = ast.literal_eval(os.environ.get('SESSION_COOKIE_SECURE', 'False'))
 CSRF_COOKIE_SECURE = ast.literal_eval(os.environ.get('CSRF_COOKIE_SECURE', 'False'))
+
+
+# ------
+# DATABASE PERMISSIONS
+# ------
+
+DBIAIT_ANL_SELECT_ROLES = ['DBIAIT_ANL_ROLE_R']
+DBIAIT_FRZ_SELECT_ROLES = ['DBIAIT_FRZ_ROLE_R']
+DBIAIT_FRZ_UID_ROLES = ['DBIAIT_FRZ_ROLE_W']
+DBIAIT_FRZ_ADMIN_ROLES = ['DBIAIT_FRZ_ROLE_D']

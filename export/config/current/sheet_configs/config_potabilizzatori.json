@@ -437,6 +437,7 @@
 
       {"id":"31300", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
 
-      {"id":"31600", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}}
+      {"id":"31600", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
+      {"id":"31600", "transformation": {"func":"DECODE_COM", "params": { "field": "cod_comune" }}}
    ]
 }

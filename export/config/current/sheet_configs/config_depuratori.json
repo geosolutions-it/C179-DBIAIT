@@ -429,9 +429,9 @@
         {"id": "72100", "transformation": { "func": "ROUND", "params": {"field": "transformed_x_geom", "ndigits":  3}}},
 
         {"id": "72500", "transformation": {"func": "LSTRIP", "params": { "field": "cod_comune", "char": "0" }}},
+        {"id": "72500", "transformation": {"func": "DECODE_COM", "params": { "field": "cod_comune" }}},
 
         {"id":"80000", "transformation":{"func":"DOMAIN", "params":{"field":"a_potenza_instal", "domain_name": "D_AFFIDABILITA"}}},
-
 
         {"id": "72600", "transformation": {"func": "DOMAIN", "params": { "field": "d_corpo_ricet", "domain_name": "D_CORPO_RICET" }}},
         {"id": "72900", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons_civ", "domain_name": "D_STATO_CONS" }}, "validations": [{

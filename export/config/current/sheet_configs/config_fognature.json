@@ -19,9 +19,11 @@
                 {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"},
                 {"name": "fgn_lunghezza_allacci.lunghezza_allaccio","alias": "lunghezza_allaccio"},
                 {"name": "abitanti_trattati.lunghezza_allaccio","alias": "lunghezza_allaccio"},
-                {"name": "fgn_lunghezza_allacci.lunghezza_allaccio","alias": "lunghezza_allaccio"},
-                {"name": "fgn_vol_utenze.utenze_prod_auth","alias": "utenze_prod_auth"},
-                {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
+                {"name": "fgn_lunghezza_allacci_id_rete.lunghezza_allaccio","alias": "lunghezza_allaccio"},
+                {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
+                {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"},
                 {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"},
                 {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista"},
                 {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera"}
@@ -63,21 +65,21 @@
                 }, {
                     "type": "left",
                     "table": {
-                        "name": "fgn_lunghezza_allacci"
+                        "name": "fgn_lunghezza_allacci_id_rete"
                     },
                     "on": [
-                        "a_fgn_rete_racc.codice_ato",
-                        "fgn_lunghezza_allacci.codice_ato"
+                        "a_fgn_rete_racc.idgis",
+                        "fgn_lunghezza_allacci_id_rete.id_rete"
                     ],
                     "cond": "="
                 }, {
                     "type": "left",
                     "table": {
-                        "name": "fgn_vol_utenze"
+                        "name": "utenze_fognature_collettori"
                     },
                     "on": [
-                        "a_fgn_rete_racc.codice_ato",
-                        "fgn_vol_utenze.ids_codice_orig_fgn"
+                        "a_fgn_rete_racc.idgis",
+                        "utenze_fognature_collettori.id_rete"
                     ],
                     "cond": "="
                 }
@@ -99,10 +101,13 @@
                 {"name": "fgn_lunghezza_rete.tipo_infr","alias": "tipo_infr"},
                 {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
                 {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"},
-                {"name": "fgn_lunghezza_allacci.lunghezza_allaccio","alias": "lunghezza_allaccio"},
-                {"name": "fgn_vol_utenze.utenze_prod_auth","alias": "utenze_prod_auth"},
-                {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
-                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"},
+                {"name": "fgn_lunghezza_allacci_id_rete.lunghezza_allaccio","alias": "lunghezza_allaccio"},
+
+                {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
+                {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"},
+
                 {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista"},
                 {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera"}
             ],
@@ -133,21 +138,21 @@
                 }, {
                     "type": "left",
                     "table": {
-                        "name": "fgn_lunghezza_allacci"
+                        "name": "fgn_lunghezza_allacci_id_rete"
                     },
                     "on": [
-                        "fgn_rete_racc.codice_ato",
-                        "fgn_lunghezza_allacci.codice_ato"
+                        "fgn_rete_racc.idgis",
+                        "fgn_lunghezza_allacci_id_rete.id_rete"
                     ],
                     "cond": "="
                 },{
                     "type": "left",
                     "table": {
-                        "name": "fgn_vol_utenze"
+                        "name": "utenze_fognature_collettori"
                     },
                     "on": [
-                        "fgn_rete_racc.codice_ato",
-                        "fgn_vol_utenze.ids_codice_orig_fgn"
+                        "fgn_rete_racc.idgis",
+                        "utenze_fognature_collettori.id_rete"
                     ],
                     "cond": "="
                 }
@@ -161,7 +166,7 @@
         {"id": "59500","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
 
         {"id": "101100","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_allaccio"}}},
-        {"id": "59800","transformation": { "func": "DIRECT", "params": { "field": "utenze_prod_auth"}}},
+        {"id": "59800","transformation": { "func": "DIRECT", "params": { "field": "utenze_totali"}}},
         {"id": "101500","transformation": { "func": "DIRECT", "params": { "field": "vol_fatturato"}}},
         {"id": "59900","transformation": { "func": "DIRECT", "params": { "field": "vol_utenze_auth"}}},
 

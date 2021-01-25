@@ -190,6 +190,15 @@ class SchemaAcquedottistico(BaseProcessTask):
         pass
 
 
+class CodiceDenominazione(BaseProcessTask):
+    algorithm = u"populate_codice_capt_accorp"
+    name = u"Codice Denominazione"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
 process_mapper = {
     u"Generazione grafo (rete idrica e fognaria)": Networks,
     u"In attesa del grafo": GraphTemp,
@@ -203,5 +212,6 @@ process_mapper = {
     u"Acquedotto": Acquedotto,
     u"Fognatura": Fognatura,
     u"Punti Clorazione su rete e adduzione": PuntiClorazione,
-    u"Schema Acquedottistico": SchemaAcquedottistico
+    u"Schema Acquedottistico": SchemaAcquedottistico,
+    u"Codice Denominazione": CodiceDenominazione
 }

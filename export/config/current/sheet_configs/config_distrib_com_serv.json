@@ -15,7 +15,7 @@
    ],
    "columns":[
       {"id": "57700","transformation": {"func": "DIRECT", "params": {"field": "codice_opera"}}},
-      {"id": "57900","transformation": {"func": "DIRECT", "params": {"field": "id_comune_istat"}}},
+      {"id": "57900","transformation": {"func": "DECODE_COM", "params": { "field": "id_comune_istat" }}},
       {"id": "58000","transformation": {"func": "DIRECT", "params": {"field": "perc_popsrv"}}}
    ]
 }
