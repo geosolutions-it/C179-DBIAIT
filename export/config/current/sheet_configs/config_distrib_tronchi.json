@@ -55,7 +55,7 @@
         {"id": "56500", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
         {"id": "56800", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
 
-        {"id": "56600", "transformation": {"func": "DOMAIN", "params": { "field": "id_materiale", "domain_name": "D_MATERIALE_IDR" }}, "validations": [{
+        {"id": "56600", "transformation": {"func": "DIRECT", "params": { "field": "id_materiale"}}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "56600",
@@ -69,7 +69,7 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is null"
                 }
             ]},
-        {"id": "56700", "transformation": {"func": "DOMAIN", "params": { "field": "id_conservazione", "domain_name": "D_STATO_CONS" }}},
+        {"id": "56700", "transformation": {"func": "DIRECT", "params": { "field": "id_conservazione" }}},
 
         {"id": "56800", "transformation": {"func": "DIRECT", "params": { "field": "diametro" }}, "validations": [{
                     "func": "IF",
@@ -116,8 +116,8 @@
         {"id": "57300", "transformation": {"func": "DIRECT", "params": { "field": "idx_anno" }}},
 
 
-        {"id": "57000", "transformation": {"func": "DOMAIN", "params": { "field": "57000", "domain_name": "D_CORPO_RICET" }}},
-        {"id": "57400", "transformation": {"func": "DOMAIN", "params": { "field": "57400", "domain_name": "D_T_RILIEVO" }}},
+        {"id": "57000", "transformation": {"func": "DIRECT", "params": { "field": "lunghezza" }}},
+        {"id": "57400", "transformation": {"func": "DIRECT", "params": { "field": "idx_lunghezza" }}},
         {"id": "101000", "transformation": {
                 "func": "IF",
                 "params": {

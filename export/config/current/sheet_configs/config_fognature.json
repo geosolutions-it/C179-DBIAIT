@@ -25,6 +25,7 @@
                 {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"},
                 {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"},
+                {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
                 {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista"},
                 {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera"}
             ],
@@ -107,7 +108,8 @@
                 {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"},
-
+                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"},
+                {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
                 {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista"},
                 {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera"}
             ],

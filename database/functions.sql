@@ -2874,7 +2874,7 @@ BEGIN
 		SELECT DISTINCT ' || v_in_fields[v_t] || ' 
 		FROM ' || v_in_tables[v_t] || ' t
 		LEFT join acq_rete_distrib r
-		  ON r.geom&&t.geom AND st_INTERSECTS(r.geom,t.geom)
+		  ON r.geom&&t.geom AND ST_INTERSECTS(r.geom,t.geom) AND ST_TOUCHES(r.geom,t.geom)=FALSE
 		WHERE r.codice_ato is NOT NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')
 		' || v_filters[v_t];
 		
@@ -2889,7 +2889,7 @@ BEGIN
 			SELECT t.idgis
 			FROM ' || v_in_tables[v_t] || ' t
 			LEFT JOIN acq_rete_distrib r 
-				ON r.geom&&t.geom AND st_INTERSECTS(r.geom, t.geom)
+				ON r.geom&&t.geom AND ST_INTERSECTS(r.geom, t.geom) AND ST_TOUCHES(r.geom,t.geom)=FALSE
 			WHERE r.codice_ato is NOT NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')
 			' || v_filters[v_t] || '
 		) t2 group by t2.idgis having count(0) > 1;' USING v_tables[v_t];
@@ -2900,7 +2900,7 @@ BEGIN
 		SELECT t.idgis, $1, ''Elemento non intersecante alcuna rete''
 		FROM ' || v_in_tables[v_t] || ' t
 		LEFT JOIN acq_rete_distrib r 
-			ON r.geom&&t.geom AND st_INTERSECTS(r.geom, t.geom)
+			ON r.geom&&t.geom AND ST_INTERSECTS(r.geom, t.geom) AND ST_TOUCHES(r.geom,t.geom)=FALSE
 		where r.codice_ato is NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') 
 		' || v_filters[v_t] USING v_tables[v_t];
 		
