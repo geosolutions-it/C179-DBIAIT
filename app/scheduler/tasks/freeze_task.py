@@ -99,6 +99,8 @@ class FreezeTask(BaseTask):
             )
             raise
 
+        FreezeDefinition(orm_task).delete_freeze_year(ref_year)
+
         freeze_information = Freeze(
             ref_year=ref_year,
             notes=notes,
