@@ -99,7 +99,6 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is greater than 2014 or is None"
                 }
             ]},
-      {"id": "61600","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name":  "D_STATO_CONS"}}},
       {"id":"61800", "transformation":{
             "func": "IF",
             "params": {
