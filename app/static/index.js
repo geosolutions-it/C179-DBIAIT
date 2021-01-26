@@ -81,6 +81,7 @@ const table_function_mapper = {
                 var download = '<a href="download/' + data.id + '" target="_blank"><i class="fas fa-download"></i></a>';
             }
             table.row.add([
+                data.id,
                 data.user,
                 data.geopackage_name,
                 get_local_date(data.start_date)  || "--/--/---" ,
