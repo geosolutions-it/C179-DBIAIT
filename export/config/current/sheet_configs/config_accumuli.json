@@ -240,7 +240,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value lower than 3 or ref year: {REF_YEAR} not valid"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value lower than 3"
                 }
             ]
         },

@@ -1296,7 +1296,7 @@ BEGIN
                 select distinct on(cc.idgis) cc.id_derivazione, uc.id_cass_cont
                 from acq_cass_cont cc, acq_ubic_contatore uc
                 where uc.ID_IMPIANTO is not null
-                and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
                 and uc.id_cass_cont = cc.idgis
             ) cc
             WHERE
@@ -1314,7 +1314,7 @@ BEGIN
                 select distinct on(cc.idgis) cc.id_derivazione, uc.id_cass_cont
                 from acq_cass_cont cc, acq_ubic_contatore uc
                 where uc.ID_IMPIANTO is not null
-                and EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                and EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
                 and uc.id_cass_cont = cc.idgis
             ) cc
             WHERE
@@ -1342,7 +1342,7 @@ BEGIN
                 select distinct on(cc.idgis) cc.idgis, cc.id_derivazione , uc.id_cass_cont
                 from acq_cass_cont_auto cc, acq_ubic_contatore uc
                 where uc.ID_IMPIANTO is not null
-                and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
                 and uc.id_cass_cont = cc.idgis
         ) cc
         WHERE
@@ -1357,7 +1357,7 @@ BEGIN
                 select distinct on(cc.idgis) cc.idgis, cc.id_derivazione , uc.id_cass_cont
                 from acq_cass_cont_auto cc, acq_ubic_contatore uc
                 where uc.ID_IMPIANTO is not null
-                and EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                and EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
                 and uc.id_cass_cont = cc.idgis
         ) ss
         WHERE
@@ -1424,7 +1424,7 @@ BEGIN
         from acq_cass_cont_auto cc join acq_ubic_contatore uc on uc.id_cass_cont = cc.idgis
         join acq_contatore ac on uc.idgis =ac.id_ubic_contatore
         where uc.ID_IMPIANTO is not null
-        and not EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+        and not EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
         and ac.tariffa not in ('APB_REFIND', 'APBLREFIND', 'APBNREFCIV', 'APBHSUBDIS', 'COPDCI0000', 'COPDIN0000'))
     GROUP BY id_cassetta, id_condotta, id_derivazione, sub_funzione;
 
@@ -1545,7 +1545,7 @@ BEGIN
                         AND us.cattariffa NOT IN ('APB_REFIND','APBLREFIND')
                     ) uc
                     where
-                    uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale) and
+                    uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale) and
                     uc.id_fossa_settica = fs.idgis
                 ) cc
                 WHERE
@@ -1600,7 +1600,7 @@ BEGIN
                         select id_produttivo, id_immissione from a_fgn_rel_prod_imm
                     ) prod_imm
                     where
-                    uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale) and
+                    uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale) and
                     prod_cont.id_ubic_contatore = uc.idgis and
                     prod_imm.id_produttivo = prod_cont.idgis_produttivo
                 ) cc
@@ -1638,7 +1638,7 @@ BEGIN
                         where us.id_ubic_contatore = uct.idgis
                         AND us.cattariffa NOT IN ('APB_REFIND','APBLREFIND')
                     ) uc
-                    where uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                    where uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
                     and uc.id_fossa_settica = fs.idgis
                     --and uc.idgis='PAAUCO00000002095624'
             ) cc
@@ -1677,7 +1677,7 @@ BEGIN
                         where us.id_ubic_contatore = uct.idgis
                         AND us.cattariffa IN ('APB_REFIND','APBLREFIND')
                     ) uc
-                    where uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val='31-12-9999' and uc.idgis=idgis_divisionale)
+                    where uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
                     and uc.id_fossa_settica = fs.idgis
                     --and uc.idgis='PAAUCO00000002095624'
             ) cc
@@ -1770,7 +1770,7 @@ BEGIN
         from
             utenza_defalco
         where
-            dt_fine_val = '31-12-9999'
+            dt_fine_val = to_date('31-12-9999', 'DD-MM-YYYY')
             and uc.idgis = idgis_divisionale))
     select
         sfa.id_fossa_settica id_fossa,
@@ -3370,7 +3370,7 @@ begin
 	from
 		ubic_contatori_cass_cont
 	join utenza_defalco on
-		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999')
+		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY'))
 	select
 		c.id_ubic_contatore,
 		case
@@ -3400,7 +3400,7 @@ begin
         from
             ubic_contatori_cass_cont
         join utenza_defalco on
-            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999'),
+            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')),
         defalco_divisionali as (
         select
             distinct ud.idgis_divisionale,
@@ -3642,7 +3642,7 @@ begin
 	from
 		ubic_contatori_fgn
 	join utenza_defalco on
-		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999')
+		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY'))
 	select
 		c.id_ubic_contatore,
 		case
@@ -3672,7 +3672,7 @@ begin
 	from
 		ubic_contatori_fgn
 	join utenza_defalco on
-		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val='31-12-9999'),
+		id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')),
 	defalco_divisionali as (
 	select
 		distinct ud.idgis_divisionale,
