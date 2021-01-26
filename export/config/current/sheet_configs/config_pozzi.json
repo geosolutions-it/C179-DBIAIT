@@ -439,7 +439,7 @@
       {"id":"14900", "transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
       {"id":"15000", "transformation": { "func": "ROUND", "params": {"field": "transformed_x_geom", "ndigits":  3}}},
 
-      {"id":"16300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons", "domain_name": "D_STATO_CONS"}}, "validations": [{
+      {"id":"16300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons", "domain_name": "D_STATO"}}, "validations": [{
               "func": "IF",
               "params": {
                   "field": "16300",
@@ -643,7 +643,7 @@
                      "operator": "=",
                      "value": 0,
                      "result": "A",
-                     "else": "{ a_volume }"
+                     "else": "{ 18900 }"
                  }
              }
          }
