@@ -49,6 +49,66 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field)
         self.assertTrue(actual)
 
+    def test_given_transformation_name_IF_with_first_cond_true_for_ref_year_netsic_accumuli(
+        self,
+    ):
+        condition_schema = {
+                        "field": "44700",
+                        "cond": [{
+                            "and": [
+                                {"lookup": "{44600}", "operator": ">=", "value": 2014},
+                                {"operator": ">=", "value": 3}
+                            ]
+                        }, {
+                            "and": [
+                                {"lookup": "{44600}", "operator": "<", "value": 2014}
+                            ]
+                        }]
+                    }
+        self.field = {"44600": "9998", "44700": 4}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_given_transformation_name_IF_with_second_cond_true_for_ref_year_netsic_accumuli(
+        self,
+    ):
+        condition_schema = {
+                        "field": "44700",
+                        "cond": [{
+                            "and": [
+                                {"lookup": "{44600}", "operator": ">=", "value": 2014},
+                                {"operator": ">=", "value": 3}
+                            ]
+                        }, {
+                            "and": [
+                                {"lookup": "{44600}", "operator": "<", "value": 2014}
+                            ]
+                        }]
+                    }
+        self.field = {"44600": "2013", "44700": 4}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_given_transformation_name_IF_with_false_conditions_for_ref_year_netsic_accumuli(
+        self,
+    ):
+        condition_schema = {
+                        "field": "44700",
+                        "cond": [{
+                            "and": [
+                                {"lookup": "{44600}", "operator": ">=", "value": 2014},
+                                {"operator": ">=", "value": 3}
+                            ]
+                        }, {
+                            "and": [
+                                {"lookup": "{44600}", "operator": "<", "value": 2014}
+                            ]
+                        }]
+                    }
+        self.field = {"44600": "2015", "44700": 2}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
     def test_given_transformation_name_IF_AND_with_true_cond_and_not_matching_regex_should_return_the_expected_output(
         self,
     ):
