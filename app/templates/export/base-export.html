@@ -29,6 +29,7 @@
   <table class="table" id="export-table">
     <thead>
       <tr>
+        <th>id</th>
         <th>Utente</th>
         <th>GeoPackage</th>
         <th>Data Inizio</th>
@@ -96,7 +97,14 @@
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
         },
-        "order": [[ 2, "desc" ]]
+         "columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false,
+                "searchable": false
+            }
+        ],
+        "order": [[ 0, "desc" ]]
     } );
 } );
 </script>
