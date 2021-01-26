@@ -640,8 +640,8 @@
          "params": {
              "field": "cod_opera_inpotab_not_exist",
              "cond": {
-                     "operator": "=",
-                     "value": 0,
+                     "operator": "!=",
+                     "value": 1,
                      "result": "A",
                      "else": "{ 18900 }"
                  }
