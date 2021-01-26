@@ -26,7 +26,7 @@
     ],
     "columns": [
         {"id": "81000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
-        {"id": "81200","transformation": { "func": "DIRECT", "params": { "field": "d_stato_cons" }}},
+        {"id": "81200","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons" , "domain_name": "D_STATO_CONS"}}},
         {"id": "81300","transformation": { "func": "DIRECT", "params": { "field": "anno_instal" }}, "validations": [{
                     "func": "IF",
                     "params": {
@@ -59,7 +59,7 @@
         {"id": "81600","transformation": { "func": "DIRECT", "params": { "field": "portata" }}},
         {"id": "81700","transformation": { "func": "DIRECT", "params": { "field": "prevalenza" }}},
         {"id": "81800","transformation": { "func": "DIRECT", "params": { "field": "sn_riserva" }}},
-        {"id": "81900","transformation": { "func": "DIRECT", "params": { "field": "a_anno_instal" }}, "validations": [{
+        {"id": "81900","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_instal" , "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "82000",
@@ -78,7 +78,7 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not A or X"
                 }
             ]},
-        {"id": "82000","transformation": { "func": "DIRECT", "params": { "field": "a_anno_ristr" }}, "validations": [{
+        {"id": "82000","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr" , "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "82000",
@@ -92,8 +92,8 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not A"
                 }
             ]},
-        {"id": "82100","transformation": { "func": "DIRECT", "params": { "field": "a_potenza" }}},
-        {"id": "82200","transformation": { "func": "DIRECT", "params": { "field": "a_portata" }}},
-        {"id": "82300","transformation": { "func": "DIRECT", "params": { "field": "a_prevalenza" }}}
+        {"id": "82100","transformation": { "func": "DOMAIN", "params": { "field": "a_potenza" , "domain_name": "D_AFFIDABILITA"}}},
+        {"id": "82200","transformation": { "func": "DOMAIN", "params": { "field": "a_portata" , "domain_name": "D_AFFIDABILITA"}}},
+        {"id": "82300","transformation": { "func": "DOMAIN", "params": { "field": "a_prevalenza" , "domain_name": "D_AFFIDABILITA"}}}
     ]
 }

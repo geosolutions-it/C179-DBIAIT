@@ -26,7 +26,7 @@
     ],
     "columns": [
         {"id": "37000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato" }}},
-        {"id": "37200","transformation": { "func": "DIRECT", "params": { "field": "d_stato_cons" }}, "validations": [{
+        {"id": "37200","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "37200",
@@ -85,7 +85,7 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not A"
                 }
             ]},
-        {"id": "37900","transformation": { "func": "DIRECT", "params": { "field": "a_anno_instal"}}, "validations": [{
+        {"id": "37900","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_instal", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "37900",
@@ -104,9 +104,9 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not X or A"
                 }
             ]},
-        {"id": "38000","transformation": { "func": "DIRECT", "params": { "field": "a_anno_ristr"}}},
-        {"id": "38100","transformation": { "func": "DIRECT", "params": { "field": "a_potenza" }}},
-        {"id": "38200","transformation": { "func": "DIRECT", "params": { "field": "a_portata" }}},
-        {"id": "38300","transformation": { "func": "DIRECT", "params": { "field": "a_prevalenza" }}}
+        {"id": "38000","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}},
+        {"id": "38100","transformation": { "func": "DOMAIN", "params": { "field": "a_potenza" , "domain_name": "D_AFFIDABILITA"}}},
+        {"id": "38200","transformation": { "func": "DOMAIN", "params": { "field": "a_portata", "domain_name": "D_AFFIDABILITA" }}},
+        {"id": "38300","transformation": { "func": "DOMAIN", "params": { "field": "a_prevalenza", "domain_name": "D_AFFIDABILITA" }}}
     ]
 }

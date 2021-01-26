@@ -396,8 +396,8 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE(
 );
 
 --
-DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_ALLACCIO;
-CREATE TABLE DBIAIT_ANALYSIS.ACQ_ALLACCIO(
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_LUNGHEZZA_ALLACCI;
+CREATE TABLE DBIAIT_ANALYSIS.ACQ_LUNGHEZZA_ALLACCI(
 	idgis			VARCHAR(32),
 	codice_ato		VARCHAR(32),
 	tipo_infr		VARCHAR(100),
@@ -408,8 +408,8 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_ALLACCIO(
 );
 
 --
-DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_ALLACCIO;
-CREATE TABLE DBIAIT_ANALYSIS.FGN_ALLACCIO(
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.fgn_lunghezza_allacci;
+CREATE TABLE DBIAIT_ANALYSIS.fgn_lunghezza_allacci(
 	idgis				VARCHAR(32),
 	codice_ato			VARCHAR(32),
 	tipo_infr			VARCHAR(100),
@@ -810,8 +810,8 @@ alter table DBIAIT_ANALYSIS.FOGNAT_TRONCHI	   add constraint FOGNAT_TRONCHI_pk P
 alter table DBIAIT_ANALYSIS.COLLETT_TRONCHI	   add constraint COLLETT_TRONCHI_pk PRIMARY KEY(idgis);
 alter table DBIAIT_ANALYSIS.FGN_SHAPE	       add constraint FGN_SHAPE_pk PRIMARY KEY(ids_codi_1);
 alter table DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE add constraint FGN_LUNGHEZZA_RETE_pk PRIMARY KEY(idgis);
-alter table DBIAIT_ANALYSIS.ACQ_ALLACCIO	   add constraint ACQ_ALLACCIO_pk PRIMARY KEY(IDGIS);
-alter table DBIAIT_ANALYSIS.FGN_ALLACCIO	   add constraint FGN_ALLACCIO_pk PRIMARY KEY(IDGIS);
+alter table DBIAIT_ANALYSIS.ACQ_LUNGHEZZA_ALLACCI	   add constraint ACQ_LUNGHEZZA_ALLACCI PRIMARY KEY(IDGIS);
+alter table DBIAIT_ANALYSIS.fgn_lunghezza_allacci	   add constraint fgn_lunghezza_allacci_pk PRIMARY KEY(IDGIS);
 alter table DBIAIT_ANALYSIS.POMPAGGI_POMPE	   add column oid SERIAL;
 alter table DBIAIT_ANALYSIS.SOLLEV_POMPE	   add column oid SERIAL;
 alter table DBIAIT_ANALYSIS.DEPURATO_POMPE	   add column oid SERIAL;
@@ -823,10 +823,10 @@ alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_FGN	add constraint UTENZA_SERVIZIO_F
 alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_BAC	add constraint UTENZA_SERVIZIO_BAC_pk PRIMARY KEY(ID_UBIC_CONTATORE);
 -----------------------------------------------------------------------------------------------------------------------
 --
-DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI;
-CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI(
-	codice_ato		VARCHAR(32),
-	lunghezza_allaccio	double precision
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI_ID_RETE;
+CREATE TABLE DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI_ID_RETE(
+    id_rete     VARCHAR(32),
+    lunghezza_allaccio     double precision
 );
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_VOL_UTENZE;
@@ -880,11 +880,10 @@ CREATE TABLE DBIAIT_ANALYSIS.STATS_CLORATORE(
 
 -----
 
-DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACCORP_CODICE_DENOM;
-CREATE TABLE DBIAIT_ANALYSIS.ACCORP_CODICE_DENOM(
-	id_captazione VARCHAR(32),
-	codice_accorp		VARCHAR(32),
-    denominazione	VARCHAR(200)
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_CAPT_ACCORPAM;
+CREATE TABLE DBIAIT_ANALYSIS.ACQ_CAPT_ACCORPAM(
+	codice_acc		VARCHAR(32),
+    denom	VARCHAR(200)
 );
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.area_poe;
@@ -902,4 +901,127 @@ CREATE TABLE DBIAIT_ANALYSIS.schema_acq(
 	codice_schema_acq		text,
     denominazione_schema_acq	text,
     primary key (idgis)
+);
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.acq_allaccio;
+CREATE TABLE DBIAIT_ANALYSIS.acq_allaccio(
+    id_cassetta       VARCHAR(32),
+    id_condotta     VARCHAR(32),
+    id_derivazione     VARCHAR(32),
+    lungh_all     DOUBLE PRECISION,
+    tipo     VARCHAR(100),
+    nr_cassette     INTEGER
+
+);
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_contatori_cass_cont;
+CREATE TABLE DBIAIT_ANALYSIS.ubic_contatori_cass_cont(
+    id_ubic_contatore     VARCHAR(32),
+    id_cass_cont     VARCHAR(32)
+);
+
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_allaccio;
+CREATE TABLE DBIAIT_ANALYSIS.ubic_allaccio(
+    id_ubic_contatore     VARCHAR(32),
+    acq_sn_alla     VARCHAR(32),
+    acq_idrete     VARCHAR(32)
+);
+
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.utenza_defalco;
+CREATE TABLE DBIAIT_ANALYSIS.utenza_defalco(
+    imp_defalco     bigint,
+    imp_divisionale     bigint,
+    idgis_defalco     VARCHAR(32),
+    idgis_divisionale     VARCHAR(32),
+    dt_iniz_val     date,
+    dt_fine_val     date,
+    annotazioni     text
+);
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.support_acq_allacci;
+CREATE TABLE DBIAIT_ANALYSIS.support_acq_allacci(
+	id_cassetta			VARCHAR(32),
+	id_condotta			VARCHAR(32),
+	id_derivazione			VARCHAR(32),
+	sub_funzione		INTEGER,
+	nr_allacci	INTEGER,
+	lung_alla	double precision,
+	nr_allacci_ril	INTEGER,
+	lung_alla_ril	double precision
+);
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.utenze_distribuzioni_adduttrici;
+CREATE TABLE DBIAIT_ANALYSIS.utenze_distribuzioni_adduttrici(
+	id_rete			VARCHAR(32),
+	nr_utenze_dirette			INTEGER,
+	nr_utenze_dir_dom_e_residente			INTEGER,
+	nr_utenze_dir_residente		INTEGER,
+	nr_utenze_condominiali	INTEGER,
+	nr_utenze_indir_indirette 	INTEGER,
+	nr_utenze_indir_domestici	INTEGER,
+	nr_utenze_indir_residente	INTEGER,
+	nr_utenze_misuratore integer,
+	volume_erogato double precision,
+	volume_fatturato double precision,
+	nr_allacci integer
+);
+
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.fgn_allaccio;
+CREATE TABLE DBIAIT_ANALYSIS.fgn_allaccio(
+    id_fossa       VARCHAR(20),
+    id_condotta     VARCHAR(20),
+    id_immissione     VARCHAR(20),
+    lungh_all     DOUBLE PRECISION,
+    tipo     VARCHAR(10),
+    industriale     VARCHAR(2)
+
+);
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.support_fgn_allacci;
+CREATE TABLE DBIAIT_ANALYSIS.support_fgn_allacci(
+	id_fossa_settica			VARCHAR(20),
+	id_condotta			VARCHAR(20),
+	id_immissione			VARCHAR(20),
+	tipo			VARCHAR(20),
+	lu_allacci_c        DOUBLE PRECISION,
+	lu_allacci_c_ril        DOUBLE PRECISION,
+	lu_allacci_i        DOUBLE PRECISION,
+	lu_allacci_i_ril        DOUBLE PRECISION,
+	nr_allacci_c        INTEGER,
+	nr_allacci_c_ril        INTEGER,
+	nr_allacci_i        INTEGER,
+	nr_allacci_i_ril        INTEGER
+);
+
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_f_allaccio;
+CREATE TABLE DBIAIT_ANALYSIS.ubic_f_allaccio(
+    id_ubic_contatore     VARCHAR(20),
+    fgn_sn_alla     VARCHAR(2),
+    fgn_idrete     VARCHAR(20)
+);
+
+-- support table
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_contatori_fgn;
+CREATE TABLE DBIAIT_ANALYSIS.ubic_contatori_fgn(
+    id_ubic_contatore     VARCHAR(32),
+    id_fossa     VARCHAR(32)
+);
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.utenze_fognature_collettori;
+CREATE TABLE DBIAIT_ANALYSIS.utenze_fognature_collettori(
+	id_rete			VARCHAR(32),
+	nr_utenze_totali			INTEGER,
+	nr_utenze_industriali			INTEGER,
+	volume_utenze_industriali double precision,
+	volume_utenze_totali double precision
+););
+
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.support_codice_capt_accorp;
+CREATE TABLE DBIAIT_ANALYSIS.support_codice_capt_accorp(
+	idgis			VARCHAR(32),
+	codice_accorp_capt			VARCHAR(32),
+	denom			VARCHAR(100)
 );

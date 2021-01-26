@@ -9,7 +9,7 @@
                 {"name": "fgn_shape.ids_codice", "alias": "cod_rete", "cast": "VARCHAR(32)"},
                 {"name": "fgn_shape.comune_nom", "alias": "comune_nom", "cast": "VARCHAR(32)"},
                 {"name": "fgn_shape.id_comune_", "alias": "comune_cod", "cast": "INTEGER"},
-                {"name": "fgn_shape.ids_codi_1", "alias": "cod_tratto", "cast": "VARCHAR(16)"},
+                {"name": "fgn_shape.ids_codi_1", "alias": "cod_tratto", "cast": "VARCHAR(20)"},
                 {"name": "fgn_shape.id_materia", "alias": "id_mater", "cast": "INTEGER"},
                 {"name": "fgn_shape.idx_materi", "alias": "idx_mater", "cast": "VARCHAR(2)"},
                 {"name": "fgn_shape.sezione", "alias": "sezione", "cast": "VARCHAR(16)"},
@@ -31,7 +31,7 @@
                 {"name": "fgn_shape.allacci", "alias": "allacci", "cast": "INTEGER"},
                 {"name": "fgn_shape.allacci_in", "alias": "allac_indu", "cast": "INTEGER"},
                 {"name": "fgn_shape.lunghezza_", "alias": "lung_allac", "cast": "DOUBLE PRECISION"},
-                {"name": "fgn_shape.riparazion", "alias": "rip_allac", "cast": "INTEGER"},
+                {"name": "fgn_shape.riparazion", "alias": "rip_allacc", "cast": "INTEGER"},
                 {"name": "fgn_shape.riparazi_1", "alias": "rip_rete", "cast": "INTEGER"},
                 {"name": "fgn_shape.id_opera_s", "alias": "id_op_stat", "cast": "INTEGER"}
             ],

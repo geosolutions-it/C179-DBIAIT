@@ -41,6 +41,15 @@ class FreezeDefinition(BaseFreezeDefinition):
             self._handle_shp_files(year)
             return True
 
+    @staticmethod
+    def delete_freeze_year(ref_year):
+        try:
+            with connection.cursor() as cursor:
+                query = f"DELETE FROM {Schema.SYSTEM}.scheduler_freeze WHERE ref_year ={ref_year}"
+                cursor.execute(query)
+        except Exception as e:
+            print(f"Error during deleting freeze for year {ref_year} - {e.args[0]}")
+
     def run(self):
         layer_to_freeze = self.get_freeze_layers()
         cont = self.offset

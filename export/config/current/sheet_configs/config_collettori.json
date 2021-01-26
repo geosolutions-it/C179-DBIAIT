@@ -13,9 +13,14 @@
                 { "name": "fgn_auth_collet.sn_scar_sup",  "alias": "sn_scar_sup" , "function": "TO_BIT"},
                 { "name": "fgn_auth_collet.n_scar_piena",  "alias": "n_scar_piena" },
                 { "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
+                { "name": "fgn_auth_collet.nr_rip",  "alias": "nr_rip" },
                 { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" , "function": "TO_BIT"},
                 { "name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"}
+                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"},
+                {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
+                {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"}
             ],
             "table": {
                 "name": "fgn_collettore"
@@ -42,6 +47,16 @@
                         "fgn_lunghezza_rete.codice_ato"
                     ],
                     "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_fognature_collettori"
+                    },
+                    "on": [
+                        "fgn_collettore.idgis",
+                        "utenze_fognature_collettori.id_rete"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE fgn_collettore.d_gestore = 'PUBLIACQUA' AND fgn_collettore.d_ambito IN ('AT3', NULL) AND fgn_collettore.d_stato NOT IN ('IPR','IAC')"
@@ -57,9 +72,14 @@
                 { "name": "fgn_auth_collet.sn_scar_sup",  "alias": "sn_scar_sup" , "function": "TO_BIT"},
                 { "name": "fgn_auth_collet.n_scar_piena",  "alias": "n_scar_piena" },
                 { "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
+                { "name": "fgn_auth_collet.nr_rip",  "alias": "nr_rip" },
                 { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port", "function": "TO_BIT" },
                 { "name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"}
+                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"},
+                {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
+                {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"}
             ],
             "table": {
                 "name": "a_fgn_collettore"
@@ -86,6 +106,16 @@
                         "fgn_lunghezza_rete.codice_ato"
                     ],
                     "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_fognature_collettori"
+                    },
+                    "on": [
+                        "a_fgn_collettore.idgis",
+                        "utenze_fognature_collettori.id_rete"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE a_fgn_collettore.d_gestore = 'PUBLIACQUA' AND a_fgn_collettore.d_ambito IN ('AT3', NULL) AND a_fgn_collettore.d_stato NOT IN ('IPR','IAC')"
@@ -96,6 +126,7 @@
         { "id": "68200", "transformation": { "func": "DIRECT", "params": { "field": "denom" } } },
 
         { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
+        { "id": "101900", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" } }},
         { "id": "68400", "transformation": { "func": "DIRECT",  "params": { "field": "id_refluo_trasportato" } }},
         { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } },"validations": [{
                     "func": "IF",

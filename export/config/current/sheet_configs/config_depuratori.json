@@ -13,8 +13,8 @@
                 { "name": "fgn_trattamento.conc_co2_usc", "alias": "conc_co2_usc"},
                 { "name": "fgn_trattamento.vol_att_tratt", "alias": "vol_att_tratt"},
                 { "name": "fgn_trattamento.anno_costr", "alias": "anno_costr"},
-                { "name": "fgn_trattamento.sn_terziario", "alias": "sn_terziario", "function": "TO_BIT"},
-                { "name": "fgn_trattamento.sn_imhoff", "alias": "sn_imhoff", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_terziario", "alias": "sn_terziario", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_imhoff", "alias": "sn_imhoff", "function": "TO_BIT"},
                 { "name": "fgn_trattamento.d_stato", "alias": "d_stato"},
                 { "name": "fgn_trattamento.a_anno_costr", "alias": "a_anno_costr"},
                 { "name": "fgn_trattamento.data_agg", "alias": "data_agg"},
@@ -154,8 +154,8 @@
                 { "name": "a_fgn_trattamento.conc_co2_usc", "alias": "conc_co2_usc"},
                 { "name": "a_fgn_trattamento.vol_att_tratt", "alias": "vol_att_tratt"},
                 { "name": "a_fgn_trattamento.anno_costr", "alias": "anno_costr"},
-                { "name": "a_fgn_trattamento.sn_terziario", "alias": "sn_terziario", "function": "TO_BIT"},
-                { "name": "a_fgn_trattamento.sn_imhoff", "alias": "sn_imhoff", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_terziario", "alias": "sn_terziario", "function": "TO_BIT"},
+                { "name": "fgn_auth_trattam.sn_imhoff", "alias": "sn_imhoff", "function": "TO_BIT"},
                 { "name": "a_fgn_trattamento.d_stato", "alias": "d_stato"},
                 { "name": "a_fgn_trattamento.a_anno_costr", "alias": "a_anno_costr"},
                 { "name": "a_fgn_trattamento.data_agg", "alias": "data_agg"},
@@ -443,6 +443,10 @@
                               {"lookup": "{72800}" ,"operator": ">=", "value": 2014},
                               {"operator":  ">=", "value": 3}
                             ]
+                        },{
+                            "and": [
+                              {"lookup": "{72800}" ,"operator": "<", "value": 2014}
+                            ]
                         }]
                     },
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not greater than 3"
@@ -456,6 +460,10 @@
                             "and": [
                               {"lookup": "{73000}" ,"operator": ">=", "value": 2014},
                               {"operator":  ">=", "value": 3}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{73000}" ,"operator": "<", "value": 2014}
                             ]
                         }]
                     },

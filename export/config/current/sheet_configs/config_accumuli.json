@@ -211,7 +211,7 @@
                         },
                         {
                             "or": [
-                                {"operator": ">=", "value": 2020},
+                                {"operator": ">=", "value": "{REF_YEAR}"},
                                 {"operator": "=", "value": 9800}
                             ]
                         }]
@@ -233,6 +233,10 @@
                             "and": [
                                 {"lookup": "{44600}" ,"operator": ">=", "value": 2014},
                                 {"operator": ">=", "value": 3}
+                            ]
+                        },{
+                            "and": [
+                                {"lookup": "{44600}" , "operator": "<", "value": 2014}
                             ]
                         }]
                     },

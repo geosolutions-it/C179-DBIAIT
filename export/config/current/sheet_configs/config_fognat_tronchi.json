@@ -36,6 +36,16 @@
                      "fognat_tronchi.idgis"
                  ],
                  "cond": "="
+             },{
+                 "type": "left",
+                 "table": {
+                     "name": "fgn_condotta"
+                 },
+                 "on": [
+                     "fgn_condotta.idgis",
+                     "fognat_tronchi.idgis"
+                 ],
+                 "cond": "="
              }
          ]
       }
@@ -43,6 +53,10 @@
    "columns":[
       {"id": "61200","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
       {"id": "61400","transformation": { "func": "DIRECT", "params": { "field": "idgis"}}},
+      {"id": "61600","transformation": { "func": "DIRECT", "params": { "field": "id_conservazione"}}},
+      {"id": "62000","transformation": { "func": "DIRECT", "params": { "field": "lunghezza"}}},
+      {"id": "62400","transformation": { "func": "DIRECT", "params": { "field": "idx_lunghezza"}}},
+      {"id": "101700","transformation": { "func": "DIRECT", "params": { "field": "funziona_gravita"}}},
       {"id": "101800","transformation": { "func": "DIRECT", "params": { "field": "depurazione"}}, "validations": [{
                     "func": "IF",
                     "params": {
@@ -71,7 +85,7 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is greater than 2002 or is None"
                 }
             ]},
-      {"id": "61500","transformation": { "func": "DOMAIN", "params": { "field": "d_materiale", "domain_name":  "D_MATERIALE_IDR"}}, "validations": [{
+      {"id": "61500","transformation": { "func": "DIRECT", "params": { "field": "id_materiale"}}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "61500",
@@ -85,16 +99,15 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is greater than 2014 or is None"
                 }
             ]},
-      {"id": "61600","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name":  "D_STATO_CONS"}}},
       {"id":"61800", "transformation":{
             "func": "IF",
             "params": {
-                "field": "data_esercizio",
+                "field": "anno",
                 "cond": {
                         "operator": "=",
                         "value": "",
                         "result": "9999",
-                        "else": "{data_esercizio}"
+                        "else": "{anno}"
                     }
                 }
             }, "validations": [{
@@ -112,7 +125,7 @@
                 }
             ]
       },
-      {"id": "61900","transformation": { "func": "DOMAIN", "params": { "field": "d_tipo_acqua", "domain_name":  "D_F_T_ACQUA"}}},
+      {"id": "61900","transformation": { "func": "direct", "params": { "field": "id_refluo_trasportato"}}},
 
       {"id": "62100","transformation": { "func": "DIRECT", "params": { "field": "idx_materiale"}}},
       {"id": "62200","transformation": { "func": "DIRECT", "params": { "field": "idx_diametro"}}},

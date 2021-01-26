@@ -45,11 +45,11 @@
             {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
             { "name": "localita.denominazi", "alias": "denominazi" },
             { "name": "acq_auth_capt.consumo_ee", "alias": "consumo_ee"},
-            {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
-            {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
-            {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"},
-            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
-            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
+            {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT"},
+            {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT"},
+            {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT"},
+            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
+            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -113,10 +113,10 @@
             {
                  "type": "left",
                  "table": {
-                     "name": "accorp_codice_denom"
+                     "name": "support_codice_capt_accorp"
                  },
                  "on": [
-                     "accorp_codice_denom.codice_accorp",
+                     "support_codice_capt_accorp.idgis",
                      "acq_captazione.idgis"
                  ],
                  "cond": "="
@@ -167,11 +167,11 @@
             {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
             { "name": "localita.denominazi", "alias": "denominazi" },
             { "name": "acq_auth_capt.consumo_ee", "alias": "consumo_ee"},
-            {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass"},
-            {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto"},
-            {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione"},
-            {"name": "accorp_codice_denom.codice_accorp","alias": "codice_accorp"},
-            {"name": "accorp_codice_denom.denominazione","alias": "accorp_denominazione"}
+            {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT"},
+            {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT"},
+            {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT"},
+            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
+            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -180,10 +180,10 @@
             {
                "type":"left",
                "table":{
-                  "name":"acq_capt_conces"
+                  "name":"a_acq_capt_conces"
                },
                "on":[
-                  "acq_capt_conces.id_captazione",
+                  "a_acq_capt_conces.id_captazione",
                   "a_acq_captazione.idgis"
                ],
                "cond":"="
@@ -235,10 +235,10 @@
             {
                  "type": "left",
                  "table": {
-                     "name": "accorp_codice_denom"
+                     "name": "support_codice_capt_accorp"
                  },
                  "on": [
-                     "accorp_codice_denom.id_captazione",
+                     "support_codice_capt_accorp.idgis",
                      "a_acq_captazione.idgis"
                  ],
                  "cond": "="
@@ -279,6 +279,10 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not 0"
                 }
             ]},
+
+      {"id":"-2", "transformation":{"func":"DIRECT", "params":{"field":"codice_accorp"}}},
+      {"id":"-3", "transformation":{"func":"DIRECT", "params":{"field":"accorp_denominazione"}}},
+
       {"id":"15500", "transformation":{"func":"DIRECT", "params":{"field":"estremi_conces"}}},
       {"id":"15600", "transformation":{"func":"DIRECT", "params":{"field":"port_potab"}}, "validations": [{
               "func": "IF",
@@ -612,9 +616,9 @@
 
       {"id":"15100", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
 
-      {"id": "17800","transformation": { "func": "DOMAIN", "params": { "field": "sn_tut_ass", "domain_name":  "D_AFFIDABILITA"}}},
-      {"id": "17900","transformation": { "func": "DOMAIN", "params": { "field": "sn_rispetto", "domain_name":  "D_AFFIDABILITA"}}},
-      {"id": "18000","transformation": { "func": "DOMAIN", "params": { "field": "sn_protezione", "domain_name":  "D_AFFIDABILITA"}}},
+      {"id": "17800","transformation": { "func": "DIRECT", "params": { "field": "sn_tut_ass"}}},
+      {"id": "17900","transformation": { "func": "DIRECT", "params": { "field": "sn_rispetto"}}},
+      {"id": "18000","transformation": { "func": "DIRECT", "params": { "field": "sn_protezione"}}},
 
       {"id":"16800", "transformation":{"func":"DIRECT", "params":{"field":"sum_potenza"}}},
 
@@ -639,7 +643,7 @@
                      "operator": "=",
                      "value": 0,
                      "result": "A",
-                     "else": "{ a_volume }"
+                     "else": "{ 18900 }"
                  }
              }
          }
