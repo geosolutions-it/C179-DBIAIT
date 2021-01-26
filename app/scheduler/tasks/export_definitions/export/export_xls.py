@@ -129,7 +129,7 @@ class ExportXls(ExportBase):
                     message = "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Error: {E}" if not column['warning'] else column['warning']
                     try:
                         transformed_value = column["transformer"].apply(
-                            row=raw_data_row, domains=all_domains, municipalities=municipalities
+                            row=raw_data_row, domains=all_domains, municipalities=municipalities, already_transformed_data=sheet_row
                         )
                     except KeyError as e:
                         transformed_value = None

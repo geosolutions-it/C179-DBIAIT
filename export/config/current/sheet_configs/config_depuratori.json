@@ -443,6 +443,10 @@
                               {"lookup": "{72800}" ,"operator": ">=", "value": 2014},
                               {"operator":  ">=", "value": 3}
                             ]
+                        },{
+                            "and": [
+                              {"lookup": "{72800}" ,"operator": "<", "value": 2014}
+                            ]
                         }]
                     },
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not greater than 3"
@@ -456,6 +460,10 @@
                             "and": [
                               {"lookup": "{73000}" ,"operator": ">=", "value": 2014},
                               {"operator":  ">=", "value": 3}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{73000}" ,"operator": "<", "value": 2014}
                             ]
                         }]
                     },

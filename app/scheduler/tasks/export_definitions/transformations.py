@@ -70,7 +70,8 @@ class DomainTransformation(BaseTransformation):
 
     schema = schema.Schema({"field": str, "domain_name": str})
 
-    def apply(self, row: Dict, domains: Domains, municipalities: Municipalities):
+    def apply(self, row: Dict, domains: Domains, municipalities: Municipalities, **kwargs):
+        x = 5
         field_value = row.get(self.args["field"], None)
         return domains.translate(self.args["domain_name"], field_value)
 
@@ -79,7 +80,7 @@ class DecodeComTransformation(BaseTransformation):
 
     schema = schema.Schema({"field": str})
 
-    def apply(self, row: Dict, domains: Domains, municipalities: Municipalities):
+    def apply(self, row: Dict, domains: Domains, municipalities: Municipalities, **kwargs):
         field_value = row.get(self.args["field"], None)
         return municipalities.translate_code(field_value)
 
@@ -199,16 +200,21 @@ class IfTransformation(BaseTransformation):
         result_val = cond["result"]
         if isinstance(result_val, str):
             result_alias = re.match(self.re_pattern, result_val)
-
             if result_alias is not None:
-                result_val = row.get(result_alias.group(1), None)
+                if result_alias.group(1).isnumeric():
+                    result_val = kwargs['already_transformed_data'].get(result_alias.group(1), None)
+                else:
+                    result_val = row.get(result_alias.group(1), None)
 
         else_val = cond["else"]
         if isinstance(else_val, str):
             else_alias = re.match(self.re_pattern, else_val)
 
             if else_alias is not None:
-                else_val = row.get(else_alias.group(1), None)
+                if else_alias.group(1).isnumeric():
+                    else_val = kwargs['already_transformed_data'].get(else_alias.group(1), None)
+                else:
+                    else_val = row.get(else_alias.group(1), None)
 
         return result_val if operator(field_value, cond["value"]) else else_val
 

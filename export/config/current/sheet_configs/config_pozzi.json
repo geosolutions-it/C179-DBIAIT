@@ -643,7 +643,7 @@
                      "operator": "=",
                      "value": 0,
                      "result": "A",
-                     "else": "{ a_volume }"
+                     "else": "{ 18900 }"
                  }
              }
          }
