@@ -73,26 +73,6 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
---------------------------------------------------------------------
--- Etract pro-com part from the localita ISTAT (removing last 5 characters)
--- Example:
---  select dbiait_analysis.locistat_2_procom('3701520011')
---  37015
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.locistat_2_procom(
-	v_locistat VARCHAR
-) RETURNS VARCHAR AS $$
-DECLARE 
-	v_result VARCHAR := NULL;
-BEGIN
-	v_result := substr(v_locistat, 1, length(v_locistat) - 5);
-    RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RETURN v_result;
-END;
-$$  LANGUAGE plpgsql
-    SECURITY DEFINER
-    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
 ------------------------------------------------------------------
 -- Transform a Geometry from EPSG:25832 to EPSG:3003 using NTV2 nadgrids
 --SELECT ST_X(geom), ST_Y(geom) FROM(
@@ -3323,7 +3303,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_ubic_allaccio(
 ) RETURNS BOOLEAN AS $$
 begin
 
-	-- PULIZIA PRECENTI CALCOLAZIONI E LOG STAND-ALONE
+	-- PULIZIA PRECENTI ELABORAZIONI E LOG STAND-ALONE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UBIC_ALLACCIO';
 	DELETE FROM ubic_contatori_cass_cont;
 	DELETE FROM ubic_allaccio;
@@ -3803,13 +3783,11 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_codice_capt_accorp(
 ) RETURNS BOOLEAN AS $$
 begin
-
-    insert into support_codice_capt_accorp
-    select ac.idgis,codice_accorp_capt codice, acc2.denom from acq_capt_conces acc
-    join acq_captazione ac
-    on ac.idgis=acc.id_captazione
+    DELETE FROM support_codice_capt_accorp;
+    INSERT INTO support_codice_capt_accorp
+    SELECT ac.idgis,codice_accorp_capt codice, acc2.denom FROM acq_capt_conces acc
+    JOIN acq_captazione ac on ac.idgis=acc.id_captazione
     join ACQ_CAPT_ACCORPAM acc2 on codice_accorp_capt=codice_acc;
-
 
 	RETURN TRUE;
 END;
