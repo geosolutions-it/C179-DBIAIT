@@ -15,13 +15,17 @@
 -- ==========================================================================================
 -- TEST POPULATE STATS CLORATORE
 -- ------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_populate_stats_cloratore() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_populate_stats_cloratore(
+    v_run_proc BOOLEAN DEFAULT FALSE
+) returns void as $$
 DECLARE
   new_id varchar;
   new_count bigint;
 begin
     -- run the new version of the procedure
-	perform dbiait_analysis.populate_stats_cloratore();
+    IF v_run_proc THEN
+    	perform test_assertTrue('Verifica esito procedura', dbiait_analysis.populate_stats_cloratore() );
+    END IF;
     --- check if the count of the selected id_rete is still the same
     SELECT id_rete,counter INTO new_id, new_count FROM dbiait_analysis.stats_cloratore WHERE id_rete='PAARDI00000000001319';
     perform test_assertTrue(new_id, 5 = new_count );
@@ -32,11 +36,12 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public,pgunit;
-
 -- ------------------------------------------------------------------------------------------
 -- TEST POPULATE LUNG RETE FGN
 -- ------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_populate_lung_rete_fgn() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_populate_lung_rete_fgn(
+    v_run_proc BOOLEAN DEFAULT FALSE
+) returns void as $$
 DECLARE
   dummy_int bigint;
   dummy_string varchar;
@@ -46,8 +51,9 @@ DECLARE
   dummy_decimal_actual decimal;
 begin
     -- run the new version of the procedure
-	PERFORM dbiait_analysis.populate_lung_rete_fgn();
-
+    IF v_run_proc THEN
+    	perform test_assertTrue('Verifica esito procedura', dbiait_analysis.populate_lung_rete_fgn() );
+    END IF;
 	-- ASSERTION TESTS START FROM HERE
 
     --- given a selected idgis, the value should be the expected
@@ -74,19 +80,21 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public,pgunit;
-
 -- ------------------------------------------------------------------------------------------
 -- TEST POPULATE FGN SHAPE
 -- ------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_populate_fgn_shape() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_populate_fgn_shape(
+    v_run_proc BOOLEAN DEFAULT FALSE
+) returns void as $$
 DECLARE
   dummy_int bigint;
   dummy_string varchar;
   dummy_decimal decimal;
 begin
     -- run the new version of the procedure
-	PERFORM dbiait_analysis.populate_fgn_shape();
-
+    IF v_run_proc THEN
+    	perform test_assertTrue('Verifica esito procedura', dbiait_analysis.populate_fgn_shape() );
+    END IF;
 	-- ASSERTION TESTS START FROM HERE
 
     --- given a selected ids_codi_1, the value of sezione should be null
@@ -128,7 +136,9 @@ $$  LANGUAGE plpgsql
 -- ------------------------------------------------------------------------------------------
 -- TEST POPULATE SCHEMA ACQ (ACQUEDOTTISTICO)
 -- ------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_populate_schema_acq() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_populate_schema_acq(
+    v_run_proc BOOLEAN DEFAULT FALSE
+) returns void as $$
 DECLARE
   cod_schema varchar;
   denom_schema varchar;
@@ -136,8 +146,9 @@ DECLARE
 
 begin
     -- run the new version of the procedure
-	perform dbiait_analysis.populate_schema_acq();
-
+    IF v_run_proc THEN
+	    perform test_assertTrue('Verifica esito procedura', dbiait_analysis.populate_schema_acq() );
+    END IF;
 --- check if the output of the selected idgis is the expected
     SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001299';
     perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected 1 ma trovata ' || cod_schema , '1' = cod_schema );
@@ -154,14 +165,18 @@ $$  LANGUAGE plpgsql
     SET search_path = public,pgunit;
 
 -- ------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_populate_ubic_allaccio() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_populate_ubic_allaccio(
+    v_run_proc BOOLEAN DEFAULT FALSE
+) returns void as $$
 DECLARE
   sn_alla varchar;
   id_rete varchar;
   new_count bigint;
 begin
     -- run the new version of the procedure
-	perform dbiait_analysis.populate_ubic_allaccio();
+    IF v_run_proc THEN
+    	perform test_assertTrue('Verifica esito procedura', dbiait_analysis.populate_ubic_allaccio() );
+    END IF;
     --- check if the count of the selected id_rete is still the same
     SELECT acq_sn_alla,acq_idrete into sn_alla,id_rete FROM dbiait_analysis.ubic_allaccio ua WHERE id_ubic_contatore ='PAAUCO00000001907206';
     perform test_assertTrue('ID_rete wrong, expected PAARDI00000000001511 but found ' || id_rete, 'PAARDI00000000001511' = id_rete );
@@ -591,34 +606,34 @@ BEGIN
         "FGN_SHAPE_C": 						6013,
         "FGN_VOL_UTENZE": 					935,
         "STATS_POMPE": 						1413,
-        "POZZI_POMPE": 						0,
-        "POTAB_POMPE": 						0,
-        "POMPAGGI_POMPE": 					0,
-        "SOLLEV_POMPE": 					0,
-        "DEPURATO_POMPE": 					0,
-        "ADDUT_COM_SERV":		 			0,
-        "COLLET_COM_SERV": 					0,
-        "FIUMI_INRETI": 					0,
-        "LAGHI_INRETI": 					0,
-        "POZZI_INRETI": 					0,
-        "SORGENTI_INRETI": 					0,
-        "POTAB_INRETI": 					0,
-        "ADDUT_INRETI": 					0,
-        "ACCUMULI_INRETI": 					0,
-        "ACCUMULI_INADD": 					0,
-        "DEPURATO_INCOLL": 					0,
-        "SCARICATO_INFOG": 					0,
-        "ACQ_CONDOTTA_NODES": 				0,
-        "ACQ_CONDOTTA_EDGES": 				0,
-        "FGN_CONDOTTA_NODES": 				0,
-        "FGN_CONDOTTA_EDGES": 				0,
-        "STATS_CLORATORE": 					0,
+        "POZZI_POMPE": 						578,
+        "POTAB_POMPE": 						875,
+        "POMPAGGI_POMPE": 					875,
+        "SOLLEV_POMPE": 					536,
+        "DEPURATO_POMPE": 					425,
+        "ADDUT_COM_SERV":		 			825,
+        "COLLET_COM_SERV": 					210,
+        "FIUMI_INRETI": 					60,
+        "LAGHI_INRETI": 					22,
+        "POZZI_INRETI": 					576,
+        "SORGENTI_INRETI": 					838,
+        "POTAB_INRETI": 					99,
+        "ADDUT_INRETI": 					820,
+        "ACCUMULI_INRETI": 					910,
+        "ACCUMULI_INADD": 					784,
+        "DEPURATO_INCOLL": 					43,
+        "SCARICATO_INFOG": 					1074,
+        "ACQ_CONDOTTA_NODES": 				161569,
+        "ACQ_CONDOTTA_EDGES": 				153193,
+        "FGN_CONDOTTA_NODES": 				82198,
+        "FGN_CONDOTTA_EDGES": 				80517,
+        "STATS_CLORATORE": 					43,
         "SCHEMA_ACQ": 						0,
-        "UBIC_ALLACCIO": 					0,
-        "UBIC_CONTATORI_CASS_CONT": 		0,
-        "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	0,
-        "UBIC_CONTATORI_FGN": 				0,
-        "UBIC_F_ALLACCIO": 					0,
+        "UBIC_ALLACCIO": 					399447,
+        "UBIC_CONTATORI_CASS_CONT": 		399447,
+        "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	392,
+        "UBIC_CONTATORI_FGN": 				363343,
+        "UBIC_F_ALLACCIO": 					363343,
         "UTENZE_FOGNATURE_COLLETTORI": 		0,
         "SUPPORT_CODICE_CAPT_ACCORP": 		0
     }'::JSON)->v_table;
@@ -963,4 +978,289 @@ BEGIN
     perform test_assertTrue('count TAB STATS_POMPE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
-
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_POZZI_POMPE_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('POZZI_POMPE');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.POZZI_POMPE;
+    perform test_assertTrue('count TAB POZZI_POMPE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_POTAB_POMPE_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('POTAB_POMPE');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.POTAB_POMPE;
+    perform test_assertTrue('count TAB POTAB_POMPE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_POMPAGGI_POMPE_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('POMPAGGI_POMPE');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.POMPAGGI_POMPE;
+    perform test_assertTrue('count TAB POMPAGGI_POMPE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_SOLLEV_POMPE_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('SOLLEV_POMPE');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.SOLLEV_POMPE;
+    perform test_assertTrue('count TAB SOLLEV_POMPE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_DEPURATO_POMPE_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('DEPURATO_POMPE');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.DEPURATO_POMPE;
+    perform test_assertTrue('count TAB DEPURATO_POMPE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_ADDUT_COM_SERV_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('ADDUT_COM_SERV');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.ADDUT_COM_SERV;
+    perform test_assertTrue('count TAB ADDUT_COM_SERV, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_COLLET_COM_SERV_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('COLLET_COM_SERV');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.COLLET_COM_SERV;
+    perform test_assertTrue('count TAB COLLET_COM_SERV, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_FIUMI_INRETI_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('FIUMI_INRETI');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.FIUMI_INRETI;
+    perform test_assertTrue('count TAB FIUMI_INRETI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_LAGHI_INRETI_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('LAGHI_INRETI');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.LAGHI_INRETI;
+    perform test_assertTrue('count TAB LAGHI_INRETI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_POZZI_INRETI_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('POZZI_INRETI');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.POZZI_INRETI;
+    perform test_assertTrue('count TAB POZZI_INRETI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_SORGENTI_INRETI_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('SORGENTI_INRETI');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.SORGENTI_INRETI;
+    perform test_assertTrue('count TAB SORGENTI_INRETI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_POTAB_INRETI_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('POTAB_INRETI');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.POTAB_INRETI;
+    perform test_assertTrue('count TAB POTAB_INRETI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_ADDUT_INRETI_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('ADDUT_INRETI');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.ADDUT_INRETI;
+    perform test_assertTrue('count TAB ADDUT_INRETI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_ACCUMULI_INRETI_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('ACCUMULI_INRETI');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.ACCUMULI_INRETI;
+    perform test_assertTrue('count TAB ACCUMULI_INRETI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_ACCUMULI_INADD_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('ACCUMULI_INADD');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.ACCUMULI_INADD;
+    perform test_assertTrue('count TAB ACCUMULI_INADD, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_DEPURATO_INCOLL_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('DEPURATO_INCOLL');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.DEPURATO_INCOLL;
+    perform test_assertTrue('count TAB DEPURATO_INCOLL, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_SCARICATO_INFOG_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('SCARICATO_INFOG');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.SCARICATO_INFOG;
+    perform test_assertTrue('count TAB SCARICATO_INFOG, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_GRAFO_ACQUEDOTTO_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('ACQ_CONDOTTA_NODES');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.ACQ_CONDOTTA_NODES;
+    perform test_assertTrue('count TAB ACQ_CONDOTTA_NODES, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+    v_expected := dbiait_analysis._test_expected_count('ACQ_CONDOTTA_EDGES');
+    select count(0) into v_count from dbiait_analysis.ACQ_CONDOTTA_EDGES;
+    perform test_assertTrue('count TAB ACQ_CONDOTTA_EDGES, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_GRAFO_FOGNATURA_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('FGN_CONDOTTA_NODES');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.FGN_CONDOTTA_NODES;
+    perform test_assertTrue('count TAB FGN_CONDOTTA_NODES, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+    v_expected := dbiait_analysis._test_expected_count('FGN_CONDOTTA_EDGES');
+    select count(0) into v_count from dbiait_analysis.FGN_CONDOTTA_EDGES;
+    perform test_assertTrue('count TAB FGN_CONDOTTA_EDGES, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_STATS_CLORATORE_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('STATS_CLORATORE');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.STATS_CLORATORE;
+    perform test_assertTrue('count TAB STATS_CLORATORE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_SCHEMA_ACQ_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('SCHEMA_ACQ');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.SCHEMA_ACQ;
+    perform test_assertTrue('count TAB SCHEMA_ACQ, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_UBIC_ALLACCIO_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('UBIC_ALLACCIO');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.UBIC_ALLACCIO;
+    perform test_assertTrue('count TAB UBIC_ALLACCIO, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_UBIC_F_ALLACCIO_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('UBIC_F_ALLACCIO');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.UBIC_F_ALLACCIO;
+    perform test_assertTrue('count TAB UBIC_F_ALLACCIO, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_UBIC_CONTATORI_CASS_CONT_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('UBIC_CONTATORI_CASS_CONT');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.UBIC_CONTATORI_CASS_CONT;
+    perform test_assertTrue('count TAB UBIC_CONTATORI_CASS_CONT, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_UBIC_CONTATORI_FGN_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('UBIC_CONTATORI_FGN');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.UBIC_CONTATORI_FGN;
+    perform test_assertTrue('count TAB UBIC_CONTATORI_FGN, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_UTENZE_DISTRIBUZIONI_ADDUTTRICI_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('UTENZE_DISTRIBUZIONI_ADDUTTRICI');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.UTENZE_DISTRIBUZIONI_ADDUTTRICI;
+    perform test_assertTrue('count TAB UTENZE_DISTRIBUZIONI_ADDUTTRICI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_UTENZE_FOGNATURE_COLLETTORI_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('UTENZE_FOGNATURE_COLLETTORI');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.UTENZE_FOGNATURE_COLLETTORI;
+    perform test_assertTrue('count TAB UTENZE_FOGNATURE_COLLETTORI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_SUPPORT_CODICE_CAPT_ACCORP_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('SUPPORT_CODICE_CAPT_ACCORP');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.SUPPORT_CODICE_CAPT_ACCORP;
+    perform test_assertTrue('count TAB SUPPORT_CODICE_CAPT_ACCORP, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
