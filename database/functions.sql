@@ -3788,7 +3788,6 @@ begin
     SELECT ac.idgis,codice_accorp_capt codice, acc2.denom FROM acq_capt_conces acc
     JOIN acq_captazione ac on ac.idgis=acc.id_captazione
     join ACQ_CAPT_ACCORPAM acc2 on codice_accorp_capt=codice_acc;
-
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql

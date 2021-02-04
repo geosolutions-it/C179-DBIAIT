@@ -3,6 +3,8 @@
 -- In this database:
 -- CREATE SCHEMA pgunit;
 -- CREATE EXTENSION DBLINK SCHEMA pgunit;
+-- # GRANT EXECUTE ON FUNCTION dblink_connect_u(text) TO dbiait_stub;
+-- # GRANT EXECUTE ON FUNCTION dblink_connect_u(text, text) TO dbiait_stub;
 -- run PGUnit.sql (from https://github.com/adrianandrei-ca/pgunit)
 ---------------------------------------------------------------------------------------------
 
@@ -57,14 +59,14 @@ begin
 	-- ASSERTION TESTS START FROM HERE
 
     --- given a selected idgis, the value should be the expected
-    SELECT lung_rete_mista, lung_rete_nera into dummy_decimal, dummy_decimal2 FROM dbiait_analysis.fgn_lunghezza_rete flr WHERE idgis ='PAFRRC00000000001908';
-	PERFORM test_assertTrue('Check rete mista sia 15', dummy_decimal = 15 );
-    PERFORM test_assertTrue('Check rete nera sia 20', dummy_decimal2 = 20 );
+    SELECT lung_rete_mista, lung_rete_nera into dummy_decimal, dummy_decimal2 FROM dbiait_analysis.fgn_lunghezza_rete flr WHERE idgis ='PAFRRC00000000001145';
+	PERFORM test_assertTrue('Check rete mista sia 0.044926231', dummy_decimal BETWEEN 0.044926 and 0.044927 );
+    PERFORM test_assertTrue('Check rete nera sia 0.005073769', dummy_decimal2 BETWEEN 0.005073 and 0.005074 );
 
     --- given a selected idgis, the value should be the expected
-    SELECT lung_rete_mista, lung_rete_nera into dummy_decimal, dummy_decimal2 FROM dbiait_analysis.fgn_lunghezza_rete flr WHERE idgis ='PAFRRC00000000001273';
-	PERFORM test_assertTrue('Check rete mista sia 0', dummy_decimal = 0 );
-    PERFORM test_assertTrue('Check rete nera sia 10', dummy_decimal2 = 10 );
+    SELECT lung_rete_mista, lung_rete_nera into dummy_decimal, dummy_decimal2 FROM dbiait_analysis.fgn_lunghezza_rete flr WHERE idgis ='PAFRRC00000000001142';
+	PERFORM test_assertTrue('Check rete mista sia 0.1', dummy_decimal = 0.1 );
+    PERFORM test_assertTrue('Check rete nera sia 0.0', dummy_decimal2 = 0.0 );
 
    --- for FOGNATURA the field 'lung_dep' should be the same as the sum of 'lunghezza' in fognat_tronchi with depurazione =1
     SELECT round(cast(sum(lunghezza) as numeric), 9) into dummy_decimal_expected from dbiait_analysis.fognat_tronchi where depurazione='1';
@@ -111,7 +113,7 @@ begin
 
    --- given a selected ids_codi_1, the value of lunghz_1 should be rounded to the 6° decimal
     SELECT lunghez_1 into dummy_decimal FROM dbiait_analysis.fgn_shape WHERE ids_codi_1 ='PAFCON00000000420850';
-    PERFORM test_assertTrue('Check lunghez_ rounded al 6 decimale', dummy_decimal = 0.052013 );
+    PERFORM test_assertTrue('Check lunghez_ rounded al 6 decimale', dummy_decimal > 52.012974 and dummy_decimal < 52.012975 );
 
    --- given a selected ids_codi_1, the value of lunghz_1 should be rounded to the 6° decimal
     SELECT id_refluo_ into dummy_int FROM dbiait_analysis.fgn_shape WHERE ids_codi_1 ='PAFCON00000000371107';
@@ -151,13 +153,13 @@ begin
     END IF;
 --- check if the output of the selected idgis is the expected
     SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001299';
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected 1 ma trovata ' || cod_schema , '1' = cod_schema );
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected foo_denominazione ma trovata ' || denom_schema , 'foo_denominazione' = denom_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01166;DI01165 ma trovata ' || cod_schema , 'DI01166;DI01165' = cod_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected LE MASSE;CASOLE ma trovata ' || denom_schema , 'LE MASSE;CASOLE' = denom_schema );
 
     --- check if the output of the selected idgis is the expected
-    SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001426';
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected 2;3 ma trovata ' || cod_schema , '2;3' = cod_schema );
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected bar_denominazione;foobar_denominazione ma trovata ' || denom_schema , 'bar_denominazione;foobar_denominazione' = denom_schema );
+    SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001285';
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01100 ma trovata ' || cod_schema , 'DI01100' = cod_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected BARBERINO CAPOLUOGO ma trovata ' || denom_schema , 'BARBERINO CAPOLUOGO' = denom_schema );
 
 END;
 $$  LANGUAGE plpgsql
@@ -184,7 +186,7 @@ begin
     --- check if the count of the selected id_rete is still the same
     SELECT acq_sn_alla,acq_idrete into sn_alla,id_rete FROM dbiait_analysis.ubic_allaccio ua WHERE id_ubic_contatore ='PAAUCO00000002073907';
     perform test_assertTrue('ID_rete wrong, expected PAARDI00000000001511 but found <' || id_rete || '>', 'PAARDI00000000001511' = id_rete );
-    perform test_assertTrue('sn_alla wrong, expected SI but found ' || sn_alla, 'NO' = sn_alla );
+    perform test_assertTrue('sn_alla wrong, expected NO but found ' || sn_alla, 'NO' = sn_alla );
     -- check if the total rows are the same
 
 END;
@@ -482,8 +484,8 @@ CREATE OR REPLACE function dbiait_analysis.test_case_func_st_transform_rm40_etrs
 DECLARE
   v_x DOUBLE PRECISION;
   v_y DOUBLE PRECISION;
-  v_x_exp DOUBLE PRECISION:=1705469.68;
-  v_y_exp DOUBLE PRECISION:=4830687.91;
+  v_x_exp DOUBLE PRECISION:=1705470.09;
+  v_y_exp DOUBLE PRECISION:=4830688.67;
 BEGIN
     SELECT ROUND(ST_X(geom)::NUMERIC,2) x, ROUND(ST_Y(geom)::NUMERIC,2) y
         into v_x, v_y
@@ -590,13 +592,13 @@ BEGIN
         "FGN_LUNGHEZZA_RETE": 				1092,
         "FGN_LUNGHEZZA_RETE_C": 			160,
         "FGN_LUNGHEZZA_RETE_F": 			932,
-        "ACQ_ALLACCIO": 					221859,
+        "ACQ_ALLACCIO": 					220635,
         "ACQ_LUNGHEZZA_ALLACCI": 			971,
         "SUPPORT_ACQ_ALLACCI": 				231228,
-        "FGN_ALLACCIO": 					195189,
+        "FGN_ALLACCIO": 					194077,
         "FGN_LUNGHEZZA_ALLACCI": 			1092,
-        "FGN_LUNGHEZZA_ALLACCI_id_rete":	0,
-        "SUPPORT_FGN_ALLACCI": 				195858,
+        "FGN_LUNGHEZZA_ALLACCI_id_rete":	921,
+        "SUPPORT_FGN_ALLACCI": 				194746,
         "ACQ_SHAPE": 						119262,
         "ACQ_SHAPE_A": 						10443,
         "ACQ_SHAPE_D": 						108819,
@@ -607,7 +609,7 @@ BEGIN
         "FGN_VOL_UTENZE": 					935,
         "STATS_POMPE": 						1413,
         "POZZI_POMPE": 						578,
-        "POTAB_POMPE": 						875,
+        "POTAB_POMPE": 						220,
         "POMPAGGI_POMPE": 					875,
         "SOLLEV_POMPE": 					536,
         "DEPURATO_POMPE": 					425,
@@ -628,14 +630,14 @@ BEGIN
         "FGN_CONDOTTA_NODES": 				82198,
         "FGN_CONDOTTA_EDGES": 				80517,
         "STATS_CLORATORE": 					43,
-        "SCHEMA_ACQ": 						0,
+        "SCHEMA_ACQ": 						1209,
         "UBIC_ALLACCIO": 					399447,
         "UBIC_CONTATORI_CASS_CONT": 		399447,
-        "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	392,
-        "UBIC_CONTATORI_FGN": 				363343,
-        "UBIC_F_ALLACCIO": 					363343,
+        "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	389,
+        "UBIC_CONTATORI_FGN": 				358115,
+        "UBIC_F_ALLACCIO": 					358115,
         "UTENZE_FOGNATURE_COLLETTORI": 		0,
-        "SUPPORT_CODICE_CAPT_ACCORP": 		0
+        "SUPPORT_CODICE_CAPT_ACCORP": 		2720
     }'::JSON)->v_table;
     RETURN COALESCE(v_count,0);
 EXCEPTION WHEN OTHERS THEN

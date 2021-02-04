@@ -2,6 +2,7 @@ import getopt
 import sys
 import psycopg2
 import os
+_DB_ON_WIN = False
 _HOST = "127.0.0.1"
 _PORT = "5432"
 _DATABASE = "dbiait_stub"
@@ -50,13 +51,16 @@ def run_tests(password, folder, file):
     print("Executing All Unit Tests...")
     connection = getConnection(password)
     cursor = connection.cursor()
-    if os.name == "nt":
+
+    # Workaround to execute in case of database running on Window OS
+    if _DB_ON_WIN:
         conn_str = "hostaddr={0} port={1} dbname={2} user={3} password={4}".format(
             _HOST, _PORT, _DATABASE, _USER, password
         )
         sql = "SELECT set_config('{0}.dblink_conn_extra', '{1}', false);".format(_SCHEMA_UT, conn_str)
         cursor.execute(sql)
         result = cursor.fetchone()
+
     sql = "SELECT status, status || ' ' || rowid || ' ' || message tap_line "
     sql += "FROM("
     sql += "SELECT"
@@ -85,18 +89,19 @@ def run_tests(password, folder, file):
 
 def main(argv):
     global _USER
+    global _HOST
     jenkins_workspace = ""
     output_file = ""
     db_password = ""
     run_procs = True
     try:
-        opts, args = getopt.getopt(argv, "hj:o:u:p:r:", ["workspace=", "output=", "user=", "password=", "run="])
+        opts, args = getopt.getopt(argv, "hj:o:u:p:r:H:", ["workspace=", "output=", "user=", "password=", "run=", "host="])
     except getopt.GetoptError:
-        print('test.py -j <jenkins_workspace> -o <output_file> -u <db_user> -p <db_password> -r <run_stda_procs>')
+        print('test.py -j <jenkins_workspace> -o <output_file> -h <db_host> -u <db_user> -p <db_password> -r <run_stda_procs>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('test.py -j <jenkins_workspace> -o <output_file> -u <db_user> -p <db_password> -r <run_stda_procs>')
+            print('test.py -j <jenkins_workspace> -o <output_file> -H <db_host> -u <db_user> -p <db_password> -r <run_stda_procs>')
             sys.exit()
         elif opt in ("-j", "--workspace"):
             jenkins_workspace = arg
@@ -107,8 +112,10 @@ def main(argv):
         elif opt in ("-p", "--password"):
             db_password = arg
         elif opt in ("-r", "--run"):
-            if arg.lower() != "true" or arg.lower() != "t" or arg.lower() != "y" or arg.lower() != "yes":
+            if arg.lower() != "true" and arg.lower() != "t" and arg.lower() != "y" and arg.lower() != "yes":
                 run_procs = False
+        elif opt in ("-H", "--host"):
+            _HOST = arg
     if run_procs:
         execute_stda_procs(True, db_password)
     run_tests(db_password, jenkins_workspace, output_file)
