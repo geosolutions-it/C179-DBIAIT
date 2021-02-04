@@ -172,33 +172,6 @@ class GraphTemp(BaseProcessTask):
         pass
 
 
-class PuntiClorazione(BaseProcessTask):
-    algorithm = u"populate_stats_cloratore"
-    name = u"Punti Clorazione su rete e adduzione"
-
-    @classmethod
-    def process_pre_send(cls):
-        pass
-
-
-class SchemaAcquedottistico(BaseProcessTask):
-    algorithm = u"populate_schema_acq"
-    name = u"Schema Acquedottistico"
-
-    @classmethod
-    def process_pre_send(cls):
-        pass
-
-
-class CodiceDenominazione(BaseProcessTask):
-    algorithm = u"populate_codice_capt_accorp"
-    name = u"Codice Denominazione"
-
-    @classmethod
-    def process_pre_send(cls):
-        pass
-
-
 class ResetStdaTables(BaseProcessTask):
     algorithm = u"reset_proc_stda_tables"
     name = u"Ripristino Tabelle Standalone"
@@ -207,21 +180,18 @@ class ResetStdaTables(BaseProcessTask):
     def process_pre_send(cls):
         pass
 
-
 process_mapper = {
     u"Ripristino Tabelle Standalone": ResetStdaTables,
-    u"Generazione grafo (rete idrica e fognaria)": Networks,
-    u"Tabelle di relazione": GraphTemp,
     u"Località Istat": LocalitaIstat,
-    u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalita,
     u"Popolazione residente Istat per comune": PopolazioneResidenteIstatPerComune,
+    u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalita,
     u"Percentuale popolazione servita sulla rete per comune": PercentualePopolazioneServitaSullaRetePerComune,
     u"Servizio utenza": ServizioUtenza,
     u"Abitanti equivalenti trattati da depuratori o scarico diretto": AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto,
     u"Archivi pompe": ArchiviPompe,
+    u"Tabelle di relazione": GraphTemp,
     u"Acquedotto": Acquedotto,
     u"Fognatura": Fognatura,
-    u"Punti Clorazione su rete e adduzione": PuntiClorazione,
-    u"Schema Acquedottistico": SchemaAcquedottistico,
-    u"Codice Denominazione": CodiceDenominazione
+    u"Generazione grafo (rete idrica e fognaria)": Networks
 }
+
