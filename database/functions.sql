@@ -1997,7 +1997,10 @@ begin
 	AND populate_acq_vol_utenze()
 	AND populate_acq_shape()
 	AND populate_ubic_allaccio()
-	and populate_utenze_distribuzioni_adduttrici();
+	and populate_utenze_distribuzioni_adduttrici()
+    and populate_stats_cloratore()
+	and populate_schema_acq()
+	and populate_codice_capt_accorp();
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -2378,8 +2381,8 @@ BEGIN
 	AND populate_lung_rete_fgn()
 	AND determine_fgn_allacci()
 	AND populate_fgn_volumi_utenze()
-	and populate_utenze_fognature_collettori()
 	AND populate_ubic_f_allaccio()
+	and populate_utenze_fognature_collettori()
 	AND populate_fgn_shape();
 END;
 $$  LANGUAGE plpgsql
@@ -3900,11 +3903,7 @@ begin
 			and populate_abitanti_trattati()
 			and populate_archivi_pompe()
 			and populate_acquedotto()
-			and populate_fognatura()
-			and populate_stats_cloratore()
-			and populate_schema_acq()
-			and populate_codice_capt_accorp()
-			and populate_codice_capt_accorp();
+			and populate_fognatura();
 	END IF;
 	
 	RETURN v_result;
