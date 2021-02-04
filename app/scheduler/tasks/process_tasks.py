@@ -199,7 +199,17 @@ class CodiceDenominazione(BaseProcessTask):
         pass
 
 
+class ResetStdaTables(BaseProcessTask):
+    algorithm = u"reset_proc_stda_tables"
+    name = u"Ripristino Tabelle Standalone"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
 process_mapper = {
+    u"Ripristino Tabelle Standalone": ResetStdaTables,
     u"Generazione grafo (rete idrica e fognaria)": Networks,
     u"Tabelle di relazione": GraphTemp,
     u"Località Istat": LocalitaIstat,

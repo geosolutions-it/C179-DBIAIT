@@ -73,26 +73,6 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
---------------------------------------------------------------------
--- Etract pro-com part from the localita ISTAT (removing last 5 characters)
--- Example:
---  select dbiait_analysis.locistat_2_procom('3701520011')
---  37015
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.locistat_2_procom(
-	v_locistat VARCHAR
-) RETURNS VARCHAR AS $$
-DECLARE 
-	v_result VARCHAR := NULL;
-BEGIN
-	v_result := substr(v_locistat, 1, length(v_locistat) - 5);
-    RETURN v_result;
-EXCEPTION WHEN OTHERS THEN
-	RETURN v_result;
-END;
-$$  LANGUAGE plpgsql
-    SECURITY DEFINER
-    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
 ------------------------------------------------------------------
 -- Transform a Geometry from EPSG:25832 to EPSG:3003 using NTV2 nadgrids
 --SELECT ST_X(geom), ST_Y(geom) FROM(
@@ -3120,12 +3100,12 @@ DECLARE
 	v_tol DOUBLE PRECISION := snap_tolerance();
 BEGIN
 	v_node_table := v_table_name || '_nodes';
-	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_node_table;
-	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_node_table || '(id INTEGER)';
+	EXECUTE 'DROP TABLE IF EXISTS ' || v_node_table;
+	EXECUTE 'CREATE TABLE ' || v_node_table || '(id INTEGER)';
 	PERFORM AddGeometryColumn ('dbiait_analysis', v_node_table, 'geom', 25832, 'POINT', 2); 
 	
 	EXECUTE '
-		INSERT INTO dbiait_analysis.' || v_node_table || ' (geom, id)
+		INSERT INTO ' || v_node_table || ' (geom, id)
 		select geom, ROW_NUMBER () OVER () id from (
 
 			select distinct on (ST_ASTEXT(geom)) geom
@@ -3154,7 +3134,7 @@ BEGIN
 		) t3
 	' USING v_tol, v_tol;
 	
-	EXECUTE 'CREATE INDEX ' || v_node_table || '_geom_idx ON dbiait_analysis.' || v_node_table || ' USING GIST(geom)';
+	EXECUTE 'CREATE INDEX ' || v_node_table || '_geom_idx ON ' || v_node_table || ' USING GIST(geom)';
 	
 	RETURN TRUE;
 END;
@@ -3174,34 +3154,34 @@ DECLARE
 BEGIN
 	v_tol := snap_tolerance();
 	v_edge_table := v_table_name || '_edges';
-	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_edge_table;
-	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_edge_table || '(id INTEGER, idgis VARCHAR(32), source INTEGER, target INTEGER)';
+	EXECUTE 'DROP TABLE IF EXISTS ' || v_edge_table;
+	EXECUTE 'CREATE TABLE ' || v_edge_table || '(id INTEGER, idgis VARCHAR(32), source INTEGER, target INTEGER)';
 	PERFORM AddGeometryColumn ('dbiait_analysis', v_edge_table, 'geom', 25832, 'LINESTRING', 2); 
 	
 	EXECUTE '
-		INSERT INTO dbiait_analysis.' || v_edge_table || ' (id, idgis, geom)
+		INSERT INTO ' || v_edge_table || ' (id, idgis, geom)
 		SELECT ROW_NUMBER () OVER () id, idgis, st_geometryn(geom, 1) geom
 		FROM ' || v_table_name || '
 		WHERE st_numgeometries(geom) = 1
 	';
 	
-	EXECUTE 'CREATE INDEX ' || v_edge_table || '_geom_idx ON dbiait_analysis.' || v_edge_table || ' USING GIST(geom)';
+	EXECUTE 'CREATE INDEX ' || v_edge_table || '_geom_idx ON ' || v_edge_table || ' USING GIST(geom)';
 	
 	--Update source field
 	EXECUTE '
-	update dbiait_analysis.' || v_edge_table || '
+	update ' || v_edge_table || '
 	set source = n.id
 	from acq_condotta_nodes n
-	where st_buffer(st_startpoint(dbiait_analysis.' || v_edge_table || '.geom),$1)&&n.geom
-	and st_intersects(n.geom,st_buffer(st_startpoint(dbiait_analysis.' || v_edge_table || '.geom),$2))
+	where st_buffer(st_startpoint(' || v_edge_table || '.geom),$1)&&n.geom
+	and st_intersects(n.geom,st_buffer(st_startpoint(' || v_edge_table || '.geom),$2))
 	' USING v_tol, v_tol;
 	--Update target field
 	EXECUTE '
-	update dbiait_analysis.' || v_edge_table || '
+	update ' || v_edge_table || '
 	set target = n.id
 	from acq_condotta_nodes n
-	where st_buffer(st_endpoint(dbiait_analysis.' || v_edge_table || '.geom),$1)&&n.geom
-	and st_intersects(n.geom,st_buffer(st_endpoint(dbiait_analysis.' || v_edge_table || '.geom),$2))
+	where st_buffer(st_endpoint(' || v_edge_table || '.geom),$1)&&n.geom
+	and st_intersects(n.geom,st_buffer(st_endpoint(' || v_edge_table || '.geom),$2))
 	' USING v_tol, v_tol;
 	RETURN TRUE;
 END;
@@ -3220,11 +3200,11 @@ DECLARE
 	v_result BOOLEAN;
 BEGIN
 	-- Rete Idrica
-	PERFORM DBIAIT_ANALYSIS.create_network_nodes('acq_condotta');
-	PERFORM DBIAIT_ANALYSIS.create_network_edges('acq_condotta');
+	PERFORM create_network_nodes('acq_condotta');
+	PERFORM create_network_edges('acq_condotta');
 	-- Rete Fognaria
-	PERFORM DBIAIT_ANALYSIS.create_network_nodes('fgn_condotta');
-	PERFORM DBIAIT_ANALYSIS.create_network_edges('fgn_condotta');
+	PERFORM create_network_nodes('fgn_condotta');
+	PERFORM create_network_edges('fgn_condotta');
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -3323,7 +3303,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_ubic_allaccio(
 ) RETURNS BOOLEAN AS $$
 begin
 
-	-- PULIZIA PRECENTI CALCOLAZIONI E LOG STAND-ALONE
+	-- PULIZIA PRECENTI ELABORAZIONI E LOG STAND-ALONE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UBIC_ALLACCIO';
 	DELETE FROM ubic_contatori_cass_cont;
 	DELETE FROM ubic_allaccio;
@@ -3803,16 +3783,134 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_codice_capt_accorp(
 ) RETURNS BOOLEAN AS $$
 begin
-
-    insert into support_codice_capt_accorp
-    select ac.idgis,codice_accorp_capt codice, acc2.denom from acq_capt_conces acc
-    join acq_captazione ac
-    on ac.idgis=acc.id_captazione
+    DELETE FROM support_codice_capt_accorp;
+    INSERT INTO support_codice_capt_accorp
+    SELECT ac.idgis,codice_accorp_capt codice, acc2.denom FROM acq_capt_conces acc
+    JOIN acq_captazione ac on ac.idgis=acc.id_captazione
     join ACQ_CAPT_ACCORPAM acc2 on codice_accorp_capt=codice_acc;
-
-
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
+-------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------
+-- Esegue il reset (DELETE o UPDATE) della tabelle/colonne che sono aggiornate
+-- dalle procedure standalone
+-- SELECT DBIAIT_ANALYSIS.reset_proc_stda_tables()
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.reset_proc_stda_tables(
+) RETURNS BOOLEAN AS $$
+begin
+	DELETE FROM LOG_STANDALONE;
+    DELETE FROM POP_RES_LOC;
+	DELETE FROM DISTRIB_LOC_SERV;
+	
+	UPDATE POP_RES_COMUNE
+	SET 
+		pop_ser_acq = NULL, 
+		perc_acq = NULL,	
+		perc_fgn = NULL,	
+		pop_ser_fgn = NULL, 
+		perc_dep = NULL,		
+		pop_ser_dep = NULL;																									
+	
+	DELETE FROM DISTRIB_COM_SERV;
+	DELETE FROM UTENZA_SERVIZIO;
+	DELETE FROM UTENZA_SERVIZIO_LOC;
+	DELETE FROM UTENZA_SERVIZIO_ACQ;
+	DELETE FROM UTENZA_SERVIZIO_FGN;
+	DELETE FROM UTENZA_SERVIZIO_BAC;
+	DELETE FROM ABITANTI_TRATTATI;
+	DELETE FROM DISTRIB_TRONCHI;
+	DELETE FROM ADDUT_TRONCHI;
+	DELETE FROM ACQ_COND_ALTRO;
+	DELETE FROM ACQ_LUNGHEZZA_RETE;
+	DELETE FROM FOGNAT_TRONCHI;
+	DELETE FROM COLLETT_TRONCHI;
+	DELETE FROM FGN_COND_ALTRO;
+	DELETE FROM FGN_LUNGHEZZA_RETE;
+	DELETE FROM ACQ_ALLACCIO;
+	DELETE FROM ACQ_LUNGHEZZA_ALLACCI;
+	DELETE FROM SUPPORT_ACQ_ALLACCI;
+	DELETE FROM FGN_ALLACCIO;
+	DELETE FROM FGN_LUNGHEZZA_ALLACCI;
+	DELETE FROM FGN_LUNGHEZZA_ALLACCI_id_rete;
+	DELETE FROM SUPPORT_FGN_ALLACCI;
+	DELETE FROM ACQ_SHAPE;
+	DELETE FROM ACQ_VOL_UTENZE;
+	DELETE FROM FGN_SHAPE;
+	DELETE FROM FGN_VOL_UTENZE;
+	DELETE FROM STATS_POMPE;
+	DELETE FROM POZZI_POMPE;
+	DELETE FROM POTAB_POMPE;
+	DELETE FROM POMPAGGI_POMPE;
+	DELETE FROM SOLLEV_POMPE;
+	DELETE FROM DEPURATO_POMPE;
+	DELETE FROM ADDUT_COM_SERV;
+	DELETE FROM COLLET_COM_SERV;
+	DELETE FROM FIUMI_INRETI;
+	DELETE FROM LAGHI_INRETI;
+	DELETE FROM POZZI_INRETI;
+	DELETE FROM SORGENTI_INRETI;
+	DELETE FROM POTAB_INRETI;
+	DELETE FROM ADDUT_INRETI;
+	DELETE FROM ACCUMULI_INRETI;
+	DELETE FROM ACCUMULI_INADD;
+	DELETE FROM DEPURATO_INCOLL;
+	DELETE FROM SCARICATO_INFOG;
+	DELETE FROM ACQ_CONDOTTA_NODES;
+	DELETE FROM ACQ_CONDOTTA_EDGES;
+	DELETE FROM FGN_CONDOTTA_NODES;
+	DELETE FROM FGN_CONDOTTA_EDGES;
+	DELETE FROM STATS_CLORATORE;
+	DELETE FROM SCHEMA_ACQ;
+	DELETE FROM UBIC_ALLACCIO;
+	DELETE FROM UBIC_CONTATORI_CASS_CONT;
+	DELETE FROM UTENZE_DISTRIBUZIONI_ADDUTTRICI;
+	DELETE FROM UBIC_CONTATORI_FGN;
+	DELETE FROM UBIC_F_ALLACCIO;
+	DELETE FROM UTENZE_FOGNATURE_COLLETTORI;
+	DELETE FROM SUPPORT_CODICE_CAPT_ACCORP;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+-------------------------------------------------------------------------------------------------------
+-- Esegue la lista di tutte le procedure STANDALONE nell'ordine corretto
+-- SELECT DBIAIT_ANALYSIS.run_all_procs();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.run_all_procs(
+	v_reset_before BOOLEAN DEFAULT TRUE
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_result BOOLEAN := TRUE;
+begin
+	IF v_reset_before THEN
+		v_result := reset_proc_stda_tables();
+	END IF;
+	
+	IF v_result THEN
+		v_result:= create_networks()
+			and populate_temp_graph_tables()
+			and populate_pop_res_loc()
+			and populate_distrib_loc_serv()
+			and populate_pop_res_comune()
+			and populate_distr_com_serv()
+			and populate_utenza_servizio()
+			and populate_abitanti_trattati()
+			and populate_archivi_pompe()
+			and populate_acquedotto()
+			and populate_fognatura()
+			and populate_stats_cloratore()
+			and populate_schema_acq()
+			and populate_codice_capt_accorp()
+			and populate_codice_capt_accorp();
+	END IF;
+	
+	RETURN v_result;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+-------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------

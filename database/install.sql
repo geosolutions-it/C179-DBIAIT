@@ -890,7 +890,8 @@ DROP TABLE IF EXISTS DBIAIT_ANALYSIS.area_poe;
 CREATE TABLE DBIAIT_ANALYSIS.area_poe
 (
     codice_schema_acq varchar(32),
-    denominazione_schema_acq character varying(100)
+    denominazione_schema_acq character varying(100),
+	PRIMARY KEY(codice_schema_acq)
 );
 SELECT AddGeometryColumn ('dbiait_analysis', 'area_poe', 'geom', 25832, 'MULTIPOLYGON', 2);
 
@@ -930,13 +931,14 @@ CREATE TABLE DBIAIT_ANALYSIS.ubic_allaccio(
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.utenza_defalco;
 CREATE TABLE DBIAIT_ANALYSIS.utenza_defalco(
-    imp_defalco     bigint,
-    imp_divisionale     bigint,
-    idgis_defalco     VARCHAR(32),
-    idgis_divisionale     VARCHAR(32),
-    dt_iniz_val     date,
-    dt_fine_val     date,
-    annotazioni     text
+    imp_defalco     	bigint,
+    imp_divisionale 	bigint,
+    idgis_defalco   	VARCHAR(32),
+    idgis_divisionale   VARCHAR(32),
+    dt_iniz_val     	date,
+    dt_fine_val     	date,
+    annotazioni     	text,
+	primary key (idgis_defalco,idgis_divisionale)
 );
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.support_acq_allacci;

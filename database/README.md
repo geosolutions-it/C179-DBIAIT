@@ -5,12 +5,24 @@ Unittest for procedure
 --
 
 Some preliminary actions are needed in order to run the unittests.
-1) create a copy of the database, with a name like `unittest_pa`
+1) create a copy of the database, with a name like `dbiait_stub`
 2) run the `install.sql` and `functions.sql`  
 3) Import the dump for the stabbed data
-4) install [pgUnit](https://github.com/adrianandrei-ca/pgunit).
-4) run the `unittest.sql`
+4) Create a specific schema for the pgunit framework
+> CREATE SCHEMA pgunit;
+5) Create the `dblink` extension
+> CREATE EXTENSION DBLINK SCHEMA pgunit;
+6) Give to the test user (eg dbiait_stub) the following permissions:
+> GRANT EXECUTE ON FUNCTION dblink_connect_u(text) TO dbiait_stub;
+> GRANT EXECUTE ON FUNCTION dblink_connect_u(text, text) TO dbiait_stub;
+7) install [pgUnit](https://github.com/adrianandrei-ca/pgunit).
+8) Import the `unittest.sql`
+9) To test all procedures execute the following SQL statement:
+> SELECT * FROM pgunit.test_run_all();
+10) To run a specific suite (eg sqlexport => all procedures starting with name test_case_sqlexport*)
+> SELECT * FROM test_run_suite('sqlexport');
 
+---------------------------------------------------------------------------------------------
 
 How it works:
 --
