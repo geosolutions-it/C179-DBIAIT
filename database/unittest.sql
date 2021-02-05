@@ -621,7 +621,7 @@ BEGIN
         "SORGENTI_INRETI": 					838,
         "POTAB_INRETI": 					99,
         "ADDUT_INRETI": 					820,
-        "ACCUMULI_INRETI": 					910,
+        "ACCUMULI_INRETI": 					914,
         "ACCUMULI_INADD": 					784,
         "DEPURATO_INCOLL": 					43,
         "SCARICATO_INFOG": 					1074,
@@ -1118,6 +1118,11 @@ DECLARE
 BEGIN
     select count(0) into v_count from dbiait_analysis.ACCUMULI_INRETI;
     perform test_assertTrue('count TAB ACCUMULI_INRETI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+
+    v_expected := 3;
+    select count(0) into v_count from DBIAIT_ANALYSIS.LOG_STANDALONE WHERE alg_name ='ACCUMULI_INRETI';
+    perform test_assertTrue('count anomalies ACCUMULI_INRETI, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 -- ------------------------------------------------------------------------------------------
