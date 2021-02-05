@@ -2815,6 +2815,17 @@ DECLARE
 		'ADDUT_INRETI',
 		'ACCUMULI_INRETI'
 	];
+
+	v_touch_flt VARCHAR[] := ARRAY[
+		'',
+		'',
+		'',
+		'',
+		'',
+		' AND ST_TOUCHES(r.geom,t.geom)=FALSE ',
+		''
+	];
+
 	v_in_fields VARCHAR[] := ARRAY[
 		't.codice_ato, r.codice_ato, 3',
 		't.codice_ato, r.codice_ato, 3',
@@ -2848,14 +2859,14 @@ BEGIN
 	LOOP
 		-- Cleanup destination table
 		EXECUTE 'DELETE FROM ' || v_tables[v_t] || ';';
-		
+
 		--Populate destination table
 		EXECUTE '
 		INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
 		SELECT DISTINCT ' || v_in_fields[v_t] || ' 
 		FROM ' || v_in_tables[v_t] || ' t
 		LEFT join acq_rete_distrib r
-		  ON r.geom&&t.geom AND ST_INTERSECTS(r.geom,t.geom) AND ST_TOUCHES(r.geom,t.geom)=FALSE
+		  ON r.geom&&t.geom AND ST_INTERSECTS(r.geom,t.geom) ' || v_touch_flt[v_t] || '
 		WHERE r.codice_ato is NOT NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')
 		' || v_filters[v_t];
 		
@@ -2870,7 +2881,7 @@ BEGIN
 			SELECT t.idgis
 			FROM ' || v_in_tables[v_t] || ' t
 			LEFT JOIN acq_rete_distrib r 
-				ON r.geom&&t.geom AND ST_INTERSECTS(r.geom, t.geom) AND ST_TOUCHES(r.geom,t.geom)=FALSE
+				ON r.geom&&t.geom AND ST_INTERSECTS(r.geom, t.geom) ' || v_touch_flt[v_t] || '
 			WHERE r.codice_ato is NOT NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')
 			' || v_filters[v_t] || '
 		) t2 group by t2.idgis having count(0) > 1;' USING v_tables[v_t];
@@ -2880,11 +2891,12 @@ BEGIN
 		INSERT INTO LOG_STANDALONE (id, alg_name, description)
 		SELECT t.idgis, $1, ''Elemento non intersecante alcuna rete''
 		FROM ' || v_in_tables[v_t] || ' t
-		LEFT JOIN acq_rete_distrib r 
-			ON r.geom&&t.geom AND ST_INTERSECTS(r.geom, t.geom) AND ST_TOUCHES(r.geom,t.geom)=FALSE
-		where r.codice_ato is NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') 
+		WHERE NOT EXISTS(
+		    SELECT TRUE from ' || v_tables[v_t] || ' ai
+            where t.codice_ato = ai.ids_codice
+		)
 		' || v_filters[v_t] USING v_tables[v_t];
-		
+
 	END LOOP;
 
 	RETURN TRUE;
