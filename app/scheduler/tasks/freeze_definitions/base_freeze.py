@@ -5,6 +5,7 @@ from django.conf import settings
 from app.scheduler.utils import Schema
 from shutil import copy
 import ntpath
+import pathlib
 
 
 class BaseFreezeDefinition:
@@ -41,8 +42,8 @@ class BaseFreezeDefinition:
             export_folder = f"{settings.EXPORT_FOLDER}/config/{ref_year}"
             self._create_folder(export_folder)
 
-            database_folder = f"{settings.EXPORT_FOLDER}/config/{ref_year}/database"
-            self._create_folder(database_folder)
+            export_database_folder = f"{settings.EXPORT_FOLDER}/config/{ref_year}/database"
+            self._create_folder(export_database_folder)
 
             conf_filename = ntpath.basename(self.config_filename.substitute())
             shp_file = ntpath.basename(self.shp_file.substitute())
@@ -51,9 +52,9 @@ class BaseFreezeDefinition:
             copy(self.config_filename.substitute(), f"{export_folder}/{conf_filename}")
             copy(self.shp_file.substitute(), f"{export_folder}/{shp_file}")
             copy(self.netsic_file.substitute(), f"{export_folder}/{netsic_file}")
-            copy(f"{self.db_folder}/functions.sql", f"{database_folder}/functions.sql")
-            copy(f"{self.db_folder}/install.sql", f"{database_folder}/install.sql")
-            copy(f"{self.db_folder}/unittest.sql", f"{database_folder}/unittest.sql")
+            copy(f"{self.db_folder}/functions.sql", f"{export_database_folder}/functions.sql")
+            copy(f"{self.db_folder}/install.sql", f"{export_database_folder}/install.sql")
+            copy(f"{self.db_folder}/unittest.sql", f"{export_database_folder}/unittest.sql")
 
             return True
         except Exception as e:
