@@ -23,7 +23,7 @@ def get_plpgsql_test_lines(sheet, sources):
     return procs
 
 root_folder = pathlib.Path(os.path.dirname(__file__)).parents[0].parents[0]
-file_path = os.path.join(root_folder, "database", "unittest_xls.py")
+file_path = os.path.join(root_folder, "database", "unittest_xls.sql")
 all_sql_query = XlsExportConfig().config
 with open(file_path.replace("\\", "/"), 'w') as file:
     for q in all_sql_query:
