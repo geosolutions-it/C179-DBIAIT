@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import ast
+import pathlib
+
 import ldap
 
 from app.utils import TemplateWithDefaults
@@ -269,7 +271,7 @@ FTP_FOLDER = os.getenv("FTP_FOLDER", BASE_DIR)
 
 # Directory from which geopackage, import configuration and domains.csv files are imported
 IMPORT_FOLDER = os.getenv("IMPORT_FOLDER", os.path.join(FTP_FOLDER, "import"))
-DATABASE_FOLDER = os.getenv("DATABASE_FOLDER", os.path.join(FTP_FOLDER, "database"))
+DATABASE_FOLDER = os.getenv("DATABASE_FOLDER", f"{pathlib.Path().absolute()}/database/")
 IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'config', "layers.json"))
 IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
 
