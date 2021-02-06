@@ -13,7 +13,7 @@
 -- SELECT * FROM pgunit.test_run_all();
 --
 -- RUN A SPECIFIC SUITE
--- SELECT * FROM test_run_suite('sqlexport');
+-- SELECT * FROM pgunit.test_run_suite('sqlexport');
 -- ==========================================================================================
 -- TEST POPULATE STATS CLORATORE
 -- ------------------------------------------------------------------------------------------
@@ -557,6 +557,69 @@ BEGIN
     v_expected:=51015;
     v_val := DBIAIT_ANALYSIS.decode_municipal(51015);
     perform test_assertTrue('check decode_municipal(51015), expected ' || v_expected || ' but found ' || v_val, v_val = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis._test_expected_xls_count(v_sheet IN VARCHAR) returns INTEGER as $$
+DECLARE
+    v_count INTEGER;
+BEGIN
+    v_count := ('{
+        "XLS_ACCUMULI":         1017,
+        "XLS_ACCUMULI_INADD":   784,
+        "XLS_ACCUMULI_INRETI":  914,
+        "XLS_ADDUT_COM_SERV":   825,
+        "XLS_ADDUT_INRETI":     820,
+        "XLS_ADDUT_TRONCHI":    10443,
+        "XLS_ADDUTTRICI":       751,
+        "XLS_COLLETT_COM_SERV": 210,
+        "XLS_COLLETT_TRONCHI":  6013,
+        "XLS_COLLETTORI":       161,
+        "XLS_CONDOTTEMARINE":   0,
+        "XLS_DEPURAT_INCOLL":   43,
+        "XLS_DEPURAT_POMPE":    429,
+        "XLS_DEPURATORI":       154,
+        "XLS_DISTRIB_COM_SERV": 451,
+        "XLS_DISTRIB_LOC_SERV": 1430,
+        "XLS_DISTRIB_QUALITA":  0,
+        "XLS_DISTRIB_TRONCHI":  108819,
+        "XLS_DISTRIBUZIONI":    244,
+        "XLS_FIUMI":            74,
+        "XLS_FIUMI_INPOTAB":    0,
+        "XLS_FIUMI_INRETI":     60,
+        "XLS_FOGNAT_COM_SERV":  0,
+        "XLS_FOGNAT_LOC_SERV":  0,
+        "XLS_FOGNAT_TRONCHI":   63233,
+        "XLS_FOGNATURE":        1027,
+        "XLS_LAGHI":            36,
+        "XLS_LAGHI_INPOTAB":    0,
+        "XLS_LAGHI_INRETI":     22,
+        "XLS_POMPAGGI":         493,
+        "XLS_POMPAGGI_INPOTAB": 0,
+        "XLS_POMPAGGI_INSERBA": 0,
+        "XLS_POMPAGGI_POMPE":   875,
+        "XLS_POTAB_INCAPTAZ":   0,
+        "XLS_POTAB_INRETI":     99,
+        "XLS_POTAB_POMPE":      221,
+        "XLS_POTABILIZZATORI":  142,
+        "XLS_POZZI":            1336,
+        "XLS_POZZI_INPOTAB":    0,
+        "XLS_POZZI_INRETI":     576,
+        "XLS_POZZI_POMPE":      578,
+        "XLS_POZZI_QUALITA":    0,
+        "XLS_SCARICAT_INFOG":   1074,
+        "XLS_SCARICATORI":      1118,
+        "XLS_SOLLEV_POMPE":     537,
+        "XLS_SOLLEVAMENTI":     250,
+        "XLS_SORGENT_INPOTAB":  0,
+        "XLS_SORGENTI":         1722,
+        "XLS_SORGENTI_INRETI":  838,
+        "XLS_SORGENTI_QUALITA": 0
+    }'::JSON)->v_sheet;
+    RETURN COALESCE(v_count,0);
+EXCEPTION WHEN OTHERS THEN
+    RETURN 0;
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 -- ------------------------------------------------------------------------------------------
