@@ -101,11 +101,11 @@ begin
 
     --- given a selected ids_codi_1, the value of sezione should be null
     SELECT sezione into dummy_string FROM dbiait_analysis.fgn_shape WHERE ids_codi_1 ='PAFCON00000000420230';
-    PERFORM test_assertTrue('Check la sezione ALTRO esiste', dummy_string = 'ALTRO' );
+    PERFORM test_assertTrue('Check la sezione sia ALTRO', dummy_string = 'ALTRO' );
 
    --- given a selected ids_codi_1, the value of sezione should be circolare
     SELECT sezione into dummy_string FROM dbiait_analysis.fgn_shape WHERE ids_codi_1 ='PAFCON00000000368712';
-    PERFORM test_assertTrue('Check la sezione CIRCOLARE esista', dummy_string = 'CIRCOLARE' );
+    PERFORM test_assertTrue('Check la sezione sia CIRCOLARE', dummy_string = 'CIRCOLARE' );
 
    --- given a selected ids_codi_1, the value of comune_nom should be the pro_com and not the codice_istat
     SELECT id_comune_ into dummy_int FROM dbiait_analysis.fgn_shape WHERE ids_codi_1 ='PAFCON00000000375524';
@@ -121,7 +121,7 @@ begin
 
    --- given a selected ids_codi_1, the value of copertura should be null in case of ASFALTO SIMILI
     SELECT copertura into dummy_string FROM dbiait_analysis.fgn_shape WHERE ids_codi_1 ='PAFCON00000000400248';
-    PERFORM test_assertNull('Check la sezione ASFALTO SIMILI è NULL', dummy_string );
+    PERFORM test_assertTrue('Check copertura sia ASFALTO SIMILI', dummy_string = 'ASFALTO SIMILI' );
 
    --- given a selected ids_codi_1, the value of copertura should be TERRENO VEGETALE in case of NOT NULL
     SELECT copertura into dummy_string FROM dbiait_analysis.fgn_shape WHERE ids_codi_1 ='PAFCON00000000400245';
