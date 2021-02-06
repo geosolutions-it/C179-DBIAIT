@@ -101,7 +101,7 @@ begin
 
     --- given a selected ids_codi_1, the value of sezione should be null
     SELECT sezione into dummy_string FROM dbiait_analysis.fgn_shape WHERE ids_codi_1 ='PAFCON00000000420230';
-    PERFORM test_assertNull('Check la sezione ALTRO è NULL', dummy_string );
+    PERFORM test_assertTrue('Check la sezione ALTRO esiste', dummy_string = 'ALTRO' );
 
    --- given a selected ids_codi_1, the value of sezione should be circolare
     SELECT sezione into dummy_string FROM dbiait_analysis.fgn_shape WHERE ids_codi_1 ='PAFCON00000000368712';
@@ -603,7 +603,7 @@ BEGIN
         "XLS_POTAB_INRETI":     99,
         "XLS_POTAB_POMPE":      221,
         "XLS_POTABILIZZATORI":  142,
-        "XLS_POZZI":            1336,
+        "XLS_POZZI":            764,
         "XLS_POZZI_INPOTAB":    0,
         "XLS_POZZI_INRETI":     576,
         "XLS_POZZI_POMPE":      578,
@@ -613,7 +613,7 @@ BEGIN
         "XLS_SOLLEV_POMPE":     537,
         "XLS_SOLLEVAMENTI":     250,
         "XLS_SORGENT_INPOTAB":  0,
-        "XLS_SORGENTI":         1722,
+        "XLS_SORGENTI":         934,
         "XLS_SORGENTI_INRETI":  838,
         "XLS_SORGENTI_QUALITA": 0
     }'::JSON)->v_sheet;
@@ -637,8 +637,8 @@ BEGIN
         "UTENZA_SERVIZIO_LOC":  			425970,
         "UTENZA_SERVIZIO_ACQ":  			425916,
         "UTENZA_SERVIZIO_FGN":  			380435,
-        "UTENZA_SERVIZIO_BAC":  			281618,
-        "ABITANTI_TRATTATI":    			846,
+        "UTENZA_SERVIZIO_BAC":  			385827,
+        "ABITANTI_TRATTATI":    			840,
         "DISTRIB_TRONCHI":      			108819,
         "ADDUT_TRONCHI":        			10443,
         "ACQ_COND_ALTRO":       			119262,
@@ -700,7 +700,7 @@ BEGIN
         "UBIC_CONTATORI_FGN": 				358115,
         "UBIC_F_ALLACCIO": 					358115,
         "UTENZE_FOGNATURE_COLLETTORI": 		1063,
-        "SUPPORT_CODICE_CAPT_ACCORP": 		2720
+        "SUPPORT_CODICE_CAPT_ACCORP": 		1360
     }'::JSON)->v_table;
     RETURN COALESCE(v_count,0);
 EXCEPTION WHEN OTHERS THEN
