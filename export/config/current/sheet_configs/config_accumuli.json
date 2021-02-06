@@ -211,7 +211,7 @@
                         },
                         {
                             "or": [
-                                {"operator": ">=", "value": "{REF_YEAR}"},
+                                {"operator": "<=", "value": "{REF_YEAR}"},
                                 {"operator": "=", "value": 9800}
                             ]
                         }]
@@ -292,7 +292,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not A or X"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Affid. Anno costruzione non coerente con Anno di costruzione"
                 }
             ]
         },

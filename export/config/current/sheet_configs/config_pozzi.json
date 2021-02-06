@@ -430,7 +430,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value 1 is not permitted or {REF_YEAR}"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Anno ristrutturazione cloratore non corretto {REF_YEAR}"
           }
       ]},
       {"id":"18400", "transformation":{"func":"DIRECT", "params":{"field":"sn_epis_inq"}}},
@@ -506,7 +506,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not A or X"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Affid. Anno costruzione non coerente con Anno di costruzione"
           }
       ]},
       {"id":"18700", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{

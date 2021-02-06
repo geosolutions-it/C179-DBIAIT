@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION public.to_integer(
 	v_default INTEGER DEFAULT 0
 ) RETURNS INTEGER AS $$
 BEGIN
-    RETURN v_number::INTEGER;
+    RETURN CAST(v_number as NUMERIC)::INTEGER;
 EXCEPTION WHEN OTHERS THEN
 	RETURN v_default;
 END;
@@ -442,12 +442,12 @@ BEGIN
 			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
 			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
-			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
+			AND (t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE_ATO in (''DE00213'',''DE00214'')
 			UNION ALL
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
-			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
+			AND (t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE in (''DE00213'',''DE00214'')
 		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null';
 
@@ -975,7 +975,7 @@ BEGIN
 				ELSE ''B''
 			END idx_materiale,
 			CASE 
-				WHEN a.d_diametro IS NULL THEN ''X''
+				WHEN coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NULL THEN ''X''
 				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro, 
@@ -2293,6 +2293,8 @@ BEGIN
 					'CIRCOLARE'
 				WHEN c.d_tipo_sezione IN ('OVO','VIG','OVS','OVC') THEN
 					'OVOIDALE'
+				WHEN c.d_tipo_sezione IN ('VOL','TRA','SCO','CAT','CAA','ALT') THEN
+					'ALTRO'
 				ELSE null
 			END sezione,
 			coalesce(quota_in_rel,0) quota_in_rel,
@@ -2308,7 +2310,7 @@ BEGIN
 		WHERE COALESCE(c.d_pavimentaz,'SCO') in ('SCO','ALT')
 		AND d.dominio_gis = 'D_UBICAZIONE'
 		AND d.valore_gis = COALESCE(c.d_ubicazione,'SCO')
-		and d.valore_netsic !='ASFALTO SIMILI'
+		--and d.valore_netsic !='ASFALTO SIMILI'
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
 	UPDATE FGN_SHAPE
 	SET copertura = t.valore_netsic
@@ -2318,7 +2320,7 @@ BEGIN
 		WHERE COALESCE(c.d_pavimentaz,'SCO') NOT IN ('SCO','ALT')
 		AND d.dominio_gis = 'D_MAT_PAVIMENT'
 		AND d.valore_gis = c.d_pavimentaz
-		and d.valore_netsic !='ASFALTO SIMILI'
+		--and d.valore_netsic !='ASFALTO SIMILI'
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
 
 	--(allacci, allacci_industriali, lunghezza_allaci)
