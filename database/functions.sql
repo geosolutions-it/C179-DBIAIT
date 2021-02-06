@@ -3117,8 +3117,8 @@ DECLARE
 	v_tol DOUBLE PRECISION := snap_tolerance();
 BEGIN
 	v_node_table := v_table_name || '_nodes';
-	EXECUTE 'DROP TABLE IF EXISTS ' || v_node_table;
-	EXECUTE 'CREATE TABLE ' || v_node_table || '(id INTEGER)';
+	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_node_table;
+	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_node_table || '(id INTEGER)';
 	PERFORM AddGeometryColumn ('dbiait_analysis', v_node_table, 'geom', 25832, 'POINT', 2); 
 	
 	EXECUTE '
@@ -3171,8 +3171,8 @@ DECLARE
 BEGIN
 	v_tol := snap_tolerance();
 	v_edge_table := v_table_name || '_edges';
-	EXECUTE 'DROP TABLE IF EXISTS ' || v_edge_table;
-	EXECUTE 'CREATE TABLE ' || v_edge_table || '(id INTEGER, idgis VARCHAR(32), source INTEGER, target INTEGER)';
+	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_edge_table;
+	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_edge_table || '(id INTEGER, idgis VARCHAR(32), source INTEGER, target INTEGER)';
 	PERFORM AddGeometryColumn ('dbiait_analysis', v_edge_table, 'geom', 25832, 'LINESTRING', 2); 
 	
 	EXECUTE '
