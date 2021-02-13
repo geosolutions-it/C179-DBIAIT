@@ -7,11 +7,11 @@ id_indice_idx,D_AFFIDABILITA,MIS,Misurato,A
 id_tra_acarboni_attivi,D_ASS_CARB_ATT,GAC,GAC,3
 id_tra_acarboni_attivi,D_ASS_CARB_ATT,NO,No,1
 id_tra_acarboni_attivi,D_ASS_CARB_ATT,PAC,PAC,2
-id_corso_acqua_classe,D_CLASSIFIC,A1,A1,1
-id_corso_acqua_classe,D_CLASSIFIC,A2,A2,2
-id_corso_acqua_classe,D_CLASSIFIC,A3,A3,3
-id_corso_acqua_classe,D_CLASSIFIC,B1,B1,3
-id_corso_acqua_classe,D_CLASSIFIC,NDF,Non Definito,5
+id_corso_acqua_classe,D_CLASSIF_OPERA,A1,A1,1
+id_corso_acqua_classe,D_CLASSIF_OPERA,A2,A2,2
+id_corso_acqua_classe,D_CLASSIF_OPERA,A3,A3,3
+id_corso_acqua_classe,D_CLASSIF_OPERA,B1,B1, 
+id_corso_acqua_classe,D_CLASSIF_OPERA,NDF,Non Definito,5
 ,D_CORPO_RICET,PA-TORRENTE LIMENTRA DI SAMBUC,TORRENTE LIMENTRA DI SAMBUCA,TORRENTE LIMENTRA DI SAMBUCA
 ,D_CORPO_RICET,PA-BORRO DELLA CERVIA,BORRO DELLA CERVIA,BORRO DELLA CERVIA
 ,D_CORPO_RICET,PA-TORRENTE OMBRONE,TORRENTE OMBRONE,TORRENTE OMBRONE
@@ -115,7 +115,7 @@ id_dig_anaerobica,D_DIGEST_ANAE,SCO,Sconosciuto,9999
 id_disidratazione,D_DISIDRAT,CEN,Centrifuga,4
 id_disidratazione,D_DISIDRAT,FIL,Filtropressa,2
 id_disidratazione,D_DISIDRAT,NAS,Nastropressa,3
-id_disidratazione,D_DISIDRAT,NO,No,11
+id_disidratazione,D_DISIDRAT,NO,No,1
 ,D_F_FUNZIONAM_COND,GRA,Gravita',1
 ,D_F_FUNZIONAM_COND,DEP,Depressione,0
 ,D_F_FUNZIONAM_COND,PRE,Pressione,0
@@ -234,7 +234,7 @@ id_materiale,D_MATERIALE_IDR,PEAD,Polietilene alta densita',26
 id_materiale,D_MATERIALE_IDR,NULL,nullo,1
 id_tra_ossida_riduzione,D_OSSID_RIDUZ,CAT,Catalitica,3
 id_tra_ossida_riduzione,D_OSSID_RIDUZ,CON,Con Aria,2
-id_tra_ossida_riduzione,D_OSSID_RIDUZ,KMN,Kmno4,2
+id_tra_ossida_riduzione,D_OSSID_RIDUZ,KMN,Kmno4,4
 id_tra_ossida_riduzione,D_OSSID_RIDUZ,OSS,Ossigeno,2
 id_tra_ossida_riduzione,D_OSSID_RIDUZ,OZO,Ozono,3
 id_tra_ossida_riduzione,D_OSSID_RIDUZ,ALT,Altro,5
@@ -243,7 +243,7 @@ id_opera_stato,D_STATO,ATT,Attivo,1
 id_opera_stato,D_STATO,DIS,Dismesso,5
 id_opera_stato,D_STATO,FEI,Fermo impianto,4
 id_opera_stato,D_STATO,FIP,Fermo impianto parziale,2
-id_opera_stato,D_STATO,IAC,In acquisizione,
+id_opera_stato,D_STATO,IAC,In acquisizione, 
 id_opera_stato,D_STATO,ICO,In costruzione,3
 id_opera_stato,D_STATO,NAC,Non acquisito,6
 id_opera_stato,D_STATO,RES,Restituito,5
@@ -251,7 +251,7 @@ id_opera_stato,D_STATO,DEM,Demolito,5
 id_opera_stato,D_STATO,PIF,Parzialmente in Funzione,1
 id_opera_stato,D_STATO,IAA,In attesa di attivazione,3
 id_opera_stato,D_STATO,RIS,Fermo impianto per ristrutturazione,2
-id_opera_stato,D_STATO,IPR,in progetto,
+id_opera_stato,D_STATO,IPR,in progetto, 
 id_conserva,D_STATO_CONS,INS,Insufficiente,2
 id_conserva,D_STATO_CONS,SUF,Sufficiente,3
 id_conserva,D_STATO_CONS,BUO,Buono,4
@@ -264,22 +264,6 @@ id_tipo_clorazione,D_T_CLORAZ,NES,Nessuna,1
 id_tipo_clorazione,D_T_CLORAZ,BIO,Biossido di cloro,4
 id_tipo_clorazione,D_T_CLORAZ,IPO,Ipocloriti,3
 id_tipo_clorazione,D_T_CLORAZ,MIS,Per miscelazione,5
-id_indice_idx,D_T_RILIEVO,SCO,Sconosciuto,B
-id_indice_idx,D_T_RILIEVO,PLN,Planimetrico,B
-id_indice_idx,D_T_RILIEVO,DCA,Da carta,B
-id_indice_idx,D_T_RILIEVO,DES,Descrittivo,B
-id_indice_idx,D_T_RILIEVO,DGP,Da gestore precedente,B
-id_indice_idx,D_T_RILIEVO,DIN,Da intervento,A
-id_indice_idx,D_T_RILIEVO,DLE,Da letturista,B
-id_indice_idx,D_T_RILIEVO,WFM,Wfm,B
-id_indice_idx,D_T_RILIEVO,STE,Step Test,B
-id_indice_idx,D_T_RILIEVO,ASB,As built,A
-id_indice_idx,D_T_RILIEVO,DAC,Da campionamento,B
-id_indice_idx,D_T_RILIEVO,STO,Storico,B
-id_indice_idx,D_T_RILIEVO,PLA,Planoaltimetrico,B
-id_indice_idx,D_T_RILIEVO,DTA,Da task,B
-id_indice_idx,D_T_RILIEVO,AVI,A vista,B
-id_indice_idx,D_T_RILIEVO,INT,Interpolato,B
 id_tipo_scolmatore,D_T_SCOLM,LUC,Luce di fondo,2
 id_tipo_scolmatore,D_T_SCOLM,STR,Stramazzo laterale,1
 id_tipo_scolmatore,D_T_SCOLM,SX,A sx,3
@@ -296,60 +280,77 @@ id_tipo_telecontrollo,D_TELECONT,ASS,Assente,1
 id_tipo_telecontrollo,D_TELECONT,MAN,Manuale,2
 id_tipo_telecontrollo,D_TELECONT,SEM,Semi-automatico,3
 id_tipo_telecontrollo,D_TELECONT,AUT,Automatico,4
-id_tra_filtraz_rapida,D_TIPO_FILTRAZ,GRA,Gravit?,3
-id_tra_filtraz_rapida,D_TIPO_FILTRAZ,NES,Nessuna,1
-id_tra_filtraz_rapida,D_TIPO_FILTRAZ,PRE,Pressione,2
-id_tra_filtraz_rapida,D_TIPO_FILTRAZ,ALT,Altro,4
-id_linea_acqua,D_TIPO_TRATT_ACQUA,SMA,Secondario Massa Adesa,3
-id_linea_acqua,D_TIPO_TRATT_ACQUA,SMS,Secondario Massa Sospesa,2
-id_linea_acqua,D_TIPO_TRATT_ACQUA,SOL,Solo Sedimentazione,1
-id_linea_fango,D_TIPO_TRATT_FANGHI,DAD,Digestione Anaerobica Con Disidratazione,4
-id_linea_fango,D_TIPO_TRATT_FANGHI,DDA,Disidratazione Senza Digestione Anaerobica,3
-id_linea_fango,D_TIPO_TRATT_FANGHI,DDE,"Dig. Anaerobica, Disidratazione, Essiccamento",4
-id_linea_fango,D_TIPO_TRATT_FANGHI,DDI,"Dig. Anaerobica, Disidratazione, Incenerimento",7
-id_linea_fango,D_TIPO_TRATT_FANGHI,DIA,Digestione Anaerobica,2
-id_linea_fango,D_TIPO_TRATT_FANGHI,DIE,"Disidratazione, Essiccamento",6
-id_linea_fango,D_TIPO_TRATT_FANGHI,DII,"Disidratazione, Incenerimento",8
-id_linea_fango,D_TIPO_TRATT_FANGHI,SCO,Sconosciuto,99
-id_linea_fango,D_TIPO_TRATT_FANGHI,SPE,"Spessimento, Dig.Aerobica, Essic. In Letto",1
-,D_UBICAZ_OPERA,FUO,Fuori terra,1
-,D_UBICAZ_OPERA,INT,Interrato,2
-,D_UBICAZ_OPERA,SEM,Semi Interrato,4
-,D_UBICAZ_OPERA,PEN,Pensile,3
-,D_UTILIZZO_OPERA,OCC,Occasionale,Occasionale
-,D_UTILIZZO_OPERA,CON,Continuo,Continuo
-,D_UTILIZZO_OPERA,PER,Periodico,Periodico
-,D_UTILIZZO_OPERA,SCO,Sconosciuto,Sconosciuto
+id_tra_filtraz_rapida,D_T_FILTRAZ,GRA,Gravitƒ,3
+id_tra_filtraz_rapida,D_T_FILTRAZ,NES,Nessuna,1
+id_tra_filtraz_rapida,D_T_FILTRAZ,PRE,Pressione,2
+id_tra_filtraz_rapida,D_T_FILTRAZ,ALT,Altro,4
+id_linea_acqua,D_T_TRATTAM_ACQUA,SMA,Secondario Massa Adesa,3
+id_linea_acqua,D_T_TRATTAM_ACQUA,SMS,Secondario Massa Sospesa,2
+id_linea_acqua,D_T_TRATTAM_ACQUA,SOL,Solo Sedimentazione,1
+id_linea_fango,D_T_TRATTAM_FANGHI,DAD,Digestione Anaerobica Con Disidratazione,4
+id_linea_fango,D_T_TRATTAM_FANGHI,DDA,Disidratazione Senza Digestione Anaerobica,3
+id_linea_fango,D_T_TRATTAM_FANGHI,DDE,"Dig. Anaerobica, Disidratazione, Essiccamento",5
+id_linea_fango,D_T_TRATTAM_FANGHI,DDI,"Dig. Anaerobica, Disidratazione, Incenerimento",7
+id_linea_fango,D_T_TRATTAM_FANGHI,DIA,Digestione Anaerobica,2
+id_linea_fango,D_T_TRATTAM_FANGHI,DIE,"Disidratazione, Essiccamento",6
+id_linea_fango,D_T_TRATTAM_FANGHI,DII,"Disidratazione, Incenerimento",8
+id_linea_fango,D_T_TRATTAM_FANGHI,SCO,Sconosciuto,99
+id_linea_fango,D_T_TRATTAM_FANGHI,SPE,"Spessimento, Dig.Aerobica, Essic. In Letto",1
+id_tipo_serbatoio,D_UBICAZ_OPERA,FUO,Fuori terra,1
+id_tipo_serbatoio,D_UBICAZ_OPERA,INT,Interrato,2
+id_tipo_serbatoio,D_UBICAZ_OPERA,SEM,Semi Interrato,4
+id_tipo_serbatoio,D_UBICAZ_OPERA,PEN,Pensile,3
+ ,D_UTILIZZO_OPERA,OCC,Occasionale,Occasionale
+ ,D_UTILIZZO_OPERA,CON,Continuo,Continuo
+ ,D_UTILIZZO_OPERA,PER,Periodico,Periodico
+ ,D_UTILIZZO_OPERA,SCO,Sconosciuto,Sconosciuto
 ,D_T_ACQUA_IDR,AGR,Acqua Grezza,GREZZA
 ,D_T_ACQUA_IDR,AIN,Acqua Industriale,
 ,D_T_ACQUA_IDR,POT,Acqua Potabile,
 ,D_T_ACQUA_IDR,ATR,Acqua Trattata,TRATTATA
 ,D_T_ACQUA_IDR,SCO,Sconosciuto,
-,D_T_SCORRIM,GRA,A Gravitï¿½,S
+,D_T_SCORRIM,GRA,A Gravita',S
 ,D_T_SCORRIM,AUT,Autoclave,N
 ,D_T_SCORRIM,PRE,In pressione,N
 ,D_T_SCORRIM,PRM,Premente,N
-,D_UBICAZIONE,AIU,Aiuole o giardini pubblici,TERRENO VEGETALE
-,D_UBICAZIONE,ALT,Altro,ASFALTO SIMILI
-,D_UBICAZIONE,BAN,Banchina,ASFALTO SIMILI
-,D_UBICAZIONE,CAM,Campagna,TERRENO VEGETALE
-,D_UBICAZIONE,EST,Esterno,TERRENO VEGETALE
-,D_UBICAZIONE,INC,In cameretta,ASFALTO SIMILI
-,D_UBICAZIONE,MAR,Marciapiede,ASFALTO SIMILI
-,D_UBICAZIONE,PON,Ponte,ASFALTO SIMILI
-,D_UBICAZIONE,PRI,Privato,ASFALTO SIMILI
-,D_UBICAZIONE,SCO,Sconosciuto,ASFALTO SIMILI
-,D_UBICAZIONE,SED,Sede stradale,ASFALTO SIMILI
-,D_UBICAZIONE,SEN,Sentiero,STRADA BIANCA
-,D_UBICAZIONE,SOT,Sotto edificio,ASFALTO SIMILI
-,D_UBICAZIONE,SUB,Subalveo,TERRENO VEGETALE
-,D_MAT_PAVIMENT,ALT,Altro,ASFALTO SIMILI
-,D_MAT_PAVIMENT,ASF,Asfalto,ASFALTO SIMILI
-,D_MAT_PAVIMENT,BAS,Basolato,ASFALTO SIMILI
-,D_MAT_PAVIMENT,CEM,Cemento,ASFALTO SIMILI
-,D_MAT_PAVIMENT,MAT,"Mattonato, piastrellato",ASFALTO SIMILI
-,D_MAT_PAVIMENT,PIE,Pietra,ASFALTO SIMILI
-,D_MAT_PAVIMENT,POR,Porfido,ASFALTO SIMILI
-,D_MAT_PAVIMENT,SCO,Sconosciuto,ASFALTO SIMILI
-,D_MAT_PAVIMENT,SEL,Selciato,STRADA BIANCA
-,D_MAT_PAVIMENT,STR,Strada Bianca,STRADA BIANCA
+,D_UBICAZIONE,AIU,Aiuole o giardini pubblici,TERRENO_VEGETALE
+,D_UBICAZIONE,ALT,Altro,ASFALTO_SIMILI
+,D_UBICAZIONE,BAN,Banchina,ASFALTO_SIMILI
+,D_UBICAZIONE,CAM,Campagna,TERRENO_VEGETALE
+,D_UBICAZIONE,EST,Esterno,TERRENO_VEGETALE
+,D_UBICAZIONE,INC,In cameretta,ASFALTO_SIMILI
+,D_UBICAZIONE,MAR,Marciapiede,ASFALTO_SIMILI
+,D_UBICAZIONE,PON,Ponte,ASFALTO_SIMILI
+,D_UBICAZIONE,PRI,Privato,ASFALTO_SIMILI
+,D_UBICAZIONE,SCO,Sconosciuto,ASFALTO_SIMILI
+,D_UBICAZIONE,SED,Sede stradale,ASFALTO_SIMILI
+,D_UBICAZIONE,SEN,Sentiero,STRADA_BIANCA
+,D_UBICAZIONE,SOT,Sotto edificio,ASFALTO_SIMILI
+,D_UBICAZIONE,SUB,Subalveo,TERRENO_VEGETALE
+,D_MAT_PAVIMENT,ALT,Altro,ASFALTO_SIMILI
+,D_MAT_PAVIMENT,ASF,Asfalto,ASFALTO_SIMILI
+,D_MAT_PAVIMENT,BAS,Basolato,ASFALTO_SIMILI
+,D_MAT_PAVIMENT,CEM,Cemento,ASFALTO_SIMILI
+,D_MAT_PAVIMENT,MAT,"Mattonato, piastrellato",ASFALTO_SIMILI
+,D_MAT_PAVIMENT,PIE,Pietra,ASFALTO_SIMILI
+,D_MAT_PAVIMENT,POR,Porfido,ASFALTO_SIMILI
+,D_MAT_PAVIMENT,SCO,Sconosciuto,ASFALTO_SIMILI
+,D_MAT_PAVIMENT,SEL,Selciato,STRADA_BIANCA
+,D_MAT_PAVIMENT,STR,Strada Bianca,STRADA_BIANCA
+id_gestore,D_GESTORE,ACQUE,Acque,2
+id_gestore,D_GESTORE,ACQUE TOSCANE,Acque Toscane,8
+id_gestore,D_GESTORE,ACQUEDOTTO DEL FIORA,Acquedotto del Fiora,6
+id_gestore,D_GESTORE,ALTRO,Altro,
+id_gestore,D_GESTORE,COMUNE,Comune,
+id_gestore,D_GESTORE,GIDA,Gida,
+id_gestore,D_GESTORE,NUOVE ACQUE,Nuove Acque,4
+id_gestore,D_GESTORE,PRIVATO,Privato,
+id_gestore,D_GESTORE,PUBLIACQUA,Publiacqua,3
+,D_SI_NO,NO,NO,0
+,D_SI_NO,SI,SI,1
+id_refluo_trasportato,D_F_T_ACQUA,SCA,Scarico,1
+ids_classe_regionale,D_CLASSIF_SCARICO,A1,A1,A1
+ids_classe_regionale,D_CLASSIF_SCARICO,A2,A2,A2
+ids_classe_regionale,D_CLASSIF_SCARICO,B1,B1,B1
+ids_classe_regionale,D_CLASSIF_SCARICO,B2,B2,B2
+ids_classe_regionale,D_CLASSIF_SCARICO,ND,Non Definito,

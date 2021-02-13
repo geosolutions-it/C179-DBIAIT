@@ -3284,8 +3284,7 @@ BEGIN
         ot.idgis idgis,
         string_agg(ot.codice_schema_acq, ';') codice_schema_acq,
         string_agg(ot.denominazione_schema_acq, ';') denominazione_schema_acq
-    FROM
-        (
+    FROM (
         SELECT
             ap.codice_schema_acq,
             ap.denominazione_schema_acq,
@@ -3298,8 +3297,10 @@ BEGIN
             SELECT idgis, geom FROM all_impianti
             ORDER BY idgis desc
          ) ar ON
-         ap.geom && ar.geom AND
-         ST_INTERSECTS(ap.geom, ar.geom)) ot
+         ap.geom && ar.geom
+         AND ST_INTERSECTS(ap.geom, ar.geom)
+		 AND ST_TOUCHES(ap.geom, ar.geom) = FALSE
+	) ot
     GROUP BY
         idgis;
 
@@ -3338,7 +3339,7 @@ begin
 		auc.idgis = ac.id_ubic_contatore
 	where
 		auc.id_impianto is not null
-		and ac.tariffa not in ('APB_REFIND',
+		AND COALESCE(ac.tariffa, '?') NOT IN ('APB_REFIND',
 		'APBLREFIND',
 		'APBNREFCIV',
 		'APBHSUBDIS',
