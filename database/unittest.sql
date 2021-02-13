@@ -153,13 +153,13 @@ begin
     END IF;
 --- check if the output of the selected idgis is the expected
     SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001299';
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01166;DI01165 ma trovata ' || cod_schema , 'DI01166;DI01165' = cod_schema );
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected LE MASSE;CASOLE ma trovata ' || denom_schema , 'LE MASSE;CASOLE' = denom_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01165 ma trovata ' || cod_schema , 'DI01165' = cod_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected CASOLE ma trovata ' || denom_schema , 'CASOLE' = denom_schema );
 
     --- check if the output of the selected idgis is the expected
-    SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001285';
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01100 ma trovata ' || cod_schema , 'DI01100' = cod_schema );
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected BARBERINO CAPOLUOGO ma trovata ' || denom_schema , 'BARBERINO CAPOLUOGO' = denom_schema );
+    SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001402';
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01215;DI01184 ma trovata ' || cod_schema , 'DI01215;DI01184' = cod_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected POGGIO DI LORO;LORO CIUFFENNA ma trovata ' || denom_schema , 'POGGIO DI LORO;LORO CIUFFENNA' = denom_schema );
 
 END;
 $$  LANGUAGE plpgsql
@@ -696,7 +696,7 @@ BEGIN
         "SCHEMA_ACQ": 						1182,
         "UBIC_ALLACCIO": 					423768,
         "UBIC_CONTATORI_CASS_CONT": 		423768,
-        "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	389,
+        "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	390,
         "UBIC_CONTATORI_FGN": 				358115,
         "UBIC_F_ALLACCIO": 					358115,
         "UTENZE_FOGNATURE_COLLETTORI": 		1063,
