@@ -336,7 +336,7 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE function dbiait_analysis.test_case_sqlexport_pozzi_shp() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=774;
+  v_expected    BIGINT:=764;
 BEGIN
     --- check the count of the query for SHP of POZZI
     select sum(cnt) into v_count from (
@@ -637,7 +637,7 @@ BEGIN
         "UTENZA_SERVIZIO_LOC":  			425970,
         "UTENZA_SERVIZIO_ACQ":  			425916,
         "UTENZA_SERVIZIO_FGN":  			380435,
-        "UTENZA_SERVIZIO_BAC":  			385827,
+        "UTENZA_SERVIZIO_BAC":  			380184,
         "ABITANTI_TRATTATI":    			846,
         "DISTRIB_TRONCHI":      			108819,
         "ADDUT_TRONCHI":        			10443,
@@ -697,8 +697,8 @@ BEGIN
         "UBIC_ALLACCIO": 					423768,
         "UBIC_CONTATORI_CASS_CONT": 		423768,
         "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	390,
-        "UBIC_CONTATORI_FGN": 				358115,
-        "UBIC_F_ALLACCIO": 					358115,
+        "UBIC_CONTATORI_FGN": 				425971,
+        "UBIC_F_ALLACCIO": 					425971,
         "UTENZE_FOGNATURE_COLLETTORI": 		1063,
         "SUPPORT_CODICE_CAPT_ACCORP": 		1360
     }'::JSON)->v_table;
