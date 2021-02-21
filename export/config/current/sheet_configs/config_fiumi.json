@@ -241,31 +241,231 @@
             ]},
         {"id": "1800","transformation": { "func": "DIRECT", "params": { "field": "bacino"}}},
         {"id": "1900","transformation": { "func": "DIRECT", "params": { "field": "corso_acqua"}}},
-        {"id": "2100","transformation": { "func": "DIRECT", "params": { "field": "estremi_conces"}}},
+        {"id": "2100","transformation": { "func": "DIRECT", "params": { "field": "estremi_conces"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "2100",
+                        "cond": [{
+                            "and": [
+                              {"operator": "!=", "value": null }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere vuoto"
+                }
+            ]},
         {"id": "2200","transformation": { "func": "DIRECT", "params": { "field": "port_potab"}},"validations": [{
                     "func": "IF",
                     "params": {
                         "field": "2200",
                         "cond": [{
                             "and": [
-                              {"lookup": "{3500}","operator": ">", "value": "{2200}"}
+                              {"lookup": "{2200}","operator": ">=", "value": "{3500}"},
+                              {"operator": "!=", "value": null }
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is 0"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere vuoto"
                 }
             ]},
-        {"id": "2300","transformation": { "func": "DIRECT", "params": { "field": "port_industr"}}},
-        {"id": "2400","transformation": { "func": "DIRECT", "params": { "field": "port_irrig"}}},
-        {"id": "2500","transformation": { "func": "DIRECT", "params": { "field": "port_idroel"}}},
-        {"id": "2600","transformation": { "func": "DIRECT", "params": { "field": "port_altro"}}},
-        {"id": "2700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr"}}},
-        {"id": "2800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr"}}},
-        {"id": "3100","transformation": { "func": "DIRECT", "params": { "field": "utilizzo_annuo"}}},
+        {"id": "2300","transformation": { "func": "DIRECT", "params": { "field": "port_industr"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "2300",
+                        "cond": [{
+                            "and": [
+                              {"operator": "!=", "value": null }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere vuoto"
+                }
+            ]
+        },
+        {"id": "2400","transformation": { "func": "DIRECT", "params": { "field": "port_irrig"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "2400",
+                        "cond": [{
+                            "and": [
+                              {"operator": "!=", "value": null }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere vuoto"
+                }
+            ]
+        },
+        {"id": "2500","transformation": { "func": "DIRECT", "params": { "field": "port_idroel"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "2500",
+                        "cond": [{
+                            "and": [
+                              {"operator": "!=", "value": null }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere vuoto"
+                }
+            ]
+
+        },
+        {"id": "2600","transformation": { "func": "DIRECT", "params": { "field": "port_altro"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "2600",
+                        "cond": [{
+                            "and": [
+                              {"operator": "!=", "value": null }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere vuoto"
+                }
+            ]
+        },
+        {"id": "2700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "2700",
+                        "cond": [{
+                            "or": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere successivo all'anno di competenza netsic (eccetto per 9999)"
+                }
+            ]
+        },
+        {"id": "2800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "2800",
+                        "cond": [{
+                            "or": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere successivo all'anno di competenza netsic (eccetto per 9800)"
+                }
+            ]
+        },
+        {"id": "3100","transformation": { "func": "DIRECT", "params": { "field": "utilizzo_annuo"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "3100",
+                        "cond": [{
+                            "and": [
+                               {"lookup": "{3300}","operator": "=", "value": 0},
+                               {"operator":  "=", "value": 0}
+                            ],
+                            "and": [
+                               {"lookup": "{3300}","operator": "<", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                               {"lookup": "{3300}","operator": ">", "value": 0},
+                               {"operator":  "<", "value": 100}
+                            ],
+                            "and": [
+                               {"lookup": "{3300}","operator": "<", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                               {"lookup": "{3000}","operator": "=", "value": "continuo"},
+                               {"operator":  "=", "value": 100}
+                            ],
+                            "and": [
+                               {"lookup": "{3000}","operator": "!=", "value": "continuo"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Valore non valido"
+                }
+            ]
+        },
         {"id": "3200","transformation": { "func": "DIRECT", "params": { "field": "area_bac_affer"}}},
-        {"id": "3300","transformation": { "func": "DIRECT", "params": { "field": "volume_medio_prel"}}},
-        {"id": "3600","transformation": { "func": "DIRECT", "params": { "field": "port_uti_max"}}},
-        {"id": "3700","transformation": { "func": "DIRECT", "params": { "field": "port_uti_min"}}},
+        {"id": "3300","transformation": { "func": "DIRECT", "params": { "field": "volume_medio_prel"}},"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "3300",
+                        "cond": [{
+                            "and": [
+                               {"lookup": "{5300}","operator": "=", "value": 1},
+                               {"operator":  ">", "value": 0}
+                            ],
+                            "and": [
+                               {"lookup": "{5300}","operator": "!=", "value": 1}
+                            ]
+                        },{
+                            "and": [
+                               {"lookup": "{2200}","operator": "=", "value": 0},
+                               {"operator":  "<=", "value": 0}
+                            ],
+                            "and": [
+                               {"lookup": "{2200}","operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Valore non valido"
+                }
+            ]
+        },
+        {"id": "3600","transformation": { "func": "DIRECT", "params": { "field": "port_uti_max"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "3600",
+                        "cond": [{
+                            "and": [
+                                {"lookup": "{3500}","operator": "=", "value": 0},
+                                {"operator":  "=", "value": 0}
+                            ],
+                            "and": [
+                                {"lookup": "{3500}","operator": "!=", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                                {"lookup": "{3500}","operator": ">", "value": 0},
+                                {"operator":  ">", "value": "{3500}"}
+                            ],
+                            "and": [
+                                {"lookup": "{3500}","operator": "<=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Valore non valido"
+                }]
+        },
+        {"id": "3700","transformation": { "func": "DIRECT", "params": { "field": "port_uti_min"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "3700",
+                        "cond": [{
+                            "and": [
+                                {"lookup": "{3500}","operator": "=", "value": 0},
+                                {"operator":  "=", "value": 0}
+                            ],
+                            "and": [
+                                {"lookup": "{3500}","operator": "!=", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                                {"lookup": "{3500}","operator": ">", "value": 0},
+                                {"operator":  "<", "value": "{3500}"}
+                            ],
+                            "and": [
+                                {"lookup": "{3500}","operator": ">=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Valore non valido"
+                }]
+        },
         {"id": "3800","transformation": { "func": "DIRECT", "params": { "field": "port_deriv"}}},
         {"id": "3900","transformation": { "func": "DIRECT", "params": { "field": "sn_trav_fluv"}}},
         {"id": "4000","transformation": { "func": "DIRECT", "params": { "field": "sn_cam_presa"}}},
@@ -274,7 +474,28 @@
         {"id": "4300","transformation": { "func": "DIRECT", "params": { "field": "sn_filtro"}}},
         {"id": "4400","transformation": { "func": "DIRECT", "params": { "field": "sn_dissab"}}},
         {"id": "4600","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port"}}},
-        {"id": "5100","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor"}}},
+        {"id": "5100","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "5100",
+                        "cond": [{
+                            "and": [
+                                {"lookup": "{5000}","operator": "=", "value": 1},
+                                {"operator":  "=", "value": 9800}
+                            ],
+                            "and": [
+                                {"lookup": "{5000}","operator": "!=", "value": 1}
+                            ]
+                        },{
+                            "or": [
+                                {"operator":  "<=", "value": "{REF_YEAR}"},
+                                {"operator":  "=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Valore non valido"
+                }]
+        },
         {"id": "5200","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor"}}},
 
         {"id": "1200","transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
@@ -283,12 +504,83 @@
         {"id": "6300","transformation": { "func": "DIRECT", "params": { "field": "data_agg"}}},
 
         {"id": "2000","transformation": { "func": "DOMAIN", "params": { "field": "d_classific", "domain_name":  "D_CLASSIFIC"}}},
-        {"id": "2900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name":  "D_STATO_CONS"}}},
-        {"id": "3000","transformation": { "func": "DOMAIN", "params": { "field": "d_utilizzo", "domain_name":  "D_UTILIZZO_OPERA"}}},
-        {"id": "4500","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name":  "D_TELECONT"}}},
-        {"id": "5000","transformation": { "func": "DOMAIN", "params": { "field": "d_tipo_cloraz", "domain_name":  "D_T_CLORAZ"}}},
+        {"id": "2900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name":  "D_STATO_CONS"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "2900",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{2800}","operator": ">=", "value": 2014},
+                              {"operator": ">=", "value": 3}
+                            ],
+                            "and": [
+                                {"lookup": "{2800}","operator": "<", "value": 2014}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Dovrebbe assumere valore >= 3"
+                }]
+        },
+        {"id": "3000","transformation": { "func": "DOMAIN", "params": { "field": "d_utilizzo", "domain_name":  "D_UTILIZZO_OPERA"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "3000",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{3100}","operator": "=", "value": 100},
+                              {"operator": "=", "value": "continuo"}
+                            ],
+                            "and": [
+                                {"lookup": "{3100}","operator": "!=", "value": 100}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{3300}","operator": "=", "value": 0},
+                              {"lookup": "{5300}","operator": "=", "value": 1},
+                              {"operator": "=", "value": "occasionale"}
+                            ],
+                            "or": [
+                                {"lookup": "{3300}","operator": "!=", "value": 0},
+                                {"lookup": "{5300}","operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Dovrebbe assumere valore occasionale/continuo"
+                }]
+        },
 
-        {"id": "3500","transformation": { "func": "EXPR", "params": { "field": "volume_medio_prel" ,"expr": "_value_*1000/365/3600/24"}}},
+        {"id": "4500","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name":  "D_TELECONT"}}},
+        {"id": "5000","transformation": { "func": "DOMAIN", "params": { "field": "d_tipo_cloraz", "domain_name":  "D_T_CLORAZ"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "5000",
+                        "cond": [{
+                            "and": [
+                                {"lookup": "{5100}","operator": "!=", "value": 9800},
+                                {"operator":  "!=", "value": 1}
+                            ],
+                            "and": [
+                                {"lookup": "{5100}","operator": "=", "value": 9800}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Valore non valido"
+                }]
+        },
+
+        {"id": "3500","transformation": { "func": "EXPR", "params": { "field": "volume_medio_prel" ,"expr": "_value_*1000/365/3600/24"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "3500",
+                        "cond": [{
+                            "and": [
+                              {"operator": "<=", "value": "{2200}"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Dovrebbe assumere <= al valore del campo ID 2200"
+                }]
+        },
 
         {"id": "5300","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name":  "D_STATO"}}},
 

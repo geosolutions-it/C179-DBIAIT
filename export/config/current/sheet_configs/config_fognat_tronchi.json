@@ -93,6 +93,9 @@
                             "and": [
                               {"lookup": "{61800}","operator": ">=", "value": 2014},
                               {"operator":  "!=", "value": "None"}
+                            ],
+							"and": [
+                              {"lookup": "{61800}","operator": "<", "value": 2014}
                             ]
                         }]
                     },

@@ -49,7 +49,8 @@
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT"},
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT"},
             {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
-            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
+            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"},
+            {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -120,6 +121,17 @@
                      "acq_captazione.idgis"
                  ],
                  "cond": "="
+            },
+            {
+                 "type": "left",
+                 "table": {
+                     "name": "support_pozzi_inpotab"
+                 },
+                 "on": [
+                     "support_pozzi_inpotab.ids_codice",
+                     "acq_captazione.codice_ato"
+                 ],
+                 "cond": "="
             }
          ],
          "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3"
@@ -171,7 +183,8 @@
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT"},
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT"},
             {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
-            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
+            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"},
+            {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -240,6 +253,17 @@
                  "on": [
                      "support_codice_capt_accorp.idgis",
                      "a_acq_captazione.idgis"
+                 ],
+                 "cond": "="
+            },
+            {
+                 "type": "left",
+                 "table": {
+                     "name": "support_pozzi_inpotab"
+                 },
+                 "on": [
+                     "support_pozzi_inpotab.ids_codice",
+                     "a_acq_captazione.codice_ato"
                  ],
                  "cond": "="
             }
@@ -497,12 +521,19 @@
                       "and": [
                         {"lookup": "{16100}", "operator": "=", "value": 9999},
                         {"operator": "=", "value": "X"}
+                      ],
+                      "and": [
+                          {"lookup": "{16100}" , "operator": "!=", "value": 9999}
                       ]
                   },{
                       "and": [
                         {"lookup": "{16100}", "operator": ">=", "value": 2002},
                         {"lookup": "{16100}", "operator": "!=", "value": 9999},
                         {"operator": "=", "value": "A"}
+                      ],
+                      "or": [
+                          {"lookup": "{16100}" , "operator": "<", "value": 2002},
+                          {"lookup": "{16100}" , "operator": "=", "value": 9999}
                       ]
                   }]
               },
@@ -638,10 +669,10 @@
     {"id":"19000", "transformation":{
          "func": "IF",
          "params": {
-             "field": "cod_opera_inpotab_not_exist",
+             "field": "support_vol_med_prel",
              "cond": {
-                     "operator": "!=",
-                     "value": 1,
+                     "operator": "=",
+                     "value": 0,
                      "result": "A",
                      "else": "{ 18900 }"
                  }
