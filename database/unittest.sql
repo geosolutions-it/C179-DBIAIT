@@ -158,8 +158,8 @@ begin
 
     --- check if the output of the selected idgis is the expected
     SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001402';
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01215;DI01184 ma trovata ' || cod_schema , 'DI01215;DI01184' = cod_schema );
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected POGGIO DI LORO;LORO CIUFFENNA ma trovata ' || denom_schema , 'POGGIO DI LORO;LORO CIUFFENNA' = denom_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01215 ma trovata ' || cod_schema , 'DI01215' = cod_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected POGGIO DI LORO ma trovata ' || denom_schema , 'POGGIO DI LORO' = denom_schema );
 
 END;
 $$  LANGUAGE plpgsql
@@ -336,7 +336,7 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE function dbiait_analysis.test_case_sqlexport_pozzi_shp() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=764;
+  v_expected    BIGINT:=774;
 BEGIN
     --- check the count of the query for SHP of POZZI
     select sum(cnt) into v_count from (
@@ -567,10 +567,10 @@ DECLARE
 BEGIN
     v_count := ('{
         "XLS_ACCUMULI":         1017,
-        "XLS_ACCUMULI_INADD":   784,
+        "XLS_ACCUMULI_INADD":   783,
         "XLS_ACCUMULI_INRETI":  914,
-        "XLS_ADDUT_COM_SERV":   825,
-        "XLS_ADDUT_INRETI":     820,
+        "XLS_ADDUT_COM_SERV":   822,
+        "XLS_ADDUT_INRETI":     819,
         "XLS_ADDUT_TRONCHI":    10443,
         "XLS_ADDUTTRICI":       751,
         "XLS_COLLETT_COM_SERV": 210,
@@ -603,7 +603,7 @@ BEGIN
         "XLS_POTAB_INRETI":     99,
         "XLS_POTAB_POMPE":      221,
         "XLS_POTABILIZZATORI":  142,
-        "XLS_POZZI":            764,
+        "XLS_POZZI":            774,
         "XLS_POZZI_INPOTAB":    0,
         "XLS_POZZI_INRETI":     576,
         "XLS_POZZI_POMPE":      578,
@@ -638,7 +638,7 @@ BEGIN
         "UTENZA_SERVIZIO_ACQ":  			425916,
         "UTENZA_SERVIZIO_FGN":  			380435,
         "UTENZA_SERVIZIO_BAC":  			385827,
-        "ABITANTI_TRATTATI":    			840,
+        "ABITANTI_TRATTATI":    			846,
         "DISTRIB_TRONCHI":      			108819,
         "ADDUT_TRONCHI":        			10443,
         "ACQ_COND_ALTRO":       			119262,
@@ -676,16 +676,16 @@ BEGIN
         "POMPAGGI_POMPE": 					875,
         "SOLLEV_POMPE": 					536,
         "DEPURATO_POMPE": 					425,
-        "ADDUT_COM_SERV":		 			825,
+        "ADDUT_COM_SERV":		 			822,
         "COLLET_COM_SERV": 					210,
         "FIUMI_INRETI": 					60,
         "LAGHI_INRETI": 					22,
         "POZZI_INRETI": 					576,
         "SORGENTI_INRETI": 					838,
         "POTAB_INRETI": 					99,
-        "ADDUT_INRETI": 					820,
+        "ADDUT_INRETI": 					819,
         "ACCUMULI_INRETI": 					914,
-        "ACCUMULI_INADD": 					784,
+        "ACCUMULI_INADD": 					783,
         "DEPURATO_INCOLL": 					43,
         "SCARICATO_INFOG": 					1074,
         "ACQ_CONDOTTA_NODES": 				161569,
@@ -693,7 +693,7 @@ BEGIN
         "FGN_CONDOTTA_NODES": 				82198,
         "FGN_CONDOTTA_EDGES": 				80517,
         "STATS_CLORATORE": 					43,
-        "SCHEMA_ACQ": 						1182,
+        "SCHEMA_ACQ": 						1173,
         "UBIC_ALLACCIO": 					423768,
         "UBIC_CONTATORI_CASS_CONT": 		423768,
         "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	390,
