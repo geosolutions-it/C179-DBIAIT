@@ -17,7 +17,7 @@ def get_plpgsql_test_lines(sheet, sources):
     procs.append("   " + query)
     procs.append("   ) t; ")
     procs.append("   SET search_path = public,pgunit; ")
-    procs.append("   PERFORM test_assertTrue('count XLS {0}, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected); ")
+    procs.append("   PERFORM test_assertTrue('count XLS_" + sheet + ", expected ' || v_expected || ' but found ' || v_count, v_count = v_expected); ")
     procs.append("END; ")
     procs.append("$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit; ")
     return procs
