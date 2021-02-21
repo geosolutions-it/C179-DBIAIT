@@ -442,12 +442,12 @@ BEGIN
 			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
 			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
-			AND (t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE_ATO in (''DE00213'',''DE00214'')
+			AND ((t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE_ATO in (''DE00213'',''DE00214''))
 			UNION ALL
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
-			AND (t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE in (''DE00213'',''DE00214'')
+			AND ((t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE in (''DE00213'',''DE00214''))
 		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null';
 
@@ -1943,12 +1943,13 @@ BEGIN
         join utenza_sap us on
             auc.idgis = us.id_ubic_contatore
         where
-            us.cattariffa not in ('APB_REFIND',
-            'APBLREFIND',
-            'APBNREFCIV',
-            'APBHSUBDIS',
-            'COPDCI0000',
-            'COPDIN0000')
+            COALESCE(us.cattariffa,'?') not in (
+				'APB_REFIND',
+				'APBLREFIND',
+				'APBNREFCIV',
+				'APBHSUBDIS',
+				'COPDCI0000',
+				'COPDIN0000')
             and nr_contat >1
         group by
             1) g
@@ -2494,6 +2495,7 @@ DECLARE
 BEGIN
 
 	DELETE FROM STATS_POMPE;
+	DELETE FROM POZZI_INPOTAB_INFO;
 	
     FOR v_t IN array_lower(v_tables,1) .. array_upper(v_tables,1)
 	LOOP
@@ -2571,6 +2573,26 @@ BEGIN
 		
 	END LOOP;	
 	
+	--
+	INSERT INTO SUPPORT_POZZI_INPOTAB(ids_codice, volume_medio_prel)
+	select 
+		ac.codice_ato, 
+		case when pz.ids_codice is null then ac.volume_medio_prel
+		else 0 
+		end volume_medio_prel 
+	from a_acq_captazione ac 
+	left join pozzi_inpotab pz
+	on ac.codice_ato = pz.ids_codice
+	union ALL
+	select 
+		ac.codice_ato, 
+		case when pz.ids_codice is null then ac.volume_medio_prel
+		else 0 
+		end volume_medio_prel 
+	from acq_captazione ac 
+	left join pozzi_inpotab pz
+	on ac.codice_ato = pz.ids_codice;
+	
 	RETURN TRUE;
 
 END;
@@ -2610,8 +2632,6 @@ BEGIN
 		EXECUTE 'ALTER TABLE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' ADD COLUMN _year INTEGER NOT NULL DEFAULT ' || v_year;
 		
 		EXECUTE 'ALTER TABLE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' ADD COLUMN _note TEXT';
-		
-		EXECUTE 'INSERT INTO ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' SELECT * FROM ' || v_schema_anl || '.' || v_table_name;
 		
 		IF v_note IS NOT NULL THEN
 			EXECUTE 'UPDATE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' SET _note = $1 ' using v_note;
@@ -2721,7 +2741,11 @@ BEGIN
 	select DISTINCT t.codice_ato, (c.pro_com::INTEGER)::VARCHAR from (
 		select aa.codice_ato, ac.geom
 		from acq_adduttrice aa, acq_condotta ac 
-		where aa.d_gestore='PUBLIACQUA' and aa.d_ambito IN ('AT3', NULL) and aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		where aa.d_gestore='PUBLIACQUA' 
+		and aa.d_ambito IN ('AT3', NULL) 
+		--and aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		AND ac.d_stato IN ('ATT', 'FIP', NULL) 
+		and ac.sn_fittizia in ('NO', NULL)
 		and ac.id_rete = aa.idgis 
 	) t, confine_comunale c
 	where t.geom && c.geom and st_intersects(t.geom, c.geom);
@@ -2733,7 +2757,11 @@ BEGIN
 	select distinct t.codice_ato, c.pro_com from (
 		select aa.codice_ato, ac.geom
 		from acq_adduttrice aa, acq_condotta ac 
-		where aa.d_gestore='PUBLIACQUA' and aa.d_ambito IN ('AT3', NULL) and aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		where aa.d_gestore='PUBLIACQUA' 
+		and aa.d_ambito IN ('AT3', NULL) 
+		--and aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		AND ac.d_stato IN ('ATT', 'FIP', NULL) 
+		and ac.sn_fittizia in ('NO', NULL)
 		and ac.id_rete = aa.idgis 
 	) t, confine_comunale c
 	where t.geom && c.geom and st_intersects(t.geom, c.geom)
@@ -2760,7 +2788,11 @@ BEGIN
 	SELECT distinct t.codice_ato, c.pro_com FROM (
 		SELECT fc.codice_ato, fc2.geom 
 		FROM fgn_collettore fc, fgn_condotta fc2 
-		WHERE fc.d_gestore='PUBLIACQUA' and fc.d_ambito IN ('AT3', NULL) and fc.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		WHERE fc.d_gestore='PUBLIACQUA' 
+		and fc.d_ambito IN ('AT3', NULL) 
+		and fc.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		AND fc2.d_stato IN ('ATT', 'FIP', NULL) 
+		AND fc2.sn_fittizia in ('NO', NULL)
 		AND fc.idgis=fc2.id_rete
 	) t, confine_comunale c
 	WHERE t.geom && c.geom and st_intersects(t.geom, c.geom);
@@ -2772,7 +2804,11 @@ BEGIN
 		select distinct t.codice_ato, c.pro_com from (
 		select fc.codice_ato, fc2.geom 
 		from fgn_collettore fc, fgn_condotta fc2 
-		where fc.d_gestore='PUBLIACQUA' and fc.d_ambito IN ('AT3', NULL) and fc.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		where fc.d_gestore='PUBLIACQUA' 
+		and fc.d_ambito IN ('AT3', NULL) 
+		and fc.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+		AND fc2.d_stato IN ('ATT', 'FIP', NULL) 
+		AND fc2.sn_fittizia in ('NO', NULL)
 		and fc.idgis=fc2.id_rete
 		) t, confine_comunale c
 		where t.geom && c.geom and st_intersects(t.geom, c.geom)
@@ -2805,7 +2841,7 @@ DECLARE
 		'acq_captazione',
 		'acq_captazione',
 		'acq_potabiliz',
-		'(select aa.codice_ato, aa.idgis, ac.geom from acq_adduttrice aa, acq_condotta ac where aa.d_gestore = ''PUBLIACQUA'' AND aa.d_ambito IN (''AT3'', NULL) AND aa.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') and ac.d_gestore = ''PUBLIACQUA'' AND ac.d_ambito IN (''AT3'', NULL) AND ac.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') and aa.idgis=ac.id_rete)',
+		'(select aa.codice_ato, aa.idgis, ac.geom from acq_adduttrice aa, acq_condotta ac where aa.d_gestore = ''PUBLIACQUA'' AND aa.d_ambito IN (''AT3'', NULL) AND aa.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') and ac.d_gestore = ''PUBLIACQUA'' AND ac.d_ambito IN (''AT3'', NULL) AND ac.d_stato IN (''ATT'', ''FIP'', NULL) and ac.sn_fittizia in (''NO'', NULL) and aa.idgis=ac.id_rete)',
 		'acq_accumulo'
 	];
 	v_tables VARCHAR[] := ARRAY[
@@ -2923,7 +2959,11 @@ BEGIN
 	SELECT DISTINCT t.codice_ato, ad.codice_ato, 3 from (
 		SELECT distinct aa.codice_ato, ac.id_rete
 		from acq_accumulo aa, acq_condotta ac
-		WHERE aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL) AND aa.d_stato IN ('ATT','FIP','PIF','RIS')
+		WHERE aa.d_gestore = 'PUBLIACQUA' 
+		AND aa.d_ambito IN ('AT3', NULL) 
+		AND aa.d_stato IN ('ATT','FIP','PIF','RIS')
+		AND ac.d_stato IN ('ATT', 'FIP', NULL) 
+		AND ac.sn_fittizia in ('NO', NULL)
 		and st_buffer(aa.geom, v_tol)&&ac.geom and st_intersects(ac.geom, st_buffer(aa.geom, v_tol))
 	) t, acq_adduttrice ad
 	WHERE t.id_rete=ad.idgis
@@ -3264,6 +3304,8 @@ $$  LANGUAGE plpgsql
 --
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_schema_acq(
 ) RETURNS BOOLEAN AS $$
+DECLARE
+	v_tol DOUBLE PRECISION := snap_tolerance();
 BEGIN
 
 	DELETE FROM schema_acq;
@@ -3298,7 +3340,7 @@ BEGIN
             ORDER BY idgis desc
          ) ar ON
          ap.geom && ar.geom
-         AND ST_INTERSECTS(ap.geom, ar.geom)
+         AND ST_INTERSECTS(ST_BUFFER(ap.geom, -1*v_tol), ar.geom)
 		 AND ST_TOUCHES(ap.geom, ar.geom) = FALSE
 	) ot
     GROUP BY
@@ -3613,7 +3655,7 @@ begin
 		distinct idgis, id_fossa
 	from
 		acq_ubic_contatore as auc
-	join fgn_allaccio fa on
+	LEFT join fgn_allaccio fa on
 		auc.id_fossa_settica = fa.id_fossa
 	where
 		auc.id_impianto is not null;
