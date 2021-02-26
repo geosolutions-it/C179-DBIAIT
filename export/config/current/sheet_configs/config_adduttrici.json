@@ -132,22 +132,64 @@
                     "params": {
                         "field": "40100",
                         "cond": [{
+                            "and": [
+                              {"lookup": "{40000}", "operator": "=", "value": 1},
+                              {"operator": "=", "value": 9800}
+                            ]},{
+                            "and": [
+                              {"lookup": "{40000}", "operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 1: se il campo ID 40000 = 1, allora deve assumere valore 9800"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "40100",
+                        "cond": [{
                             "or": [
                               {"operator": "<=", "value": "{REF_YEAR}"},
                               {"operator": "=", "value": 9999}
                             ]
-                        },
-                        {
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
+                }
+            ]},
+        { "id": "40200", "transformation": { "func": "DIRECT",  "params": { "field": "anno_ristr_clor" } },"validations": [
+            {
+                    "func": "IF",
+                    "params": {
+                        "field": "40200",
+                        "cond": [
+                            {
                             "and": [
                               {"lookup": "{40000}", "operator": "=", "value": 1},
                               {"operator": "=", "value": 9800}
                             ]
+                        },{
+                           "and": [
+                              {"lookup": "{40000}", "operator": "!=", "value": 1}
+                           ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9800"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 1: se il campo ID 40000 = 1, allora deve assumere valore 9800"
+            }, {
+                    "func": "IF",
+                    "params": {
+                        "field": "40200",
+                        "cond": [{
+                                "or": [
+                                  {"operator": "<=", "value": "{REF_YEAR}"},
+                                  {"operator": "=", "value": 9800}
+                                ]
+                            }
+                        ]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800) - {REF_YEAR}"
                 }
-            ]},
-        { "id": "40200", "transformation": { "func": "DIRECT",  "params": { "field": "anno_ristr_clor" } }},
+            ]
+        },
         { "id": "40600", "transformation": { "func": "DIRECT",  "params": { "field": "data_agg" } }},
         { "id": "98800", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza_tlc" } }},
         { "id": "99000", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" }}},
@@ -157,13 +199,16 @@
                     "params": {
                         "field": "40000",
                         "cond": [{
-                            "or": [
+                            "and": [
                               {"lookup":  "{40100}", "operator": "!=", "value": 9800},
                               {"operator": "!=", "value": 1}
+                            ]},{
+                            "and": [
+                              {"lookup":  "{40100}", "operator": "=", "value": 9800}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value 1 is not permitted"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: se il campo ID 40100 <> 9800, allora non è ammesso il valore 1"
                 }
             ]},
         {"id":"40300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},

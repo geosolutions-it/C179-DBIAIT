@@ -250,6 +250,314 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
         self.assertTrue(actual)
 
+    def test_validation_adduttrici_40200_condition_1_case_ok_1(
+        self,
+    ):
+        condition_schema = {
+            "field": "40200",
+            "cond": [
+                {
+                "and": [
+                  {"lookup": "{40000}", "operator": "=", "value": 1},
+                  {"operator": "=", "value": 9800}
+                ]
+            },{
+               "and": [
+                  {"lookup": "{40000}", "operator": "!=", "value": 1}
+               ]
+            }]
+        }
+        self.field = {"40000": 1, "40200": 9800}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_accumuli_40200_less_than_refyear(
+        self,
+    ):
+        condition_schema = {
+            "field": "44500",
+            "cond": [{
+                "or": [
+                    {"operator": "<=", "value": 2020},
+                    {"operator": "=", "value": 9999}
+                ]
+            }]
+        }
+        self.field = {"44500": 2019}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_accumuli_40200_great_than_refyear(
+        self,
+    ):
+        condition_schema = {
+            "field": "44500",
+            "cond": [{
+                "or": [
+                    {"operator": "<=", "value": 2020},
+                    {"operator": "=", "value": 9999}
+                ]
+            }]
+        }
+        self.field = {"44500": 2021}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
+    def test_validation_accumuli_40200_case_9999(
+        self,
+    ):
+        condition_schema = {
+            "field": "44500",
+            "cond": [{
+                "or": [
+                    {"operator": "<=", "value": 2020},
+                    {"operator": "=", "value": 9999}
+                ]
+            }]
+        }
+        self.field = {"44500": 9999}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_accumuli_44700_case_ok(
+        self,
+    ):
+        condition_schema = {
+            "field": "44700",
+            "cond": [{
+                "and": [
+                    {"lookup": "{44600}", "operator": ">=", "value": 2014},
+                    {"operator": ">=", "value": 3}
+                ]
+            },{
+                "and": [
+                    {"lookup": "{44600}" , "operator": "<", "value": 2014}
+                ]
+            }]
+        }
+        self.field = {"44600": 2014, "44700": 3}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_accumuli_44700_case_ko(
+        self,
+    ):
+        condition_schema = {
+            "field": "44700",
+            "cond": [{
+                "and": [
+                    {"lookup": "{44600}", "operator": ">=", "value": 2014},
+                    {"operator": ">=", "value": 3}
+                ]
+            },{
+                "and": [
+                    {"lookup": "{44600}", "operator": "<", "value": 2014}
+                ]
+            }]
+        }
+        self.field = {"44600": 2014, "44700": 2}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
+    def test_validation_accumuli_44700_case_less_than_2014(
+        self,
+    ):
+        condition_schema = {
+            "field": "44700",
+            "cond": [{
+                "and": [
+                    {"lookup": "{44600}", "operator": ">=", "value": 2014},
+                    {"operator": ">=", "value": 3}
+                ]
+            },{
+                "and": [
+                    {"lookup": "{44600}", "operator": "<", "value": 2014}
+                ]
+            }]
+        }
+        self.field = {"44600": 2013, "44700": 2}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_accumuli_45600_condition_1_ok(
+        self,
+    ):
+        condition_schema = {
+            "field": "45600",
+            "cond": [{
+                "and": [
+                    {"lookup": "{45500}", "operator": "=", "value": 1},
+                    {"operator": "=", "value": 9800}
+                ]
+            },{
+                "and": [
+                    {"lookup": "{45500}", "operator": "!=", "value": 1}
+                ]
+            }]
+        }
+        self.field = {"45500": 1, "45600": 9800}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_accumuli_45600_condition_1_ko(
+        self,
+    ):
+        condition_schema = {
+            "field": "45600",
+            "cond": [{
+                "and": [
+                    {"lookup": "{45500}", "operator": "=", "value": 1},
+                    {"operator": "=", "value": 9800}
+                ]
+            },{
+                "and": [
+                    {"lookup": "{45500}", "operator": "!=", "value": 1}
+                ]
+            }]
+        }
+        self.field = {"45500": 1, "45600": 1234}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
+    def test_validation_accumuli_45600_condition_1_ok_value_is_not_one(
+        self,
+    ):
+        condition_schema = {
+            "field": "45600",
+            "cond": [{
+                "and": [
+                    {"lookup": "{45500}", "operator": "=", "value": 1},
+                    {"operator": "=", "value": 9800}
+                ]
+            },{
+                "and": [
+                    {"lookup": "{45500}", "operator": "!=", "value": 1}
+                ]
+            }]
+        }
+        self.field = {"45500": 2, "45600": 1234}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_accumuli_45900_condition_2_ok(
+        self,
+    ):
+        condition_schema = {
+            "field": "45900",
+            "cond": [{
+                "and": [
+                    {"lookup": "{44500}", "operator": ">=", "value": 2002},
+                    {"lookup": "{44500}", "operator": "!=", "value": 9999},
+                    {"operator": "=", "value": "A"}
+                ]}, {
+                "or": [
+                    {"lookup": "{44500}", "operator": "<", "value": 2002},
+                    {"lookup": "{44500}", "operator": "=", "value": 9999}
+                ]
+            }]
+        }
+        self.field = {"44500": 2003, "45900": "A"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+        self.field = {"44500": 9999, "45900": "B"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+        self.field = {"44500": 2001, "45900": "B"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_accumuli_45900_condition_2_ko(
+        self,
+    ):
+        condition_schema = {
+            "field": "45900",
+            "cond": [{
+                "and": [
+                    {"lookup": "{44500}", "operator": ">=", "value": 2002},
+                    {"lookup": "{44500}", "operator": "!=", "value": 9999},
+                    {"operator": "=", "value": "A"}
+                ]}, {
+                "or": [
+                    {"lookup": "{44500}", "operator": "<", "value": 2002},
+                    {"lookup": "{44500}", "operator": "=", "value": 9999}
+                ]
+            }]
+        }
+        self.field = {"44500": 2002, "45900": "B"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
+    def test_validation_addut_tronchi_41500_ok(
+        self,
+    ):
+        condition_schema = {
+            "field": "41500",
+            "cond": [{
+                "or": [
+                  {"operator": "<=", "value": 2021},
+                  {"operator": "=", "value": 9999}
+                ]
+            }]
+        }
+        self.field = {"41500": 2002}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+        self.field = {"41500": 9999}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_addut_tronchi_41500_ko(
+        self,
+    ):
+        condition_schema = {
+            "field": "41500",
+            "cond": [{
+                "or": [
+                  {"operator": "<=", "value": 2021},
+                  {"operator": "=", "value": 9999}
+                ]
+            }]
+        }
+        self.field = {"41500": 2099}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
+    def test_validation_fiumi_3500_ok(
+        self,
+    ):
+        condition_schema = {
+            "field": "3500",
+            "cond": [{
+                "and": [
+                  {"operator": "<=", "value": "{2200}"}
+                ]
+            }]
+        }
+        self.field = {"3500": 1000, "2200": 2000}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+        self.field = {"3500": 2000, "2200": 2000}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_fiumi_3500_ko(
+        self,
+    ):
+        condition_schema = {
+            "field": "3500",
+            "cond": [{
+                "and": [
+                  {"operator": "<=", "value": "{2200}"}
+                ]
+            }]
+        }
+        self.field = {"3500": 3000, "2200": 2000}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
 
 if __name__ == "__main__":
     unittest.main()
