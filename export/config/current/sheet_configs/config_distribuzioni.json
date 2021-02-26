@@ -235,6 +235,7 @@
         { "id": "54600", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
         { "id": "54700", "transformation": { "func": "DIRECT", "params": { "field": "volume_fatturato" } }},
         { "id": "100400", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_misuratore" } }},
+        { "id": "118900", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
 
         { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom" } }},
         { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_immesso" } }},
