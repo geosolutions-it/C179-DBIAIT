@@ -16,7 +16,6 @@
                 { "name": "fgn_auth_collet.nr_rip",  "alias": "nr_rip" },
                 { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port" , "function": "TO_BIT"},
                 { "name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"},
                 {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
                 {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
@@ -75,7 +74,6 @@
                 { "name": "fgn_auth_collet.nr_rip",  "alias": "nr_rip" },
                 { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port", "function": "TO_BIT" },
                 { "name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                { "name": "fgn_lunghezza_rete.id_refluo_trasportato","alias": "id_refluo_trasportato"},
                 {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
                 {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
@@ -125,9 +123,13 @@
         { "id": "68100", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } } },
         { "id": "68200", "transformation": { "func": "DIRECT", "params": { "field": "denom" } } },
 
+        { "id": "119300", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
+        { "id": "117300", "transformation": { "func": "DIRECT",  "params": { "field": "utenze_totali" } }},
+        { "id": "117400", "transformation": { "func": "DIRECT",  "params": { "field": "nr_utenze_industriali" } }},
+        { "id": "117500", "transformation": { "func": "DIRECT",  "params": { "field": "volume_utenze_industriali" } }},
+
         { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
         { "id": "101900", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" } }},
-        { "id": "68400", "transformation": { "func": "DIRECT",  "params": { "field": "id_refluo_trasportato" } }},
         { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } },"validations": [{
                     "func": "IF",
                     "params": {
@@ -166,20 +168,7 @@
 
         { "id": "69200", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_idra", "domain_name": "D_AFFIDABILITA" } } },
 
-        { "id": "69100", "transformation": { "func": "CONST", "params": { "value": "B" } } },
+        { "id": "69100", "transformation": { "func": "CONST", "params": { "value": "B" } } }
 
-        {"id": "68400", "transformation":{
-                "func": "IF",
-                "params": {
-                    "field": "68400",
-                    "cond": {
-                        "operator": "=",
-                        "value": "mista",
-                        "result": "mista",
-                        "else": "nero"
-                    }
-                }
-            }
-        }
     ]
 }

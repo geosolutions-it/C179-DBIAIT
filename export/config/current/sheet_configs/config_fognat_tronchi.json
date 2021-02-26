@@ -128,7 +128,7 @@
                 }
             ]
       },
-      {"id": "61900","transformation": { "func": "direct", "params": { "field": "id_refluo_trasportato"}}},
+      {"id": "61900","transformation": { "func": "DIRECT", "params": { "field": "id_refluo_trasportato"}}},
 
       {"id": "62100","transformation": { "func": "DIRECT", "params": { "field": "idx_materiale"}}},
       {"id": "62200","transformation": { "func": "DIRECT", "params": { "field": "idx_diametro"}}},

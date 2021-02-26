@@ -11,7 +11,6 @@
             {"name":"fgn_sfioro.anno_costr", "alias":"anno_costr"},
             {"name":"fgn_sfioro.anno_ristr", "alias":"anno_ristr"},
             {"name":"fgn_sfioro.d_materiale", "alias":"d_materiale"},
-            {"name":"fgn_sfioro.n_ae", "alias":"n_ae"},
             {"name":"fgn_auth_sfioro.larg_uti_poz_scol", "alias":"larg_uti_poz_scol"},
             {"name":"fgn_auth_sfioro.lung_uti_poz_scol", "alias":"lung_uti_poz_scol"},
             {"name":"fgn_sfioro.rapporto_diluiz", "alias":"rapporto_diluiz"},
@@ -28,7 +27,8 @@
             {"name":"fgn_sfioro.cod_comune", "alias":"cod_comune"},
             {"name":"fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            { "name": "localita.denominazi", "alias": "denominazi" }
+            { "name": "localita.denominazi", "alias": "denominazi" },
+            {"name":"fgn_sfioro.sn_bypass", "alias": "sn_bypass"}
          ],
          "table":{
             "name":"fgn_sfioro"
@@ -68,7 +68,6 @@
             {"name":"a_fgn_sfioro.anno_costr", "alias":"anno_costr"},
             {"name":"a_fgn_sfioro.anno_ristr", "alias":"anno_ristr"},
             {"name":"a_fgn_sfioro.d_materiale", "alias":"d_materiale"},
-            {"name":"a_fgn_sfioro.n_ae", "alias":"n_ae"},
             {"name":"fgn_auth_sfioro.larg_uti_poz_scol", "alias":"larg_uti_poz_scol"},
             {"name":"fgn_auth_sfioro.lung_uti_poz_scol", "alias":"lung_uti_poz_scol"},
             {"name":"a_fgn_sfioro.rapporto_diluiz", "alias":"rapporto_diluiz"},
@@ -85,7 +84,8 @@
             {"name":"a_fgn_sfioro.cod_comune", "alias":"cod_comune"},
             {"name":"a_fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            { "name": "localita.denominazi", "alias": "denominazi" }
+            { "name": "localita.denominazi", "alias": "denominazi" },
+            {"name":"a_fgn_sfioro.sn_bypass", "alias": "sn_bypass"}
          ],
          "table":{
             "name":"a_fgn_sfioro"
@@ -119,6 +119,9 @@
    ],
    "columns":[
       {"id":"82800", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
+
+      {"id":"116100", "transformation":{"func":"DIRECT", "params":{"field":"sn_bypass"}}},
+
       {"id":"82900", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
       {"id":"83300", "transformation":{"func":"DIRECT", "params":{"field":"quota_terr_man"}}, "validations": [{
                     "func": "IF",
@@ -161,7 +164,6 @@
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
                 }
             ]},
-      {"id":"84000", "transformation":{"func":"DIRECT", "params":{"field":"n_ae"}}},
       {"id":"84100", "transformation":{"func":"DIRECT", "params":{"field":"larg_uti_poz_scol"}}},
       {"id":"84200", "transformation":{"func":"DIRECT", "params":{"field":"lung_uti_poz_scol"}}},
       {"id":"84300", "transformation":{"func":"DIRECT", "params":{"field":"rapporto_diluiz"}}},
@@ -169,7 +171,9 @@
       {"id":"84500", "transformation":{"func":"DIRECT", "params":{"field":"tipo_recapito"}}},
       {"id":"84600", "transformation":{"func":"DIRECT", "params":{"field":"bacino_recet"}}},
       {"id":"85300", "transformation":{"func":"DIRECT", "params":{"field":"data_agg"}}},
-      {"id":"102500", "transformation":{"func":"DIRECT", "params":{"field":"d_classif"}}},
+
+      {"id":"102500", "transformation":{"func":"DOMAIN", "params":{"field":"d_classif", "domain_name": "D_CLASSIF_SCARICO"}}},
+
       {"id":"83400", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
 
       {"id":"83000", "transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
@@ -215,7 +219,6 @@
             ]},
 
       {"id":"83200", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
-      {"id":"85200", "transformation":{"func":"CONST", "params":{"value":"C"}}},
 
       {"id": "83500","transformation": {"func": "DECODE_COM", "params": { "field": "cod_comune" }}},
 
