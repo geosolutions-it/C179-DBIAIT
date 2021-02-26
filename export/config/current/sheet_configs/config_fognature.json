@@ -182,10 +182,19 @@
     "columns": [
         {"id": "101200","transformation": { "func": "CONST", "params": { "value": "B"}}},
 
+        {"id": "119100","transformation": { "func": "CONST", "params": { "value": "A"}}},
+        {"id": "119200","transformation": { "func": "CONST", "params": { "value": "A"}}},
+        {"id": "60800","transformation": { "func": "CONST", "params": { "value": "B"}}},
+
+        {"id": "117200","transformation": { "func": "DIRECT", "params": { "field": "utenze_totali"}}},
+
+        {"id": "117000","transformation": { "func": "DIRECT", "params": { "field": "lung_rete_mista"}}},
+        {"id": "117100","transformation": { "func": "DIRECT", "params": { "field": "lung_rete_nera"}}},
+
         {"id": "59500","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
 
         {"id": "101100","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_allaccio"}}},
-        {"id": "59800","transformation": { "func": "DIRECT", "params": { "field": "utenze_totali"}}},
+
         {"id": "101500","transformation": { "func": "DIRECT", "params": { "field": "vol_fatturato"}}},
         {"id": "59900","transformation": { "func": "DIRECT", "params": { "field": "vol_utenze_auth"}}},
 
@@ -217,7 +226,6 @@
         {"id": "60500","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO"}}},
 
         {"id": "60600","transformation": { "func": "CONST", "params": { "value": "B"}}},
-        {"id": "60700","transformation": { "func": "CONST", "params": { "value": "B"}}},
         {"id": "60800","transformation": { "func": "CONST", "params": { "value": "A"}}}
     ]
 }

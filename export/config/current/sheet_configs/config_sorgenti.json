@@ -9,10 +9,6 @@
             {"name":"acq_captazione.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
             {"name":"acq_capt_conces.estremi_conces", "alias":"estremi_conces"},
             {"name":"acq_capt_conces.port_potab", "alias":"port_potab"},
-            {"name":"acq_capt_conces.port_industr", "alias":"port_industr"},
-            {"name":"acq_capt_conces.port_irrig", "alias":"port_irrig"},
-            {"name":"acq_capt_conces.port_idroel", "alias":"port_idroel"},
-            {"name":"acq_auth_capt.port_altro", "alias":"port_altro"},
             {"name":"acq_captazione.anno_costr", "alias":"anno_costr"},
             {"name":"acq_captazione.anno_ristr", "alias":"anno_ristr"},
             {"name":"acq_captazione.d_stato_cons", "alias":"d_stato_cons"},
@@ -44,8 +40,11 @@
             {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
-            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
+            {"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
+            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
+            { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
+            {"name": "support_codice_capt_accorp.denom","alias": "denom"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -105,7 +104,17 @@
                    "support_codice_capt_accorp.idgis"
                  ],
                  "cond": "="
-            }
+            },{
+                    "type": "left",
+                    "table": {
+                        "name": "schema_acq"
+                    },
+                    "on": [
+                        "acq_captazione.idgis",
+                        "schema_acq.idgis"
+                    ],
+                    "cond": "="
+                }
          ],
          "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.d_stato NOT IN ('IPR', 'IAC') AND acq_captazione.sub_funzione = 4"
       },
@@ -116,10 +125,6 @@
             {"name":"a_acq_captazione.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
             {"name":"a_acq_capt_conces.estremi_conces", "alias":"estremi_conces"},
             {"name":"a_acq_capt_conces.port_potab", "alias":"port_potab"},
-            {"name":"a_acq_capt_conces.port_industr", "alias":"port_industr"},
-            {"name":"a_acq_capt_conces.port_irrig", "alias":"port_irrig"},
-            {"name":"a_acq_capt_conces.port_idroel", "alias":"port_idroel"},
-            {"name":"acq_auth_capt.port_altro", "alias":"port_altro"},
             {"name":"a_acq_captazione.anno_costr", "alias":"anno_costr"},
             {"name":"a_acq_captazione.anno_ristr", "alias":"anno_ristr"},
             {"name":"a_acq_captazione.d_stato_cons", "alias":"d_stato_cons"},
@@ -151,8 +156,11 @@
             {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
-            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"}
+            {"name": "a_acq_captazione.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
+            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
+            { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
+            {"name": "support_codice_capt_accorp.denom","alias": "denom"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -212,12 +220,32 @@
                    "support_codice_capt_accorp.idgis"
                  ],
                  "cond": "="
-            }
+            },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "schema_acq"
+                    },
+                    "on": [
+                        "a_acq_captazione.idgis",
+                        "schema_acq.idgis"
+                    ],
+                    "cond": "="
+                }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') AND a_acq_captazione.sub_funzione = 4"
       }
    ],
    "columns":[
+      {"id":"112200", "transformation":{"func":"DIRECT", "params":{"field":"sn_uso_plurimo"}}},
+
+      {"id": "112000","transformation": { "func": "DIRECT", "params": { "field": "codice_schema_acq"}}},
+      {"id": "112100","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
+
+        {"id": "111800","transformation": { "func": "DIRECT", "params": { "field": "codice_accorp_capt"}}},
+        {"id": "111900","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
+
+
       {"id":"26200", "transformation":{"func":"EXPR", "params":{"field":"volume_medio_prel", "expr": "_value_*1000/365/3600/24"}}, "validations": [{
               "func": "IF",
               "params": {
@@ -233,9 +261,6 @@
       ]},
 
       {"id":"23700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
-
-      {"id":"-2", "transformation":{"func":"DIRECT", "params":{"field":"codice_accorp"}}},
-      {"id":"-3", "transformation":{"func":"DIRECT", "params":{"field":"accorp_denominazione"}}},
 
       {"id":"26100", "transformation":{"func":"DIRECT", "params":{"field":"ids_codice_potab"}}},
       {"id":"23800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
@@ -267,10 +292,6 @@
               "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is lower than ID 26200"
           }
       ]},
-      {"id":"24700", "transformation":{"func":"DIRECT", "params":{"field":"port_industr"}}},
-      {"id":"24800", "transformation":{"func":"DIRECT", "params":{"field":"port_irrig"}}},
-      {"id":"24900", "transformation":{"func":"DIRECT", "params":{"field":"port_idroel"}}},
-      {"id":"25000", "transformation":{"func":"DIRECT", "params":{"field":"port_altro"}}},
       {"id":"25100", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}, "validations": [{
               "func": "IF",
               "params": {

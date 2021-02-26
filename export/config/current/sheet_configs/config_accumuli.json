@@ -28,6 +28,8 @@
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
+                { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+                { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
                 { "name": "localita.denominazi", "alias": "denominazi"}
             ],
             "table": {
@@ -55,6 +57,17 @@
                         "acq_accumulo.geom"
                     ],
                     "cond": "ST_INTERSECTS"
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "schema_acq"
+                    },
+                    "on": [
+                        "acq_accumulo.idgis",
+                        "schema_acq.idgis"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND acq_accumulo.d_ambito IN ('AT3', NULL) AND acq_accumulo.d_stato NOT IN ('IPR','IAC')"
@@ -85,6 +98,8 @@
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
+                { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+                { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
                 { "name": "localita.denominazi", "alias": "denominazi"}
             ],
             "table": {
@@ -112,6 +127,17 @@
                         "a_acq_accumulo.geom"
                     ],
                     "cond": "ST_INTERSECTS"
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "schema_acq"
+                    },
+                    "on": [
+                        "a_acq_accumulo.idgis",
+                        "schema_acq.idgis"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE a_acq_accumulo.d_gestore = 'PUBLIACQUA' AND a_acq_accumulo.d_ambito IN ('AT3', NULL) AND a_acq_accumulo.d_stato NOT IN ('IPR','IAC')"
@@ -122,6 +148,8 @@
         {"id": "44400","transformation": {"func": "DECODE_COM", "params": { "field": "cod_comune" }}},
         {"id": "44100","transformation": {"func": "CONST", "params": {"value": "3003"}}},
         {"id": "44300","transformation": {"func": "DIRECT", "params": {"field": "denominazi"}}},
+        {"id": "112800","transformation": {"func": "DIRECT", "params": {"field": "codice_schema_acq"}}},
+        {"id": "112900","transformation": {"func": "DIRECT", "params": {"field": "denominazione_schema_acq"}}},
 
         {"id": "43700","transformation": {"func": "DIRECT", "params": {"field": "codice_ato"}}},
         {"id": "43800","transformation": {"func": "DIRECT", "params": {"field": "denom"}}},
@@ -227,6 +255,7 @@
                                 {"operator": "=", "value": 9800}
                             ],
                             "and": [
+                                {"lookup": "{45500}" ,"operator": "!=", "value": 1}
                                 {"lookup": "{45500}" ,"operator": "!=", "value": 1}
                             ]
                         },

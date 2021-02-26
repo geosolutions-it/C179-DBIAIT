@@ -20,6 +20,7 @@
                 {"name": "collett_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
                 {"name": "collett_tronchi.depurazione", "alias": "depurazione"},
                 {"name": "collett_tronchi.note", "alias": "note"},
+                {"name": "collett_tronchi.id_refluo_trasportato", "alias": "id_refluo_trasportato"},
                 {"name": "collett_tronchi.geom", "alias": "geom"},
                 {"name":  "acq_condotta.data_esercizio", "alias": "data_esercizio"},
                 { "name": "fgn_condotta.codice_ato", "alias": "fgn_codice_ato"}
@@ -64,6 +65,7 @@
     ],
      "columns": [
         {"id": "69800", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
+        {"id": "120000", "transformation": {"func": "DIRECT", "params": { "field": "id_refluo_trasportato" }}},
         {"id": "69600", "transformation": {"func": "DIRECT", "params": { "field": "fgn_codice_ato" }}},
 
         {"id": "69900", "transformation": {"func": "DIRECT", "params": { "field": "id_materiale" }},"validations": [{

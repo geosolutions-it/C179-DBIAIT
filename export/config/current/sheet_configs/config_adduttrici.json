@@ -12,12 +12,21 @@
                 {"name": "acq_adduttrice.data_agg","alias": "data_agg"},
                 {"name": "acq_adduttrice.nr_rip","alias": "nr_rip"},
                 {"name": "acq_auth_adduttr.sn_strum_mis_port","alias": "sn_strum_mis_port", "function": "TO_BIT"},
-                {"name": "acq_auth_adduttr.d_tipo_cloraz","alias": "d_tipo_cloraz"},
-                {"name": "acq_auth_adduttr.anno_instal_clor","alias": "anno_instal_clor"},
-                {"name": "acq_auth_adduttr.anno_ristr_clor","alias": "anno_ristr_clor"},
                 {"name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza"},
                 {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
-                {"name": "stats_cloratore.counter","alias": "count_cloratori"}
+                { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+                { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
+                {"name": "stats_cloratore.counter","alias": "count_cloratori"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_residente","alias": "nr_utenze_dir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_condominiali","alias": "nr_utenze_condominiali"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_indirette","alias": "nr_utenze_indir_indirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_domestici","alias": "nr_utenze_indir_domestici"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_residente","alias": "nr_utenze_indir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_misuratore","alias": "nr_utenze_misuratore"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"}
             ],
             "table": {
                 "name": "acq_adduttrice"
@@ -55,6 +64,27 @@
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "schema_acq"
+                    },
+                    "on": [
+                        "acq_adduttrice.idgis",
+                        "schema_acq.idgis"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_distribuzioni_adduttrici"
+                    },
+                    "on": [
+                        "utenze_distribuzioni_adduttrici.id_rete",
+                        "acq_adduttrice.idgis"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE acq_adduttrice.d_gestore = 'PUBLIACQUA' AND acq_adduttrice.d_ambito IN ('AT3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
@@ -69,12 +99,21 @@
                 {"name": "a_acq_adduttrice.data_agg","alias": "data_agg"},
                 {"name": "a_acq_adduttrice.nr_rip","alias": "nr_rip"},
                 {"name": "acq_auth_adduttr.sn_strum_mis_port","alias": "sn_strum_mis_port", "function": "TO_BIT"},
-                {"name": "acq_auth_adduttr.d_tipo_cloraz","alias": "d_tipo_cloraz"},
-                {"name": "acq_auth_adduttr.anno_instal_clor","alias": "anno_instal_clor"},
-                {"name": "acq_auth_adduttr.anno_ristr_clor","alias": "anno_ristr_clor"},
                 {"name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza"},
                 {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
-                { "name": "stats_cloratore.counter","alias": "count_cloratori"}
+                { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+                { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
+                { "name": "stats_cloratore.counter","alias": "count_cloratori"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_residente","alias": "nr_utenze_dir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_condominiali","alias": "nr_utenze_condominiali"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_indirette","alias": "nr_utenze_indir_indirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_domestici","alias": "nr_utenze_indir_domestici"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_residente","alias": "nr_utenze_indir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_misuratore","alias": "nr_utenze_misuratore"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"}
             ],
             "table": {
                 "name": "a_acq_adduttrice"
@@ -112,60 +151,64 @@
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "schema_acq"
+                    },
+                    "on": [
+                        "a_acq_adduttrice.idgis",
+                        "schema_acq.idgis"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_distribuzioni_adduttrici"
+                    },
+                    "on": [
+                        "utenze_distribuzioni_adduttrici.id_rete",
+                        "a_acq_adduttrice.idgis"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE a_acq_adduttrice.d_gestore = 'PUBLIACQUA' AND a_acq_adduttrice.d_ambito IN ('AT3', NULL) AND a_acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
         }
     ],
     "columns": [
+        { "id": "118600", "transformation": { "func": "CONST",  "params":{"value":"C"}} },
+        { "id": "118500", "transformation": { "func": "CONST",  "params":{"value":"A"}} },
         { "id": "40500", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
         { "id": "98900", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
-        { "id": "-2", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
+        { "id": "112700", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
+
+        {"id": "112500","transformation": {"func": "DIRECT", "params": {"field": "codice_schema_acq"}}},
+        {"id": "112600","transformation": {"func": "DIRECT", "params": {"field": "denominazione_schema_acq"}}},
+
+        { "id": "117800", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dirette" } }},
+        { "id": "117900", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dir_dom_e_residente" } }},
+        { "id": "118000", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dir_residente" } }},
+        { "id": "118100", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_condominiali" } }},
+        { "id": "118200", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_indirette" } }},
+        { "id": "118300", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_domestici" } }},
+        { "id": "118400", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_residente" } }},
+
+        { "id": "117700", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
+        { "id": "116600", "transformation": { "func": "DIRECT", "params": { "field": "volume_fatturato" } }},
+        { "id": "116900", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_misuratore" } }},
 
         { "id": "39400", "transformation": { "func": "DIRECT",  "params": { "field": "codice_ato" } }},
         { "id": "39500", "transformation": { "func": "DIRECT",  "params": { "field": "denom" } }},
         { "id": "39600", "transformation": { "func": "DIRECT",  "params": { "field": "portata_media" } }},
         { "id": "39700", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
         { "id": "39900", "transformation": { "func": "DIRECT",  "params": { "field": "sn_strum_mis_port" } }},
-        { "id": "40100", "transformation": { "func": "DIRECT",  "params": { "field": "anno_instal_clor" } },"validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "40100",
-                        "cond": [{
-                            "or": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
-                              {"operator": "=", "value": 9999}
-                            ]
-                        },
-                        {
-                            "and": [
-                              {"lookup": "{40000}", "operator": "=", "value": 1},
-                              {"operator": "=", "value": 9800}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9800"
-                }
-            ]},
-        { "id": "40200", "transformation": { "func": "DIRECT",  "params": { "field": "anno_ristr_clor" } }},
+
         { "id": "40600", "transformation": { "func": "DIRECT",  "params": { "field": "data_agg" } }},
         { "id": "98800", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza_tlc" } }},
         { "id": "99000", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" }}},
 
-        {"id":"40000", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}, "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "40000",
-                        "cond": [{
-                            "or": [
-                              {"lookup":  "{40100}", "operator": "!=", "value": 9800},
-                              {"operator": "!=", "value": 1}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value 1 is not permitted"
-                }
-            ]},
         {"id":"40300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
         {"id":"40400", "transformation":{"func":"DOMAIN", "params":{"field":"a_portata_media", "domain_name": "D_AFFIDABILITA"}}},
 
