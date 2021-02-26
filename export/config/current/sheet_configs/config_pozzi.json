@@ -47,7 +47,6 @@
             {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"},
             { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
             { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
-            {"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
             {"name": "support_codice_capt_accorp.denom","alias": "denom"}
          ],
@@ -191,7 +190,6 @@
             {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"},
             { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
             { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
-            {"name": "a_acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
             {"name": "support_codice_capt_accorp.denom","alias": "denom"}
 
@@ -296,7 +294,6 @@
 
         {"id": "111500","transformation": { "func": "DIRECT", "params": { "field": "codice_schema_acq"}}},
         {"id": "111600","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
-        {"id": "111700","transformation": { "func": "DIRECT", "params": { "field": "sn_uso_plurimo"}}},
 
         {"id": "111300","transformation": { "func": "DIRECT", "params": { "field": "codice_accorp_capt"}}},
         {"id": "111400","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},

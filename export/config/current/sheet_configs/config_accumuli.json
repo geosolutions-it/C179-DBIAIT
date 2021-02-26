@@ -262,7 +262,7 @@
                                 {"operator": "=", "value": 9800}
                             ]},{
                             "and": [
-                                {"lookup": "{45500}" ,"operator": "!=", "value": 1}
+                                {"lookup": "{45500}" ,"operator": "!=", "value": 1},
                                 {"lookup": "{45500}" ,"operator": "!=", "value": 1}
                             ]
                         }]

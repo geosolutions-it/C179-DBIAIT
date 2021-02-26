@@ -38,7 +38,6 @@
                 {"name": "acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
                 {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
-                {"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
                 {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
                 {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
                 {"name": "acq_capt_conces.estremi_conces","alias": "estremi_conces"},
@@ -152,7 +151,6 @@
                 {"name": "a_acq_captazione.cod_comune", "alias":"cod_comune"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-                {"name": "a_acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
                 {"name": "a_acq_capt_conces.port_uti_max","alias": "port_uti_max"},
                 {"name": "a_acq_capt_conces.port_uti_min","alias": "port_uti_min"},
                 {"name": "a_acq_capt_conces.port_deriv","alias": "port_deriv"},
@@ -236,7 +234,6 @@
     "columns": [
         {"id": "1400","transformation": { "func": "CONST",  "params": { "value": "3003"}}},
 
-        {"id": "110900","transformation": { "func": "DIRECT", "params": { "field": "sn_uso_plurimo"}}},
         {"id": "110700","transformation": { "func": "DIRECT", "params": { "field": "codice_schema_acq"}}},
         {"id": "110800","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
 
