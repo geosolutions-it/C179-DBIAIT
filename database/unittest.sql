@@ -660,7 +660,7 @@ BEGIN
         "XLS_POTAB_INRETI":     99,
         "XLS_POTAB_POMPE":      221,
         "XLS_POTABILIZZATORI":  142,
-        "XLS_POZZI":            774,
+        "XLS_POZZI":            764,
         "XLS_POZZI_INPOTAB":    0,
         "XLS_POZZI_INRETI":     576,
         "XLS_POZZI_POMPE":      578,
@@ -1402,3 +1402,19 @@ BEGIN
     perform test_assertTrue('count TAB SUPPORT_POZZI_INPOTAB, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_duplicated_SUPPORT_POZZI_INPOTAB_tab() returns void as $$
+DECLARE
+  v_count BIGINT:=0;
+BEGIN
+    select max(cnt) INTO v_count from (
+        select ids_codice, count(0) cnt
+        from dbiait_analysis.SUPPORT_POZZI_INPOTAB group by ids_codice
+    ) t;
+    perform test_assertTrue('check for duplicated items in TAB SUPPORT_POZZI_INPOTAB', v_count = 1 );
+
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+
+

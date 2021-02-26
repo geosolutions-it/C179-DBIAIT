@@ -2572,23 +2572,28 @@ BEGIN
 	
 	--
 	INSERT INTO SUPPORT_POZZI_INPOTAB(ids_codice, volume_medio_prel)
-	select 
-		ac.codice_ato, 
-		case when pz.ids_codice is null then ac.volume_medio_prel
-		else 0 
-		end volume_medio_prel 
-	from a_acq_captazione ac 
-	left join pozzi_inpotab pz
-	on ac.codice_ato = pz.ids_codice
-	union ALL
-	select 
-		ac.codice_ato, 
-		case when pz.ids_codice is null then ac.volume_medio_prel
-		else 0 
-		end volume_medio_prel 
-	from acq_captazione ac 
-	left join pozzi_inpotab pz
-	on ac.codice_ato = pz.ids_codice;
+	SELECT DISTINCT ON(codice_ato) codice_ato, volume_medio_prel
+	FROM (
+		select 
+			ac.codice_ato, 
+			case when pz.ids_codice is null then ac.volume_medio_prel
+			else 0 
+			end volume_medio_prel	
+		from a_acq_captazione ac 
+		left join pozzi_inpotab pz
+		on ac.codice_ato = pz.ids_codice
+		WHERE ac.d_gestore = 'PUBLIACQUA' AND ac.d_ambito IN ('AT3', NULL) AND ac.sub_funzione = 3
+		UNION ALL	
+		select 
+			ac.codice_ato, 
+			case when pz.ids_codice is null then ac.volume_medio_prel
+			else 0 
+			end volume_medio_prel
+		from acq_captazione ac 
+		left join pozzi_inpotab pz
+		on ac.codice_ato = pz.ids_codice
+		WHERE ac.d_gestore = 'PUBLIACQUA' AND ac.d_ambito IN ('AT3', NULL) AND ac.sub_funzione = 3		
+	) t;
 	
 	RETURN TRUE;
 
@@ -3872,6 +3877,7 @@ begin
 		pop_ser_dep = NULL;																									
 	
 	DELETE FROM DISTRIB_COM_SERV;
+	DELETE FROM SUPPORT_POZZI_INPOTAB;
 	DELETE FROM UTENZA_SERVIZIO;
 	DELETE FROM UTENZA_SERVIZIO_LOC;
 	DELETE FROM UTENZA_SERVIZIO_ACQ;
