@@ -139,6 +139,8 @@ class IfValidation(BaseValidation):
     def cast_field(self, field_value):
         if not isinstance(field_value, int) and field_value is not None and not isinstance(field_value, float):
             try:
+                if field_value == '':
+                    return field_value
                 field_value = ast.literal_eval(field_value)
             except ValueError as e:
                 field_value = field_value
