@@ -356,14 +356,14 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_SHAPE(
 	id_comune_  INTEGER,
 	ids_codi_1	VARCHAR(32),
 	id_materia	INTEGER,
-	idx_materi	VARCHAR(2),
+	idx_materi	VARCHAR(4),
 	sezione		VARCHAR(32),
 	diametro	INTEGER,
-	idx_diamet	VARCHAR(2),
+	idx_diamet	VARCHAR(4),
 	anno		INTEGER,
-	idx_anno	VARCHAR(2),
+	idx_anno	VARCHAR(4),
 	lunghez_1	double precision,
-	idx_lunghe	VARCHAR(2),
+	idx_lunghe	VARCHAR(4),
 	id_conserv	INTEGER,
 	TIPO_RETE 	VARCHAR(100),
 	id_refluo_	INTEGER,
@@ -372,13 +372,13 @@ CREATE TABLE DBIAIT_ANALYSIS.FGN_SHAPE(
 	COPERTURA 	VARCHAR(100),
 	prof_inizi 	double precision,
 	prof_final 	double precision,
-	IDX_PROFON 	VARCHAR(2), 
+	IDX_PROFON 	VARCHAR(4), 
 	ALLACCI 	INTEGER, 
 	ALLACCI_IN 	INTEGER,
 	LUNGHEZZA_ 	double precision, 
 	RIPARAZION 	INTEGER, 
 	RIPARAZI_1 	INTEGER, 
-	ID_OPERA_S 	VARCHAR(2)
+	ID_OPERA_S 	VARCHAR(4)
 );
 SELECT AddGeometryColumn ('dbiait_analysis','fgn_shape','geom', 25832, 'MULTILINESTRING',2);
 

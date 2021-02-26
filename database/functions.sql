@@ -546,12 +546,12 @@ BEGIN
 			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
 			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
-			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
+			AND ((t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE_ATO in (''DE00213'',''DE00214''))
 			UNION ALL
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
-			AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
+			AND ((t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE in (''DE00213'',''DE00214''))
 		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null
 	)t group by t.id_ubic_contatore having count(0)>1';
@@ -1405,7 +1405,7 @@ BEGIN
         join acq_contatore ac on uc.idgis =ac.id_ubic_contatore
         where uc.ID_IMPIANTO is not null
         and not EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
-        and ac.tariffa not in ('APB_REFIND', 'APBLREFIND', 'APBNREFCIV', 'APBHSUBDIS', 'COPDCI0000', 'COPDIN0000'))
+        and COALESCE(ac.tariffa,'?') not in ('APB_REFIND', 'APBLREFIND', 'APBNREFCIV', 'APBHSUBDIS', 'COPDCI0000', 'COPDIN0000'))
     GROUP BY id_cassetta, id_condotta, id_derivazione, sub_funzione;
 
 	--ANOMALIES 1
@@ -1841,20 +1841,17 @@ BEGIN
     FROM distrib_tronchi;
 
     -- (comune_nome, id_comune_istat)
-    UPDATE ACQ_SHAPE
-    SET comune_nom = t.denom, id_comune_ = t.cod_istat
-    FROM (
-        --SELECT c.idgis, cc.denom, cc.cod_istat
-        --FROM acq_condotta c, confine_comunale cc
-        --WHERE c.cod_comune = cc.pro_com_tx
-        SELECT c.idgis, cc.denom, cc.cod_istat
-        FROM (
-            select c.idgis, coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
-            from acq_condotta c left JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com
-        ) c, confine_comunale cc
-        WHERE c.cod_comune = cc.pro_com
-        --LIMIT 10
-    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
+	UPDATE ACQ_SHAPE
+	SET comune_nom = t.denom, id_comune_ = t.cod_comune
+	FROM (
+		SELECT c.idgis, cc.denom, c.cod_comune
+		FROM (
+			select c.idgis, coalesce(d.pro_com_acc, c.cod_comune::INTEGER) cod_comune
+			from acq_condotta c left JOIN decod_com d on c.cod_comune::INTEGER = d.pro_com
+		) c, confine_comunale cc
+		WHERE c.cod_comune = cc.pro_com
+		--LIMIT 10
+	) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
     -- (tipo_acqua)
     UPDATE ACQ_SHAPE
     SET tipo_acqua = t.valore_netsic
