@@ -9,10 +9,6 @@
             {"name":"acq_captazione.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
             {"name":"acq_capt_conces.estremi_conces", "alias":"estremi_conces"},
             {"name":"acq_capt_conces.port_potab", "alias":"port_potab"},
-            {"name":"acq_capt_conces.port_industr", "alias":"port_industr"},
-            {"name":"acq_capt_conces.port_irrig", "alias":"port_irrig"},
-            {"name":"acq_capt_conces.port_idroel", "alias":"port_idroel"},
-            {"name":"acq_auth_capt.port_altro", "alias":"port_altro"},
             {"name":"acq_captazione.anno_costr", "alias":"anno_costr"},
             {"name":"acq_captazione.anno_ristr", "alias":"anno_ristr"},
             {"name":"acq_captazione.d_stato_cons", "alias":"d_stato_cons"},
@@ -48,9 +44,12 @@
             {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT"},
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT"},
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT"},
-            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
-            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"},
-            {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"}
+            {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"},
+            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
+            {"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
+            { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
+            {"name": "support_codice_capt_accorp.denom","alias": "denom"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -132,6 +131,17 @@
                      "acq_captazione.codice_ato"
                  ],
                  "cond": "="
+            },
+            {
+                "type": "left",
+                "table": {
+                    "name": "schema_acq"
+                },
+                "on": [
+                    "acq_captazione.idgis",
+                    "schema_acq.idgis"
+                ],
+                "cond": "="
             }
          ],
          "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3"
@@ -143,10 +153,6 @@
             {"name":"a_acq_captazione.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
             {"name":"a_acq_capt_conces.estremi_conces", "alias":"estremi_conces"},
             {"name":"a_acq_capt_conces.port_potab", "alias":"port_potab"},
-            {"name":"a_acq_capt_conces.port_industr", "alias":"port_industr"},
-            {"name":"a_acq_capt_conces.port_irrig", "alias":"port_irrig"},
-            {"name":"a_acq_capt_conces.port_idroel", "alias":"port_idroel"},
-            {"name":"acq_auth_capt.port_altro", "alias":"port_altro"},
             {"name":"a_acq_captazione.anno_costr", "alias":"anno_costr"},
             {"name":"a_acq_captazione.anno_ristr", "alias":"anno_ristr"},
             {"name":"a_acq_captazione.d_stato_cons", "alias":"d_stato_cons"},
@@ -182,9 +188,13 @@
             {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT"},
             {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT"},
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT"},
-            {"name": "support_codice_capt_accorp.codice_accorp_capt","alias": "codice_accorp"},
-            {"name": "support_codice_capt_accorp.denom","alias": "accorp_denominazione"},
-            {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"}
+            {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"},
+            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
+            {"name": "a_acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
+            { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
+            {"name": "support_codice_capt_accorp.denom","alias": "denom"}
+
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -266,12 +276,31 @@
                      "a_acq_captazione.codice_ato"
                  ],
                  "cond": "="
+            },
+            {
+                "type": "left",
+                "table": {
+                    "name": "schema_acq"
+                },
+                "on": [
+                    "a_acq_captazione.idgis",
+                    "schema_acq.idgis"
+                ],
+                "cond": "="
             }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.sub_funzione = 3"
       }
    ],
    "columns":[
+
+        {"id": "111500","transformation": { "func": "DIRECT", "params": { "field": "codice_schema_acq"}}},
+        {"id": "111600","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
+        {"id": "111700","transformation": { "func": "DIRECT", "params": { "field": "sn_uso_plurimo"}}},
+
+        {"id": "111300","transformation": { "func": "DIRECT", "params": { "field": "codice_accorp_capt"}}},
+        {"id": "111400","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
+
       {"id":"17200", "transformation":{"func":"EXPR", "params":{"field":"volume_medio_prel", "expr": "_value_*1000/365/3600/24"}}, "validations": [{
               "func": "IF",
               "params": {
@@ -287,7 +316,25 @@
       ]},
 
       {"id":"14700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
-      {"id":"16900", "transformation":{"func":"DIRECT", "params":{"field":"consumo_ee"}}},
+      {"id":"16900", "transformation":{"func":"DIRECT", "params":{"field":"consumo_ee"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "16900",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{18500}","operator": "=", "value": 1},
+                              {"operator": "=", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{18500}","operator": "!=", "value": 1},
+                              {"operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not 0"
+                }
+            ]},
       {"id":"15300", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
       {"id":"14800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
       {"id":"15200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}, "validations": [{
@@ -304,10 +351,18 @@
                 }
             ]},
 
-      {"id":"-2", "transformation":{"func":"DIRECT", "params":{"field":"codice_accorp"}}},
-      {"id":"-3", "transformation":{"func":"DIRECT", "params":{"field":"accorp_denominazione"}}},
-
-      {"id":"15500", "transformation":{"func":"DIRECT", "params":{"field":"estremi_conces"}}},
+      {"id":"15500", "transformation":{"func":"DIRECT", "params":{"field":"estremi_conces"}}, "validations":  [{
+        "func": "IF",
+              "params": {
+                  "field": "15500",
+                  "cond": [{
+                      "and": [
+                        {"operator": "!=", "value": ""}
+                      ]
+                  }]
+              },
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is empty"
+      }]},
       {"id":"15600", "transformation":{"func":"DIRECT", "params":{"field":"port_potab"}}, "validations": [{
               "func": "IF",
               "params": {
@@ -316,25 +371,30 @@
                       "and": [
                         {"operator": ">=", "value": "{17200}"}
                       ]
+                  }, {
+                      "and": [
+                        {"operator": "!=", "value": ""}
+                      ]
                   }]
               },
-              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is lower than the value in field 17200"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is lower than the value in field 17200 or empty"
           }
       ]},
-      {"id":"15700", "transformation":{"func":"DIRECT", "params":{"field":"port_industr"}}},
-      {"id":"15800", "transformation":{"func":"DIRECT", "params":{"field":"port_irrig"}}},
-      {"id":"15900", "transformation":{"func":"DIRECT", "params":{"field":"port_idroel"}}},
-      {"id":"16000", "transformation":{"func":"DIRECT", "params":{"field":"port_altro"}}},
       {"id":"16100", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}, "validations": [{
               "func": "IF",
               "params": {
                   "field": "16100",
                   "cond": [{
-                      "or": [
-                        {"operator": "<=", "value": "{REF_YEAR}"},
-                        {"operator": "=", "value": 9999}
-                      ]
-                  }]
+                            "and": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9999}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9999}
+                            ]
+                        }]
               },
               "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not valid for year {REF_YEAR}"
           }
@@ -344,11 +404,16 @@
               "params": {
                   "field": "16200",
                   "cond": [{
-                      "or": [
-                        {"operator": "<=", "value": "{REF_YEAR}"},
-                        {"operator": "=", "value": 9800}
-                      ]
-                  }]
+                            "and": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
+                              {"operator":  "=", "value": 9800}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
+                            ]
+                        }]
               },
               "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is not valid for year {REF_YEAR}"
           }
@@ -393,12 +458,42 @@
                         {"lookup": "{15600}","operator": "=", "value": 0},
                         {"operator": ">", "value": 0}
                       ]
+                  },{
+                      "and": [
+                        {"lookup": "{18500}","operator": "!=", "value": 1}
+                      ]
+                  },{
+                      "and": [
+                        {"lookup": "{15600}","operator": "!=", "value": 0}
+                      ]
                   }]
               },
               "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is lower than 0"
           }
       ]},
-      {"id":"17300", "transformation":{"func":"DIRECT", "params":{"field":"port_uti_max"}}},
+      {"id":"17300", "transformation":{"func":"DIRECT", "params":{"field":"port_uti_max"}}, "validations": [{
+              "func": "IF",
+              "params": {
+                  "field": "17300",
+                  "cond": [{
+                      "and": [
+                        {"lookup": "{17200}","operator": "=", "value": 0},
+                        {"operator": "=", "value": 0}
+                      ]
+                  },{
+                      "and": [
+                        {"lookup": "{17200}","operator": ">", "value": 0},
+                        {"lookup": "{17200}","operator": "<", "value": "{17300}"}
+                      ]
+                  },{
+                      "and": [
+                        {"lookup": "{17200}","operator": "!=", "value": 0}
+                      ]
+                  }]
+              },
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field not lower than ID 17200"
+          }
+      ]},
       {"id":"17400", "transformation":{"func":"DIRECT", "params":{"field":"port_uti_min"}}, "validations": [{
               "func": "IF",
               "params": {
@@ -413,9 +508,13 @@
                         {"lookup": "{17200}","operator": ">", "value": 0},
                         {"lookup": "{17200}","operator": "<", "value": "{17400}"}
                       ]
+                  },{
+                      "and": [
+                        {"lookup": "{17200}","operator": "!=", "value": 0}
+                      ]
                   }]
               },
-              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field not lower than ID 15600"
+              "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field not lower than ID 17200"
           }
       ]},
       {"id":"17600", "transformation":{"func":"DIRECT", "params":{"field":"sn_strum_mis_port"}}},
@@ -468,11 +567,15 @@
               "params": {
                   "field": "16300",
                   "cond": [{
-                      "and": [
-                        {"lookup": "{16200}","operator": ">=", "value": 2014},
-                        {"operator": ">=", "value": 3}
-                      ]
-                  }]
+                          "and": [
+                              {"lookup": "{16200}", "operator": ">=", "value": 2014},
+                              {"operator": ">=", "value": 3}
+                            ]
+                        }, {
+                            "and": [
+                              {"lookup": "{16200}", "operator": "<", "value": 2014}
+                            ]
+                        }]
               },
               "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is lower than 3"
           }
@@ -484,13 +587,13 @@
                   "cond": [{
                       "and": [
                         {"lookup": "{16500}","operator": "=", "value": 100},
-                        {"operator": "=", "value": "Continuo"}
+                        {"operator": "=", "value": "continuo"}
                       ]
                   },{
-                      "or": [
+                      "and": [
                         {"lookup": "{17000}","operator": "=", "value": 0},
                         {"lookup": "{18500}","operator": "=", "value": 1},
-                        {"operator": "=", "value": "Occasionale"}
+                        {"operator": "=", "value": "occasionale"}
                       ]
                   }]
               },

@@ -61,7 +61,9 @@
             {"name":"acq_potabiliz.cod_comune", "alias":"cod_comune"},
             {"name":"acq_potabiliz.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"acq_potabiliz.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            { "name": "localita.denominazi", "alias": "denominazi" }
+            { "name": "localita.denominazi", "alias": "denominazi" },
+            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"}
          ],
          "table":{
             "name":"acq_potabiliz"
@@ -88,7 +90,17 @@
                      "acq_potabiliz.geom"
                  ],
                  "cond": "ST_INTERSECTS"
-            }
+            },{
+                    "type": "left",
+                    "table": {
+                        "name": "schema_acq"
+                    },
+                    "on": [
+                        "acq_potabiliz.idgis",
+                        "schema_acq.idgis"
+                    ],
+                    "cond": "="
+                }
          ],
          "filter": "WHERE acq_potabiliz.d_gestore = 'PUBLIACQUA' AND acq_potabiliz.d_ambito IN ('AT3', NULL) AND acq_potabiliz.d_stato NOT IN ('IPR', 'IAC')"
       },
@@ -151,7 +163,9 @@
             {"name":"a_acq_potabiliz.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_potabiliz.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_acq_potabiliz.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            { "name": "localita.denominazi", "alias": "denominazi" }
+            { "name": "localita.denominazi", "alias": "denominazi" },
+            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
+            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"}
          ],
          "table":{
             "name":"a_acq_potabiliz"
@@ -178,12 +192,27 @@
                      "a_acq_potabiliz.geom"
                  ],
                  "cond": "ST_INTERSECTS"
-             }
+             },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "schema_acq"
+                    },
+                    "on": [
+                        "a_acq_potabiliz.idgis",
+                        "schema_acq.idgis"
+                    ],
+                    "cond": "="
+                }
          ],
          "filter": "WHERE a_acq_potabiliz.d_gestore = 'PUBLIACQUA' AND a_acq_potabiliz.d_ambito IN ('AT3', NULL) AND a_acq_potabiliz.d_stato NOT IN ('IPR', 'IAC')"
       }
    ],
    "columns":[
+
+      {"id": "112300","transformation": { "func": "DIRECT", "params": { "field": "codice_schema_acq"}}},
+      {"id": "112400","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
+
       {"id":"30900", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
       {"id":"31000", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
       {"id":"31400", "transformation":{"func":"DIRECT", "params":{"field":"quota"}},"validations": [{
@@ -204,9 +233,14 @@
                     "params": {
                         "field": "31800",
                         "cond": [{
-                            "or": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
+                            "and": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
                               {"operator":  "=", "value": 9999}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9999}
                             ]
                         }]
                     },
@@ -220,8 +254,12 @@
                         "field": "32200",
                         "cond": [{
                             "and": [
-                              {"lookup": "{35500}","operator": "=", "value": 1},
+                              {"lookup": "{35500}", "operator": "=", "value": 1},
                               {"operator": ">", "value": 0}
+                            ]
+                        }, {
+                            "and": [
+                              {"lookup": "{35500}", "operator": "!=", "value": 1}
                             ]
                         }]
                     },
@@ -234,9 +272,14 @@
                     "params": {
                         "field": "32010",
                         "cond": [{
-                            "or": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
+                            "and": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
                               {"operator":  "=", "value": 9800}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
                             ]
                         }]
                     },
@@ -248,9 +291,14 @@
                     "params": {
                         "field": "32030",
                         "cond": [{
-                            "or": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
+                            "and": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
                               {"operator":  "=", "value": 9800}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
                             ]
                         }]
                     },
@@ -290,11 +338,16 @@
                     "params": {
                         "field": "98600",
                         "cond": [{
-                            "and": [
-                              {"lookup": "{35500}","operator": "=", "value": 1},
-                              {"operator": ">", "value": 0}
-                            ]
-                        }]
+                              "and": [
+                                {"lookup": "{35500 }", "operator": "=", "value": 1},
+                                {"operator": ">", "value": 0}
+                              ]
+                          }, {
+                              "and": [
+                                {"lookup": "{35500 }", "operator": "!=", "value": 1}
+                              ]
+                          }
+                        ]
                     },
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not greater than 0"
                 }
@@ -313,9 +366,13 @@
                     "params": {
                         "field": "32020",
                         "cond": [{
-                            "and": [
-                              {"lookup": "{32010}","operator": ">=", "value": 2014},
+                          "and": [
+                              {"lookup": "{32010}", "operator": ">=", "value": 2014},
                               {"operator": ">=", "value": 3}
+                            ]
+                        }, {
+                            "and": [
+                              {"lookup": "{32010}", "operator": "<", "value": 2014}
                             ]
                         }]
                     },
@@ -327,11 +384,15 @@
                     "params": {
                         "field": "32040",
                         "cond": [{
-                            "and": [
-                              {"lookup": "{32030}","operator": ">=", "value": 2014},
-                              {"operator": ">=", "value": 3}
-                            ]
-                        }]
+                        "and": [
+                          {"lookup": "{32040}", "operator": ">=", "value": 2014},
+                          {"operator": ">=", "value": 3}
+                        ]
+                    }, {
+                        "and": [
+                          {"lookup": "{32040}", "operator": "<", "value": 2014}
+                        ]
+                    }]
                     },
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is lower than 3"
                 }
@@ -347,11 +408,22 @@
                     "params": {
                         "field": "35600",
                         "cond": [{
-                            "and": [
-                              {"lookup": "{31800}","operator": "=", "value": 9999},
-                              {"operator": "=", "value": "x"}
-                            ]
-                        },{
+                              "and": [
+                                {"lookup": "{31800}", "operator": "=", "value": 9999},
+                                {"operator": "=", "value": "X"}
+                              ]
+                          },{
+                              "and": [
+                                {"lookup": "{31800}", "operator": "!=", "value": 9999}
+                              ]
+                          }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Affid. Anno costruzione non coerente con Anno di costruzione"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "35600",
+                        "cond": [{
                             "and": [
                               {"lookup": "{31800}","operator": ">=", "value": 2002},
                               {"lookup": "{31800}","operator": "!=", "value": 9999},
@@ -359,15 +431,31 @@
                             ]
                         },{
                             "and": [
-                              {"lookup": "{32010}","operator": ">=", "value": 2002},
-                              {"operator": "=", "value": "a"}
+                              {"lookup": "{31800}","operator": "<", "value": 2002}
                             ]
                         }]
                     },
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Affid. Anno costruzione non coerente con Anno di costruzione"
                 }
             ]},
-      {"id":"35710", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"35710", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "35710",
+                        "cond": [{
+                        "and": [
+                          {"lookup": "{32010}", "operator": ">=", "value": 2002},
+                          {"operator": "=", "value": "A"}
+                        ]
+                    }, {
+                        "and": [
+                          {"lookup": "{32010}", "operator": "<", "value": 2002}
+                        ]
+                    }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: year is greater that 2002 and fields is not A"
+                }]},
+
       {"id":"35800", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_gg_tratt", "domain_name": "D_AFFIDABILITA"}}},
       {"id":"35900", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_anno_tratt", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
@@ -375,18 +463,19 @@
                         "field": "35900",
                         "cond": [{
                             "and": [
-                              {"lookup": "{32200}","operator": "=", "value": 0},
+                              {"lookup": "{32200}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "A"}
                             ]
-                        },{
+                        }, {
                             "and": [
-                              {"lookup": "{32200}","operator": ">", "value": 0},
-                              {"lookup": "{98400}","operator": "=", "value": 1},
+                              {"lookup": "{32200}", "operator": ">", "value": 0},
+                              {"lookup": "{98400}", "operator": "=", "value": 1},
                               {"operator": "=", "value": "A"}
                             ]
-                        },{
+                        }, {
                             "and": [
-                              {"lookup": "{98400}","operator": "=", "value": 0},
+                              {"lookup": "{32200}", "operator": ">", "value": 0},
+                              {"lookup": "{98400}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "C"}
                             ]
                         }]
@@ -400,19 +489,19 @@
                         "field": "98700",
                         "cond": [{
                             "and": [
-                              {"lookup": "{98600}","operator": "=", "value": 0},
+                              {"lookup": "{98600}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "A"}
                             ]
-                        },{
+                        }, {
                             "and": [
-                              {"lookup": "{98600}","operator": ">", "value": 0},
-                              {"lookup": "{98500}","operator": "=", "value": 1},
+                              {"lookup": "{98600}", "operator": ">", "value": 0},
+                              {"lookup": "{95800}", "operator": "=", "value": 1},
                               {"operator": "=", "value": "A"}
                             ]
-                        },{
+                        }, {
                             "and": [
-                              {"lookup": "{98600}","operator": ">", "value": 0},
-                              {"lookup": "{98500}","operator": "=", "value": 0},
+                              {"lookup": "{98600}", "operator": ">", "value": 0},
+                              {"lookup": "{98500}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "C"}
                             ]
                         }]
@@ -428,6 +517,10 @@
                             "and": [
                               {"lookup": "{32030}","operator": ">=", "value": 2002},
                               {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{32030}","operator": "<", "value": 2002}
                             ]
                         }]
                     },
