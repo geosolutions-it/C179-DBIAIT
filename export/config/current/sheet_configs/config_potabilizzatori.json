@@ -204,9 +204,14 @@
                     "params": {
                         "field": "31800",
                         "cond": [{
-                            "or": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
+                            "and": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
                               {"operator":  "=", "value": 9999}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9999}
                             ]
                         }]
                     },
@@ -220,8 +225,12 @@
                         "field": "32200",
                         "cond": [{
                             "and": [
-                              {"lookup": "{35500}","operator": "=", "value": 1},
+                              {"lookup": "{35500}", "operator": "=", "value": 1},
                               {"operator": ">", "value": 0}
+                            ]
+                        }, {
+                            "and": [
+                              {"lookup": "{35500}", "operator": "!=", "value": 1}
                             ]
                         }]
                     },
@@ -234,9 +243,14 @@
                     "params": {
                         "field": "32010",
                         "cond": [{
-                            "or": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
+                            "and": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
                               {"operator":  "=", "value": 9800}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
                             ]
                         }]
                     },
@@ -248,9 +262,14 @@
                     "params": {
                         "field": "32030",
                         "cond": [{
-                            "or": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
+                            "and": [
+                              {"operator": ">", "value": "{REF_YEAR}"},
                               {"operator":  "=", "value": 9800}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator":  "!=", "value": 9800}
                             ]
                         }]
                     },
@@ -290,11 +309,16 @@
                     "params": {
                         "field": "98600",
                         "cond": [{
-                            "and": [
-                              {"lookup": "{35500}","operator": "=", "value": 1},
-                              {"operator": ">", "value": 0}
-                            ]
-                        }]
+                              "and": [
+                                {"lookup": "{35500 }", "operator": "=", "value": 1},
+                                {"operator": ">", "value": 0}
+                              ]
+                          }, {
+                              "and": [
+                                {"lookup": "{35500 }", "operator": "!=", "value": 1}
+                              ]
+                          }
+                        ]
                     },
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not greater than 0"
                 }
@@ -313,9 +337,13 @@
                     "params": {
                         "field": "32020",
                         "cond": [{
-                            "and": [
-                              {"lookup": "{32010}","operator": ">=", "value": 2014},
+                          "and": [
+                              {"lookup": "{32010}", "operator": ">=", "value": 2014},
                               {"operator": ">=", "value": 3}
+                            ]
+                        }, {
+                            "and": [
+                              {"lookup": "{32010}", "operator": "<", "value": 2014}
                             ]
                         }]
                     },
@@ -327,11 +355,15 @@
                     "params": {
                         "field": "32040",
                         "cond": [{
-                            "and": [
-                              {"lookup": "{32030}","operator": ">=", "value": 2014},
-                              {"operator": ">=", "value": 3}
-                            ]
-                        }]
+                        "and": [
+                          {"lookup": "{32040}", "operator": ">=", "value": 2014},
+                          {"operator": ">=", "value": 3}
+                        ]
+                    }, {
+                        "and": [
+                          {"lookup": "{32040}", "operator": "<", "value": 2014}
+                        ]
+                    }]
                     },
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is lower than 3"
                 }
@@ -347,11 +379,22 @@
                     "params": {
                         "field": "35600",
                         "cond": [{
-                            "and": [
-                              {"lookup": "{31800}","operator": "=", "value": 9999},
-                              {"operator": "=", "value": "x"}
-                            ]
-                        },{
+                              "and": [
+                                {"lookup": "{31800}", "operator": "=", "value": 9999},
+                                {"operator": "=", "value": "X"}
+                              ]
+                          },{
+                              "and": [
+                                {"lookup": "{31800}", "operator": "!=", "value": 9999}
+                              ]
+                          }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Affid. Anno costruzione non coerente con Anno di costruzione"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "35600",
+                        "cond": [{
                             "and": [
                               {"lookup": "{31800}","operator": ">=", "value": 2002},
                               {"lookup": "{31800}","operator": "!=", "value": 9999},
@@ -359,15 +402,31 @@
                             ]
                         },{
                             "and": [
-                              {"lookup": "{32010}","operator": ">=", "value": 2002},
-                              {"operator": "=", "value": "a"}
+                              {"lookup": "{31800}","operator": "<", "value": 2002}
                             ]
                         }]
                     },
                     "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Affid. Anno costruzione non coerente con Anno di costruzione"
                 }
             ]},
-      {"id":"35710", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"35710", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "35710",
+                        "cond": [{
+                        "and": [
+                          {"lookup": "{32010}", "operator": ">=", "value": 2002},
+                          {"operator": "=", "value": "A"}
+                        ]
+                    }, {
+                        "and": [
+                          {"lookup": "{32010}", "operator": "<", "value": 2002}
+                        ]
+                    }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: year is greater that 2002 and fields is not A"
+                }]},
+
       {"id":"35800", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_gg_tratt", "domain_name": "D_AFFIDABILITA"}}},
       {"id":"35900", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_anno_tratt", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
@@ -375,18 +434,19 @@
                         "field": "35900",
                         "cond": [{
                             "and": [
-                              {"lookup": "{32200}","operator": "=", "value": 0},
+                              {"lookup": "{32200}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "A"}
                             ]
-                        },{
+                        }, {
                             "and": [
-                              {"lookup": "{32200}","operator": ">", "value": 0},
-                              {"lookup": "{98400}","operator": "=", "value": 1},
+                              {"lookup": "{32200}", "operator": ">", "value": 0},
+                              {"lookup": "{98400}", "operator": "=", "value": 1},
                               {"operator": "=", "value": "A"}
                             ]
-                        },{
+                        }, {
                             "and": [
-                              {"lookup": "{98400}","operator": "=", "value": 0},
+                              {"lookup": "{32200}", "operator": ">", "value": 0},
+                              {"lookup": "{98400}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "C"}
                             ]
                         }]
@@ -400,19 +460,19 @@
                         "field": "98700",
                         "cond": [{
                             "and": [
-                              {"lookup": "{98600}","operator": "=", "value": 0},
+                              {"lookup": "{98600}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "A"}
                             ]
-                        },{
+                        }, {
                             "and": [
-                              {"lookup": "{98600}","operator": ">", "value": 0},
-                              {"lookup": "{98500}","operator": "=", "value": 1},
+                              {"lookup": "{98600}", "operator": ">", "value": 0},
+                              {"lookup": "{95800}", "operator": "=", "value": 1},
                               {"operator": "=", "value": "A"}
                             ]
-                        },{
+                        }, {
                             "and": [
-                              {"lookup": "{98600}","operator": ">", "value": 0},
-                              {"lookup": "{98500}","operator": "=", "value": 0},
+                              {"lookup": "{98600}", "operator": ">", "value": 0},
+                              {"lookup": "{98500}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "C"}
                             ]
                         }]
@@ -428,6 +488,10 @@
                             "and": [
                               {"lookup": "{32030}","operator": ">=", "value": 2002},
                               {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{32030}","operator": "<", "value": 2002}
                             ]
                         }]
                     },
