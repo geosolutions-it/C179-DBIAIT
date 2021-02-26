@@ -38,6 +38,63 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public,pgunit;
+	
+-- ------------------------------------------------------------------------------------------
+-- TEST ACQ_SHAPE denominazione comuni accorpati
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_denom_acq_shape(
+) returns void as $$
+DECLARE
+  dummy_string varchar;
+  dummy_numeric NUMERIC;
+begin
+    
+	-- Barberino Tavarnelle	48054
+	SELECT distinct comune_nom INTO dummy_string
+	FROM dbiait_analysis.acq_shape where id_comune_  = 48054; 
+	PERFORM test_assertTrue('Check comune_nom: expected Barberino Tavarnelle, got ' || dummy_string, dummy_string = 'Barberino Tavarnelle');
+	
+	-- San Marcello Piteglio	47024
+	SELECT distinct comune_nom INTO dummy_string
+	FROM dbiait_analysis.acq_shape where id_comune_  = 47024; 
+	PERFORM test_assertTrue('Check comune_nom: expected San Marcello Piteglio, got ' || dummy_string, dummy_string = 'San Marcello Piteglio');
+	
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public,pgunit;
+
+
+-- ------------------------------------------------------------------------------------------
+-- TEST log duplicati UTENZA_SERVIZIO_BAC
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_log_standalone_UTENZA_SERVIZIO_BAC(
+) returns void as $$
+DECLARE
+    v_count INTEGER;
+begin
+    SELECT count(0) INTO v_count
+    from dbiait_analysis.acq_ubic_contatore uc, (
+        select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
+        from dbiait_analysis.FGN_BACINO b, dbiait_analysis.FGN_TRATTAMENTO t
+        WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
+        AND ((t.D_STATO='ATT' AND t.D_AMBITO='AT3' AND t.D_GESTORE in ('PUBLIACQUA','GIDA') ) OR t.CODICE_ATO in ('DE00213','DE00214'))
+        UNION ALL
+        select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
+        from dbiait_analysis.FGN_BACINO b, dbiait_analysis.FGN_PNT_SCARICO t
+        WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
+        AND ((t.D_STATO='ATT' AND t.D_AMBITO='AT3' AND t.D_GESTORE in ('PUBLIACQUA','GIDA') ) OR t.CODICE in ('DE00213','DE00214'))
+    ) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+        AND uc.id_impianto in (
+        '4001762758', '4001760688', '4002068228'
+    );
+
+    PERFORM test_assertTrue('Check duplicati UTENZA_SERVIZIO_BAC: expected 6, got ' || v_count, v_count = 6);
+
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public,pgunit;
 -- ------------------------------------------------------------------------------------------
 -- TEST POPULATE LUNG RETE FGN
 -- ------------------------------------------------------------------------------------------
@@ -700,7 +757,8 @@ BEGIN
         "UBIC_CONTATORI_FGN": 				425971,
         "UBIC_F_ALLACCIO": 					425971,
         "UTENZE_FOGNATURE_COLLETTORI": 		1063,
-        "SUPPORT_CODICE_CAPT_ACCORP": 		1360
+        "SUPPORT_CODICE_CAPT_ACCORP": 		1360,
+        "SUPPORT_POZZI_INPOTAB":            1859
     }'::JSON)->v_table;
     RETURN COALESCE(v_count,0);
 EXCEPTION WHEN OTHERS THEN
@@ -1332,5 +1390,15 @@ DECLARE
 BEGIN
     select count(0) into v_count from dbiait_analysis.SUPPORT_CODICE_CAPT_ACCORP;
     perform test_assertTrue('count TAB SUPPORT_CODICE_CAPT_ACCORP, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_count_SUPPORT_POZZI_INPOTAB_tab() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('SUPPORT_POZZI_INPOTAB');
+BEGIN
+    select count(0) into v_count from dbiait_analysis.SUPPORT_POZZI_INPOTAB;
+    perform test_assertTrue('count TAB SUPPORT_POZZI_INPOTAB, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;

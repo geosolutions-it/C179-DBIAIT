@@ -68,13 +68,13 @@
                             "and": [
                               {"lookup": "{41500}" ,"operator": ">=", "value": 2014},
                               {"operator":  "!=", "value": null}
-                            ],
+                            ]},{
                             "and": [
                               {"lookup": "{41500}" ,"operator": "<", "value": 2014}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is 2014 and the value is null"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: se il campo ID 41500 >= 2014, allora non è ammesso il campo null"
                 }
             ]
         },
@@ -85,13 +85,16 @@
                     "params": {
                         "field": "41400",
                         "cond": [{
-                            "or": [
+                            "and": [
                               {"lookup": "{41500}" ,"operator": ">=", "value": 2002},
                               {"operator":  "!=", "value": null}
+                            ]},{
+                            "and": [
+                              {"lookup": "{41500}" ,"operator": "<", "value": 2002}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is 2002 and the value is null"
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: se il campo ID 41500 >= 2002, allora non è ammesso il campo null"
                 }
             ]},
 
@@ -106,21 +109,7 @@
                         "else": 0
                     }
                 }
-            },"validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "41400",
-                        "cond": [{
-                            "or": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
-                              {"operator": "=", "value": 9999}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9999"
-                }
-            ]},
-
+            }},
         {"id": "41500", "transformation": {
                 "func": "IF",
                 "params": {
@@ -132,7 +121,21 @@
                         "else": "{data_esercizio}"
                     }
                 }
-            }},
+            },"validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "41500",
+                        "cond": [{
+                            "or": [
+                              {"operator": "<=", "value": "{REF_YEAR}"},
+                              {"operator": "=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
+                }
+            ]
+        },
         {"id": "41700", "transformation": {"func": "DIRECT", "params": { "field": "lunghezza" }}},
         {"id": "41800", "transformation": {"func": "DIRECT", "params": { "field": "idx_materiale" }}},
         {"id": "41900", "transformation": {"func": "DIRECT", "params": { "field": "idx_diametro" }}},
