@@ -126,7 +126,16 @@ CREATE OR REPLACE FUNCTION public.TO_BIT(
 		case when UPPER(v_value) IN ('SI','YES', 'S', 'Y', '1') then 1::BIT
 		else 0::BIT
 		end;
-$$  LANGUAGE sql;	
+$$  LANGUAGE sql;
+--------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.TO_BIT(
+	v_value INTEGER
+) RETURNS BIT AS $$
+	SELECT 
+		case when v_value = 1 then 1::BIT
+		else 0::BIT
+		end;
+$$  LANGUAGE sql;
 --------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.GB_X(
 	v_geom GEOMETRY
