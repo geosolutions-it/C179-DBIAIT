@@ -712,7 +712,7 @@ BEGIN
         "FGN_LUNGHEZZA_RETE": 				1092,
         "FGN_LUNGHEZZA_RETE_C": 			160,
         "FGN_LUNGHEZZA_RETE_F": 			932,
-        "ACQ_ALLACCIO": 					220635,
+        "ACQ_ALLACCIO": 					229997,
         "ACQ_LUNGHEZZA_ALLACCI": 			971,
         "SUPPORT_ACQ_ALLACCI": 				231228,
         "FGN_ALLACCIO": 					194077,
@@ -758,7 +758,7 @@ BEGIN
         "UBIC_F_ALLACCIO": 					425971,
         "UTENZE_FOGNATURE_COLLETTORI": 		1063,
         "SUPPORT_CODICE_CAPT_ACCORP": 		1360,
-        "SUPPORT_POZZI_INPOTAB":            1859
+        "SUPPORT_POZZI_INPOTAB":            764
     }'::JSON)->v_table;
     RETURN COALESCE(v_count,0);
 EXCEPTION WHEN OTHERS THEN
