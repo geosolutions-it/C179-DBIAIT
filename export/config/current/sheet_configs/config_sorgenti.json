@@ -40,7 +40,6 @@
             {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
             { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
             { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
@@ -156,7 +155,6 @@
             {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name": "a_acq_captazione.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
             { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
             { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
@@ -237,7 +235,6 @@
       }
    ],
    "columns":[
-      {"id":"112200", "transformation":{"func":"DIRECT", "params":{"field":"sn_uso_plurimo"}}},
 
       {"id": "112000","transformation": { "func": "DIRECT", "params": { "field": "codice_schema_acq"}}},
       {"id": "112100","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
