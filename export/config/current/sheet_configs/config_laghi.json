@@ -257,12 +257,25 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|il valore 0 non e' ammissibile"
                 }
             ]},
         {"id": "8800","transformation": { "func": "DIRECT", "params": { "field": "bacino" }}},
         {"id": "8900","transformation": { "func": "DIRECT", "params": { "field": "corso_acqua" }}},
-        {"id": "9100","transformation": { "func": "DIRECT", "params": { "field": "estremi_conces" }}},
+        {"id": "9100","transformation": { "func": "DIRECT", "params": { "field": "estremi_conces" }}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "9100",
+                        "cond": [{
+                            "and": [
+                              {"operator": "!=", "value": null }
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere vuoto"
+                }
+            ]
+        },
         {"id": "9200","transformation": { "func": "DIRECT", "params": { "field": "port_potab" }}, "validations": [{
                     "func": "IF",
                     "params": {
@@ -273,7 +286,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not greater than 10500"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|dovrebbe essere >= al valore del campo 10500"
                 }
             ]},
         {"id": "9700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr" }},"validations": [{
@@ -287,7 +300,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9999"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
                 }
             ]},
         {"id": "9800","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }},"validations": [{
@@ -301,7 +314,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9999"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
                 }
             ]},
         {"id": "10100","transformation": { "func": "DIRECT", "params": { "field": "utilizzo_annuo" }}, "validations": [{
@@ -315,17 +328,43 @@
                             ]
                         },{
                             "and": [
+                              {"lookup": "{10300}","operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 10300 = 0 =>  il campo deve assumere valore 0"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "10100",
+                        "cond": [{
+                            "and": [
                               {"lookup": "{10300}","operator": ">", "value": 0},
                               {"operator": "<", "value": 100}
                             ]
                         },{
                             "and": [
-                              {"lookup": "{10000}","operator": "=", "value": "Continuo"},
-                              {"operator": "=", "value": 100}
+                              {"lookup": "{10300}","operator": "<=", "value": 0}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not continuo or occasionale"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 10300 > 0 =>  il campo deve assumere valore < 100"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "10100",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10000}","operator": "=", "value": "continuo"},
+                              {"operator": "=", "value": 100}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10000}","operator": "!=", "value": "continuo"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 3: se il campo ID 10000 = 'continuo', allora il campo assume valore 100"
                 }
             ]},
         {"id": "10200","transformation": { "func": "DIRECT", "params": { "field": "area_bac_affer" }}},
@@ -340,12 +379,27 @@
                             ]
                         },{
                             "and": [
-                              {"lookup": "{9200}","operator": "=", "value": 0},
-                              {"operator": "<=", "value": 0}
+                              {"lookup": "{12000}","operator": "!=", "value": 1}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not valid"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 12000 = 1, allora il campo deve essere > 0"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "10300",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{9200}","operator": "=", "value": 0},
+                              {"operator": "<=", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{9200}","operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 9200 è = 0, il valore non puo' essere > 0"
                 }
             ]},
         {"id": "10600","transformation": { "func": "DIRECT", "params": { "field": "port_uti_max" }}, "validations": [{
@@ -359,12 +413,27 @@
                             ]
                         },{
                             "and": [
-                              {"lookup": "{10500}","operator": ">", "value": 0},
-                              {"operator": ">", "value": "{10500}"}
+                              {"lookup": "{10500}","operator": "!=", "value": 0}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not valid"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 10500 = 0, allora il campo assume valore 0"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "10600",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10500}","operator": ">", "value": 0},
+                              {"operator": ">", "value": "{10500}"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10500}","operator": "<=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 10500 > 0, dovrebbe essere > del valore del campo ID 10500"
                 }
             ]},
         {"id": "10700","transformation": { "func": "DIRECT", "params": { "field": "port_uti_min" }},"validations": [{
@@ -378,12 +447,27 @@
                             ]
                         },{
                             "and": [
-                              {"lookup": "{10500}","operator": ">", "value": 0},
-                              {"operator": ">", "value": "{10500}"}
+                              {"lookup": "{10500}","operator": "!=", "value": 0}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not valid"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 10500 = 0, allora il campo assume valore 0"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "10700",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10500}","operator": ">", "value": 0},
+                              {"operator": "<", "value": "{10500}"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{10500}","operator": "<=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 10500 > 0, dovrebbe essere < del valore del campo ID 10500"
                 }
             ]},
         {"id": "10800","transformation": { "func": "DIRECT", "params": { "field": "port_deriv" }}},
@@ -402,13 +486,24 @@
                               {"operator": "=", "value": 9800}
                             ]
                         },{
+                            "and": [
+                              {"lookup": "{11700}","operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 11700 = 1, allora deve assumere valore 9800"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "11800",
+                        "cond": [{
                             "or": [
-                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator": "<=", "value": "{REF_YEAR}"},
                               {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field error"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
                 }
             ]},
         {"id": "11900","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor" }},"validations": [{
@@ -421,13 +516,24 @@
                               {"operator": "=", "value": 9800}
                             ]
                         },{
+                            "and": [
+                              {"lookup": "{11700}","operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 11700 = 1, allora deve assumere valore 9800"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "11900",
+                        "cond": [{
                             "or": [
-                              {"operator": "<", "value": "{REF_YEAR}"},
+                              {"operator": "<=", "value": "{REF_YEAR}"},
                               {"operator": "=", "value": 9800}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field field error"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
                 }
             ]},
         {"id": "13000","transformation": { "func": "DIRECT", "params": { "field": "data_agg" }}},
@@ -438,11 +544,11 @@
                         "field": "10500",
                         "cond": [{
                             "and": [
-                              {"lookup": "{9200}","operator": "<", "value": "{10500}"}
+                              {"operator": "<=", "value": "{9200}"}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not lower than the field 9200"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|dovrebbe essere <= al valore del campo ID 9200"
                 }
             ]},
 
@@ -456,9 +562,13 @@
                               {"lookup": "{9800}","operator": ">=", "value": 2014},
                               {"operator": ">=", "value": 3}
                             ]
+                        },{
+                          "and": [
+                              {"lookup": "{9800}","operator": "<", "value": 2014}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is lower than 3"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 9800 >= 2014, allora il campo dovrebbe assumere valore >= 3 (sufficiente)"
                 }
             ]},
         {"id": "10000","transformation": { "func": "DOMAIN", "params": { "field": "d_utilizzo", "domain_name": "D_UTILIZZO_OPERA" }}, "validations": [{
@@ -468,17 +578,33 @@
                         "cond": [{
                             "and": [
                               {"lookup": "{10100}","operator": "=", "value": 100},
-                              {"operator": "=", "value": "Continuo"}
+                              {"operator": "=", "value": "continuo"}
                             ]
                         },{
-                            "and": [
-                              {"lookup": "{10300}","operator": "=", "value": 0},
-                              {"lookup": "{12000}","operator": "=", "value": 1},
-                              {"operator": "=", "value": "Occasionale"}
+                          "and": [
+                              {"lookup": "{10100}","operator": "!=", "value": 100}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not continuo or occasionale"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 10100 = 100, allora deve essere = 'continuo'"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "10000",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10300}","operator": "=", "value": 0},
+                              {"lookup": "{12000}","operator": "=", "value": 1},
+                              {"operator": "=", "value": "occasionale"}
+                            ]
+                        },{
+                            "or": [
+                              {"lookup": "{10300}","operator": "!=", "value": 0},
+                              {"lookup": "{12000}","operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 10300 = 0 e il campo ID 12000 = 1, allora deve essere = \"occasionale\""
                 }
             ]},
         {"id": "11200","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" }}},
@@ -491,9 +617,13 @@
                               {"lookup": "{11800}","operator": "!=", "value": 9800},
                               {"operator": "!=", "value": 1}
                             ]
+                        },{
+                            "and": [
+                              {"lookup": "{11800}","operator": "=", "value": 9800}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is 1"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 11800 <> 9800, allora non è ammesso il valore 1"
                 }
             ]},
         {"id": "12000","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" }}},
@@ -508,14 +638,30 @@
                               {"operator": "=", "value": "x"}
                             ]
                         },{
-                            "or": [
-                              {"lookup": "{9700}","operator": ">", "value": 2002},
-                              {"lookup": "{9700}","operator": "!=", "value": 9999},
-                              {"operator": "=", "value": "a"}
+                            "and": [
+                              {"lookup": "{9700}","operator": "!=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not A or X"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 9700 = 9999, allora il campo deve assumere valore X"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "12200",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{9700}","operator": ">=", "value": 2002},
+                              {"lookup": "{9700}","operator": "!=", "value": 9999},
+                              {"operator": "=", "value": "a"}
+                            ]
+                        },{
+                            "or": [
+                              {"lookup": "{9700}","operator": "<", "value": 2002},
+                              {"lookup": "{9700}","operator": "=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 9700 è >= 2002 e <> 9999, allora il campo deve assumere valore A"
                 }
             ]},
         {"id": "12300","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -524,12 +670,16 @@
                         "field": "12300",
                         "cond": [{
                             "and": [
-                              {"lookup": "{9800}","operator": "=", "value": 2002},
+                              {"lookup": "{9800}","operator": ">=", "value": 2002},
                               {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{9800}","operator": "<", "value": 2002}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 9800 >= 2002 allora il campo deve assumere valore A"
                 }
             ]},
         {"id": "12400","transformation": { "func": "DOMAIN", "params": { "field": "a_volume", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -543,19 +693,47 @@
                             ]
                         },{
                             "and": [
+                              {"lookup": "{10300}","operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 10300 = 0, allora deve assumere valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "12400",
+                        "cond": [{
+                            "and": [
                               {"lookup": "{10300}","operator": ">", "value": 0},
                               {"lookup": "{11300}","operator": "=", "value": 1},
                               {"operator": "=", "value": "A"}
                             ]
                         },{
+                            "or": [
+                              {"lookup": "{10300}","operator": "<=", "value": 0},
+                              {"lookup": "{11300}","operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 10300 > 0 e il campo ID 11300 = 1, allora il campo dovrebbe assumere il valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "12400",
+                        "cond": [{
                             "and": [
                               {"lookup": "{10300}","operator": ">", "value": 0},
                               {"lookup": "{11300}","operator": "=", "value": 0},
                               {"operator": "=", "value": "C"}
                             ]
+                        },{
+                            "or": [
+                              {"lookup": "{10300}","operator": "<=", "value": 0},
+                              {"lookup": "{11300}","operator": "!=", "value": 0}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: One or more condition are failing"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 3: se il campo ID 10300 > 0 e il campo ID 11300 = 0, allora il campo dovrebbe assumere il valore C"
                 }
             ]},
         {"id": "12600","transformation": { "func": "DOMAIN", "params": { "field": "a_port_es", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -568,7 +746,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not equal to ID 12400"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|deve essere uguale al valore del campo ID 12400"
                 }
             ]},
         {"id": "12700","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_max", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -582,19 +760,47 @@
                             ]
                         },{
                             "and": [
-                              {"lookup": "{10600}","operator": ">", "value": 0},
-                              {"lookup": "{10600}","operator": "=", "value": 1},
-                              {"operator": "=", "value": "A"}
-                            ]
-                        },{
-                            "and": [
-                              {"lookup": "{10600}","operator": ">", "value": 0},
-                              {"lookup": "{10600}","operator": "=", "value": 0},
-                              {"operator": "=", "value": "C"}
+                              {"lookup": "{10600}","operator": "!=", "value": 0}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: One or more condition are failing"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 10600 = 0, allora deve assumere valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "12700",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10600}","operator": ">", "value": 0},
+                              {"lookup": "{11300}","operator": "=", "value": 1},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "or": [
+                              {"lookup": "{10600}","operator": "<=", "value": 0},
+                              {"lookup": "{11300}","operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 10600 > 0 e il campo ID 11300 = 1, allora il campo dovrebbe assumere il valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "12700",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10600}","operator": ">", "value": 0},
+                              {"lookup": "{11300}","operator": "=", "value": 0},
+                              {"operator": "=", "value": "C"}
+                            ]
+                        },{
+                            "or": [
+                              {"lookup": "{10600}","operator": "<=", "value": 0},
+                              {"lookup": "{11300}","operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 3: se il campo ID 10600 > 0 e il campo ID 11300 = 0, allora il campo dovrebbe assumere il valore C"
                 }
             ]},
         {"id": "12800","transformation": { "func": "DOMAIN", "params": { "field": "a_port_uti_min", "domain_name":  "D_AFFIDABILITA" }},"validations": [{
@@ -608,19 +814,47 @@
                             ]
                         },{
                             "and": [
-                              {"lookup": "{10700}","operator": ">", "value": 0},
-                              {"lookup": "{10700}","operator": "=", "value": 1},
-                              {"operator": "=", "value": "A"}
-                            ]
-                        },{
-                            "and": [
-                              {"lookup": "{10700}","operator": ">", "value": 0},
-                              {"lookup": "{10700}","operator": "=", "value": 0},
-                              {"operator": "=", "value": "C"}
+                              {"lookup": "{10700}","operator": "!=", "value": 0}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: One or more condition are failing"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 10700 = 0, allora deve assumere valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "12800",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10700}","operator": ">", "value": 0},
+                              {"lookup": "{11300}","operator": "=", "value": 1},
+                              {"operator": "=", "value": "A"}
+                            ]
+                        },{
+                            "or": [
+                              {"lookup": "{10700}","operator": "<=", "value": 0},
+                              {"lookup": "{11300}","operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 10700 > 0 e il campo ID 11300 = 1, allora il campo dovrebbe assumere il valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "12800",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{10700}","operator": ">", "value": 0},
+                              {"lookup": "{11300}","operator": "=", "value": 0},
+                              {"operator": "=", "value": "C"}
+                            ]
+                        },{
+                            "or": [
+                              {"lookup": "{10700}","operator": "<=", "value": 0},
+                              {"lookup": "{11300}","operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 3: se il campo ID 10700 > 0 e il campo ID 11300 = 0, allora il campo dovrebbe assumere il valore C"
                 }
             ]},
         {"id": "12900","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA" }}},

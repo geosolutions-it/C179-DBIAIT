@@ -200,7 +200,25 @@
 
         {"id": "101100","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_allacci"}}},
 
-        {"id": "60200","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_dep"}}},
+        {"id": "60200","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_dep"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "60200",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{101300}","operator": "=", "value": 1},
+                              {"operator":  "=", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{101300}","operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 101300 = 1, allora il campo assume valore 0"
+                }
+            ]
+        },
         {"id": "59700","transformation": { "func": "DIRECT", "params": { "field": "lunghezza"}}},
         {"id": "59600","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
         {"id": "60000","transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena"}}},
@@ -217,7 +235,25 @@
                         "else": 0
                     }
                 }
-            }},
+            }, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "101300",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{60200}","operator": ">", "value": 0},
+                              {"operator":  "=", "value": 0}
+                            ]
+                        },{
+                            "and": [
+                                {"lookup": "{60200}","operator": "<=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 60200 > 0, allora il campo assume valore 0"
+                }
+            ]
+        },
         {"id": "60300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port"}}},
         {"id": "60900","transformation": { "func": "DIRECT", "params": { "field": "data_agg"}}},
         {"id": "101400","transformation": { "func": "DIRECT", "params": { "field": "nr_rip"}}},

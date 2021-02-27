@@ -130,33 +130,24 @@
 
         { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
         { "id": "101900", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" } }},
-        { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } },"validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "70400",
-                        "cond": [{
-                            "and": [
-                              {"lookup": "{69000}","operator": "=", "value": 1.2},
-                              {"operator": "=", "value": "{70400}"}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9800"
-                }
-            ]},
+        { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
         { "id": "68500", "transformation": { "func": "DIRECT", "params": { "field": "vol_idraulici" } } },
-        { "id": "68600", "transformation": { "func": "DIRECT", "params": { "field": "sn_scar_sup" } },"validations": [{
+        { "id": "68600", "transformation": { "func": "DIRECT", "params": { "field": "sn_scar_sup" } }, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "68600",
                         "cond": [{
-                            "or": [
+                            "and": [
                               {"lookup": "{102000}","operator": "=", "value": 1},
                               {"operator": "=", "value": 0}
                             ]
+                        },{
+                            "and": [
+                              {"lookup": "{102000}","operator": "!=", "value": 1}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 102000 = 1, allora il campo assume valore 0"
                 }
             ]},
         { "id": "68700", "transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena" } } },

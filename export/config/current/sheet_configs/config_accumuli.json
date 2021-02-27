@@ -166,7 +166,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
                 }
             ]
         },
@@ -182,7 +182,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
                 }
             ]
         },
@@ -198,7 +198,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Il valore 0 non e' ammissibile"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Il valore 0 non e' ammissibile"
                 }
             ]
         },
@@ -213,7 +213,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: il valore 0 non e' ammissibile"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|il valore 0 non e' ammissibile"
                 }
             ]
         },
@@ -235,7 +235,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 1: se il campo ID 45500 = 1, allora deve assumere valore 9800"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 45500 = 1, allora deve assumere valore 9800"
                 },{
                     "func": "IF",
                     "params": {
@@ -247,7 +247,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
                 }
             ]
         },
@@ -262,12 +262,12 @@
                                 {"operator": "=", "value": 9800}
                             ]},{
                             "and": [
-                                {"lookup": "{45500}" ,"operator": "!=", "value": 1}
+                                {"lookup": "{45500}" ,"operator": "!=", "value": 1},
                                 {"lookup": "{45500}" ,"operator": "!=", "value": 1}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 1: se il campo ID 45500 = 1, allora deve assumere valore 9800"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 45500 = 1, allora deve assumere valore 9800"
                 },{
                     "func": "IF",
                     "params": {
@@ -279,7 +279,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
                 }
             ]
         },
@@ -303,7 +303,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value lower than 3"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|value lower than 3"
                 }
             ]
         },
@@ -326,7 +326,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: se il campo ID 45600 <> 9800, allora non e' ammesso il valore 1"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 45600 <> 9800, allora non e' ammesso il valore 1"
                 }
             ]
         },
@@ -347,7 +347,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 1: se il campo ID 44500 = 9999, allora il campo deve assumere valore X"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 44500 = 9999, allora il campo deve assumere valore X"
                 },{
                     "func": "IF",
                     "params": {
@@ -364,7 +364,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Condizione 2: se il campo ID 44500 e' >= 2002 e <> 9999, allora il campo deve assumere valore A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 44500 e' >= 2002 e <> 9999, allora il campo deve assumere valore A"
                 }
             ]
         },
@@ -383,7 +383,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: se il campo ID 44600 >= 2002 allora il campo deve assumere valore A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 44600 >= 2002 allora il campo deve assumere valore A"
                 }
             ]
         },

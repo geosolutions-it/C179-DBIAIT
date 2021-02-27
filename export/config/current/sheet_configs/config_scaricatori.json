@@ -133,7 +133,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field field is 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|il valore 0 non e' ammissibile"
                 }
             ]},
       {"id":"83700", "transformation":{"func":"DIRECT", "params":{"field":"anno_costr"}}, "validations": [{
@@ -147,7 +147,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
                 }
             ]},
       {"id":"83800", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}, "validations": [{
@@ -161,7 +161,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
                 }
             ]},
       {"id":"84100", "transformation":{"func":"DIRECT", "params":{"field":"larg_uti_poz_scol"}}},
@@ -184,37 +184,57 @@
       {"id":"84800", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
       {"id":"84900", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
       {"id":"85000", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_costr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "85000",
-                        "cond": [{
-                            "and": [
-                              {"lookup": "{83700}","operator": "=", "value": 9999},
-                              {"operator":  "=", "value": "X"}
-                            ]
-                        },{
-                            "or": [
-                              {"lookup": "{83700}","operator": ">=", "value": 2002},
-                              {"lookup": "{83700}","operator": "!=", "value": 9999},
-                              {"operator":  "=", "value": "A"}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
-                }
-            ]},
+              "func": "IF",
+              "params": {
+                  "field": "85000",
+                  "cond": [{
+                      "and": [
+                        {"lookup": "{83700}","operator": "=", "value": 9999},
+                        {"operator":  "=", "value": "X"}
+                      ]
+                  },{
+                      "and": [
+                        {"lookup": "{83700}","operator": "!=", "value": 9999}
+                      ]
+                  }]
+              },
+              "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 83700 = 9999, allora il campo deve assumere valore X"
+          },{
+              "func": "IF",
+              "params": {
+                  "field": "85000",
+                  "cond": [{
+                      "and": [
+                        {"lookup": "{83700}","operator": ">=", "value": 2002},
+                        {"lookup": "{83700}","operator": "!=", "value": 9999},
+                        {"operator":  "=", "value": "A"}
+                      ]
+                  },{
+                      "or": [
+                        {"lookup": "{83700}","operator": "<", "value": 2002},
+                        {"lookup": "{83700}","operator": "=", "value": 9999}
+                      ]
+                  }]
+              },
+              "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 83700 è >= 2002 e <> 9999, allora il campo deve assumere valore A"
+          }
+      ]},
       {"id":"85100", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "85100",
                         "cond": [{
-                            "or": [
+                            "and": [
                               {"lookup": "{83800}","operator": ">=", "value": 2002},
                               {"operator": "=", "value": "A"}
                             ]
+                        },{
+                            "and": [
+                              {"lookup": "{83800}","operator": "<", "value": 2002}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: value is not A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 83800 >= 2002 allora il campo deve assumere valore A"
                 }
             ]},
 

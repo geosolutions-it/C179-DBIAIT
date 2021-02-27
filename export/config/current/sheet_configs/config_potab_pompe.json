@@ -35,9 +35,13 @@
                               {"lookup": "{37400}","operator": ">=", "value": 2014},
                               {"operator": ">=", "value": 3}
                             ]
+                        },{
+                            "and": [
+                              {"lookup": "{37400}","operator": "<", "value": 2014}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is lower than 3"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 37400 >= 2014, allora il campo dovrebbe assumere valore >= 3 (sufficiente)"
                 }
             ]},
         {"id": "37300","transformation": { "func": "DIRECT", "params": { "field": "anno_instal" }},  "validations": [{
@@ -51,7 +55,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
                 }
             ]},
         {"id": "37400","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }},  "validations": [{
@@ -65,26 +69,13 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
                 }
             ]},
         {"id": "37500","transformation": { "func": "DIRECT", "params": { "field": "potenza" }}},
         {"id": "37600","transformation": { "func": "DIRECT", "params": { "field": "portata" }}},
         {"id": "37700","transformation": { "func": "DIRECT", "params": { "field": "prevalenza" }}},
-        {"id": "37800","transformation": { "func": "DIRECT", "params": { "field": "sn_riserva" }}, "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "37800",
-                        "cond": [{
-                            "and": [
-                              {"lookup": "{37400}","operator": ">=", "value": 2002},
-                              {"operator":  "=", "value": "A"}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not A"
-                }
-            ]},
+        {"id": "37800","transformation": { "func": "DIRECT", "params": { "field": "sn_riserva" }}},
         {"id": "37900","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_instal", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
                     "params": {
@@ -93,18 +84,54 @@
                             "and": [
                               {"lookup": "{37300}","operator": "=", "value": 9999},
                               {"operator": "=", "value": "X"}
-                            ],
-                            "or": [
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{37300}","operator": "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 37300 = 9999, allora il campo deve assumere valore X"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "37900",
+                        "cond": [{
+                            "and": [
                               {"lookup": "{37300}","operator": ">=", "value": 2002},
                               {"lookup": "{37300}","operator": "!=", "value": 9999},
                               {"operator": "=", "value": "A"}
                             ]
+                        },{
+                            "or": [
+                              {"lookup": "{37300}","operator": "<", "value": 2002},
+                              {"lookup": "{37300}","operator": "=", "value": 9999}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not X or A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 37300 è >= 2002 e <> 9999, allora il campo deve assumere valore A"
                 }
             ]},
-        {"id": "38000","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}},
+        {"id": "38000","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "38000",
+                        "cond": [{
+                            "and": [
+                              {"lookup": "{37400}","operator": ">=", "value": 2002},
+                              {"operator":  "=", "value": "A"}
+                            ]
+                        },{
+                            "and": [
+                              {"lookup": "{37400}","operator": "<", "value": 2002}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 37400 >= 2002 allora il campo deve assumere valore A"
+                }
+            ]
+
+        },
         {"id": "38100","transformation": { "func": "DOMAIN", "params": { "field": "a_potenza" , "domain_name": "D_AFFIDABILITA"}}},
         {"id": "38200","transformation": { "func": "DOMAIN", "params": { "field": "a_portata", "domain_name": "D_AFFIDABILITA" }}},
         {"id": "38300","transformation": { "func": "DOMAIN", "params": { "field": "a_prevalenza", "domain_name": "D_AFFIDABILITA" }}}
