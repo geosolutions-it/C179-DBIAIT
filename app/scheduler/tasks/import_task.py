@@ -135,6 +135,10 @@ class ImportTask(BaseTask):
         # grant role to specific users after import status
         print(f"Granting permissions to: {', '.join(settings.DBIAIT_ANL_SELECT_ROLES)}")
         with connection.cursor() as cursor:
-            cursor.execute(f"GRANT SELECT ON ALL TABLES IN SCHEMA dbiait_analysis TO {' '.join(settings.DBIAIT_ANL_SELECT_ROLES)};")
+            cursor.execute(
+                f"SELECT DBIAIT_ANALYSIS.reset_proc_stda_tables();")
+            cursor.execute(
+                f"GRANT SELECT ON ALL TABLES IN SCHEMA "
+                f"dbiait_analysis TO {' '.join(settings.DBIAIT_ANL_SELECT_ROLES)};")
 
         print(f"Finished IMPORT execution of package from: {gpkg_path}")

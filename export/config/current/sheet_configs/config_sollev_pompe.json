@@ -28,19 +28,19 @@
       {"id":"66300", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
       {"id":"66500", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato_cons", "domain_name": "D_STATO_CONS"}}},
       {"id":"66600", "transformation":{"func":"DIRECT", "params":{"field":"anno_instal"}}, "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "66600",
-                        "cond": [{
-                            "or": [
-                              {"operator": "<=", "value": "{REF_YEAR}"},
-                              {"operator":  "=", "value": 9999}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
-                }
-            ]},
+              "func": "IF",
+              "params": {
+                  "field": "66600",
+                  "cond": [{
+                      "or": [
+                        {"operator": "<=", "value": "{REF_YEAR}"},
+                        {"operator":  "=", "value": 9999}
+                      ]
+                  }]
+              },
+              "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
+          }
+      ]},
       {"id":"66700", "transformation":{"func":"DIRECT", "params":{"field":"anno_ristr"}}, "validations": [{
                     "func": "IF",
                     "params": {
@@ -52,7 +52,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field greater than {REF_YEAR}"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
                 }
             ]},
       {"id":"66800", "transformation":{"func":"DIRECT", "params":{"field":"potenza"}}},
@@ -60,24 +60,41 @@
       {"id":"67000", "transformation":{"func":"DIRECT", "params":{"field":"prevalenza"}}},
       {"id":"67100", "transformation":{"func":"DIRECT", "params":{"field":"sn_riserva"}}},
       {"id":"67200", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_instal", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "67200",
-                        "cond": [{
-                            "and": [
-                              {"lookup": "{66600}","operator": "=", "value": 9999},
-                              {"operator": "=", "value": "X"}
-                            ],
-                            "or": [
-                              {"lookup": "{66600}","operator": ">=", "value": 2002},
-                              {"lookup": "{66600}","operator": "!=", "value": 9999},
-                              {"operator": "=", "value": "A"}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not X or A"
-                }
-            ]},
+                "func": "IF",
+                "params": {
+                    "field": "67200",
+                    "cond": [{
+                        "and": [
+                          {"lookup": "{66600}","operator": "=", "value": 9999},
+                          {"operator": "=", "value": "X"}
+                        ]
+                    },{
+                        "and": [
+                          {"lookup": "{66600}","operator": "!=", "value": 9999}
+                        ]
+                    }]
+                },
+                "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 66600 = 9999, allora il campo deve assumere valore X"
+            },{
+                "func": "IF",
+                "params": {
+                    "field": "67200",
+                    "cond": [{
+                        "and": [
+                          {"lookup": "{66600}","operator": ">=", "value": 2002},
+                          {"lookup": "{66600}","operator": "!=", "value": 9999},
+                          {"operator": "=", "value": "A"}
+                        ]
+                    },{
+                        "or": [
+                          {"lookup": "{66600}","operator": "<", "value": 2002},
+                          {"lookup": "{66600}","operator": "=", "value": 9999}
+                        ]
+                    }]
+                },
+                "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 66600 è >= 2002 e <> 9999, allora il campo deve assumere valore A"
+            }
+        ]},
         {"id":"67300", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
                     "params": {
@@ -87,9 +104,13 @@
                               {"lookup": "{66700}","operator": ">=", "value": 2002},
                               {"operator":  "=", "value": "A"}
                             ]
+                        },{
+                            "and": [
+                              {"lookup": "{66700}","operator": "<", "value": 2002}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Field is not A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 66700 >= 2002 allora il campo deve assumere valore A"
                 }
             ]},
       {"id":"67400", "transformation":{"func":"DOMAIN", "params":{"field":"a_potenza", "domain_name": "D_AFFIDABILITA"}}},

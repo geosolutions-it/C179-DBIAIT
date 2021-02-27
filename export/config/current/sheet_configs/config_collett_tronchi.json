@@ -77,9 +77,13 @@
                               {"lookup": "{70200}" ,"operator": ">=", "value": 2014},
                               {"operator":  "!=", "value": null}
                             ]
+                        },{
+                          "and": [
+                              {"lookup": "{70200}" ,"operator": "<", "value": 2014}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is Null and data_esercizio is greater than 2014"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 70200 >= 2014, allora non è ammesso il campo null"
                 }
             ]},
         {"id": "70000", "transformation": {"func": "DIRECT", "params": { "field": "id_conservazione" }}},
@@ -93,9 +97,13 @@
                               {"lookup": "{70200}" ,"operator": ">=", "value": 2002},
                               {"operator":  "!=", "value": null}
                             ]
+                        },{
+                          "and": [
+                            {"lookup": "{70200}" ,"operator": "<", "value": 2002}
+                          ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is Null and data_esercizio is greater than 2002"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 70200 >= 2002, allora non è ammesso il campo null"
                 }
             ]},
 
@@ -121,7 +129,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Value is minor of the {REF_YEAR} and is not 9999"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
                 }
             ]},
         {"id": "70400", "transformation": {"func": "DIRECT", "params": { "field": "lunghezza" }}},
@@ -149,12 +157,16 @@
                         "field": "102000",
                         "cond": [{
                             "and": [
-                              {"lookup": "{68600}" ,"operator": "=", "value": 1},
+                              {"lookup": "{68600}", "operator": "=", "value": 1},
                               {"operator":  "=", "value": 0}
+                            ]
+                        },{
+                          "and": [
+                              {"lookup": "{68600}", "operator": "!=", "value": 1}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se a parità di codice ATO il campo ID 68600 = 1, allora il campo assume valore 0"
                 }
             ]}
      ]

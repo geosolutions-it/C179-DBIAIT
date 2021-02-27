@@ -558,6 +558,122 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field)
         self.assertFalse(actual)
 
+    def test_validation_laghi_9200_ok(
+        self,
+    ):
+        condition_schema = {
+            "field": "9200",
+            "cond": [{
+                "and": [
+                  {"operator": ">=", "value": "{10500}"}
+                ]
+            }]
+        }
+        self.field = {"9200": 3000, "10500": 2000}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+        self.field = {"9200": 3000, "10500": 3000}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_laghi_9200_ko(
+        self,
+    ):
+        condition_schema = {
+            "field": "9200",
+            "cond": [{
+                "and": [
+                  {"operator": ">=", "value": "{10500}"}
+                ]
+            }]
+        }
+        self.field = {"9200": 2000, "10500": 3000}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
+    def test_validation_laghi_10500_ok(
+        self,
+    ):
+        condition_schema = {
+            "field": "10500",
+            "cond": [{
+                "and": [
+                  {"operator": "<=", "value": "{9200}"}
+                ]
+            }]
+        }
+        self.field = {"10500": 2000, "9200": 3000}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+        self.field = {"10500": 2000, "9200": 2000}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_laghi_10500_ko(
+        self,
+    ):
+        condition_schema = {
+            "field": "10500",
+            "cond": [{
+                "and": [
+                  {"operator": "<=", "value": "{9200}"}
+                ]
+            }]
+        }
+        self.field = {"10500": 3000, "9200": 1000}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
+    def test_validation_sorgenti_28000_ok(
+        self,
+    ):
+        condition_schema = {
+              "field": "28000",
+              "cond": [{
+                  "and": [
+                    {"lookup": "{26300}", "operator": ">", "value": 0},
+                    {"lookup": "{26600}", "operator": "=", "value": 0},
+                    {"operator": "=", "value": "C"}
+                  ]
+              }, {
+                  "or": [
+                    {"lookup": "{26300}", "operator": "<=", "value": 0},
+                    {"lookup": "{26600}", "operator": "!=", "value": 0}
+                  ]
+              }]
+          }
+        self.field = {"28000": "C", "26300": 1, "26600": 0}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+        self.field = {"28000": "Z", "26300": 0, "26600": 0}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+        self.field = {"28000": "Z", "26300": 1, "26600": 1}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertTrue(actual)
+
+    def test_validation_sorgenti_28000_ko(
+        self,
+    ):
+        condition_schema = {
+              "field": "28000",
+              "cond": [{
+                  "and": [
+                    {"lookup": "{26300}", "operator": ">", "value": 0},
+                    {"lookup": "{26600}", "operator": "=", "value": 0},
+                    {"operator": "=", "value": "C"}
+                  ]
+              }, {
+                  "or": [
+                    {"lookup": "{26300}", "operator": "<=", "value": 0},
+                    {"lookup": "{26600}", "operator": "!=", "value": 0}
+                  ]
+              }]
+          }
+        self.field = {"28000": "X", "26300": 1, "26600": 0}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field)
+        self.assertFalse(actual)
+
 
 if __name__ == "__main__":
     unittest.main()

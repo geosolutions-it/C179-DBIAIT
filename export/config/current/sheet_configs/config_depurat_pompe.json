@@ -38,7 +38,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field greater than {REF_YEAR}"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
                 }
             ]},
         {"id": "81400","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr" }}, "validations": [{
@@ -52,7 +52,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field greater than {REF_YEAR}"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
                 }
             ]},
         {"id": "81500","transformation": { "func": "DIRECT", "params": { "field": "potenza" }}},
@@ -62,20 +62,36 @@
         {"id": "81900","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_instal" , "domain_name": "D_AFFIDABILITA"}}, "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "82000",
+                        "field": "81900",
                         "cond": [{
-                            "or": [
+                            "and": [
                               {"lookup": "{81300}","operator": "=", "value": 9999},
                               {"operator":  "=", "value": "X"}
-                            ],
-                            "or": [
+                            ]},{
+                            "and": [
+                              {"lookup": "{81300}", "operator": "!=", "value": 9999}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 81300 = 9999, allora il campo deve assumere valore X"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "82000",
+                        "cond": [{
+                            "and": [
                               {"lookup": "{81300}", "operator": ">=", "value": 2002},
                               {"lookup": "{81300}", "operator":  "!=", "value": 9999},
                               {"operator":  "=", "value": "A"}
                             ]
+                        },{
+                          "or": [
+                              {"lookup": "{81300}", "operator": "<", "value": 2002},
+                              {"lookup": "{81300}", "operator":  "=", "value": 9999}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not A or X"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 81300 è >= 2002 e <> 9999, allora il campo deve assumere valore A"
                 }
             ]},
         {"id": "82000","transformation": { "func": "DOMAIN", "params": { "field": "a_anno_ristr" , "domain_name": "D_AFFIDABILITA"}}, "validations": [{
@@ -87,9 +103,13 @@
                               {"lookup": "{81400}","operator": ">=", "value": 2002},
                               {"operator":  "=", "value": "A"}
                             ]
+                        },{
+                            "and": [
+                              {"lookup": "{81400}","operator": "<", "value": 2002}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: field is not A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 81400 >= 2002 allora il campo deve assumere valore A"
                 }
             ]},
         {"id": "82100","transformation": { "func": "DOMAIN", "params": { "field": "a_potenza" , "domain_name": "D_AFFIDABILITA"}}},
