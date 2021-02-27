@@ -28,7 +28,7 @@
             {"name":"fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name":"fgn_sfioro.sn_bypass", "alias": "sn_bypass"}
+            {"name":"fgn_sfioro.sn_bypass", "alias": "sn_bypass", "function":  "TO_BIT"}
          ],
          "table":{
             "name":"fgn_sfioro"
@@ -85,7 +85,7 @@
             {"name":"a_fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name":"a_fgn_sfioro.sn_bypass", "alias": "sn_bypass"}
+            {"name":"a_fgn_sfioro.sn_bypass", "alias": "sn_bypass", "function":  "TO_BIT"}
          ],
          "table":{
             "name":"a_fgn_sfioro"
