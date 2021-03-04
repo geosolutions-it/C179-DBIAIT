@@ -198,7 +198,8 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_pop_res_loc(
 DECLARE 
 	v_result BOOLEAN := FALSE;
 BEGIN
-    
+    SET work_mem = '256MB';
+
 	DELETE FROM POP_RES_LOC;
 
 	INSERT INTO POP_RES_LOC(anno_rif, data_rif, pro_com, id_localita_istat, popres)
@@ -272,7 +273,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_distrib_loc_serv(
 DECLARE 
 	v_result BOOLEAN := FALSE;
 BEGIN
-    
+    SET work_mem = '256MB';
 	DELETE FROM DISTRIB_LOC_SERV;
 
 	INSERT INTO DISTRIB_LOC_SERV(codice_opera, id_localita_istat, perc_popsrv)
@@ -317,7 +318,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_pop_res_comune(
 DECLARE 
 	v_result BOOLEAN := FALSE;
 BEGIN
-    
+    SET work_mem = '256MB';
 	-- reset dei dati
 	UPDATE POP_RES_COMUNE
 	SET 
@@ -369,7 +370,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_distr_com_serv(
 DECLARE 
 	v_result BOOLEAN := FALSE;
 BEGIN
-    
+    SET work_mem = '256MB';
 	-- reset dei dati
 	DELETE FROM DISTRIB_COM_SERV;
 	
@@ -410,7 +411,8 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_utenza_servizio(
 ) RETURNS BOOLEAN AS $$
 DECLARE 
 	v_result BOOLEAN := FALSE;
-BEGIN    
+BEGIN
+    SET work_mem = '256MB';
 	-- reset dei dati
 	DELETE FROM UTENZA_SERVIZIO;
 	DELETE FROM UTENZA_SERVIZIO_LOC;
@@ -584,7 +586,7 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_abitanti_trattati(
 ) RETURNS BOOLEAN AS $$
 BEGIN
-	
+	SET work_mem = '256MB';
 	DELETE FROM ABITANTI_TRATTATI;
 	
 	EXECUTE '
@@ -784,15 +786,7 @@ BEGIN
 		FROM ALL_DOMAINS d
 		WHERE d.valore_gis = COALESCE(' || v_table || '.id_conservazione,''SCO'') AND d.dominio_gis = ''D_STATO_CONS'';
 	';
-	
-	-- valorizzazione idx_lunghezza (da chiarire)
-	EXECUTE '
-		UPDATE ' || v_table || '
-		SET idx_lunghezza = d.valore_netsic
-		FROM ALL_DOMAINS d
-		WHERE d.valore_gis = COALESCE(' || v_table || '.idx_lunghezza,''SCO'') AND d.dominio_gis = ''D_T_RILIEVO'';
-	';
-	
+
 	-- valorizzazione rete con gestione delle pressioni
 	EXECUTE '
 		UPDATE ' || v_table || '
@@ -1364,7 +1358,6 @@ BEGIN
 	group by z.id_cassetta,z.id_condotta, z.id_derivazione, ac.sub_funzione;
    -- PAACCA00000001630138
 
-
     UPDATE ACQ_COND_ALTRO
     SET
         nr_allacci_sim = w.nr_allacci_sim,
@@ -1490,7 +1483,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.determine_fgn_allacci(
 DECLARE
 	v_tol DOUBLE PRECISION := snap_tolerance();
 BEGIN
-
+    SET work_mem = '256MB';
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'FOGNATURA';
 	DELETE FROM FGN_ALLACCIO;
 	DELETE FROM SUPPORT_FGN_ALLACCI;
@@ -1529,17 +1522,22 @@ BEGIN
                     from fgn_fossa_settica fs,
                     (
                         select uct.id_fossa_settica, uct.id_impianto, uct.idgis
-                        from utenza_sap us, acq_ubic_contatore uct
-                        where us.id_ubic_contatore = uct.idgis
-                        AND us.cattariffa NOT IN ('APB_REFIND','APBLREFIND')
+                        from acq_contatore ac, acq_ubic_contatore uct
+                        where ac.id_ubic_contatore = uct.idgis
+                        --AND coalesce(ac.tariffa, '?') NOT IN ('APB_REFIND','APBLREFIND','COPDIN0000')
+                        AND (ac.tariffa NOT IN ('APB_REFIND','APBLREFIND','COPDIN0000') or ac.tariffa IS NULL)
                     ) uc
                     where
-                    uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale) and
+                    uc.ID_IMPIANTO is not null and NOT EXISTS (
+                        select distinct idgis_divisionale
+                        from utenza_defalco
+                        where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis = idgis_divisionale
+                    ) and
                     uc.id_fossa_settica = fs.idgis
                 ) cc
                 WHERE
                     d.idgis = cc.id_immissione
-                    and c.sub_funzione = 0
+                    and c.sub_funzione = 0  and c.D_GESTORE='PUBLIACQUA'
                     and c.geom&&st_buffer(d.geom, v_tol)
                     and st_intersects(c.geom, st_buffer(d.geom, v_tol))
             ) t GROUP BY t.id_condotta, t.id_fossa_settica, t.id_immissione
@@ -1578,10 +1576,10 @@ BEGIN
                     ) prod_cont,
                     (
                         select uct.id_fossa_settica, uct.id_impianto, uct.idgis
-                        from utenza_sap us, acq_ubic_contatore uct
-                        where us.id_ubic_contatore = uct.idgis
-                        AND us.cattariffa IN ('APB_REFIND','APBLREFIND')
-                        --and uct.idgis = 'PAAUCO00000002082051'
+                        from acq_contatore ac, acq_ubic_contatore uct
+                        where ac.id_ubic_contatore = uct.idgis
+                        AND ac.tariffa IN ('APB_REFIND','APBLREFIND','COPDIN0000')
+                        AND uct.ID_IMPIANTO is not null
                     ) uc,
                     (
                         select id_produttivo, id_immissione from fgn_rel_prod_imm
@@ -1589,13 +1587,12 @@ BEGIN
                         select id_produttivo, id_immissione from a_fgn_rel_prod_imm
                     ) prod_imm
                     where
-                    uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale) and
                     prod_cont.id_ubic_contatore = uc.idgis and
                     prod_imm.id_produttivo = prod_cont.idgis_produttivo
                 ) cc
                 WHERE
                     d.idgis = cc.id_immissione
-                    and c.sub_funzione = 0
+                    and c.sub_funzione = 0  and c.D_GESTORE='PUBLIACQUA'
                     and c.geom&&st_buffer(d.geom, v_tol)
                     and st_intersects(c.geom, st_buffer(d.geom, v_tol))
             ) t GROUP BY t.id_condotta, id_immissione, id_fossa_settica
@@ -1623,20 +1620,25 @@ BEGIN
                     from fgn_fossa_settica fs,
                     (
                         select uct.id_fossa_settica, uct.id_impianto, uct.idgis
-                        from utenza_sap us, acq_ubic_contatore uct
-                        where us.id_ubic_contatore = uct.idgis
-                        AND us.cattariffa NOT IN ('APB_REFIND','APBLREFIND')
+                        from acq_contatore ac, acq_ubic_contatore uct
+                        where ac.id_ubic_contatore = uct.idgis
+                        --AND COALESCE(ac.tariffa, '?') NOT IN ('APB_REFIND','APBLREFIND','COPDIN0000')
+                        AND (ac.tariffa is null or ac.tariffa NOT IN ('APB_REFIND','APBLREFIND','COPDIN0000'))
                     ) uc
-                    where uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
+                    where uc.ID_IMPIANTO is not null and NOT EXISTS (
+                        select distinct idgis_divisionale
+                        from utenza_defalco
+                        where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
+                        and uc.idgis=idgis_divisionale
+                    )
                     and uc.id_fossa_settica = fs.idgis
                     --and uc.idgis='PAAUCO00000002095624'
             ) cc
             WHERE
                 d.idgis = cc.id_immissione
-                and i.id_fossa_settica = cc.idgis
                 and i.id_immissione = cc.id_immissione
+                and i.id_fossa_settica = cc.idgis
             group by d.id_condotta, cc.id_fossa_settica, cc.id_immissione
-
         ) z
         WHERE ac.idgis = z.id_condotta
         AND (ac.D_AMBITO = 'AT3' OR ac.D_AMBITO IS null)
@@ -1662,9 +1664,9 @@ BEGIN
                     from fgn_fossa_settica fs,
                     (
                         select uct.id_fossa_settica, uct.id_impianto, uct.idgis
-                        from utenza_sap us, acq_ubic_contatore uct
-                        where us.id_ubic_contatore = uct.idgis
-                        AND us.cattariffa IN ('APB_REFIND','APBLREFIND')
+                        from acq_contatore ac, acq_ubic_contatore uct
+                        where ac.id_ubic_contatore = uct.idgis
+                        AND ac.tariffa IN ('APB_REFIND','APBLREFIND','COPDIN0000')
                     ) uc
                     where uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
                     and uc.id_fossa_settica = fs.idgis
@@ -1683,7 +1685,8 @@ BEGIN
         AND (ac.SN_FITTIZIA = 'NO' OR ac.SN_FITTIZIA IS null)
         AND (ac.D_GESTORE = 'PUBLIACQUA') AND ac.SUB_FUNZIONE in (1,2)
         AND (ac.D_TIPO_ACQUA in ('MIS','NER','SCA') or ac.D_TIPO_ACQUA IS NULL)
-    ) x GROUP BY x.id_condotta, x.id_fossa_settica, id_immissione, tipo;
+    ) x
+    GROUP BY x.id_condotta, x.id_fossa_settica, id_immissione, tipo;
 
     UPDATE FGN_COND_ALTRO
     SET
@@ -1718,7 +1721,8 @@ BEGIN
                 nr_allacci_i_ril,
                 id_condotta as idgis
             from
-                support_fgn_allacci) x GROUP BY x.idgis
+                support_fgn_allacci
+        ) x GROUP BY x.idgis
     ) w WHERE w.idgis = FGN_COND_ALTRO.idgis;
 
 
@@ -1741,26 +1745,27 @@ BEGIN
 
     INSERT INTO fgn_allaccio
     with is_industriale as (
-    select
-        distinct on
-        (cc.idgis) uc.id_fossa_settica,
-        ac.d_tipo_utenza
-    from
-        fgn_fossa_settica cc
-    join acq_ubic_contatore uc on
-        cc.idgis = uc.id_fossa_settica
-    join acq_contatore ac on
-        ac.id_ubic_contatore = uc.idgis
-    where
-        uc.ID_IMPIANTO is not null
-        and not exists (
         select
-            distinct idgis_divisionale
+            distinct on
+            (cc.idgis) uc.id_fossa_settica,
+            ac.d_tipo_utenza
         from
-            utenza_defalco
+            fgn_fossa_settica cc
+        join acq_ubic_contatore uc on
+            cc.idgis = uc.id_fossa_settica
+        join acq_contatore ac on
+            ac.id_ubic_contatore = uc.idgis
         where
-            dt_fine_val = to_date('31-12-9999', 'DD-MM-YYYY')
-            and uc.idgis = idgis_divisionale))
+            uc.ID_IMPIANTO is not null
+            and not exists (
+            select
+                distinct idgis_divisionale
+            from
+                utenza_defalco
+            where
+                dt_fine_val = to_date('31-12-9999', 'DD-MM-YYYY')
+                and uc.idgis = idgis_divisionale)
+    )
     select
         sfa.id_fossa_settica id_fossa,
         id_condotta,
@@ -1907,11 +1912,11 @@ BEGIN
     WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
     --(press_med_eserc, riparazioni_allacci, riparazioni_rete, allacci, lunghezza_allacci)
 
-    -- AGGIUNTA COUNTER E LUGHEZZE
+    -- AGGIUNTA COUNTER E LUNGHEZZE
     UPDATE ACQ_SHAPE
     SET
         allacci = counter,
-        lunghezza_ = lung*1000
+        lunghezza_ = lung
     FROM (select id_condotta, sum(nr_cassette) as counter,sum(lungh_all) as lung from acq_allaccio group by 1) c
     WHERE c.id_condotta = ACQ_SHAPE.ids_codi_1;
 
@@ -1962,7 +1967,6 @@ BEGIN
     where
         acq_shape.ids_codi_1 = g.ids_codi_1;
 
-
     --(id_opera_stato)
     UPDATE ACQ_SHAPE
     SET id_opera_s = t.valore_netsic
@@ -1995,7 +1999,8 @@ $$  LANGUAGE plpgsql
 -- 	select DBIAIT_ANALYSIS.populate_acquedotto();
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acquedotto(
 ) RETURNS BOOLEAN AS $$
-begin
+BEGIN
+    SET work_mem = '256MB';
 	RETURN 
 		populate_distrib_tronchi() 
 	AND populate_addut_tronchi() 
@@ -2384,6 +2389,7 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_fognatura(
 ) RETURNS BOOLEAN AS $$
 BEGIN
+    SET work_mem = '256MB';
 	RETURN 
 		populate_fognat_tronchi() 
 	AND populate_collett_tronchi() 
@@ -2499,7 +2505,7 @@ DECLARE
 	--DEPURATO_POMPE -> [fgn_trattamento] -> tipo_oggetto = 'FGN_TRATTAMENTO'
 	v_fields VARCHAR[] := ARRAY['IDX_ANNO_INSTAL', 'IDX_ANNO_RISTR', 'IDX_POTENZA', 'IDX_PORTATA', 'IDX_PREVALENZA'];
 BEGIN
-
+    SET work_mem = '256MB';
 	DELETE FROM STATS_POMPE;
 	DELETE FROM SUPPORT_POZZI_INPOTAB;
 	
@@ -2728,6 +2734,9 @@ BEGIN
 	LOOP	
 		EXECUTE 'DROP TABLE IF EXISTS ' || v_schema_frz || '.' || v_rec.table_name;
 	END LOOP;
+
+	DELETE FROM dbiait_system.scheduler_freeze WHERE ref_year = v_year;
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -3145,6 +3154,7 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_temp_graph_tables(
 ) RETURNS BOOLEAN AS $$
 BEGIN
+    SET work_mem = '256MB';
 	PERFORM populate_impianti_inreti();
 	PERFORM populate_addut_com_serv();
 	PERFORM populate_collet_com_serv();
