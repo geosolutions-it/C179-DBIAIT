@@ -760,8 +760,8 @@ BEGIN
         "SUPPORT_CODICE_CAPT_ACCORP": 		1360,
         "SUPPORT_POZZI_INPOTAB":            764,
         "DI01149":                          1733,
-        "DI01075"                           18502,
-        "DI01079"                           148
+        "DI01075":                          18502,
+        "DI01079":                          148
     }'::JSON)->v_table;
     RETURN COALESCE(v_count,0);
 EXCEPTION WHEN OTHERS THEN
