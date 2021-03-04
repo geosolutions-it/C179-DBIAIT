@@ -918,7 +918,7 @@ CREATE TABLE DBIAIT_ANALYSIS.acq_allaccio(
     id_derivazione     VARCHAR(32),
     lungh_all     DOUBLE PRECISION,
     tipo     VARCHAR(100),
-    nr_cassette     INTEGER
+    nr_cont_cass     INTEGER
 
 );
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ubic_contatori_cass_cont;
