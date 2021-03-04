@@ -58,7 +58,31 @@
         {"id": "41100", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
         {"id": "40900", "transformation": {"func": "DIRECT", "params": { "field": "adduttrice_codice_ato" }}},
         {"id": "41500", "transformation": {"func": "DIRECT", "params": { "field": "anno" }}},
-        {"id": "42100", "transformation": {"func": "DIRECT", "params": { "field": "idx_lunghezza" }}},
+        {"id": "42100", "transformation": {
+                "func": "IF",
+                "params": {
+                    "field": "idx_lunghezza",
+                    "cond": [
+                        {
+                            "case": "WHEN",
+                            "operator": "=",
+                            "value": "ASB",
+                            "result": "A"
+                        },
+                        {
+                            "case": "WHEN",
+                            "operator": "=",
+                            "value": "DIN",
+                            "result": "A"
+                        },
+                        {
+                            "case": "ELSE",
+                            "result": "B"
+                        }
+                    ]
+                }
+            }
+        },
         {"id": "41200", "transformation": {"func": "DIRECT", "params": { "field": "id_materiale"}},
             "validations": [{
                     "func": "IF",
