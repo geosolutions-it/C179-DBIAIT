@@ -198,8 +198,6 @@
         {"id": "101500","transformation": { "func": "DIRECT", "params": { "field": "vol_fatturato"}}},
         {"id": "59900","transformation": { "func": "DIRECT", "params": { "field": "vol_utenze_auth"}}},
 
-        {"id": "101100","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_allacci"}}},
-
         {"id": "60200","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_dep"}}, "validations": [{
                     "func": "IF",
                     "params": {

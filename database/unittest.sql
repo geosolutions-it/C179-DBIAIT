@@ -758,7 +758,10 @@ BEGIN
         "UBIC_F_ALLACCIO": 					425971,
         "UTENZE_FOGNATURE_COLLETTORI": 		1063,
         "SUPPORT_CODICE_CAPT_ACCORP": 		1360,
-        "SUPPORT_POZZI_INPOTAB":            764
+        "SUPPORT_POZZI_INPOTAB":            764,
+        "DI01149":                          1733,
+        "DI01075"                           18502,
+        "DI01079"                           148
     }'::JSON)->v_table;
     RETURN COALESCE(v_count,0);
 EXCEPTION WHEN OTHERS THEN
@@ -1416,5 +1419,34 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 -- ------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_utenza_padre_defalco_non_a_sistema() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('DI01149');
+BEGIN
+    select "utenze_distribuzioni_adduttrici"."nr_allacci" "nr_allacci" from "acq_rete_distrib" "acq_rete_distrib" left join "acq_auth_rete_dist" "acq_auth_rete_dist" on "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib" left join "acq_lunghezza_rete" "acq_lunghezza_rete" on "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis" left join "acq_vol_utenze" "acq_vol_utenze" on "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato" left join "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on "utenze_distribuzioni_adduttrici"."id_rete" = "acq_rete_distrib"."idgis" left join "stats_cloratore" "stats_cloratore" on "acq_rete_distrib"."idgis" = "stats_cloratore"."id_rete" left join "schema_acq" "schema_acq" on "acq_rete_distrib"."idgis" = "schema_acq"."idgis" where acq_rete_distrib.d_gestore = 'PUBLIACQUA' and acq_rete_distrib.d_ambito in ('AT3', null) and acq_rete_distrib.d_stato not in ('IPR', 'IAC') and acq_rete_distrib.codice_ato ='DI01149';
+    perform test_assertTrue('count FOR DEFALCO PADRE NON A SISTEMA, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_nr_allacci_distribuzioni_codice_ato_DI01075() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('DI01075');
+BEGIN
+    select "utenze_distribuzioni_adduttrici"."nr_allaccci" "nr_allacci" from "acq_rete_distrib" "acq_rete_distrib" left join "acq_auth_rete_dist" "acq_auth_rete_dist" on "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib" left join "acq_lunghezza_rete" "acq_lunghezza_rete" on "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis" left join "acq_vol_utenze" "acq_vol_utenze" on "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato" left join "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on "utenze_distribuzioni_adduttrici"."id_rete" = "acq_rete_distrib"."idgis" left join "stats_cloratore" "stats_cloratore" on "acq_rete_distrib"."idgis" = "stats_cloratore"."id_rete" left join "schema_acq" "schema_acq" on "acq_rete_distrib"."idgis" = "schema_acq"."idgis" where acq_rete_distrib.d_gestore = 'PUBLIACQUA' and acq_rete_distrib.d_ambito in ('AT3', null) and acq_rete_distrib.d_stato not in ('IPR', 'IAC') and acq_rete_distrib.codice_ato ='DI01075';
+    perform test_assertTrue('count FOR distribuzioni id DI01075, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_nr_allacci_distribuzioni_codice_ato_DI01079() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=dbiait_analysis._test_expected_count('DI01079');
+BEGIN
+    select "utenze_distribuzioni_adduttrici"."nr_allacci" "nr_allacci" from "acq_rete_distrib" "acq_rete_distrib" left join "acq_auth_rete_dist" "acq_auth_rete_dist" on "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib" left join "acq_lunghezza_rete" "acq_lunghezza_rete" on "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis" left join "acq_vol_utenze" "acq_vol_utenze" on "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato" left join "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on "utenze_distribuzioni_adduttrici"."id_rete" = "acq_rete_distrib"."idgis" left join "stats_cloratore" "stats_cloratore" on "acq_rete_distrib"."idgis" = "stats_cloratore"."id_rete" left join "schema_acq" "schema_acq" on "acq_rete_distrib"."idgis" = "schema_acq"."idgis" where acq_rete_distrib.d_gestore = 'PUBLIACQUA' and acq_rete_distrib.d_ambito in ('AT3', null) and acq_rete_distrib.d_stato not in ('IPR', 'IAC') and acq_rete_distrib.codice_ato ='DI01079';
+    perform test_assertTrue('count FOR distribuzioni id DI01079, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 
 

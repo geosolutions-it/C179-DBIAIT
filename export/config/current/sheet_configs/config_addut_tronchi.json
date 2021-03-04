@@ -59,7 +59,7 @@
         {"id": "40900", "transformation": {"func": "DIRECT", "params": { "field": "adduttrice_codice_ato" }}},
         {"id": "41500", "transformation": {"func": "DIRECT", "params": { "field": "anno" }}},
         {"id": "42100", "transformation": {
-                "func": "IF",
+                "func": "CASE",
                 "params": {
                     "field": "idx_lunghezza",
                     "cond": [

@@ -1400,14 +1400,15 @@ BEGIN
 	INSERT INTO acq_allaccio
     SELECT id_cassetta,id_condotta, id_derivazione,
         (sum(lung_alla) + sum(lung_alla_ril)) lungh_all, case when sum(lung_alla) > 0 then 'SIMULATO' else 'RILEVATO' end as tipo,
-        (sum(nr_allacci_ril) + sum(nr_allacci)) nr_cassette
+        (sum(nr_allacci_ril) + sum(nr_allacci)) nr_cont_cass
     FROM support_acq_allacci
-    WHERE id_cassetta in (select distinct on(cc.idgis) uc.id_cass_cont
-        from acq_cass_cont_auto cc join acq_ubic_contatore uc on uc.id_cass_cont = cc.idgis
-        join acq_contatore ac on uc.idgis =ac.id_ubic_contatore
+    WHERE id_cassetta in (select distinct(uc.id_cass_cont)
+        from acq_ubic_contatore uc left join acq_cass_cont_auto cc on uc.id_cass_cont = cc.idgis
+        left join acq_contatore ac on uc.idgis =ac.id_ubic_contatore
         where uc.ID_IMPIANTO is not null
         and not EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
-        and COALESCE(ac.tariffa,'?') not in ('APB_REFIND', 'APBLREFIND', 'APBNREFCIV', 'APBHSUBDIS', 'COPDCI0000', 'COPDIN0000'))
+        and COALESCE(ac.tariffa,'?') not in ('APB_REFIND', 'APBLREFIND', 'APBNREFCIV', 'APBHSUBDIS', 'COPDCI0000', 'COPDIN0000')
+    )
     GROUP BY id_cassetta, id_condotta, id_derivazione, sub_funzione;
 
 	--ANOMALIES 1
@@ -1917,7 +1918,7 @@ BEGIN
     SET
         allacci = counter,
         lunghezza_ = lung
-    FROM (select id_condotta, sum(nr_cassette) as counter,sum(lungh_all) as lung from acq_allaccio group by 1) c
+    FROM (select id_condotta, count(nr_cont_cass) as counter,sum(lungh_all) as lung from acq_allaccio group by 1) c
     WHERE c.id_condotta = ACQ_SHAPE.ids_codi_1;
 
     UPDATE ACQ_SHAPE
@@ -1961,7 +1962,7 @@ BEGIN
 				'APBHSUBDIS',
 				'COPDCI0000',
 				'COPDIN0000')
-            and nr_contat >1
+            and nr_contat >= 1
         group by
             1) g
     where
@@ -3553,7 +3554,7 @@ begin
         FROM
             utenza_sap us
         where
-            cattariffa not in ('APB_CONDOM','APB_CONMIS')),
+            cattariffa IN ('APB_CONDOM','APB_CONMIS')),
         utenze_indirette as (
         SELECT
             id_ubic_contatore,
@@ -3573,7 +3574,7 @@ begin
         FROM
             utenza_sap us
         where
-            nr_contat > 1 and cattariffa not in ('APB_REFIND',
+            nr_contat >= 1 and cattariffa not in ('APB_REFIND',
             'APBLREFIND',
             'APBNREFCIV',
             'APBHSUBDIS')),
@@ -3773,7 +3774,7 @@ begin
 			ard.idgis fgn_idrete
 		from
 			acq_ubic_contatore auc
-		join fgn_rete_all ard on
+		join FGN_RETE_RACC ard on
 			st_INTERSECTS(ard.geom,
 			auc.geom)
 		where
@@ -3784,7 +3785,7 @@ begin
 					ubic_f_allaccio ua
 				where
 					fgn_idrete is null
-			)) yy
+			) and ard.d_gestore ='PUBLIACQUA' and ard.d_ambito in ('AT3', null) AND ard.d_stato not in ('IPR', 'IAC')) yy
 	where
 		ubic_f_allaccio.id_ubic_contatore = yy.id_ubic_contatore;
 
