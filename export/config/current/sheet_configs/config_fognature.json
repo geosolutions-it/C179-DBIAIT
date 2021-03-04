@@ -256,6 +256,7 @@
         {"id": "60900","transformation": { "func": "DIRECT", "params": { "field": "data_agg"}}},
         {"id": "101400","transformation": { "func": "DIRECT", "params": { "field": "nr_rip"}}},
         {"id": "101600","transformation": { "func": "DIRECT", "params": { "field": "nr_rip_allac"}}},
+        {"id": "59800","transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_industriali"}}},
         {"id": "60400","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT"}}},
         {"id": "60500","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO"}}},
 
