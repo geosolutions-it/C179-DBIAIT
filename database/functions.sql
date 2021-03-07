@@ -1553,7 +1553,7 @@ BEGIN
         UNION ALL
         -- 2) Realmente mappati (utenze industriali)
 
-        SELECT ac.idgis id_condotta, id_immissione, id_fossa_settica, ac.id_rete, 'RILEVATO' tipo, ac.sub_funzione,
+        SELECT ac.idgis id_condotta, id_fossa_settica, id_immissione, ac.id_rete, 'RILEVATO' tipo, ac.sub_funzione,
             0 lu_allacci_c, 0 lu_allacci_c_ril,
             0 lu_allacci_i, z.leng lu_allacci_i_ril,
             0 nr_allacci_c, 0 nr_allacci_c_ril,
@@ -1651,7 +1651,7 @@ BEGIN
         UNION ALL
 
         -- 3) SIMULAZIONE ALLACCIO (INDUSTRIALI)
-        SELECT ac.idgis id_condotta,z.id_fossa_settica, z.id_immissione, ac.id_rete, 'SIMULATO' as tipo, ac.sub_funzione
+        SELECT ac.idgis id_condotta, z.id_fossa_settica, z.id_immissione, ac.id_rete, 'SIMULATO' as tipo, ac.sub_funzione
             ,0 lu_allacci_c, 0 lu_allacci_c_ril,
             z.leng lu_allacci_i, 0 lu_allacci_i_ril,
             0 nr_allacci_c, 0 nr_allacci_c_ril,
@@ -1805,11 +1805,6 @@ BEGIN
     WHERE frc.d_gestore = 'PUBLIACQUA' AND frc.d_ambito IN ('AT3', NULL) AND frc.d_stato NOT IN ('IPR','IAC')
     group by id_rete;
 
-	--
-	-- LOG ANOMALIES
-	-- TODO: insert into LOG_STANDALONE
-	-- 
-	
 	RETURN TRUE;
 	
 END;
@@ -1937,6 +1932,15 @@ BEGIN
         AND c.idgis = ACQ_SHAPE.ids_codi_1;
 
     --(utenze_misuratore)
+    with defalco_parent as (
+        select
+        distinct id_ubic_contatore,
+            id_cass_cont
+        from
+            ubic_contatori_cass_cont
+        join utenza_defalco on
+            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
+    )
     update
         acq_shape
     set
@@ -1945,26 +1949,35 @@ BEGIN
         (
         select
             ids_codi_1,
-            count(*) as counter
+            count(0) as counter
         from
             acq_shape as2
         join acq_allaccio aa on
             as2.ids_codi_1 = aa.id_condotta
-        join acq_ubic_contatore auc on
+        join (
+            select auc.* from acq_ubic_contatore auc,
+            (
+                select id_cass_cont
+                from ubic_contatori_cass_cont
+                union all
+                select id_cass_cont from defalco_parent
+            ) uccc
+            where auc.id_cass_cont  = uccc.id_cass_cont
+        ) auc
+                on
             auc.id_cass_cont = aa.id_cassetta
         join utenza_sap us on
             auc.idgis = us.id_ubic_contatore
         where
             COALESCE(us.cattariffa,'?') not in (
-				'APB_REFIND',
-				'APBLREFIND',
-				'APBNREFCIV',
-				'APBHSUBDIS',
-				'COPDCI0000',
-				'COPDIN0000')
+                'APB_REFIND',
+                'APBLREFIND',
+                'APBNREFCIV',
+                'APBHSUBDIS',
+                'COPDCI0000',
+                'COPDIN0000')
             and nr_contat >= 1
-        group by
-            1) g
+        group by 1) g
     where
         acq_shape.ids_codi_1 = g.ids_codi_1;
 
@@ -3482,7 +3495,7 @@ begin
         inner join ubic_allaccio aa on aa.id_ubic_contatore = dd.idgis_defalco
     ) xx where ubic_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
 
-	-- AGGIUNTO NEL LOG STAND_ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO ID_RETE VUORO
+	-- AGGIUNTO NEL LOG STAND_ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO ID_RETE VUOTO
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UBIC_ALLACCIO', 'Contatore non allacciato alla rete acquedotto'
 	FROM ubic_allaccio where acq_idrete is null;
@@ -3753,7 +3766,7 @@ begin
 	from defalco_divisionali dd
 	inner join ubic_f_allaccio aa on aa.id_ubic_contatore = dd.idgis_defalco) xx where ubic_f_allaccio.id_ubic_contatore =xx.id_ubic_contatore;
 
-	-- AGGIUNTO NEL LOG STAND_ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO ID_RETE VUORO
+	-- AGGIUNTO NEL LOG STAND_ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO ID_RETE VUOTO
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT ufa.id_ubic_contatore, 'UBIC_F_ALLACCIO', 'Contatore servito da Fognatura non allacciato'
 	from ubic_f_allaccio ufa
@@ -3793,7 +3806,8 @@ begin
 	-- ID_RETE NULLO
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UBIC_F_ALLACCIO', 'Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
-	FROM ubic_f_allaccio where fgn_idrete is null;
+	FROM ubic_f_allaccio where fgn_idrete is null AND fgn_sn_alla = 'NO';
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql

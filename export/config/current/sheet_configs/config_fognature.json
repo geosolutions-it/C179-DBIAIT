@@ -261,6 +261,6 @@
         {"id": "60500","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO"}}},
 
         {"id": "60600","transformation": { "func": "CONST", "params": { "value": "B"}}},
-        {"id": "60800","transformation": { "func": "CONST", "params": { "value": "A"}}}
+        {"id": "60800","transformation": { "func": "CONST", "params": { "value": "B"}}}
     ]
 }
