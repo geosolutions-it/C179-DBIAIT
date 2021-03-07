@@ -715,9 +715,9 @@ BEGIN
         "ACQ_ALLACCIO": 					230003,
         "ACQ_LUNGHEZZA_ALLACCI": 			971,
         "SUPPORT_ACQ_ALLACCI": 				231228,
-        "FGN_ALLACCIO": 					203226,
+        "FGN_ALLACCIO": 					203831,
         "FGN_LUNGHEZZA_ALLACCI": 			1092,
-        "FGN_LUNGHEZZA_ALLACCI_id_rete":	922,
+        "FGN_LUNGHEZZA_ALLACCI_id_rete":	923,
         "SUPPORT_FGN_ALLACCI": 				203832,
         "ACQ_SHAPE": 						119262,
         "ACQ_SHAPE_A": 						10443,
@@ -756,7 +756,7 @@ BEGIN
         "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	390,
         "UBIC_CONTATORI_FGN": 				425971,
         "UBIC_F_ALLACCIO": 					425971,
-        "UTENZE_FOGNATURE_COLLETTORI": 		1074,
+        "UTENZE_FOGNATURE_COLLETTORI": 		1075,
         "SUPPORT_CODICE_CAPT_ACCORP": 		1360,
         "SUPPORT_POZZI_INPOTAB":            764
     }'::JSON)->v_table;
