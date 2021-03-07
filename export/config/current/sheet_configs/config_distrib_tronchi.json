@@ -151,19 +151,6 @@
                 }
             }
         },
-
-        {"id": "101000", "transformation": {
-                "func": "IF",
-                "params": {
-                    "field": " pressione",
-                    "cond": {
-                        "operator": "=",
-                        "value": "MIS",
-                        "result": 1,
-                        "else": 0
-                    }
-                }
-            }
-        }
+        {"id": "101000", "transformation": {"func": "DIRECT", "params": { "field": "pressione" }}}
      ]
 }
