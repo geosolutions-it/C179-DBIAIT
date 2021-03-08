@@ -1931,56 +1931,6 @@ BEGIN
     WHERE c.id_sist_prot_cat is not null
         AND c.idgis = ACQ_SHAPE.ids_codi_1;
 
-    --(utenze_misuratore)
-    with defalco_parent as (
-        select
-        distinct id_ubic_contatore,
-            id_cass_cont
-        from
-            ubic_contatori_cass_cont
-        join utenza_defalco on
-            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
-    )
-    update
-        acq_shape
-    set
-        UTENZE_MIS = counter
-    from
-        (
-        select
-            ids_codi_1,
-            count(0) as counter
-        from
-            acq_shape as2
-        join acq_allaccio aa on
-            as2.ids_codi_1 = aa.id_condotta
-        join (
-            select auc.* from acq_ubic_contatore auc,
-            (
-                select id_cass_cont
-                from ubic_contatori_cass_cont
-                union all
-                select id_cass_cont from defalco_parent
-            ) uccc
-            where auc.id_cass_cont  = uccc.id_cass_cont
-        ) auc
-                on
-            auc.id_cass_cont = aa.id_cassetta
-        join utenza_sap us on
-            auc.idgis = us.id_ubic_contatore
-        where
-            COALESCE(us.cattariffa,'?') not in (
-                'APB_REFIND',
-                'APBLREFIND',
-                'APBNREFCIV',
-                'APBHSUBDIS',
-                'COPDCI0000',
-                'COPDIN0000')
-            and nr_contat >= 1
-        group by 1) g
-    where
-        acq_shape.ids_codi_1 = g.ids_codi_1;
-
     --(id_opera_stato)
     UPDATE ACQ_SHAPE
     SET id_opera_s = t.valore_netsic
@@ -2004,7 +1954,70 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
+-- Update the field UTENZE_MIS for the table ACQ_SHAPE
+-- OUT: BOOLEAN
+-- Example:
+-- 	select DBIAIT_ANALYSIS.populate_acq_shape_utenze_mis();
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_shape_utenze_mis(
+) RETURNS BOOLEAN AS $$
+BEGIN
+    SET work_mem = '256MB';
+    --(utenze_misuratore)
+    with defalco_parent as (
+        select
+        distinct id_ubic_contatore,
+            id_cass_cont
+        from
+            ubic_contatori_cass_cont
+        join utenza_defalco on
+            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
+    )
+    update
+        acq_shape
+    set
+        UTENZE_MIS = g.counter
+    from
+        (
+        select
+		    aa.id_condotta as ids_codi_1,
+		    count(0) as counter
+		from
+		    acq_allaccio aa
+		join (
+		    select auc.* from acq_ubic_contatore auc,
+		    (
+		        select id_cass_cont
+		        from ubic_contatori_cass_cont
+		        union all
+		        select id_cass_cont from defalco_parent
+		    ) uccc
+		    where auc.id_cass_cont  = uccc.id_cass_cont
+		) auc on auc.id_cass_cont = aa.id_cassetta
+		join utenza_sap us on
+		    auc.idgis = us.id_ubic_contatore
+		where
+		    COALESCE(us.cattariffa,'?') not in (
+		        'APB_REFIND',
+		        'APBLREFIND',
+		        'APBNREFCIV',
+		        'APBHSUBDIS',
+		        'COPDCI0000',
+		        'COPDIN0000')
+		    and nr_contat >= 1
+		group by 1
+        ) g
+    where
+        acq_shape.ids_codi_1 = g.ids_codi_1;
+
+	RETURN TRUE;
+
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- Populate data for ACQUEDOTTO
 -- (Ref. 5.1, 5.2,5.3,5.4,5.5,7.1)
@@ -2023,16 +2036,16 @@ BEGIN
 	AND populate_acq_vol_utenze()
 	AND populate_acq_shape()
 	AND populate_ubic_allaccio()
-	and populate_utenze_distribuzioni_adduttrici()
-    and populate_stats_cloratore()
-	and populate_schema_acq()
-	and populate_codice_capt_accorp();
+	AND populate_acq_shape_utenze_mis()
+	AND populate_utenze_distribuzioni_adduttrici()
+    AND populate_stats_cloratore()
+	AND populate_schema_acq()
+	AND populate_codice_capt_accorp();
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
-
 --------------------------------------------------------------------
 -- Populate data for volumes for Acquedotto
 -- (Ref. 4.2)

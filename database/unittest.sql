@@ -1445,5 +1445,14 @@ BEGIN
     perform test_assertTrue('count FOR distribuzioni id DI01079, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
-
-
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_nr_utenze_misuratore_PAACON00000000752869() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=14;
+BEGIN
+    select utenze_mis INTO v_count from dbiait_analysis.acq_shape where ids_codi_1 = 'PAACON00000000752869';
+    perform test_assertTrue('count FOR acq_shape.utenze_mis id PAACON00000000752869, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
