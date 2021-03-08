@@ -1416,7 +1416,7 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 -- ------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_utenza_padre_defalco_non_a_sistema() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_utenza_padre_defalco_non_a_sistema() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
   v_expected    BIGINT:=1733;
@@ -1426,7 +1426,7 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 ---------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_nr_allacci_distribuzioni_codice_ato_DI01075() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_nr_allacci_distribuzioni_codice_ato_DI01075() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
   v_expected    BIGINT:=18502;
@@ -1436,7 +1436,7 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 ---------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_nr_allacci_distribuzioni_codice_ato_DI01079() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_nr_allacci_distribuzioni_codice_ato_DI01079() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
   v_expected    BIGINT:=148;
@@ -1446,7 +1446,7 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 ---------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_nr_utenze_misuratore_PAACON00000000752869() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_nr_utenze_misuratore_PAACON00000000752869() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
   v_expected    BIGINT:=14;
