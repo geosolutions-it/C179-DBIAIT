@@ -1506,28 +1506,107 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 ---------------------------------------------------------------------------------------------
--- --1745
--- select count(0) from dbiait_analysis.log_standalone
--- where description='Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
---
---
--- --7366
--- select count(0) from dbiait_analysis.log_standalone
--- where description='Contatore servito da Fognatura non allacciato'
---
--- --5621
--- select count(0) from dbiait_analysis.log_standalone
--- where description='Contatore servito da Fognatura non allacciato'
--- and id not in (
--- 	select id from dbiait_analysis.log_standalone
--- 	where description='Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
--- )
+CREATE OR REPLACE function dbiait_analysis.test_case_logstda_ubic_cont_fuori_rete_e_idrete_null() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=1745;
+BEGIN
 
--- acq_shape ids_codi_1 (utenze_mis) => populate_acq_shape_utenze_mis()
---actual 15 expected 15 => PAACON00000000905600
---actual 8 expected 8 => PAACON00000000755672
---actual 135 expected 111 => PAACON00000000769625
---actual 105 expected 106 => PAACON00000000758673
---actual 33 expected 33 => PAACON00000000806238
+    select count(0) INTO v_count
+    from dbiait_analysis.log_standalone
+    where description='Contatore servito da Fognatura non allacciato e fuori rete di raccolta';
+
+    perform test_assertTrue('count total LOG standalone (Contatore servito da Fognatura non allacciato e fuori rete di raccolta), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_logstda_ubic_cont_non_allacciato() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=7366;
+BEGIN
+
+    select count(0) INTO v_count
+    from dbiait_analysis.log_standalone
+    where description='Contatore servito da Fognatura non allacciato';
+    perform test_assertTrue('count total LOG standalone (Contatore servito da Fognatura non allacciato), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_logstda_ubic_cont_non_allacciato_minus_fuori_rete_e_idrete_null() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=5621;
+BEGIN
+    select count(0) INTO v_count
+    from dbiait_analysis.log_standalone
+    where description='Contatore servito da Fognatura non allacciato'
+    and id not in (
+        select id from dbiait_analysis.log_standalone
+        where description='Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
+    );
+    perform test_assertTrue('count total LOG standalone (Contatore servito da Fognatura non allacciato), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000905600() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=15;
+BEGIN
+    select utenze_mis INTO v_count
+    from dbiait_analysis.acq_shape
+    where ids_codi_1 = 'PAACON00000000905600';
+    perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS (PAACON00000000905600), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000755672() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=8;
+BEGIN
+    select utenze_mis INTO v_count
+    from dbiait_analysis.acq_shape
+    where ids_codi_1 = 'PAACON00000000755672';
+    perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS (PAACON00000000755672), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000769625() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=135;
+BEGIN
+    select utenze_mis INTO v_count
+    from dbiait_analysis.acq_shape
+    where ids_codi_1 = 'PAACON00000000769625';
+    perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS (PAACON00000000769625), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000758673() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=105;
+BEGIN
+    select utenze_mis INTO v_count
+    from dbiait_analysis.acq_shape
+    where ids_codi_1 = 'PAACON00000000758673';
+    perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS (PAACON00000000758673), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000806238() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=33;
+BEGIN
+    select utenze_mis INTO v_count
+    from dbiait_analysis.acq_shape
+    where ids_codi_1 = 'PAACON00000000806238';
+    perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS (PAACON00000000806238), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
 
