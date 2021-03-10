@@ -1492,3 +1492,38 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 ---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_ubic_cont_fuori_rete_e_idrete_null() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=1;
+BEGIN
+    select count(0)
+    INTO v_count
+    from dbiait_analysis.log_standalone
+    where description='Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
+    and id = 'PAAUCO00000002102420';
+    perform test_assertTrue('count LOG standalone id PAAUCO00000002102420 (Contatore servito da Fognatura non allacciato e fuori rete di raccolta), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+-- --1745
+-- select count(0) from dbiait_analysis.log_standalone
+-- where description='Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
+--
+--
+-- --7366
+-- select count(0) from dbiait_analysis.log_standalone
+-- where description='Contatore servito da Fognatura non allacciato'
+--
+-- --5621
+-- select count(0) from dbiait_analysis.log_standalone
+-- where description='Contatore servito da Fognatura non allacciato'
+-- and id not in (
+-- 	select id from dbiait_analysis.log_standalone
+-- 	where description='Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
+-- )
+--------------------------------------------------------------------------------------------
+
+
+
+
