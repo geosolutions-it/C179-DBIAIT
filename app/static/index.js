@@ -80,12 +80,18 @@ const table_function_mapper = {
             } else {
                 var download = '<a href="download/' + data.id + '" target="_blank"><i class="fas fa-download"></i></a>';
             }
+
+            var ref_year = "Import"
+            if ('ref_year' in data.params.kwargs) {
+                ref_year = "Freeze: " + data.params.kwargs.ref_year
+            }
             table.row.add([
                 data.id,
                 data.user,
                 data.geopackage_name,
                 get_local_date(data.start_date)  || "--/--/---" ,
                 get_local_date(data.end_date)  || "--/--/---" ,
+                ref_year,
                 errorModal,
                 download,
                 ]).draw( false );
