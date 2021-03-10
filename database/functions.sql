@@ -1965,15 +1965,15 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_shape_utenze_mis(
 BEGIN
     SET work_mem = '256MB';
     --(utenze_misuratore)
-    with defalco_parent as (
-        select
-        distinct id_ubic_contatore,
-            id_cass_cont
-        from
-            ubic_contatori_cass_cont
-        join utenza_defalco on
-            id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
-    )
+    with defalco_child as (select distinct id_condotta, id_cass_cont from acq_allaccio aa join (select
+			distinct id_ubic_contatore,
+			idgis_divisionale,
+			id_cass_cont
+		from
+			ubic_contatori_cass_cont
+		join utenza_defalco on
+			id_ubic_contatore = utenza_defalco.idgis_divisionale where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') )bb
+			on aa.id_cassetta=bb.id_cass_cont)
     update
         acq_shape
     set
@@ -1981,32 +1981,30 @@ BEGIN
     from
         (
         select
-		    aa.id_condotta as ids_codi_1,
-		    count(0) as counter
-		from
-		    acq_allaccio aa
-		join (
-		    select auc.* from acq_ubic_contatore auc,
-		    (
-		        select id_cass_cont
-		        from ubic_contatori_cass_cont
-		        union all
-		        select id_cass_cont from defalco_parent
-		    ) uccc
-		    where auc.id_cass_cont  = uccc.id_cass_cont
-		) auc on auc.id_cass_cont = aa.id_cassetta
-		join utenza_sap us on
-		    auc.idgis = us.id_ubic_contatore
-		where
-		    COALESCE(us.cattariffa,'?') not in (
-		        'APB_REFIND',
-		        'APBLREFIND',
-		        'APBNREFCIV',
-		        'APBHSUBDIS',
-		        'COPDCI0000',
-		        'COPDIN0000')
-		    and nr_contat >= 1
-		group by 1
+            ids_codi_1,
+            count(*) as counter
+        from
+            acq_shape as2
+        join (
+        	select id_condotta, id_cassetta from acq_allaccio
+	        union all
+    	    select id_condotta, id_cass_cont from defalco_child
+    	) aa on
+            as2.ids_codi_1 = aa.id_condotta
+        join acq_ubic_contatore auc on
+            auc.id_cass_cont = aa.id_cassetta
+        join utenza_sap us on
+            auc.idgis = us.id_ubic_contatore
+        where
+            COALESCE(us.cattariffa,'?') not in (
+				'APB_REFIND',
+				'APBLREFIND',
+				'APBNREFCIV',
+				'APBHSUBDIS',
+				'COPDCI0000',
+				'COPDIN0000')
+            and nr_contat >= 1 --and ids_codi_1='PAACON00000000905600'
+        group by 1
         ) g
     where
         acq_shape.ids_codi_1 = g.ids_codi_1;
@@ -3766,7 +3764,7 @@ begin
 		distinct ud.idgis_divisionale,
 		ud.idgis_defalco
 	from utenza_defalco ud
-	join defalco_parent dp on ud.idgis_defalco =dp.id_defalco)
+	join defalco_parent dp on ud.idgis_defalco = dp.id_defalco)
 	select dd.idgis_divisionale id_ubic_contatore,
 	case
 			when aa.fgn_idrete is not null then 'SI'
@@ -3816,17 +3814,18 @@ begin
 		ubic_f_allaccio.id_ubic_contatore = yy.id_ubic_contatore;
 
 	-- INSERIMENTO NEL LOG STAND-ALONE TUTTI GLI ID_UBIC_CONTATORE CHE HANNO
-	-- ID_RETE NULLO
+	-- ID_RETE NULLO E NON STANNO IN RETI DI RACCOLTA
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT id_ubic_contatore, 'UBIC_F_ALLACCIO', 'Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
-	FROM ubic_f_allaccio where fgn_idrete is null AND fgn_sn_alla = 'NO';
+	select ufa.id_ubic_contatore, 'UBIC_F_ALLACCIO', 'Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
+    from ubic_f_allaccio ufa
+    join utenza_sap us on ufa.id_ubic_contatore = us.id_ubic_contatore
+    where fgn_idrete is null and esente_fog = 0;
 
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
-
 -------------------------------------------------------------------------------------------------------
 -- Calcola la tabella utenze_fognature_collettori per il volume delle utenze industriali #222
 --
@@ -3842,7 +3841,7 @@ begin
     INSERT INTO utenze_fognature_collettori
 	WITH utenze AS (
 		SELECT
-			DISTINCT ufa.fgn_idrete,
+			ufa.fgn_idrete,
 			esente_fog,
 			cattariffa,
 			vol_fgn_fatt,
@@ -3850,13 +3849,13 @@ begin
 		FROM
 			(
 			SELECT
-				DISTINCT idgis
+				idgis
 			FROM
 				fgn_rete_racc frr
 			WHERE frr.d_gestore = 'PUBLIACQUA' AND frr.d_ambito IN ('AT3', NULL) AND frr.d_stato NOT IN ('IPR','IAC')
 		union all
 			SELECT
-				DISTINCT idgis
+				idgis
 			FROM
 				fgn_collettore fc
 			WHERE fc.d_gestore = 'PUBLIACQUA' AND fc.d_ambito IN ('AT3', NULL) AND fc.d_stato NOT IN ('IPR','IAC')
