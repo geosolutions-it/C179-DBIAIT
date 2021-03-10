@@ -1522,8 +1522,12 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 -- 	select id from dbiait_analysis.log_standalone
 -- 	where description='Contatore servito da Fognatura non allacciato e fuori rete di raccolta'
 -- )
+
+-- acq_shape ids_codi_1 (utenze_mis) => populate_acq_shape_utenze_mis()
+--actual 15 expected 15 => PAACON00000000905600
+--actual 8 expected 8 => PAACON00000000755672
+--actual 135 expected 111 => PAACON00000000769625
+--actual 105 expected 106 => PAACON00000000758673
+--actual 33 expected 33 => PAACON00000000806238
 --------------------------------------------------------------------------------------------
-
-
-
 

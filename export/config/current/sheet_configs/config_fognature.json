@@ -195,8 +195,8 @@
 
         {"id": "101100","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_allaccio"}}},
 
-        {"id": "101500","transformation": { "func": "DIRECT", "params": { "field": "vol_fatturato"}}},
-        {"id": "59900","transformation": { "func": "DIRECT", "params": { "field": "vol_utenze_auth"}}},
+        {"id": "101500","transformation": { "func": "DIRECT", "params": { "field": "volume_utenze_totali"}}},
+        {"id": "59900","transformation": { "func": "DIRECT", "params": { "field": "volume_utenze_industriali"}}},
 
         {"id": "60200","transformation": { "func": "DIRECT", "params": { "field": "lunghezza_dep"}}, "validations": [{
                     "func": "IF",
