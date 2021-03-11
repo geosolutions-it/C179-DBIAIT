@@ -198,10 +198,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-url_path_prefix = os.getenv("URL_PATH_PREFIX", "").replace("", "")
+URL_PATH_PREFIX = os.getenv("URL_PATH_PREFIX", "").replace("", "")
 
-STATIC_URL = f'{url_path_prefix}static/'
-STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, f"{url_path_prefix}static_root"))
+STATIC_URL = f'{URL_PATH_PREFIX}static/'
+STATIC_ROOT = os.getenv("STATIC_ROOT", os.path.join(BASE_DIR, f"{URL_PATH_PREFIX}static_root"))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'app', 'static')]
 
 # LDAP CONFIG
