@@ -817,7 +817,7 @@ alter table DBIAIT_ANALYSIS.FOGNAT_TRONCHI	   add constraint FOGNAT_TRONCHI_pk P
 alter table DBIAIT_ANALYSIS.COLLETT_TRONCHI	   add constraint COLLETT_TRONCHI_pk PRIMARY KEY(idgis);
 alter table DBIAIT_ANALYSIS.FGN_SHAPE	       add constraint FGN_SHAPE_pk PRIMARY KEY(ids_codi_1);
 alter table DBIAIT_ANALYSIS.FGN_LUNGHEZZA_RETE add constraint FGN_LUNGHEZZA_RETE_pk PRIMARY KEY(idgis);
-alter table DBIAIT_ANALYSIS.ACQ_LUNGHEZZA_ALLACCI	   add constraint ACQ_LUNGHEZZA_ALLACCI PRIMARY KEY(IDGIS);
+alter table DBIAIT_ANALYSIS.ACQ_LUNGHEZZA_ALLACCI	   add constraint ACQ_LUNGHEZZA_ALLACCI_pk PRIMARY KEY(IDGIS);
 alter table DBIAIT_ANALYSIS.fgn_lunghezza_allacci	   add constraint fgn_lunghezza_allacci_pk PRIMARY KEY(IDGIS);
 alter table DBIAIT_ANALYSIS.POMPAGGI_POMPE	   add column oid SERIAL;
 alter table DBIAIT_ANALYSIS.SOLLEV_POMPE	   add column oid SERIAL;
@@ -1026,7 +1026,7 @@ CREATE TABLE DBIAIT_ANALYSIS.utenze_fognature_collettori(
 	nr_utenze_industriali			INTEGER,
 	volume_utenze_industriali double precision,
 	volume_utenze_totali double precision
-););
+);
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.support_codice_capt_accorp;
 CREATE TABLE DBIAIT_ANALYSIS.support_codice_capt_accorp(
