@@ -828,6 +828,9 @@ alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_ACQ	add constraint UTENZA_SERVIZIO_A
 alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_LOC	add constraint UTENZA_SERVIZIO_LOC_pk PRIMARY KEY(ID_UBIC_CONTATORE);
 alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_FGN	add constraint UTENZA_SERVIZIO_FGN_pk PRIMARY KEY(ID_UBIC_CONTATORE);
 alter table DBIAIT_ANALYSIS.UTENZA_SERVIZIO_BAC	add constraint UTENZA_SERVIZIO_BAC_pk PRIMARY KEY(ID_UBIC_CONTATORE);
+alter table DBIAIT_ANALYSIS.rel_prod_cont	add constraint rel_prod_cont_pk PRIMARY KEY (idgis_contatore, idgis_produttivo);
+alter table DBIAIT_ANALYSIS.a_rel_prod_cont	add constraint a_rel_prod_cont_pk PRIMARY KEY (idgis_contatore, idgis_produttivo);
+alter table DBIAIT_ANALYSIS.fgn_cond_ext	add CONSTRAINT fgn_cond_ext_pkey PRIMARY KEY (idgis);
 -----------------------------------------------------------------------------------------------------------------------
 --
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.FGN_LUNGHEZZA_ALLACCI_ID_RETE;

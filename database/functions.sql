@@ -1966,17 +1966,19 @@ BEGIN
     SET work_mem = '256MB';
     --(utenze_misuratore)
     with defalco_child as (
-		select distinct id_condotta, id_cass_cont, idgis_divisionale from acq_allaccio aa join (
+		select distinct id_condotta, id_cass_cont, idgis_divisionale
+		from acq_allaccio aa join (
 			select
-			distinct id_ubic_contatore,
-			idgis_divisionale,
-			id_cass_cont
-		from
-			ubic_contatori_cass_cont
-		join utenza_defalco on
-			id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
-	)bb
-		on aa.id_cassetta=bb.id_cass_cont)
+                distinct id_ubic_contatore,
+                idgis_divisionale,
+                id_cass_cont
+            from
+                ubic_contatori_cass_cont
+            join utenza_defalco on
+                id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
+	    )bb
+		on aa.id_cassetta=bb.id_cass_cont
+	)
     update
         acq_shape
     set
@@ -1995,13 +1997,19 @@ BEGIN
             join utenza_sap us on
                 auc.idgis = us.id_ubic_contatore
             where
-            COALESCE(us.cattariffa,'?') not in (
-                'APB_REFIND',
-                'APBLREFIND',
-                'APBNREFCIV',
-                'APBHSUBDIS',
-                'COPDCI0000',
-                'COPDIN0000') and nr_contat >= 1
+                COALESCE(us.cattariffa,'?') not in (
+                    'APB_REFIND',
+                    'APBLREFIND',
+                    'APBNREFCIV',
+                    'APBHSUBDIS',
+                    'COPDCI0000',
+                    'COPDIN0000'
+                )
+                and nr_contat >= 1
+                and not EXISTS (
+                	select 0 from defalco_child dfc
+                	where auc.idgis = dfc.idgis_divisionale
+                )
             union all
             select dc.idgis_divisionale as idgis, id_condotta from defalco_child dc
             join acq_ubic_contatore auc on
@@ -2009,13 +2017,15 @@ BEGIN
             join utenza_sap us on
                 auc.idgis = us.id_ubic_contatore
             where
-            COALESCE(us.cattariffa,'?') not in (
-                'APB_REFIND',
-                'APBLREFIND',
-                'APBNREFCIV',
-                'APBHSUBDIS',
-                'COPDCI0000',
-                'COPDIN0000') and nr_contat >= 1
+                COALESCE(us.cattariffa,'?') not in (
+                    'APB_REFIND',
+                    'APBLREFIND',
+                    'APBNREFCIV',
+                    'APBHSUBDIS',
+                    'COPDCI0000',
+                    'COPDIN0000'
+                )
+                and nr_contat >= 1
         ) aa on
             as2.ids_codi_1 = aa.id_condotta
         --where ids_codi_1='PAACON00000000769625'
