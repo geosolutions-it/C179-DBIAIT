@@ -81,7 +81,7 @@ const table_function_mapper = {
                 var download = '<a href="download/' + data.id + '" target="_blank"><i class="fas fa-download"></i></a>';
             }
 
-            var ref_year = "Import"
+            var ref_year = "Current"
             if ('ref_year' in data.params.kwargs) {
                 ref_year = "Freeze: " + data.params.kwargs.ref_year
             }
