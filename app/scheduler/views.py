@@ -94,7 +94,7 @@ class Configuration(LoginRequiredMixin, View):
         database_user = settings.DATABASES[u'system'][u'USER']
         app_version = settings.APP_VERSION
 
-        environment = u'SVILUPPO' if settings.DEBUG else u'PRODUZIONE'
+        environment = u'SVILUPPO' if settings.url_path_prefix else u'PRODUZIONE'
         context = {
             u'app_version': app_version,
             u'bread_crumbs': bread_crumbs,
