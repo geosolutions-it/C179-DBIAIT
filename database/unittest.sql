@@ -1588,7 +1588,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000758673() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=105;
+  v_expected    BIGINT:=106;
 BEGIN
     select utenze_mis INTO v_count
     from dbiait_analysis.acq_shape
