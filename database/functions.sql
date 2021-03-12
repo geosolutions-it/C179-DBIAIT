@@ -513,7 +513,6 @@ BEGIN
 		) t
 		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
 
-
 	-- Log duplicated items
 
 	EXECUTE '
@@ -2005,10 +2004,15 @@ BEGIN
                     'COPDCI0000',
                     'COPDIN0000'
                 )
-                and nr_contat >= 1
-                and not EXISTS (
-                	select 0 from defalco_child dfc
-                	where auc.idgis = dfc.idgis_divisionale
+                AND nr_contat >= 1
+                AND NOT EXISTS (
+                	--select 0 from defalco_child dfc
+                	--where auc.idgis = dfc.idgis_divisionale
+                	select 0 from
+                	ubic_contatori_cass_cont join utenza_defalco
+                	    on id_ubic_contatore = utenza_defalco.idgis_defalco
+                	where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
+                        and idgis_divisionale = auc.idgis
                 )
             union all
             select dc.idgis_divisionale as idgis, id_condotta from defalco_child dc
