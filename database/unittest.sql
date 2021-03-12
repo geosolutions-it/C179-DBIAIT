@@ -1576,7 +1576,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000769625() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=135;
+  v_expected    BIGINT:=135; -- (forse 111)
 BEGIN
     select utenze_mis INTO v_count
     from dbiait_analysis.acq_shape
@@ -1620,5 +1620,16 @@ BEGIN
     perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS (PAACON00000000753473), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000905676() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=1;
+BEGIN
+    select utenze_mis INTO v_count
+    from dbiait_analysis.acq_shape
+    where ids_codi_1 = 'PAACON00000000905676';
+    perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS (PAACON00000000905676), expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
--- PAACON00000000905676 => 1 (?)

@@ -1037,3 +1037,10 @@ CREATE TABLE DBIAIT_ANALYSIS.support_codice_capt_accorp(
 	codice_accorp_capt			VARCHAR(32),
 	denom			VARCHAR(100)
 );
+-----------------------------------------------------------------------------------------------------------------------
+CREATE INDEX localita_geom_idx ON localita USING GIST (geom);
+CREATE INDEX confine_comunale_geom_idx ON confine_comunale USING GIST (geom);
+CREATE INDEX area_poe_geom_idx ON area_poe USING GIST (geom);
+-----------------------------------------------------------------------------------------------------------------------
+-- VACUUM ANALYZE VERBOSE;
+-----------------------------------------------------------------------------------------------------------------------
