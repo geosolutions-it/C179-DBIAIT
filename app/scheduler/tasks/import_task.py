@@ -140,5 +140,6 @@ class ImportTask(BaseTask):
             cursor.execute(
                 f"GRANT SELECT ON ALL TABLES IN SCHEMA "
                 f"dbiait_analysis TO {' '.join(settings.DBIAIT_ANL_SELECT_ROLES)};")
+            cursor.execute("VACUUM ANALYZE VERBOSE;")
 
         print(f"Finished IMPORT execution of package from: {gpkg_path}")
