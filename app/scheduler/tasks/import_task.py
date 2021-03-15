@@ -1,5 +1,6 @@
 import math
 import pathlib
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -140,6 +141,8 @@ class ImportTask(BaseTask):
             cursor.execute(
                 f"GRANT SELECT ON ALL TABLES IN SCHEMA "
                 f"dbiait_analysis TO {' '.join(settings.DBIAIT_ANL_SELECT_ROLES)};")
+            print(f"Starting vacuum: {datetime.now()}")
             cursor.execute("VACUUM ANALYZE VERBOSE;")
+            print(f"Finish vacuum: {datetime.now()}")
 
         print(f"Finished IMPORT execution of package from: {gpkg_path}")
