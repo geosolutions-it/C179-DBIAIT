@@ -1965,19 +1965,22 @@ BEGIN
     SET work_mem = '256MB';
     --(utenze_misuratore)
     with defalco_child as (
-		select distinct id_condotta, id_cass_cont, idgis_divisionale
-		from acq_allaccio aa join (
-			select
-                distinct id_ubic_contatore,
+        select distinct id_condotta, id_cass_cont, idgis_divisionale
+            from acq_allaccio aa join (
+            select
+                distinct uccc.id_ubic_contatore,
                 idgis_divisionale,
                 id_cass_cont
             from
-                ubic_contatori_cass_cont
+                ubic_contatori_cass_cont uccc
             join utenza_defalco on
-                id_ubic_contatore = utenza_defalco.idgis_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
-	    )bb
-		on aa.id_cassetta=bb.id_cass_cont
-	)
+                id_ubic_contatore = utenza_defalco.idgis_defalco
+            join utenza_sap us on
+                us.id_ubic_contatore = idgis_divisionale
+             where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
+        )bb
+        on aa.id_cassetta=bb.id_cass_cont
+    )
     update
         acq_shape
     set
