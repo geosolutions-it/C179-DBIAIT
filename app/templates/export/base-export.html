@@ -95,6 +95,7 @@
 <script>
   $(document).ready(function() {
     $('#export-table').DataTable( {
+        retrieve: true,
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
         },
@@ -115,12 +116,22 @@
 </script>
 <script>
   $('#freeze-year').hide();
+  filter_datatables_results("Current")
   $('#export-schema').change(function(){
-      console.log($('#export-schema').val());
       if($('#export-schema').val() == 'dbiait_freeze') {
           $('#freeze-year').show();
+          filter_datatables_results("Freeze")
       } else {
           $('#freeze-year').hide();
+          filter_datatables_results("Current")
+      }
+  });
+  $('#freeze-year').change(function(){
+    console.log($('#freeze-year option:selected').text() === 'Anno di riferimento')
+      if ($('#freeze-year option:selected').text() === 'Anno di riferimento') {
+        filter_datatables_results("Freeze")
+      } else {
+        filter_datatables_results("Freeze: " + $('#freeze-year').val())
       }
   });
 </script>
