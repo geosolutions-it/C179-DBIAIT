@@ -100,6 +100,11 @@ const table_function_mapper = {
     },
 }
 
+function filter_datatables_results(word_to_filter) {
+    var table = $('#export-table').DataTable();
+    table.search(word_to_filter).draw();
+}
+
 function ajax_call(url, table) {
     $.ajax({
         type: "GET",
