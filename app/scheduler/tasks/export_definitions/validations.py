@@ -148,8 +148,8 @@ class IfValidation(BaseValidation):
                 if field_value == '':
                     return field_value
                 field_value = ast.literal_eval(field_value)
-            except ValueError as e:
-                field_value = field_value
+            except Exception as e:
+                pass
         if isinstance(field_value, datetime):
             field_value = field_value.year
         return field_value
