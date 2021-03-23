@@ -524,7 +524,7 @@
                             ]
                         },{
                           "and": [
-                              {"lookup": "{98600}", "operator": "!=", "value": 0},
+                              {"lookup": "{98600}", "operator": "!=", "value": 0}
                             ]
                         }]
                     },
