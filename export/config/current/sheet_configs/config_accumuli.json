@@ -316,15 +316,18 @@
                     "func": "IF",
                     "params": {
                         "field": "45500",
-                        "cond": [{
-                            "and": [
-                                {"lookup": "{45600}" ,"operator": "!=", "value": 9800},
-                                {"operator": "!=", "value": 1}
-                            ],
-                            "or": [
-                                {"lookup": "{45600}" ,"operator": "=", "value": 9800}
-                            ]
-                        }]
+                        "cond": [
+                            {
+                                "and": [
+                                    {"lookup": "{45600}", "operator": "!=", "value": 9800},
+                                    {"operator": "!=", "value": 1}
+                                ]
+                            }, {
+                                "or": [
+                                    {"lookup": "{45600}", "operator": "=", "value": 9800}
+                                ]
+                            }
+                        ]
                     },
                     "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 45600 <> 9800, allora non e' ammesso il valore 1"
                 }

@@ -674,6 +674,181 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field)
         self.assertFalse(actual)
 
+    def test_pozzi_18100(self,):
+        condition_schema = {
+            "field": "18100",
+            "cond": [
+                {
+                    "or": [
+                        {
+                            "lookup": "{18200}",
+                            "operator": "=",
+                            "value": 9800
+                        },
+                        {
+                            "operator": "=",
+                            "value": 1
+                        }
+                    ]
+                }, {
+                    "and": [
+                        {
+                            "lookup": "{18200}",
+                            "operator": "!=",
+                            "value": 9800
+                        },
+                        {
+                            "operator": "!=",
+                            "value": 1
+                        }
+                    ]
+                }
+            ]
+        }
+        self.field = {"18100": 2, "18200": 0}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+        self.field = {"18100": 1, "18200": 9800}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+    def test_accumuli_45500(self,):
+        condition_schema = {
+            "field": "45500",
+            "cond": [
+                {
+                    "and": [
+                        {"lookup": "{45600}", "operator": "!=", "value": 9800},
+                        {"operator": "!=", "value": 1}
+                    ]
+                }, {
+                    "or": [
+                        {"lookup": "{45600}", "operator": "=", "value": 9800}
+                    ]
+                }
+            ]
+        }
+        self.field = {"45600": 9999, "45500": 3}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+    def test_laghi_12200(self):
+        condition_schema = {
+            "field": "12200",
+            "cond": [{
+                "and": [
+                  {"lookup": "{9700}", "operator": "=", "value": 9999},
+                  {"operator": "=", "value": "X"}
+                ]
+            }, {
+                "and": [
+                  {"lookup": "{9700}", "operator": "!=", "value": 9999}
+                ]
+            }]
+        }
+        self.field = {"12200": "X", "9700": 9999}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+        self.field = {"12200": "x", "9700": 9999}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+    def test_fiumi_3000(self):
+        condition_schema = {
+            "field": "3000",
+            "cond": [{
+                "and": [
+                  {"lookup": "{3100}", "operator": "=", "value": 100},
+                  {"operator": "=", "value": "continuo"}
+                ]}, {
+                "and": [
+                    {"lookup": "{3100}", "operator": "!=", "value": 100}
+                ]
+            }]
+        }
+        self.field = {"3100": 100, "3000": "continuo"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+        self.field = {"3100": 100, "3000": "altro"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertFalse(actual)
+
+        self.field = {"3100": 101, "3000": "altro"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+    def test_fiumi_2200(self):
+        condition_schema = {
+            "field": "2200",
+            "cond": [{
+                "and": [
+                  {"operator": ">=", "value": "{3500}"},
+                  {"operator": "!=", "value": None}
+                ]
+            }]
+        }
+        self.field = {"2200": 100, "3500": 100}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+        self.field = {"2200": 101, "3500": 100}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+        self.field = {"2200": 99, "3500": 100}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertFalse(actual)
+
+        self.field = {"2200": None, "3500": 100}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertFalse(actual)
+
+    def test_laghi_12600(self):
+        condition_schema = {
+            "field": "12600",
+            "cond": [{
+                "and": [
+                    {
+                        "operator": "=",
+                        "value": "{12400}"
+                    }
+                ]
+            }]
+        }
+        self.field = {"12600": "AA", "12400": "AA"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+        self.field = {"12600": "BB", "12400": "AA"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertFalse(actual)
+
+        self.field = {"12600": "aa", "12400": "AA"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+    def test_pozzi_15500(self):
+        condition_schema = {
+            "field": "15500",
+            "cond": [{
+                "and": [
+                    {"operator": "!=", "value": ""}
+                ]
+            }]
+        }
+        self.field = {"15500": None}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertFalse(actual)
+
+        self.field = {"15500": ""}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertFalse(actual)
+
+        self.field = {"15500": "AAA"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
 
 if __name__ == "__main__":
     unittest.main()

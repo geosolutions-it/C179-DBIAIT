@@ -633,7 +633,7 @@
                   "cond": [{
                       "and": [
                         {"lookup": "{25100}","operator": "=", "value": 9999},
-                        {"operator": "=", "value": "x"}
+                        {"operator": "=", "value": "X"}
                       ]
                   },{
                       "and": [

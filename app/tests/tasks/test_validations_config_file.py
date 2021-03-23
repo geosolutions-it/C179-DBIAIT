@@ -158,6 +158,9 @@ class ValidationTestCase(SimpleTestCase):
         self.field = {"foo_field": 2, "18200": 0}
         actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
         self.assertTrue(actual)
+        self.field = {"foo_field": 1, "18200": 9800}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
 
 
 if __name__ == "__main__":
