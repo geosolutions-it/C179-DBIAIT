@@ -57,7 +57,20 @@
      "columns": [
         {"id": "41100", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
         {"id": "40900", "transformation": {"func": "DIRECT", "params": { "field": "adduttrice_codice_ato" }}},
-        {"id": "41500", "transformation": {"func": "DIRECT", "params": { "field": "anno" }}},
+        {"id": "41500",
+            "transformation": {
+                "func": "IF",
+                "params": {
+                    "field": "anno",
+                    "cond": {
+                        "operator": "=",
+                        "value": "",
+                        "result": "9999",
+                        "else": "{anno}"
+                    }
+                }
+            }
+        },
         {"id": "42100", "transformation": {
                 "func": "CASE",
                 "params": {

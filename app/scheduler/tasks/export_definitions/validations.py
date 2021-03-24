@@ -134,7 +134,13 @@ class IfValidation(BaseValidation):
                 return False
 
             operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
-            yield operator(field_value, cond["value"])
+            member_1 = field_value
+            member_2 = cond["value"]
+            if isinstance(field_value, str) and isinstance(field_value, str):
+                member_1 = field_value.upper().strip()
+                member_2 = cond["value"].upper().strip()
+
+            yield operator(member_1, member_2)
 
     def cast_field(self, field_value):
         if not isinstance(field_value, int) and field_value is not None and not isinstance(field_value, float):
@@ -142,8 +148,8 @@ class IfValidation(BaseValidation):
                 if field_value == '':
                     return field_value
                 field_value = ast.literal_eval(field_value)
-            except ValueError as e:
-                field_value = field_value
+            except Exception as e:
+                pass
         if isinstance(field_value, datetime):
             field_value = field_value.year
         return field_value

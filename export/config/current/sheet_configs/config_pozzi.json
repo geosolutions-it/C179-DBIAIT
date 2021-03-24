@@ -358,7 +358,7 @@
                       ]
                   }]
               },
-              "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|field is empty"
+              "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Non puo' essere vuoto"
       }]},
       {"id":"15600", "transformation":{"func":"DIRECT", "params":{"field":"port_potab"}}, "validations": [{
               "func": "IF",

@@ -281,7 +281,7 @@
                         "field": "2200",
                         "cond": [{
                             "and": [
-                              {"lookup": "{2200}","operator": ">=", "value": "{3500}"},
+                              {"operator": ">=", "value": "{3500}"},
                               {"operator": "!=", "value": null }
                             ]
                         }]

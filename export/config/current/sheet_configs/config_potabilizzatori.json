@@ -457,7 +457,8 @@
                 }]},
 
       {"id":"35800", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_gg_tratt", "domain_name": "D_AFFIDABILITA"}}},
-      {"id":"35900", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_anno_tratt", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+      {"id":"35900", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_anno_tratt", "domain_name": "D_AFFIDABILITA"}},
+        "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "35900",
@@ -466,24 +467,53 @@
                               {"lookup": "{32200}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "A"}
                             ]
-                        }, {
+                        },{
+                          "and": [
+                              {"lookup": "{32200}", "operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Se il campo ID 32200 = 0, allora deve assumere valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "35900",
+                        "cond": [{
                             "and": [
                               {"lookup": "{32200}", "operator": ">", "value": 0},
                               {"lookup": "{98400}", "operator": "=", "value": 1},
                               {"operator": "=", "value": "A"}
                             ]
-                        }, {
+                        },{
+                          "or": [
+                              {"lookup": "{32200}", "operator": "<=", "value": 0},
+                              {"lookup": "{98400}", "operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}| Se il campo ID 32200 > 0 e il campo ID 98400 = 1, allora il campo dovrebbe assumere il valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "35900",
+                        "cond": [{
                             "and": [
                               {"lookup": "{32200}", "operator": ">", "value": 0},
                               {"lookup": "{98400}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "C"}
                             ]
+                        },{
+                            "or": [
+                              {"lookup": "{32200}", "operator": "<=", "value": 0},
+                              {"lookup": "{98400}", "operator": "!=", "value": 0}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|value is not A or C"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Se il campo ID 32200 > 0 e il campo ID 98400 = 0, allora il campo dovrebbe assumere il valore C"
                 }
             ]},
-      {"id":"98700", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_uscita", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+      {"id":"98700", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_uscita", "domain_name": "D_AFFIDABILITA"}},
+                "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "98700",
@@ -492,21 +522,49 @@
                               {"lookup": "{98600}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "A"}
                             ]
-                        }, {
+                        },{
+                          "and": [
+                              {"lookup": "{98600}", "operator": "!=", "value": 0}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Se il campo ID 98600 = 0, allora deve assumere valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "98700",
+                        "cond": [{
                             "and": [
                               {"lookup": "{98600}", "operator": ">", "value": 0},
                               {"lookup": "{95800}", "operator": "=", "value": 1},
                               {"operator": "=", "value": "A"}
                             ]
-                        }, {
+                        },{
+                            "or": [
+                              {"lookup": "{98600}", "operator": "<=", "value": 0},
+                              {"lookup": "{95800}", "operator": "!=", "value": 1}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Se il campo ID 98600 > 0 e il campo ID 98500 = 1, allora il campo dovrebbe assumere il valore A"
+                },{
+                    "func": "IF",
+                    "params": {
+                        "field": "98700",
+                        "cond": [{
                             "and": [
                               {"lookup": "{98600}", "operator": ">", "value": 0},
                               {"lookup": "{98500}", "operator": "=", "value": 0},
                               {"operator": "=", "value": "C"}
                             ]
+                        },{
+                            "or": [
+                              {"lookup": "{98600}", "operator": "<=", "value": 0},
+                              {"lookup": "{98500}", "operator": "!=", "value": 0}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|value is not A or C"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Se il campo ID 98600 > 0 e il campo ID 98500 = 0, allora il campo dovrebbe assumere il valore C"
                 }
             ]},
       {"id":"35720", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_elmec", "domain_name": "D_AFFIDABILITA"}}, "validations": [{

@@ -631,12 +631,12 @@
                         "field": "12200",
                         "cond": [{
                             "and": [
-                              {"lookup": "{9700}","operator": "=", "value": 9999},
-                              {"operator": "=", "value": "x"}
+                              {"lookup": "{9700}", "operator": "=", "value": 9999},
+                              {"operator": "=", "value": "X"}
                             ]
-                        },{
+                        }, {
                             "and": [
-                              {"lookup": "{9700}","operator": "!=", "value": 9999}
+                              {"lookup": "{9700}", "operator": "!=", "value": 9999}
                             ]
                         }]
                     },

@@ -22,8 +22,8 @@
                 {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "a_anno_ristr_elmec"},
 
                 {"name": "acq_auth_pompag.d_tipo_cloraz","alias": "d_tipo_cloraz"},
-                {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "anno_instal_clor"},
-                {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "anno_ristr_clor"},
+                {"name": "acq_auth_pompag.anno_instal_clor","alias": "anno_instal_clor"},
+                {"name": "acq_auth_pompag.anno_ristr_clor","alias": "anno_ristr_clor"},
 
                 {"name": "acq_pompaggio.data_agg","alias": "data_agg"},
                 {"name": "acq_pompaggio.geom", "alias": "transformed_x_geom", "function": "GB_X"},
@@ -105,8 +105,8 @@
                 {"name": "acq_auth_pompag.a_anno_ristr_civ","alias": "a_anno_ristr_civ"},
                 {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "a_anno_ristr_elmec"},
                 {"name": "acq_auth_pompag.d_tipo_cloraz","alias": "d_tipo_cloraz"},
-                {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "anno_instal_clor"},
-                {"name": "acq_auth_pompag.a_anno_ristr_elmec","alias": "anno_ristr_clor"},
+                {"name": "acq_auth_pompag.anno_instal_clor","alias": "anno_instal_clor"},
+                {"name": "acq_auth_pompag.anno_ristr_clor","alias": "anno_ristr_clor"},
                 {"name": "a_acq_pompaggio.data_agg","alias": "data_agg"},
                 {"name": "a_acq_pompaggio.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "a_acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
