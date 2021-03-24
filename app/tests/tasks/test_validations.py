@@ -849,6 +849,20 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
         self.assertTrue(actual)
 
+    def test_pozzi_15500_1(self):
+        condition_schema = {
+            "field": "15500",
+            "cond": [{
+                "and": [
+                    {"operator": "!=", "value": ""}
+                ]
+            }]
+        }
+
+        self.field = {"15500": "in attesa di rilascio dal 28/02/2017 (data della richiesta)"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
 
 if __name__ == "__main__":
     unittest.main()
