@@ -114,6 +114,19 @@ class TransformationTestCase(SimpleTestCase):
         with self.assertRaises(ExportConfigError):
             self.sut.from_name('NOT_EXISTING_CONFIG', {}).apply()
 
+    def test_given_transformation_name_IF_gt_should_return_999_with_None_value(self):
+        if_condition = {
+            "field": "anno",
+            "cond": {
+                "operator": "=",
+                "value": "",
+                "result": "9999",
+                "else": "{anno}"
+            }
+        }
+        actual = self.sut.from_name('IF', if_condition).apply(row={"anno": None})
+        self.assertEqual(9999, actual)
+
 
 class TransformationSchemaErrors(SimpleTestCase):
     def setUp(self) -> None:

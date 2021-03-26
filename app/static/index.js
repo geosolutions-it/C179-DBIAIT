@@ -101,7 +101,25 @@ const table_function_mapper = {
 }
 
 function filter_datatables_results(word_to_filter) {
-    var table = $('#export-table').DataTable();
+    var table = $('#export-table').DataTable({
+        retrieve: true,
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
+        },
+         "columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [ 2,3,4 ],
+                "searchable": false
+            }
+        ],
+        "order": [[ 0, "desc" ]]
+    }
+    );
     table.search(word_to_filter).draw();
 }
 

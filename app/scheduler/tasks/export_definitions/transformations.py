@@ -194,6 +194,7 @@ class IfTransformation(BaseTransformation):
 
     def apply(self, row: Dict, **kwargs):
         field_value = row.get(self.args["field"], None)
+        field_value = "" if not field_value else field_value
         cond = self.args["cond"]
         operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
 
