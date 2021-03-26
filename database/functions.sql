@@ -209,7 +209,7 @@ BEGIN
 		l.pro_com,
 		id_localita_istat,
 		--loc.popres as popres_before, 
-		ROUND(loc.popres*(p.pop_res/l.popres)) popres 
+		ROUND(loc.popres::NUMERIC*(p.pop_res::NUMERIC/l.popres::NUMERIC)) popres
 	FROM LOCALITA loc,
 	(
 		SELECT anno_rif, data_rif, pro_com, pop_res
