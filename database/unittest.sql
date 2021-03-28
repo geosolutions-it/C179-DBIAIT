@@ -1669,7 +1669,7 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_pop_res_loc_48021() returns void as $$
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_loc_48021() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
   v_expected    BIGINT:=13767;
