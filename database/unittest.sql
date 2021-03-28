@@ -1669,3 +1669,18 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_pop_res_loc_48021() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+  v_expected    BIGINT:=13767;
+BEGIN
+    SELECT sum(popres) INTO v_count FROM dbiait_analysis.pop_res_loc where pro_com='48021'
+    perform test_assertTrue('POP_RES_LOC (48021):, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+
+    SELECT count(0) INTO v_count FROM dbiait_analysis.pop_res_loc where pro_com='48021' and popres=0;
+    perform test_assertTrue('Ci sono ' || v_count || ' localita senza popolazione!', v_count = 0);
+
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+
