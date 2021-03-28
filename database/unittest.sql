@@ -1674,7 +1674,7 @@ DECLARE
   v_count       BIGINT:=0;
   v_expected    BIGINT:=13767;
 BEGIN
-    SELECT sum(popres) INTO v_count FROM dbiait_analysis.pop_res_loc where pro_com='48021'
+    SELECT sum(popres) INTO v_count FROM dbiait_analysis.pop_res_loc where pro_com='48021';
     perform test_assertTrue('POP_RES_LOC (48021):, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
 
     SELECT count(0) INTO v_count FROM dbiait_analysis.pop_res_loc where pro_com='48021' and popres=0;
