@@ -245,6 +245,20 @@
         {"id": "1700","transformation": {"func": "DECODE_COM", "params": {"field": "cod_comune"}}},
         {"id": "1600","transformation": {"func": "DIRECT", "params": {"field": "denominazi"}}},
 
+        {"id": "3500","transformation": { "func": "EXPR", "params": { "field": "volume_medio_prel" ,"expr": "_value_*1000/365/3600/24"}}, "validations": [{
+                    "func": "IF",
+                    "params": {
+                        "field": "3500",
+                        "cond": [{
+                            "and": [
+                              {"operator": "<=", "value": "{2200}"}
+                            ]
+                        }]
+                    },
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Dovrebbe assumere <= al valore del campo ID 2200"
+                }]
+        },
+
         {"id": "1000","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
         {"id": "1100","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
         {"id": "1500","transformation": { "func": "DIRECT", "params": { "field": "quota"}}, "validations": [{
@@ -609,20 +623,6 @@
                 }]
         },
 
-        {"id": "3500","transformation": { "func": "EXPR", "params": { "field": "volume_medio_prel" ,"expr": "_value_*1000/365/3600/24"}}, "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "3500",
-                        "cond": [{
-                            "and": [
-                              {"operator": "<=", "value": "{2200}"}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Dovrebbe assumere <= al valore del campo ID 2200"
-                }]
-        },
-
         {"id": "5300","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name":  "D_STATO"}}},
 
         {"id": "5400","transformation": { "func": "DOMAIN", "params": { "field": "a_area_bac_affer", "domain_name":  "D_AFFIDABILITA"}}},
@@ -846,6 +846,8 @@
                 }]
         },
         {"id": "6200","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA"}}},
+
+        {"id": "5800","transformation": { "func": "DOMAIN", "params": { "field": "ids_codice_potab", "domain_name":  "D_AFFIDABILITA"}}},
 
         {"id":"5800", "transformation":{
             "func": "IF",
