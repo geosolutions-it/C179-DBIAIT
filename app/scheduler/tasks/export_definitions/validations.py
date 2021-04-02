@@ -138,7 +138,7 @@ class IfValidation(BaseValidation):
             member_2 = cond["value"]
             if isinstance(field_value, str) and isinstance(field_value, str):
                 member_1 = field_value.upper().strip()
-                member_2 = cond["value"].upper().strip()
+                member_2 = cond["value"].upper().strip() if cond["value"] else cond["value"]
 
             yield operator(member_1, member_2)
 

@@ -863,6 +863,48 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
         self.assertTrue(actual)
 
+    def test_fiumi_2100(self):
+        condition_schema = {
+            "field": "2100",
+            "cond": [{
+                "and": [
+                  {"operator": "!=", "value": None}
+                ]
+            }]
+        }
+
+        self.field = {"2100": "abc"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+    def test_Laghi_9100(self):
+        condition_schema = {
+            "field": "9100",
+            "cond": [{
+                "and": [
+                  {"operator": "!=", "value": None}
+                ]
+            }]
+        }
+
+        self.field = {"9100": "abc"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+    def test_sorgenti_24500(self):
+        condition_schema = {
+            "field": "24500",
+            "cond": [{
+                "and": [
+                  {"operator": "!=", "value": None}
+                ]
+            }]
+        }
+
+        self.field = {"24500": "abc"}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
 
 if __name__ == "__main__":
     unittest.main()
