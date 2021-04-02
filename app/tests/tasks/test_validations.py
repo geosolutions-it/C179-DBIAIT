@@ -915,6 +915,25 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
         self.assertTrue(actual)
 
+    def test_laghi_10100(self):
+        condition_schema = {
+            "field": "10100",
+            "cond": [{
+                "and": [
+                  {"lookup": "{10300}", "operator": "=", "value": 0},
+                  {"operator": "=", "value": 0}
+                ]
+            },{
+                "and": [
+                  {"lookup": "{10300}", "operator": "!=", "value": 0}
+                ]
+            }]
+        }
+
+        self.field = {"10100": 0, "10300": 0}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
 
 if __name__ == "__main__":
     unittest.main()

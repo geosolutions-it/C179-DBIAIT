@@ -255,7 +255,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Dovrebbe assumere <= al valore del campo ID 2200"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: portata_esercizio|Dovrebbe assumere <= al valore del campo ID 2200"
                 }]
         },
 
@@ -847,20 +847,6 @@
         },
         {"id": "6200","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA"}}},
 
-        {"id": "5800","transformation": { "func": "DOMAIN", "params": { "field": "ids_codice_potab", "domain_name":  "D_AFFIDABILITA"}}},
-
-        {"id":"5800", "transformation":{
-            "func": "IF",
-            "params": {
-                "field": "ids_codice_potab",
-                "cond": {
-                    "operator": "=",
-                    "value": "0",
-                    "result": "A",
-                    "else": "{ a_volume }"
-                }
-            }
-        }},
         {"id":"3400", "transformation":{
              "func": "IF",
              "params": {
@@ -873,6 +859,19 @@
                      }
                  }
              }
-         }
+         },
+
+        {"id":"5800", "transformation":{
+            "func": "IF",
+            "params": {
+                "field": "cod_opera_inpotab_not_exist",
+                "cond": {
+                    "operator": "=",
+                    "value": "0",
+                    "result": "A",
+                    "else": "{ 5700 }"
+                }
+            }
+        }}
     ]
 }
