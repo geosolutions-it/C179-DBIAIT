@@ -582,7 +582,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|value is not AC"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}| Se il campo ID 32030 >= 2002 allora il campo deve assumere valore A"
                 }
             ]},
 

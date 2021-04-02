@@ -70,7 +70,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 56900 >= 2014, allora non è ammesso il campo null"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|{custom:idgis}|Campo: {FIELD}|se il campo ID 56900 >= 2014, allora non è ammesso il campo null"
                 }
             ]},
         {"id": "56700", "transformation": {"func": "DIRECT", "params": { "field": "id_conservazione" }}},
@@ -100,7 +100,7 @@
                     "field": "data_esercizio",
                     "cond": {
                         "operator": "=",
-                        "value": null,
+                        "value": "",
                         "result": 9999,
                         "else": "{data_esercizio}"
                     }

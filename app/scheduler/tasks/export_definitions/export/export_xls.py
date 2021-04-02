@@ -148,10 +148,10 @@ class ExportXls(ExportBase):
                         )
 
                         if '{custom:' in warning_log:
-                            re_pattern = re.compile('.*{custom:(.*)},')
-                            custom_field_name = re.match(re_pattern, message.lower()).group(1)
+                            re_pattern = re.compile('.*{custom:(.*)}\|Campo')
+                            custom_field_name = re.match(re_pattern, message).group(1)
                             custom_field_value = raw_data_row.get(custom_field_name, "")
-                            warning_to_log = warning_to_log.replace("{custom:" + custom_field_name + "},",
+                            warning_to_log = warning_to_log.replace("{custom:" + custom_field_name + "}|",
                                                                     f"{custom_field_name.upper()}: {custom_field_value},")
 
                         self.logger.error(warning_to_log)
@@ -183,10 +183,10 @@ class ExportXls(ExportBase):
                                     .replace("{REF_YEAR}", str(self.ref_year or datetime.today().year))
 
                                 if '{custom:' in warning_log:
-                                    re_pattern = re.compile('.*{custom:(.*)},')
-                                    custom_field_name = re.match(re_pattern, message.lower()).group(1)
+                                    re_pattern = re.compile('.*{custom:(.*)}\|Campo')
+                                    custom_field_name = re.match(re_pattern, message).group(1)
                                     custom_field_value = raw_data_row.get(custom_field_name, "")
-                                    warning_to_log = warning_to_log.replace("{custom:" + custom_field_name + "},", f"{custom_field_name.upper()}: {custom_field_value},")
+                                    warning_to_log = warning_to_log.replace("{custom:" + custom_field_name + "}|", f"{custom_field_name.upper()}: {custom_field_value}|")
 
                                 self.logger.warning(warning_to_log)
 

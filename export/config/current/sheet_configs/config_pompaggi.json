@@ -272,7 +272,7 @@
                "field": "avg_idx_potenza",
                "cond": {
                        "operator": "=",
-                       "value": null,
+                       "value": "",
                        "result": "X",
                        "else": "{ avg_idx_potenza }"
                    }
