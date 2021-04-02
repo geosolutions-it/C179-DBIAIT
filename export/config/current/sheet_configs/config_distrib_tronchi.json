@@ -100,7 +100,7 @@
                     "field": "data_esercizio",
                     "cond": {
                         "operator": "=",
-                        "value": null,
+                        "value": "",
                         "result": 9999,
                         "else": "{data_esercizio}"
                     }

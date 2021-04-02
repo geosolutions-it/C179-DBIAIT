@@ -867,7 +867,7 @@
                  "field": "cod_opera_inpotab_not_exist",
                  "cond": {
                          "operator": "=",
-                         "value": null,
+                         "value": "",
                          "result": "0",
                          "else": "{ volume_medio_prel }"
                      }
