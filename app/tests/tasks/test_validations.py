@@ -788,21 +788,31 @@ class ValidationTestCase(SimpleTestCase):
                 ]
             }]
         }
-        self.field = {"2200": 100, "3500": 100}
-        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        field = {"2200": 100, "3500": 100}
+        actual = self.validate.from_name("IF", condition_schema).validate(field, 2020)
         self.assertTrue(actual)
 
-        self.field = {"2200": 101, "3500": 100}
-        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        field = {"2200": 99, "3500": 100}
+        actual = self.validate.from_name("IF", condition_schema).validate(field, 2020)
+        self.assertFalse(actual)
+
+        field = {"2200": None, "3500": 100}
+        actual = self.validate.from_name("IF", condition_schema).validate(field, 2020)
+        self.assertFalse(actual)
+
+    def test_fiumi_2200_2(self):
+        condition_schema = {
+                "field": "2200",
+                "cond": [{
+                    "and": [
+                        {"operator": ">=", "value": "{3500}"},
+                        {"operator": "!=", "value": None}
+                    ]
+                }]
+        }
+        field = {"2200": 3, "3500": 1.2}
+        actual = self.validate.from_name("IF", condition_schema).validate(field, 2020)
         self.assertTrue(actual)
-
-        self.field = {"2200": 99, "3500": 100}
-        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
-        self.assertFalse(actual)
-
-        self.field = {"2200": None, "3500": 100}
-        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
-        self.assertFalse(actual)
 
     def test_laghi_12600(self):
         condition_schema = {
