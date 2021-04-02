@@ -43,7 +43,7 @@ class ExportBase:
         )
         logger = logging.getLogger(__name__)
         hdlr = logging.FileHandler(logfile_path.absolute())
-        formatter = logging.Formatter("%(levelname)s, %(message)s")
+        formatter = logging.Formatter("%(levelname)s| %(message)s")
         hdlr.setFormatter(formatter)
         logger.addHandler(hdlr)
         logger.setLevel(logging.INFO)
