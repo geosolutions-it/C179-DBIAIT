@@ -666,12 +666,32 @@
               "func": "IF",
               "params": {
                   "field": "18100",
-                  "cond": [{
-                      "and": [
-                        {"lookup": "{18200}","operator": "!=", "value": 9800},
-                        {"operator": "!=", "value": 1}
-                      ]
-                  }]
+                  "cond": [
+                {
+                    "or": [
+                        {
+                            "lookup": "{18200}",
+                            "operator": "=",
+                            "value": 9800
+                        },
+                        {
+                            "operator": "=",
+                            "value": 1
+                        }
+                    ]
+                }, {
+                    "and": [
+                        {
+                            "lookup": "{18200}",
+                            "operator": "!=",
+                            "value": 9800
+                        },
+                        {
+                            "operator": "!=",
+                            "value": 1
+                        }
+                    ]
+                }]
               },
               "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Value 1 is not permitted"
           }
