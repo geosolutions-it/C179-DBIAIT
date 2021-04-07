@@ -54,9 +54,9 @@ class ExportXls(ExportBase):
         if self.ref_year is not None:
             seed_path = settings.EXPORT_XLS_SEED_FILE.substitute({"year": self.ref_year})
         excel_wb = openpyxl.load_workbook(seed_path)
-#
+
         for sheet in config:
-#
+
             # execute pre_process for the sheet
             pre_process = sheet.get("pre_process", None)
             try:
@@ -68,7 +68,7 @@ class ExportXls(ExportBase):
                     f"Skipping '{sheet['sheet']}' sheet generation."
                 )
                 continue
-#
+
             # set current sheet as active in the xls workbook
             try:
                 sheet_index = excel_wb.sheetnames.index(sheet["sheet"])
@@ -77,13 +77,13 @@ class ExportXls(ExportBase):
                     f"Seed file does not contain '{sheet['sheet']}' sheet. Skipping..."
                 )
                 continue
-#
+
             excel_wb.active = sheet_index
             excel_ws = excel_wb.active
-#
+
             # create sheet's column ID <-> column ID mapping (iterate over ID row: 3)
             coord_id_mapping = {}
-#
+
             for column_index in range(1, len(excel_ws[self.SEED_FILE_ID_ROW]) + 1):
                 column_letter = cell.get_column_letter(column_index)
                 coord_id_mapping.update(
@@ -93,21 +93,21 @@ class ExportXls(ExportBase):
                         ).strip(): column_letter
                     }
                 )
-#
+
             # get the index of the first empty excel row
             first_empty_row = 4
-#
+
             with connections[
                 translate_schema_to_db_alias(self.orm_task.schema)
             ].cursor() as cursor:
                 sql_sources = sheet["sql_sources"]
-#
+
                 if not sql_sources:
                     self.logger.warning(
                         f"Sources for '{sheet['sheet']}' is empty. Skipping..."
                     )
                     continue
-#
+
                 raw_data = []
                 for source in sql_sources:
                     try:
@@ -119,13 +119,13 @@ class ExportXls(ExportBase):
                             f"Source: '{source}'."
                         )
                         continue
-#
+
                     raw_data.extend(dictfetchall(cursor))
-#
+
             for raw_data_row in raw_data:
                 # prepare data to be inserted into excel
                 sheet_row = {}
-#
+
                 for column in sheet["columns"]:
                     message = "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Error: {E}" if not column['warning'] else column['warning']
                     try:
@@ -138,7 +138,7 @@ class ExportXls(ExportBase):
                         transformed_value = None
                     except Exception as e:
                         warning_log = message or "Foglio: {SHEET}, Riga:{ROW}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Transformation error"
-#
+
                         warning_to_log = (
                             warning_log.replace("{SHEET}", sheet["sheet"])
                             .replace("{ROW}", str(first_empty_row))
@@ -147,14 +147,14 @@ class ExportXls(ExportBase):
                             .replace("{E}", e.args[0].strip('\n'))
                             .replace("{REF_YEAR}", str(self.ref_year or datetime.today().year))
                         )
-#
+
                         if '{custom:' in warning_log:
                             re_pattern = re.compile('.*{custom:(.*)}\|Campo')
                             custom_field_name = re.match(re_pattern, message).group(1)
                             custom_field_value = raw_data_row.get(custom_field_name, "")
                             warning_to_log = warning_to_log.replace("{custom:" + custom_field_name + "}|",
                                                                     f"{custom_field_name.upper()}: {custom_field_value},")
-#
+
                         self.logger.error(warning_to_log)
                         #  self.logger.error(
                         #      f"Trasformazione: Error occurred during transformation of column with "
@@ -162,9 +162,9 @@ class ExportXls(ExportBase):
                         #      f"{type(e).__name__}: {e}.\n"
                         #  )
                         transformed_value = None
-#
+
                     sheet_row.update({column["id"]: transformed_value})
-#
+
                 for column in sheet["columns"]:
                     for validator in column.get("validators", []):
                         try:
@@ -174,23 +174,23 @@ class ExportXls(ExportBase):
                                 #     str(column["id"]), None
                                 # )
                                 # {custom:codice_ato} ->
-#
+
                                 warning_log = message or "Foglio: {SHEET}, Riga:{ROW}, Codice ato: {CODICE_ATO}, Codice_ato: {CODICE_ATO}, Campo: {FIELD}: Validation error"
-#
+
                                 warning_to_log = warning_log.replace("{SHEET}", sheet["sheet"])\
                                     .replace("{ROW}", str(first_empty_row))\
                                     .replace("{FIELD}", column.get("alias", column['id']))\
                                     .replace("{CODICE_ATO}", raw_data_row.get("codice_ato", "") or "")\
                                     .replace("{REF_YEAR}", str(self.ref_year or datetime.today().year))
-#
+
                                 if '{custom:' in warning_log:
                                     re_pattern = re.compile('.*{custom:(.*)}\|Campo')
                                     custom_field_name = re.match(re_pattern, message).group(1)
                                     custom_field_value = raw_data_row.get(custom_field_name, "")
                                     warning_to_log = warning_to_log.replace("{custom:" + custom_field_name + "}|", f"{custom_field_name.upper()}: {custom_field_value}|")
-#
+
                                 self.logger.warning(warning_to_log)
-#
+
                         except Exception as e:
                             self.logger.error(
                                 f"Validation: Error occurred during validation of column with "
@@ -205,7 +205,7 @@ class ExportXls(ExportBase):
                             f"No column with ID '{column_id}' found in '{sheet['sheet']}' sheet."
                         )
                         continue
-#
+
                     try:
                         excel_ws[f"{column_letter}{first_empty_row}"] = value
                     except Exception as e:
@@ -214,9 +214,9 @@ class ExportXls(ExportBase):
                             f"ID '{column_id}' in row '{first_empty_row}' in sheet '{sheet['sheet']}': "
                             f"{type(e).__name__}: {e.args[0]}.".strip("\n")
                         )
-#
+
                 first_empty_row += 1
-#
+
             # update task status
             step += 1
             self.update_progress(step, total_sheet_number)
