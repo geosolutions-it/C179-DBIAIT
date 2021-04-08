@@ -39,6 +39,7 @@ class FreezeDefinition(BaseFreezeDefinition):
             self._create_year_folder(year)
             self._handle_sheet_files(year)
             self._handle_shp_files(year)
+            self._handle_validation_files(year)
             return True
 
     @staticmethod
