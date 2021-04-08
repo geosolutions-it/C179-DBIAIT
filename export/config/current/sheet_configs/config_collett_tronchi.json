@@ -66,7 +66,7 @@
      "columns": [
         {"id": "69800", "transformation": {"func": "DIRECT", "params": { "field": "idgis" }}},
         {"id": "120000", "transformation": {"func": "DIRECT", "params": { "field": "id_refluo_trasportato" }}},
-        {"id": "69600", "transformation": {"func": "DIRECT", "params": { "field": "fgn_codice_ato" }}},
+        {"id": "69600", "transformation": {"func": "DIRECT", "params": { "field": "codice_ato" }}},
 
         {"id": "69900", "transformation": {"func": "DIRECT", "params": { "field": "id_materiale" }},"validations": [{
                     "func": "IF",
@@ -151,23 +151,6 @@
                         "else": 0
                     }
                 }
-            },"validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "102000",
-                        "cond": [{
-                            "and": [
-                              {"lookup": "{68600}", "operator": "=", "value": 1},
-                              {"operator":  "=", "value": 0}
-                            ]
-                        },{
-                          "and": [
-                              {"lookup": "{68600}", "operator": "!=", "value": 1}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se a parità di codice ATO il campo ID 68600 = 1, allora il campo assume valore 0"
-                }
-            ]}
+            }}
      ]
 }
