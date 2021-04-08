@@ -15,6 +15,7 @@ from app.scheduler.tasks.export_definitions.municipalities_parser import Municip
 from app.scheduler.tasks.export_definitions.config_scraper import XlsExportConfig
 
 from .export_base import ExportBase
+from .post_validation import PostValidation
 
 
 class ExportXls(ExportBase):
@@ -220,7 +221,8 @@ class ExportXls(ExportBase):
             step += 1
             self.update_progress(step, total_sheet_number)
 
-        # update the information in the sheet "DATI" before save it
+        #  update the information in the sheet "DATI" before save it
+        # Validation between sheets
 
         excel_wb["DATI"]["B5"] = today.date()
         excel_wb["DATI"]["B8"] = self.ref_year or datetime.utcnow().year
@@ -228,4 +230,12 @@ class ExportXls(ExportBase):
         # save updated *.xlsx seed file in the target location
         excel_wb.save(target_xls_file)
 
+        import json
+        configs = []
+        with open(f'{settings.EXPORT_CONF_DIR}/current/sheet_validation.json') as file:
+            configs = json.load(file)
+        for val in configs:
+            getattr(PostValidation, val['function'])(val, excel_wb, self.logger)
+
         self.set_max_progress()
+

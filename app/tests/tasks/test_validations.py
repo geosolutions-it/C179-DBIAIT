@@ -934,6 +934,53 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
         self.assertTrue(actual)
 
+    def test_potabilizzatori_9999(self):
+        condition_schema = {
+                        "field": "3500",
+                        "cond": [{
+                            "and": [
+                              {"operator": "<=", "value": "{2200}"}
+                            ]
+                        }]
+                    }
+
+        self.field = {'3500': 0.8803589548452562, '2200': 3.0}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, None)
+        self.assertTrue(actual)
+
+    def test_fiumi_FI00050(self):
+        condition_schema = {
+                        "field": "3500",
+                        "cond": [{
+                            "and": [
+                              {"operator": "<=", "value": "{2200}"}
+                            ]
+                        }]
+                    }
+
+        self.field = {'3500': 0.8803589548452562, '2200': 3.0}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, None)
+        self.assertTrue(actual)
+
+        self.field = {'3500': 2.0, '2200': 0.0}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, None)
+        self.assertFalse(actual)
+
+
+    def test_fiumi_FI00050_none(self):
+        condition_schema = {
+                        "field": "3500",
+                        "cond": [{
+                            "and": [
+                              {"operator": "<=", "value": "{2200}"}
+                            ]
+                        }]
+                    }
+
+        self.field = {'3500': 0.8803589548452562, '2200': None}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, None)
+        self.assertTrue(actual)
+
 
 if __name__ == "__main__":
     unittest.main()

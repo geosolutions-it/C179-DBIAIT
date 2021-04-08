@@ -110,6 +110,7 @@ class IfValidation(BaseValidation):
 
     def _validate_list(self, conditions, row, ref_year):
         for cond in conditions:
+            cond_value = cond['value']
             field_value = row.get(self.args["field"], None)
             if "lookup" in cond:
                 lookup_field = re.match(self.re_pattern, cond['lookup'])
@@ -117,28 +118,28 @@ class IfValidation(BaseValidation):
                 if lookup_field is not None:
                     field_value = row.get(lookup_field.group(1), None)
 
-            if cond['value'] == "{REF_YEAR}":
-                cond['value'] = ref_year or datetime.utcnow().year
+            if cond_value == "{REF_YEAR}":
+                cond_value = ref_year or datetime.utcnow().year
 
-            if isinstance(cond["value"], str) and "{" in cond['value']:
-                lookup_value = re.match(self.re_pattern, cond['value'])
+            if isinstance(cond_value, str) and "{" in cond_value:
+                lookup_value = re.match(self.re_pattern, cond_value)
 
                 if lookup_value is not None:
                     value = row.get(lookup_value.group(1), None)
 
-                cond["value"] = self.cast_field(value)
+                cond_value = self.cast_field(value)
 
             field_value = self.cast_field(field_value)
 
-            if field_value is None:
+            if field_value is None or cond_value is None:
                 return False
 
             operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
             member_1 = field_value
-            member_2 = cond["value"]
+            member_2 = cond_value
             if isinstance(field_value, str) and isinstance(field_value, str):
                 member_1 = field_value.upper().strip()
-                member_2 = cond["value"].upper().strip() if cond["value"] else cond["value"]
+                member_2 = cond_value.upper().strip() if cond_value else cond_value
 
             yield operator(member_1, member_2)
 
