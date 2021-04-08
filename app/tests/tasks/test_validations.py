@@ -979,7 +979,7 @@ class ValidationTestCase(SimpleTestCase):
 
         self.field = {'3500': 0.8803589548452562, '2200': None}
         actual = self.validate.from_name("IF", condition_schema).validate(self.field, None)
-        self.assertTrue(actual)
+        self.assertFalse(actual)
 
     def test_potabilizzatori_35600_cond_1_ok(self):
         condition_schema = {
