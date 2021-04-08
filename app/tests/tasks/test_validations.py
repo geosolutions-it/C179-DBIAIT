@@ -934,6 +934,60 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
         self.assertTrue(actual)
 
+    def test_potabilizzatori_35600_cond_1_ok(self):
+        condition_schema = {
+            "field": "35600",
+            "cond": [{
+                  "and": [
+                    {"lookup": "{31800}", "operator": "=", "value": 9999},
+                    {"operator": "=", "value": "X"}
+                  ]
+              }, {
+                  "and": [
+                    {"lookup": "{31800}", "operator": "!=", "value": 9999}
+                  ]
+              }]
+        }
+        self.field = {"35600": "X", "31800": 9999}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+    def test_potabilizzatori_35600_cond_1_ok_not_9999(self):
+        condition_schema = {
+            "field": "35600",
+            "cond": [{
+                  "and": [
+                    {"lookup": "{31800}", "operator": "=", "value": 9999},
+                    {"operator": "=", "value": "X"}
+                  ]
+              }, {
+                  "and": [
+                    {"lookup": "{31800}", "operator": "!=", "value": 9999}
+                  ]
+              }]
+        }
+        self.field = {"35600": "X", "31800": 2020}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertTrue(actual)
+
+    def test_potabilizzatori_35600_cond_1_ko(self):
+        condition_schema = {
+            "field": "35600",
+            "cond": [{
+                  "and": [
+                    {"lookup": "{31800}", "operator": "=", "value": 9999},
+                    {"operator": "=", "value": "Y"}
+                  ]
+              }, {
+                  "and": [
+                    {"lookup": "{31800}", "operator": "!=", "value": 9999}
+                  ]
+              }]
+        }
+        self.field = {"35600": "X", "31800": 9999}
+        actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
+        self.assertFalse(actual)
+
 
 if __name__ == "__main__":
     unittest.main()

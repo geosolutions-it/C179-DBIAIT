@@ -10,6 +10,7 @@ st_round_y = CustomFunction("ST_ROUND_Y", ["v_geom"])
 
 st_transform_4326 = CustomFunction("ST_TRANSFORM_4326", ["v_geom"])
 to_bit = CustomFunction("TO_BIT", ["v_value"])
+to_year = CustomFunction("TO_YEAR", ["v_value"])
 from_float_to_int = CustomFunction("FROM_FLOAT_TO_INT", ["v_value"])
 
 SQL_FUNCTION_MAPPING = {
@@ -20,6 +21,7 @@ SQL_FUNCTION_MAPPING = {
     "ST_ROUND_Y": st_round_y,
     "ST_TRANSFORM_4326": st_transform_4326,
     "TO_BIT": to_bit,
+    "TO_YEAR": to_year,
     "FROM_FLOAT_TO_INT": from_float_to_int
 }
 

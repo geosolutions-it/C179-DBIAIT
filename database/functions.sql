@@ -56,7 +56,35 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
-    --------------------------------------------------------------------
+--------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.to_year(
+	v_date TIMESTAMP,
+	v_default INTEGER DEFAULT 9999
+) RETURNS INTEGER AS $$
+BEGIN
+    RETURN coalesce(extract(year from v_date),v_default)::INTEGER;
+EXCEPTION WHEN OTHERS THEN
+	RETURN v_default;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.to_year(
+	v_date TIMESTAMP WITH TIME ZONE,
+	v_default INTEGER DEFAULT 9999
+) RETURNS INTEGER AS $$
+BEGIN
+    RETURN coalesce(extract(year from v_date),v_default)::INTEGER;
+EXCEPTION WHEN OTHERS THEN
+	RETURN v_default;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
 -- Convert a float in integer
 -- Example:
 --  select dbiait_analysis.from_float_to_int(9.4) -> 9
@@ -884,7 +912,7 @@ BEGIN
 	)
 	SELECT 
 		idgis_rete, codice_ato, 'DISTRIBUZIONE', sum(lunghezza) lung, 
-		sum(case when id_tipo_telecon=1 then lunghezza else 0 end) lung_tlc 
+		sum(case when id_tipo_telecon=2 then lunghezza else 0 end) lung_tlc
 	FROM distrib_tronchi
 	GROUP BY codice_ato, idgis_rete;
 
@@ -897,7 +925,7 @@ BEGIN
 	)
 	SELECT 
 		idgis_rete, codice_ato, 'ADDUZIONE', sum(lunghezza) lung, 
-		sum(case when id_tipo_telecon=1 then lunghezza else 0 end) lung_tlc 
+		sum(case when id_tipo_telecon=2 then lunghezza else 0 end) lung_tlc
 	FROM addut_tronchi
 	GROUP BY codice_ato, idgis_rete;
 	
@@ -986,7 +1014,10 @@ BEGIN
 				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
 			END idx_anno, 
-			a.d_tipo_rilievo as idx_lunghezza,
+			CASE
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				ELSE ''B''
+			END idx_lunghezza,
 			a.d_tipo_acqua as id_refluo_trasportato,
 			0::BIT,
 			0::BIT
@@ -1017,15 +1048,7 @@ BEGIN
 		FROM ALL_DOMAINS d
 		WHERE d.valore_gis = COALESCE(' || v_table || '.id_conservazione,''SCO'') AND d.dominio_gis = ''D_STATO_CONS'';
 	';
-	
-	-- valorizzazione idx_lunghezza
-	EXECUTE '
-		UPDATE ' || v_table || '
-		SET idx_lunghezza = d.valore_netsic
-		FROM ALL_DOMAINS d
-		WHERE d.valore_gis = COALESCE(' || v_table || '.idx_lunghezza,''SCO'') AND d.dominio_gis = ''D_T_RILIEVO'';
-	';
-	
+
 	-- valorizzazione id_refluo_trasportato
 	EXECUTE '
 		UPDATE ' || v_table || '

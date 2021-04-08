@@ -300,7 +300,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Dovrebbe essere >= al valore del campo ID 3500 (non puo' essere vuoto)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Dovrebbe essere >= al valore del campo ID 3500 (e non puo' essere vuoto)"
                 }
             ]},
         {"id": "2700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr"}},"validations": [{

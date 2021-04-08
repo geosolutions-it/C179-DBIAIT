@@ -213,7 +213,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 101300 = 1, allora il campo assume valore 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: lunghezza_dep|se il campo ID 101300 = 1, allora il campo assume valore 0"
                 }
             ]
         },
@@ -248,7 +248,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 60200 > 0, allora il campo assume valore 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: Scarico superficiale|se il campo ID 60200 > 0, allora il campo assume valore 0"
                 }
             ]
         },

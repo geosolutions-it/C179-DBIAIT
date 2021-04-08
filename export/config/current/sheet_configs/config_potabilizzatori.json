@@ -418,7 +418,7 @@
                               ]
                           }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Affid. Anno costruzione non coerente con Anno di costruzione"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 31800 = 9999, allora il campo deve assumere valore X"
                 },{
                     "func": "IF",
                     "params": {
@@ -427,15 +427,16 @@
                             "and": [
                               {"lookup": "{31800}","operator": ">=", "value": 2002},
                               {"lookup": "{31800}","operator": "!=", "value": 9999},
-                              {"operator": "=", "value": "a"}
+                              {"operator": "=", "value": "A"}
                             ]
                         },{
-                            "and": [
-                              {"lookup": "{31800}","operator": "<", "value": 2002}
+                            "or": [
+                              {"lookup": "{31800}","operator": "<", "value": 2002},
+                              {"lookup": "{31800}","operator": "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Affid. Anno costruzione non coerente con Anno di costruzione"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 31800 >= 2002 e != 9999, allora il campo deve assumere valore A"
                 }
             ]},
       {"id":"35710", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA"}}, "validations": [{

@@ -21,7 +21,7 @@
                 { "name": "distrib_tronchi.note", "alias": "note"},
                 { "name": "distrib_tronchi.geom", "alias": "geom"},
                 { "name": "acq_condotta.codice_ato", "alias": "condotta_codice_ato"},
-                { "name": "acq_condotta.data_esercizio", "alias": "data_esercizio"}
+                { "name": "acq_condotta.data_esercizio", "alias": "data_esercizio","function": "TO_YEAR"}
             ],
             "table": {
                 "name": "distrib_tronchi"
@@ -94,18 +94,7 @@
                 }
             ]},
 
-        {"id": "56900", "transformation": {
-                "func": "IF",
-                "params": {
-                    "field": "data_esercizio",
-                    "cond": {
-                        "operator": "=",
-                        "value": "",
-                        "result": 9999,
-                        "else": "{data_esercizio}"
-                    }
-                }
-            }, "validations": [{
+        {"id": "56900", "transformation": { "func": "DIRECT", "params": {"field": "data_esercizio"} }, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "56900",
