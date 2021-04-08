@@ -57,24 +57,7 @@
       {"id": "62000","transformation": { "func": "DIRECT", "params": { "field": "lunghezza"}}},
       {"id": "62400","transformation": { "func": "DIRECT", "params": { "field": "idx_lunghezza"}}},
       {"id": "101700","transformation": { "func": "DIRECT", "params": { "field": "funziona_gravita"}}},
-      {"id": "101800","transformation": { "func": "DIRECT", "params": { "field": "depurazione"}}, "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "101800",
-                        "cond": [{
-                            "and": [
-                              {"lookup": "{101300}","operator": "=", "value": 1},
-                              {"operator":  "=", "value": 0}
-                            ]
-                        },{
-                          "and": [
-                            {"lookup": "{101300}","operator": "!=", "value": 1}
-                          ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 101300 = 1, allora il campo assume valore 0"
-                }
-            ]},
+      {"id": "101800","transformation": { "func": "DIRECT", "params": { "field": "depurazione"}}},
       {"id": "61700","transformation": { "func": "DIRECT", "params": { "field": "diametro"}}, "validations": [{
                     "func": "IF",
                     "params": {
