@@ -999,8 +999,6 @@ class ValidationTestCase(SimpleTestCase):
         actual = self.validate.from_name("IF", condition_schema).validate(self.field, 2020)
         self.assertTrue(actual)
 
-
-
     def test_potabilizzatori_35600_cond_1_ok_not_9999(self):
         condition_schema = {
             "field": "35600",
