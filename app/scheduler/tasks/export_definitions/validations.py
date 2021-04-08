@@ -131,7 +131,7 @@ class IfValidation(BaseValidation):
 
             field_value = self.cast_field(field_value)
 
-            if field_value is None or cond_value is None:
+            if field_value is None:
                 return False
 
             operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
@@ -140,8 +140,10 @@ class IfValidation(BaseValidation):
             if isinstance(field_value, str) and isinstance(field_value, str):
                 member_1 = field_value.upper().strip()
                 member_2 = cond_value.upper().strip() if cond_value else cond_value
-
-            yield operator(member_1, member_2)
+            try:
+                yield operator(member_1, member_2)
+            except Exception:
+                return False
 
     def cast_field(self, field_value):
         if not isinstance(field_value, int) and field_value is not None and not isinstance(field_value, float):
