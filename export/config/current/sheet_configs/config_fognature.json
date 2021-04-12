@@ -227,7 +227,7 @@
                 "params": {
                     "field": "lunghezza_dep",
                     "cond": {
-                        "operator": "=",
+                        "operator": ">",
                         "value": 0,
                         "result": 1,
                         "else": 0

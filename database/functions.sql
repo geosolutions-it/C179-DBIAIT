@@ -779,7 +779,10 @@ BEGIN
 				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
 			END idx_anno, 
-			a.d_tipo_rilievo,
+			CASE
+				WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_lunghezza,
 			' || v_column || '
 		FROM 
 			ACQ_CONDOTTA a,  
