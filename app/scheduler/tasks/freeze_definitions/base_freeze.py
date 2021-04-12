@@ -75,6 +75,11 @@ class BaseFreezeDefinition:
         input_dir = f"{settings.EXPORT_CONF_DIR}/current/shapefile_configs/"
         return self._add_year_to_table_name(output_path, input_dir, ref_year)
 
+    def _handle_validation_files(self, ref_year):
+        output_dir = f"{settings.EXPORT_FOLDER}/config/{ref_year}/"
+        input_file = f"{settings.EXPORT_CONF_DIR}/current/sheet_validation.json"
+        return copy(input_file, output_dir)
+
     @staticmethod
     def _add_year_to_table_name(output_dir, input_dir, ref_year):
         if not os.path.exists(output_dir):

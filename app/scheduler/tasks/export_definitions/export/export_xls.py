@@ -232,7 +232,8 @@ class ExportXls(ExportBase):
 
         import json
         configs = []
-        with open(f'{settings.EXPORT_CONF_DIR}/current/sheet_validation.json') as file:
+        year = self.ref_year if self.ref_year else 'current'
+        with open(f'{settings.EXPORT_CONF_DIR}/{year}/sheet_validation.json') as file:
             configs = json.load(file)
         for val in configs:
             getattr(PostValidation, val['function'])(val, excel_wb, self.logger)
