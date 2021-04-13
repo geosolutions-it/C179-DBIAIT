@@ -115,31 +115,7 @@
 
         {"id": "57000", "transformation": {"func": "DIRECT", "params": { "field": "lunghezza" }}},
 
-       {"id": "57400", "transformation": {
-                "func": "CASE",
-                "params": {
-                    "field": "idx_lunghezza",
-                    "cond": [
-                        {
-                            "case": "WHEN",
-                            "operator": "=",
-                            "value": "ASB",
-                            "result": "A"
-                        },
-                        {
-                            "case": "WHEN",
-                            "operator": "=",
-                            "value": "DIN",
-                            "result": "A"
-                        },
-                        {
-                            "case": "ELSE",
-                            "result": "B"
-                        }
-                    ]
-                }
-            }
-        },
+        {"id": "57400", "transformation": {"func": "DIRECT", "params": { "field": "idx_lunghezza" }}},
         {"id": "101000", "transformation": {"func": "DIRECT", "params": { "field": "pressione" }}}
      ]
 }
