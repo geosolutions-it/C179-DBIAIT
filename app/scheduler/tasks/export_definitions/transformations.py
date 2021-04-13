@@ -41,6 +41,16 @@ class BaseTransformation:
         """
         raise NotImplementedError
 
+    def cast_field(self, field_value):
+        if not isinstance(field_value, int) and field_value is not None and not isinstance(field_value, float):
+            try:
+                if field_value == '':
+                    return field_value
+                field_value = ast.literal_eval(field_value)
+            except Exception as e:
+                pass
+        return field_value
+
 
 class ConstTransformation(BaseTransformation):
 
@@ -71,7 +81,6 @@ class DomainTransformation(BaseTransformation):
     schema = schema.Schema({"field": str, "domain_name": str})
 
     def apply(self, row: Dict, domains: Domains, municipalities: Municipalities, **kwargs):
-        x = 5
         field_value = row.get(self.args["field"], None)
         return domains.translate(self.args["domain_name"], field_value)
 
@@ -163,8 +172,24 @@ class CaseTransformation(BaseTransformation):
             if l_cond == "when":
                 operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
                 if operator is not None:
-                    if operator(field_value, cond["value"]):
-                        return cond["result"]
+                    field_value = self.cast_field(field_value)
+                    cond_value = self.cast_field(cond["value"])
+                    if field_value is None and cond_value is None:
+                        if cond["operator"] == "=":
+                            return cond["result"]
+                        else:
+                            continue
+
+                    if field_value is None and cond_value is not None:
+                        continue
+
+                    if field_value is not None and cond_value is None:
+                        continue
+                    try:
+                        if operator(field_value, cond_value):
+                            return cond["result"]
+                    except Exception as e:
+                        continue
 
             elif l_cond == "else":
                 return cond["result"]
@@ -194,7 +219,6 @@ class IfTransformation(BaseTransformation):
 
     def apply(self, row: Dict, **kwargs):
         field_value = row.get(self.args["field"], None)
-        field_value = "" if not field_value else field_value
         cond = self.args["cond"]
         operator = COMPARISON_OPERATORS_MAPPING.get(cond["operator"], None)
 
@@ -217,7 +241,24 @@ class IfTransformation(BaseTransformation):
                 else:
                     else_val = row.get(else_alias.group(1), None)
 
-        return result_val if operator(field_value, cond["value"]) else else_val
+        field_value = self.cast_field(field_value)
+        cond_value = self.cast_field(cond["value"])
+        if field_value is None and cond_value is None:
+            if cond["operator"] == "=":
+                return result_val
+            else:
+                return else_val
+
+        if field_value is None and cond_value is not None:
+            return else_val
+
+        if field_value is not None and cond_value is None:
+            return else_val
+
+        try:
+            return result_val if operator(field_value, cond_value) else else_val
+        except Exception as e:
+            return else_val
 
 
 class TransformationFactory:

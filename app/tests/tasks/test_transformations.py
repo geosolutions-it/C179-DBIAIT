@@ -42,7 +42,7 @@ class TransformationTestCase(SimpleTestCase):
                 }
         }
         actual = self.sut.from_name('DOMAIN', {"field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ"})\
-            .apply(row={"d_tipo_cloraz": "CLO"}, domains=mocked_domains)
+            .apply(row={"d_tipo_cloraz": "CLO"}, domains=mocked_domains, municipalities=None)
         self.assertEqual(2, actual)
 
     def test_given_transformation_name_LSTRIP_should_return_the_expected_output(self):
@@ -67,6 +67,34 @@ class TransformationTestCase(SimpleTestCase):
             }
         }
         actual = self.sut.from_name('IF', if_condition).apply(row={"foo": 1})
+        self.assertEqual(2, actual)
+
+    def test_given_transformation_name_IF_gt_should_return_the_expected_output_1(self):
+        if_condition = {
+            "field": "foo",
+            "cond": {
+                "operator": ">",
+                "value": 0,
+                "result": 2,
+                "else": 1
+            }
+        }
+        actual = self.sut.from_name('IF', if_condition).apply(row={"foo": None})
+        self.assertEqual(1, actual)
+        actual = self.sut.from_name('IF', if_condition).apply(row={"foo": 0})
+        self.assertEqual(1, actual)
+
+    def test_given_transformation_name_IF_gt_should_return_the_expected_output_0(self):
+        if_condition = {
+            "field": "foo",
+            "cond": {
+                "operator": ">",
+                "value": 0,
+                "result": 2,
+                "else": 1
+            }
+        }
+        actual = self.sut.from_name('IF', if_condition).apply(row={"foo": 100})
         self.assertEqual(2, actual)
 
     def test_given_transformation_name_ROUND_should_return_the_expected_output(self):
@@ -98,6 +126,45 @@ class TransformationTestCase(SimpleTestCase):
         actual = self.sut.from_name('IF', if_condition).apply(row={"foo": 0})
         self.assertEqual(1, actual)
 
+    def test_given_transformation_name_IF_ne_should_return_the_expected_output_2(self):
+        if_condition = {
+            "field": "foo",
+            "cond": {
+                "operator": "!=",
+                "value": "0",
+                "result": 2,
+                "else": 1
+            }
+        }
+        actual = self.sut.from_name('IF', if_condition).apply(row={"foo": 0})
+        self.assertEqual(1, actual)
+
+    def test_given_transformation_name_IF_ne_should_return_the_expected_output_3(self):
+        if_condition = {
+            "field": "foo",
+            "cond": {
+                "operator": "!=",
+                "value": 0,
+                "result": 2,
+                "else": 1
+            }
+        }
+        actual = self.sut.from_name('IF', if_condition).apply(row={"foo": "0"})
+        self.assertEqual(1, actual)
+
+    def test_given_transformation_name_IF_ne_should_return_the_expected_output_4(self):
+        if_condition = {
+            "field": "foo",
+            "cond": {
+                "operator": "!=",
+                "value": "0",
+                "result": 2,
+                "else": 1
+            }
+        }
+        actual = self.sut.from_name('IF', if_condition).apply(row={"foo": "0"})
+        self.assertEqual(1, actual)
+
     def test_given_transformation_name_CASE_should_return_the_expected_output(self):
         case_option = {"field": "bar_field", "cond": [
              {"case": "WHEN", "operator": "=", "value": "1", "result": "X"},
@@ -110,6 +177,91 @@ class TransformationTestCase(SimpleTestCase):
         actual = self.sut.from_name('CASE', case_option).apply({"bar_field": "2"})
         self.assertEqual("A", actual)
 
+    def test_given_transformation_name_CASE_fognature_101300(self):
+        case_option = {"field": "lunghezza_dep",
+            "cond": [
+                 {"case": "WHEN", "operator": ">", "value": 0, "result": 0},
+                 {"case": "WHEN", "operator": "=", "value": 0, "result": 1},
+                 {"case": "ELSE", "result": None}
+            ]
+        }
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": 100})
+        self.assertEqual(0, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": 0})
+        self.assertEqual(1, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": None})
+        self.assertIsNone(actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": -100})
+        self.assertIsNone(actual)
+
+    def test_given_transformation_name_CASE_fognature_101300_with_string_values_1(self):
+        case_option = {"field": "lunghezza_dep",
+                       "cond": [
+                           {"case": "WHEN", "operator": ">", "value": 0, "result": 0},
+                           {"case": "WHEN", "operator": "=", "value": 0, "result": 1},
+                           {"case": "ELSE", "result": None}
+                       ]
+                       }
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": "100"})
+        self.assertEqual(0, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": "0"})
+        self.assertEqual(1, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": ""})
+        self.assertIsNone(actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": "-100"})
+        self.assertIsNone(actual)
+
+    def test_given_transformation_name_CASE_fognature_101300_with_string_values_2(self):
+        case_option = {"field": "lunghezza_dep",
+                       "cond": [
+                           {"case": "WHEN", "operator": ">", "value": "0", "result": 0},
+                           {"case": "WHEN", "operator": "=", "value": "0", "result": 1},
+                           {"case": "ELSE", "result": None}
+                       ]
+                       }
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": 100})
+        self.assertEqual(0, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": 0})
+        self.assertEqual(1, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": None})
+        self.assertIsNone(actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": -100})
+        self.assertIsNone(actual)
+
+    def test_given_transformation_name_CASE_fognature_101300_with_string_values_3(self):
+        case_option = {"field": "lunghezza_dep",
+                       "cond": [
+                           {"case": "WHEN", "operator": ">", "value": "0", "result": 0},
+                           {"case": "WHEN", "operator": "=", "value": "0", "result": 1},
+                           {"case": "ELSE", "result": None}
+                       ]
+                       }
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": "100"})
+        self.assertEqual(0, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": "0"})
+        self.assertEqual(1, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": ""})
+        self.assertIsNone(actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"lunghezza_dep": "-100"})
+        self.assertIsNone(actual)
+
+    def test_given_transformation_name_CASE_comparing_strings(self):
+        case_option = {"field": "foo",
+            "cond": [
+                 {"case": "WHEN", "operator": "=", "value": "AAA", "result": 0},
+                 {"case": "WHEN", "operator": "=", "value": "BBB", "result": 1},
+                 {"case": "ELSE", "result": 2}
+            ]
+        }
+        actual = self.sut.from_name('CASE', case_option).apply({"foo": "AAA"})
+        self.assertEqual(0, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"foo": "BBB"})
+        self.assertEqual(1, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"foo": "CCC"})
+        self.assertEqual(2, actual)
+        actual = self.sut.from_name('CASE', case_option).apply({"foo": None})
+        self.assertEqual(2, actual)
+
     def test_given_invalid_transformation_should_raise_ExportConfigError(self):
         with self.assertRaises(ExportConfigError):
             self.sut.from_name('NOT_EXISTING_CONFIG', {}).apply()
@@ -120,12 +272,12 @@ class TransformationTestCase(SimpleTestCase):
             "cond": {
                 "operator": "=",
                 "value": "",
-                "result": "9999",
+                "result": 9999,
                 "else": "{anno}"
             }
         }
         actual = self.sut.from_name('IF', if_condition).apply(row={"anno": None})
-        self.assertEqual(9999, actual)
+        self.assertIsNone(actual)
 
 
 class TransformationSchemaErrors(SimpleTestCase):

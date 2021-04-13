@@ -223,15 +223,14 @@
         {"id": "60100","transformation": { "func": "DIRECT", "params": { "field": "episodi_allag"}}},
 
         {"id": "101300", "transformation": {
-                "func": "IF",
+                "func": "CASE",
                 "params": {
                     "field": "lunghezza_dep",
-                    "cond": {
-                        "operator": ">",
-                        "value": 0,
-                        "result": 1,
-                        "else": 0
-                    }
+                    "cond": [
+                         {"case": "WHEN", "operator": ">", "value": 0, "result": 0},
+                         {"case": "WHEN", "operator": "=", "value": 0, "result": 1},
+                         {"case": "ELSE", "result": null}
+                    ]
                 }
             }, "validations": [{
                     "func": "IF",
@@ -244,7 +243,13 @@
                             ]
                         },{
                             "and": [
-                                {"lookup": "{60200}","operator": "<=", "value": 0}
+                                {"lookup": "{60200}","operator": "=", "value": 0},
+                                {"operator":  "=", "value": 1}
+                            ]
+                        },{
+                            "or": [
+                                {"lookup": "{60200}","operator": "<", "value": 0},
+                                {"lookup": "{60200}","operator": "=", "value": null}
                             ]
                         }]
                     },
