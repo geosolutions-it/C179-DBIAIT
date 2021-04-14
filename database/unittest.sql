@@ -690,7 +690,7 @@ BEGIN
         "DISTRIB_LOC_SERV":     			1430,
         "POP_RES_COMUNE":       			54,
         "DISTRIB_COM_SERV":     			451,
-        "UTENZA_SERVIZIO":      			401650,
+        "UTENZA_SERVIZIO":      			425971,
         "UTENZA_SERVIZIO_LOC":  			425970,
         "UTENZA_SERVIZIO_ACQ":  			425916,
         "UTENZA_SERVIZIO_FGN":  			380435,
