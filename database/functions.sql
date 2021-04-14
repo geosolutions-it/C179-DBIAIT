@@ -486,16 +486,24 @@ BEGIN
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
-			AND ((t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE in (''DE00213'',''DE00214''))
+			AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE = ''PUBLIACQUA''
 		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null';
 
 	-- initialize table UTENZA_SERVIZIO.id_ubic_contatore with data from ACQ_UBIC_CONTATORE.idgis
+	--EXECUTE '
+	--INSERT INTO utenza_servizio(impianto, id_ubic_contatore)
+	--SELECT DISTINCT u.id_impianto, u.idgis
+	--FROM ACQ_UBIC_CONTATORE u, ACQ_CONTATORE c
+	--WHERE u.id_impianto is not NULL
+	--AND c.D_STATO=''ATT'' AND u.idgis=c.id_ubic_contatore';
+
 	EXECUTE '
 	INSERT INTO utenza_servizio(impianto, id_ubic_contatore)
-	SELECT DISTINCT u.id_impianto, u.idgis 
-	FROM ACQ_UBIC_CONTATORE u, ACQ_CONTATORE c 
-	WHERE u.id_impianto is not NULL AND c.D_STATO=''ATT'' AND u.idgis=c.id_ubic_contatore';
+	SELECT DISTINCT u.id_impianto, u.idgis
+	FROM ACQ_UBIC_CONTATORE u
+	WHERE u.id_impianto is not NULL';
+
 	-- update field ids_codice_orig_acq
 	EXECUTE '
 		UPDATE utenza_servizio 
@@ -647,7 +655,7 @@ BEGIN
 	FROM (
 		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_fgn_ero) as volume
 		FROM utenza_servizio srv, utenza_sap sap
-		WHERE srv.impianto = sap.impianto and sap.cattariffa in ('APB_REFIND', 'APBLREFIND')
+		WHERE srv.id_ubic_contatore = sap.id_ubic_contatore and sap.cattariffa in ('APB_REFIND', 'APBLREFIND')
 		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
 	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='SCA';
 	-- (DEP)
@@ -656,7 +664,7 @@ BEGIN
 	FROM (
 		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_dep_ero) as volume
 		FROM utenza_servizio srv, utenza_sap sap
-		WHERE srv.impianto = sap.impianto and sap.cattariffa in ('APB_REFIND', 'APBLREFIND')
+		WHERE srv.id_ubic_contatore = sap.id_ubic_contatore and sap.cattariffa in ('APB_REFIND', 'APBLREFIND')
 		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
 	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='DEP';
 	---------------------------------------------------------
@@ -667,7 +675,7 @@ BEGIN
 	FROM (
 		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_fgn_ero) as volume
 		FROM utenza_servizio srv, utenza_sap sap
-		WHERE srv.impianto = sap.impianto and sap.cattariffa NOT IN ('APB_REFIND', 'APBLREFIND')
+		WHERE srv.id_ubic_contatore = sap.id_ubic_contatore and sap.cattariffa NOT IN ('APB_REFIND', 'APBLREFIND')
 		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
 	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='SCA';
 	-- (DEP)
@@ -676,7 +684,7 @@ BEGIN
 	FROM (
 		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_dep_ero) as volume
 		FROM utenza_servizio srv, utenza_sap sap
-		WHERE srv.impianto = sap.impianto and sap.cattariffa NOT IN ('APB_REFIND', 'APBLREFIND')
+		WHERE srv.id_ubic_contatore = sap.id_ubic_contatore and sap.cattariffa NOT IN ('APB_REFIND', 'APBLREFIND')
 		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
 	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='DEP';
 	
@@ -793,9 +801,6 @@ BEGIN
 			= ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
 			AND a.id_rete=r.idgis;
 		';
-
-		-- (TIPO_RILIEVO = ASB or TIPO_RILIEVO  DIN) allora l'indice assume valore A, altrimenti B
-
 
 	--D_MATERIALE convertito in D_MATERIALE_IDR
 	EXECUTE '
