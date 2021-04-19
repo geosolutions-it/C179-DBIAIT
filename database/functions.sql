@@ -1547,7 +1547,7 @@ BEGIN
             SELECT id_condotta, id_fossa_settica, id_immissione, count(0) cnt, sum(leng) leng
             FROM (
                 SELECT d.id_condotta, id_fossa_settica, id_immissione, st_length(c.geom) leng
-                FROM fgn_immissione d, fgn_condotta c,
+                FROM (select * from fgn_immissione union all a_fgn_immissione) d, fgn_condotta c,
                 (
                     select distinct on(fs.idgis) fs.id_immissione, id_fossa_settica
                     from fgn_fossa_settica fs,
@@ -1593,7 +1593,7 @@ BEGIN
             SELECT id_condotta, id_immissione, id_fossa_settica, count(0) cnt, sum(leng) leng
             FROM (
                 SELECT d.id_condotta, id_immissione, id_fossa_settica, st_length(c.geom) leng
-                FROM fgn_immissione d, fgn_condotta c,
+                FROM (select * from fgn_immissione union all a_fgn_immissione) d, fgn_condotta c,
                 (
                     select distinct prod_imm.id_immissione, id_fossa_settica
                     from (
