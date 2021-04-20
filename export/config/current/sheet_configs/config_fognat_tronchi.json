@@ -5,6 +5,7 @@
       {
          "fields":[
             {"name":"fognat_tronchi.idgis", "alias": "idgis"},
+            {"name":"fognat_tronchi.codice_ato", "alias": "codice_ato"},
             {"name":"fognat_tronchi.idgis_rete", "alias": "idgis_rete"},
             {"name":"fognat_tronchi.recapito", "alias": "recapito"},
             {"name":"fognat_tronchi.id_materiale", "alias": "id_materiale"},
@@ -19,24 +20,13 @@
             {"name":"fognat_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
             {"name":"fognat_tronchi.depurazione", "alias": "depurazione"},
             {"name":"fognat_tronchi.id_refluo_trasportato", "alias": "id_refluo_trasportato"},
-            {"name":"acq_condotta.data_esercizio", "alias": "data_esercizio"},
-            {"name":"fgn_condotta.codice_ato", "alias": "codice_ato"}
+            {"name":"fgn_condotta.data_esercizio", "alias": "data_esercizio"}
          ],
          "table":{
             "name":"fognat_tronchi"
          },
          "join": [
              {
-                 "type": "left",
-                 "table": {
-                     "name": "acq_condotta"
-                 },
-                 "on": [
-                     "acq_condotta.idgis",
-                     "fognat_tronchi.idgis"
-                 ],
-                 "cond": "="
-             },{
                  "type": "left",
                  "table": {
                      "name": "fgn_condotta"

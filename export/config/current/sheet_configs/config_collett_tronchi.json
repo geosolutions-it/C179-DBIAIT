@@ -22,8 +22,7 @@
                 {"name": "collett_tronchi.note", "alias": "note"},
                 {"name": "collett_tronchi.id_refluo_trasportato", "alias": "id_refluo_trasportato"},
                 {"name": "collett_tronchi.geom", "alias": "geom"},
-                {"name":  "acq_condotta.data_esercizio", "alias": "data_esercizio"},
-                { "name": "fgn_condotta.codice_ato", "alias": "fgn_codice_ato"}
+                {"name": "fgn_condotta.data_esercizio", "alias": "data_esercizio"}
             ],
             "table": {
                 "name": "collett_tronchi"
@@ -37,26 +36,6 @@
                     "on": [
                         "collett_tronchi.idgis",
                         "fgn_condotta.idgis"
-                    ],
-                    "cond": "="
-                },{
-                    "type": "left",
-                    "table": {
-                        "name": "fgn_collettore"
-                    },
-                    "on": [
-                        "collett_tronchi.idgis",
-                        "fgn_collettore.idgis"
-                    ],
-                    "cond": "="
-                },{
-                    "type": "left",
-                    "table": {
-                        "name": "acq_condotta"
-                    },
-                    "on": [
-                        "collett_tronchi.idgis",
-                        "acq_condotta.idgis"
                     ],
                     "cond": "="
                 }
@@ -143,7 +122,7 @@
        {"id": "102000", "transformation": {
                 "func": "IF",
                 "params": {
-                    "field": "bacino_depurazione",
+                    "field": "depurazione",
                     "cond": {
                         "operator": "=",
                         "value": 1,

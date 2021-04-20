@@ -1593,7 +1593,7 @@ BEGIN
             SELECT id_condotta, id_immissione, id_fossa_settica, count(0) cnt, sum(leng) leng
             FROM (
                 SELECT d.id_condotta, id_immissione, id_fossa_settica, st_length(c.geom) leng
-                FROM fgn_immissione d, fgn_condotta c,
+                FROM (select * from fgn_immissione union all select * from a_fgn_immissione) d, fgn_condotta c,
                 (
                     select distinct prod_imm.id_immissione, id_fossa_settica
                     from (
@@ -3956,9 +3956,10 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_codice_capt_accorp(
 begin
     DELETE FROM support_codice_capt_accorp;
     INSERT INTO support_codice_capt_accorp
-    SELECT ac.idgis,codice_accorp_capt codice, acc2.denom FROM acq_capt_conces acc
-    JOIN acq_captazione ac on ac.idgis=acc.id_captazione
-    join ACQ_CAPT_ACCORPAM acc2 on codice_accorp_capt=codice_acc;
+    SELECT ac.idgis,codice_accorp_capt codice, coalesce(acc2.denom, ac.denom) as denom
+    FROM acq_capt_conces acc
+    LEFT JOIN acq_captazione ac on ac.idgis=acc.id_captazione
+    LEFT JOIN ACQ_CAPT_ACCORPAM acc2 on codice_accorp_capt=codice_acc;
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
