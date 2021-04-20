@@ -43,7 +43,7 @@
             { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
             { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
-            {"name": "support_codice_capt_accorp.denom","alias": "denom"}
+            {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -158,7 +158,7 @@
             { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
             { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
-            {"name": "support_codice_capt_accorp.denom","alias": "denom"}
+            {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -259,7 +259,7 @@
       {"id":"23700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
 
       {"id":"26100", "transformation":{"func":"DIRECT", "params":{"field":"ids_codice_potab"}}},
-      {"id":"23800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
+      {"id":"23800", "transformation":{"func":"DIRECT", "params":{"field":"denom_accorp"}}},
       {"id":"24200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}, "validations": [{
               "func": "IF",
               "params": {
