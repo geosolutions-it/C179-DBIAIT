@@ -715,10 +715,10 @@ BEGIN
         "ACQ_ALLACCIO": 					230003,
         "ACQ_LUNGHEZZA_ALLACCI": 			971,
         "SUPPORT_ACQ_ALLACCI": 				231228,
-        "FGN_ALLACCIO": 					203831,
+        "FGN_ALLACCIO": 					203832,
         "FGN_LUNGHEZZA_ALLACCI": 			1092,
         "FGN_LUNGHEZZA_ALLACCI_id_rete":	923,
-        "SUPPORT_FGN_ALLACCI": 				203832,
+        "SUPPORT_FGN_ALLACCI": 				203833,
         "ACQ_SHAPE": 						119262,
         "ACQ_SHAPE_A": 						10443,
         "ACQ_SHAPE_D": 						108819,
@@ -757,7 +757,7 @@ BEGIN
         "UBIC_CONTATORI_FGN": 				425971,
         "UBIC_F_ALLACCIO": 					425971,
         "UTENZE_FOGNATURE_COLLETTORI": 		1075,
-        "SUPPORT_CODICE_CAPT_ACCORP": 		1360,
+        "SUPPORT_CODICE_CAPT_ACCORP": 		1853,
         "SUPPORT_POZZI_INPOTAB":            764
     }'::JSON)->v_table;
     RETURN COALESCE(v_count,0);
@@ -1523,7 +1523,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_logstda_ubic_cont_non_allacciato() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=7366;
+  v_expected    BIGINT:=7365;
 BEGIN
 
     select count(0) INTO v_count
@@ -1536,7 +1536,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_logstda_ubic_cont_non_allacciato_minus_fuori_rete_e_idrete_null() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=5621;
+  v_expected    BIGINT:=5620;
 BEGIN
     select count(0) INTO v_count
     from dbiait_analysis.log_standalone
