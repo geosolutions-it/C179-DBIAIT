@@ -3950,21 +3950,21 @@ $$  LANGUAGE plpgsql
 --
 -- Example:
 -- SELECT DBIAIT_ANALYSIS.populate_codice_capt_accorp()
-
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_codice_capt_accorp(
 ) RETURNS BOOLEAN AS $$
 begin
     DELETE FROM support_codice_capt_accorp;
     INSERT INTO support_codice_capt_accorp
-    SELECT ac.idgis,codice_accorp_capt codice, coalesce(acc2.denom, ac.denom) as denom
-    FROM acq_capt_conces acc
-    LEFT JOIN acq_captazione ac on ac.idgis=acc.id_captazione
-    LEFT JOIN ACQ_CAPT_ACCORPAM acc2 on codice_accorp_capt=codice_acc;
+    SELECT ac.idgis,acc.codice_accorp_capt codice, coalesce(acc2.denom, ac.denom) as denom
+    FROM (select id_captazione,codice_accorp_capt from acq_capt_conces union all select id_captazione,codice_accorp_capt from a_acq_capt_conces) acc
+    LEFT JOIN (select * from acq_captazione union all select * from a_acq_captazione) ac on ac.idgis=acc.id_captazione
+    LEFT JOIN ACQ_CAPT_ACCORPAM acc2 on acc.codice_accorp_capt=codice_acc;
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
+
 -------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------
 -- Esegue il reset (DELETE o UPDATE) della tabelle/colonne che sono aggiornate

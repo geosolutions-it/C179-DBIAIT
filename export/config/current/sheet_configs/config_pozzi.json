@@ -48,7 +48,7 @@
             { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
             { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
-            {"name": "support_codice_capt_accorp.denom","alias": "denom"}
+            {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -191,7 +191,7 @@
             { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
             { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
-            {"name": "support_codice_capt_accorp.denom","alias": "denom"}
+            {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"}
 
          ],
          "table":{
@@ -333,7 +333,7 @@
                 }
             ]},
       {"id":"15300", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
-      {"id":"14800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
+      {"id":"14800", "transformation":{"func":"DIRECT", "params":{"field":"denom_accorp"}}},
       {"id":"15200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}, "validations": [{
                     "func": "IF",
                     "params": {
