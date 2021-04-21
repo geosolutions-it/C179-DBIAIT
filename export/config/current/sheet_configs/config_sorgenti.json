@@ -240,7 +240,7 @@
       {"id": "112100","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
 
       {"id": "111800","transformation": { "func": "DIRECT", "params": { "field": "codice_accorp_capt"}}},
-      {"id": "111900","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
+      {"id": "111900","transformation": { "func": "DIRECT", "params": { "field": "denom_accorp"}}},
 
       {"id":"26200", "transformation":{"func":"EXPR", "params":{"field":"volume_medio_prel", "expr": "_value_*1000/365/3600/24"}}, "validations": [{
               "func": "IF",
@@ -259,7 +259,7 @@
       {"id":"23700", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
 
       {"id":"26100", "transformation":{"func":"DIRECT", "params":{"field":"ids_codice_potab"}}},
-      {"id":"23800", "transformation":{"func":"DIRECT", "params":{"field":"denom_accorp"}}},
+      {"id":"23800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
       {"id":"24200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}, "validations": [{
               "func": "IF",
               "params": {

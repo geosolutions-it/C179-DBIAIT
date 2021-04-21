@@ -296,7 +296,7 @@
         {"id": "111600","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
 
         {"id": "111300","transformation": { "func": "DIRECT", "params": { "field": "codice_accorp_capt"}}},
-        {"id": "111400","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
+        {"id": "111400","transformation": { "func": "DIRECT", "params": { "field": "denom_accorp"}}},
 
       {"id":"17200", "transformation":{"func":"EXPR", "params":{"field":"volume_medio_prel", "expr": "_value_*1000/365/3600/24"}}, "validations": [{
               "func": "IF",
@@ -333,7 +333,7 @@
                 }
             ]},
       {"id":"15300", "transformation":{"func":"DIRECT", "params":{"field":"denominazi"}}},
-      {"id":"14800", "transformation":{"func":"DIRECT", "params":{"field":"denom_accorp"}}},
+      {"id":"14800", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},
       {"id":"15200", "transformation":{"func":"DIRECT", "params":{"field":"quota"}}, "validations": [{
                     "func": "IF",
                     "params": {

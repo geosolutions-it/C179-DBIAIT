@@ -3955,7 +3955,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_codice_capt_accorp(
 begin
     DELETE FROM support_codice_capt_accorp;
     INSERT INTO support_codice_capt_accorp
-    SELECT ac.idgis,acc.codice_accorp_capt codice, coalesce(acc2.denom, ac.denom) as denom
+    SELECT ac.idgis,acc.codice_accorp_capt codice, acc2.denom
     FROM (select id_captazione,codice_accorp_capt from acq_capt_conces union all select id_captazione,codice_accorp_capt from a_acq_capt_conces) acc
     LEFT JOIN (select idgis, denom from acq_captazione union all select idgis, denom from a_acq_captazione) ac on ac.idgis=acc.id_captazione
     LEFT JOIN ACQ_CAPT_ACCORPAM acc2 on acc.codice_accorp_capt=codice_acc;
