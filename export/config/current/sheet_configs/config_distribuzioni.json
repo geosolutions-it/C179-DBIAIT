@@ -263,7 +263,7 @@
             {
                 "func": "IF",
                 "params": {
-                    "field": "99400",
+                    "field": "lunghezza_tlc",
                     "cond": {
                         "operator": "!=",
                         "value": 0,
