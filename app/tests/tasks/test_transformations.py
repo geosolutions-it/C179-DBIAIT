@@ -308,6 +308,21 @@ class TransformationSchemaErrors(SimpleTestCase):
         with self.assertRaises(SchemaError):
             self.sut.from_name('CASE', {"foo": "bar"}).apply()
 
+    def test_distribuzioni_55200(self):
+        if_condition = {
+            "field": "avg_idx_potenza",
+            "cond": {
+                "operator": "=",
+                "value": None,
+                "result": "X",
+                "else": "{ avg_idx_potenza }"
+            }
+        }
+        actual = self.sut.from_name('IF', if_condition).apply(row={"avg_idx_potenza": None})
+        self.assertEqual(actual, "X")
+        actual = self.sut.from_name('IF', if_condition).apply(row={"avg_idx_potenza": 'A'})
+        self.assertEqual(actual, "A")
+
 
 if __name__ == '__main__':
     unittest.main()
