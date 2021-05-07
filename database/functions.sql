@@ -1483,18 +1483,18 @@ BEGIN
 		AND d.idgis = ad.idgis
 	);
 
-	--ANOMALIES 3
-	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	select idgis, 'ACQUEDOTTO', 'Utenza che non risulta allacciata a nessuna rete'
-	from acq_ubic_contatore uc
-	where uc.ID_IMPIANTO is not null and
-	uc.sorgente IS null and EXISTS(
-		select idgis from (
-			SELECT idgis FROM acq_cass_cont acc where id_derivazione is null
-			union ALL
-			SELECT idgis FROM acq_cass_cont_auto acc where id_derivazione is null
-		) t where t.idgis = uc.id_cass_cont
-	);
+	----ANOMALIES 3
+	--INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	--select idgis, 'ACQUEDOTTO', 'Utenza che non risulta allacciata a nessuna rete'
+	--from acq_ubic_contatore uc
+	--where uc.ID_IMPIANTO is not null and
+	--uc.sorgente IS null and EXISTS(
+	--	select idgis from (
+	--		SELECT idgis FROM acq_cass_cont acc where id_derivazione is null
+	--		union ALL
+	--		SELECT idgis FROM acq_cass_cont_auto acc where id_derivazione is null
+	--	) t where t.idgis = uc.id_cass_cont
+	--);
 
 	RETURN TRUE;
 
