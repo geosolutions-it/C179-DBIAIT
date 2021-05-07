@@ -97,18 +97,8 @@
                 }
             ]},
 
-        {"id": "41600", "transformation": {
-                "func": "IF",
-                "params": {
-                    "field": "id_sist_prot_cat",
-                    "cond": {
-                        "operator": "!=",
-                        "value": "",
-                        "result": 1,
-                        "else": 0
-                    }
-                }
-            }},
+        {"id": "41600", "transformation": {"func": "DIRECT", "params": { "field": "id_sist_prot_cat" }}},
+
         {"id": "41500", "transformation": {
                 "func": "IF",
                 "params": {
