@@ -398,7 +398,7 @@
                 }
             ]},
       {"id":"32700", "transformation":{"func":"DOMAIN", "params":{"field":"d_telecont", "domain_name": "D_TELECONT"}}},
-      {"id":"33200", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_filtraz", "domain_name": "D_TIPO_FILTRAZ"}}},
+      {"id":"33200", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_filtraz", "domain_name": "D_T_FILTRAZ"}}},
       {"id":"33300", "transformation":{"func":"DOMAIN", "params":{"field":"d_ossid_riduz", "domain_name": "D_OSSID_RIDUZ"}}},
       {"id":"33600", "transformation":{"func":"DOMAIN", "params":{"field":"d_ass_carb_att", "domain_name": "D_ASS_CARB_ATT"}}},
       {"id":"34400", "transformation":{"func":"DOMAIN", "params":{"field":"d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
