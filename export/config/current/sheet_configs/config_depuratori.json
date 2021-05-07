@@ -434,6 +434,7 @@
         {"id": "80100", "transformation": {"func": "DIRECT", "params": { "field": "data_agg" }}},
         {"id": "102300", "transformation": {"func": "DIRECT", "params": { "field": "sn_strum_mis_port_in" }}},
         {"id": "102400", "transformation": {"func": "DIRECT", "params": { "field": "sn_strum_mis_port_out" }}},
+		{"id": "72600",  "transformation": {"func": "DIRECT", "params": { "field": "d_corpo_ricet" }}},
 
 
         {"id": "72000", "transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
@@ -444,7 +445,6 @@
 
         {"id":"80000", "transformation":{"func":"DOMAIN", "params":{"field":"a_potenza_instal", "domain_name": "D_AFFIDABILITA"}}},
 
-        {"id": "72600", "transformation": {"func": "DOMAIN", "params": { "field": "d_corpo_ricet", "domain_name": "D_CORPO_RICET" }}},
         {"id": "72900", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons_civ", "domain_name": "D_STATO_CONS" }}, "validations": [{
                     "func": "IF",
                     "params": {
@@ -521,7 +521,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 72700 è >= 2002 e <> 9999, allora il campo deve assumere valore A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 72700 Ã¨ >= 2002 e <> 9999, allora il campo deve assumere valore A"
                 }
             ]},
         {"id": "79200", "transformation": {"func": "DOMAIN", "params": { "field": "a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA" }}, "validations": [{
