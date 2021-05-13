@@ -1771,6 +1771,48 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_UBIC_F_ALLACCIO_PAAUCO00000002029321() returns void as $$
+DECLARE
+    v_idrete VARCHAR2(32);
+    v_expected VARCHAR2(32) := 'PAFRRC00000000001403';
+BEGIN
+    select fgn_idrete into v_idrete from dbiait_analysis.UBIC_F_ALLACCIO
+    where id_ubic_contatore = 'PAAUCO00000002029321';
+    perform test_assertTrue(
+        'test_case_UBIC_F_ALLACCIO_PAAUCO00000002029321: expected ' || v_expected || ' but found ' || v_idrete,
+        v_idrete = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_UBIC_F_ALLACCIO_PAAUCO00000002029178() returns void as $$
+DECLARE
+    v_idrete VARCHAR2(32);
+    v_expected VARCHAR2(32) := 'PAFRRC00000000001404';
+BEGIN
+    select fgn_idrete into v_idrete from dbiait_analysis.UBIC_F_ALLACCIO
+    where id_ubic_contatore = 'PAAUCO00000002029178';
+    perform test_assertTrue(
+        'test_case_UBIC_F_ALLACCIO_PAAUCO00000002029178: expected ' || v_expected || ' but found ' || v_idrete,
+        v_idrete = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_UBIC_F_ALLACCIO_PAAUCO00000002027995() returns void as $$
+DECLARE
+    v_idrete VARCHAR2(32);
+    v_expected VARCHAR2(32) := 'PAFRRC00000000001264';
+BEGIN
+    select fgn_idrete into v_idrete from dbiait_analysis.UBIC_F_ALLACCIO
+    where id_ubic_contatore = 'PAAUCO00000002027995';
+    perform test_assertTrue(
+        'test_case_UBIC_F_ALLACCIO_PAAUCO00000002027995: expected ' || v_expected || ' but found ' || v_idrete,
+        v_idrete = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
 
 
 

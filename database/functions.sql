@@ -3833,7 +3833,6 @@ BEGIN
         FROM (
             select c_idgis, r_idgis from (
                 select c.idgis as c_idgis, r.idgis as r_idgis,
-                    --ST_Distance(c.geom, r.geom),
                     ROW_NUMBER() OVER(PARTITION BY c.idgis ORDER BY ST_Distance(r.geom, c.geom) ASC) AS rank
                     from acq_ubic_contatore c, FGN_RETE_RACC r
                     where exists(
@@ -3842,13 +3841,13 @@ BEGIN
                         join utenza_sap us on ufa.id_ubic_contatore = us.id_ubic_contatore
                         where fgn_idrete is null and esente_fog = 0
                         and c.idgis = ufa.id_ubic_contatore
-                        --and c.idgis in ('PAAUCO00000002029321','PAAUCO00000002029178','PAAUCO00000002027995')
                     )
                 and r.geom && ST_buffer(c.geom, v_buff)
                 and ST_intersects(r.geom, ST_buffer(c.geom, v_buff))
                 ORDER BY c.idgis, ST_Distance(r.geom, c.geom) ASC
             ) t where t.rank = 1
-        ) t WHERE t.c_idgis = ubic_f_allaccio.id_ubic_contatore;
+        ) t
+        WHERE t.c_idgis = ubic_f_allaccio.id_ubic_contatore;
 
     END LOOP;
 
