@@ -109,7 +109,8 @@ CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SAP(
 	DT_RIF_VOL_ERO			DATE,
 	ANNO_RIF				INTEGER,
 	U_AB					INTEGER,
-	DEFALCO					VARCHAR(2)
+	DEFALCO					VARCHAR(2),
+	GRUPPO                  VARCHAR(1) NOT NULL DEFAULT 'A'
 );
 
 -------------------------------------------------
@@ -887,8 +888,7 @@ CREATE TABLE DBIAIT_ANALYSIS.STATS_CLORATORE(
 	id_rete		VARCHAR(32),
 	counter	bigint
 );
-
------
+-----------------------------------------------------------
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_CAPT_ACCORPAM;
 CREATE TABLE DBIAIT_ANALYSIS.ACQ_CAPT_ACCORPAM(
@@ -896,15 +896,14 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_CAPT_ACCORPAM(
     denom	VARCHAR(200)
 );
 
-DROP TABLE IF EXISTS DBIAIT_ANALYSIS.area_poe;
-CREATE TABLE DBIAIT_ANALYSIS.area_poe
-(
-    codice_schema_acq varchar(32),
-    denominazione_schema_acq character varying(100),
-	PRIMARY KEY(codice_schema_acq)
-);
-SELECT AddGeometryColumn ('dbiait_analysis', 'area_poe', 'geom', 25832, 'MULTIPOLYGON', 2);
-
+--DROP TABLE IF EXISTS DBIAIT_ANALYSIS.area_poe;
+--CREATE TABLE DBIAIT_ANALYSIS.area_poe
+--(
+--    codice_schema_acq varchar(32),
+--    denominazione_schema_acq character varying(100),
+--	PRIMARY KEY(codice_schema_acq)
+--);
+--SELECT AddGeometryColumn ('dbiait_analysis', 'area_poe', 'geom', 25832, 'MULTIPOLYGON', 2);
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.schema_acq;
 CREATE TABLE DBIAIT_ANALYSIS.schema_acq(
@@ -1040,7 +1039,7 @@ CREATE TABLE DBIAIT_ANALYSIS.support_codice_capt_accorp(
 -----------------------------------------------------------------------------------------------------------------------
 CREATE INDEX localita_geom_idx ON localita USING GIST (geom);
 CREATE INDEX confine_comunale_geom_idx ON confine_comunale USING GIST (geom);
-CREATE INDEX area_poe_geom_idx ON area_poe USING GIST (geom);
+--CREATE INDEX area_poe_geom_idx ON area_poe USING GIST (geom);
 -----------------------------------------------------------------------------------------------------------------------
 -- VACUUM ANALYZE VERBOSE;
 -----------------------------------------------------------------------------------------------------------------------

@@ -1711,7 +1711,66 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
-
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_ADDUT() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check total number of records in the support table
+    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'AD%';
+    perform test_assertTrue('populate_STATS_CLORATORE (ADDUTTRICI): total expected 37 but found ' || v_count, v_count = 37 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_ADDUT_AD00985() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check number of cloratore for AD00985
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00985';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00985): expected 2 but found ' || v_count, v_count = 2 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_ADDUT_AD00986() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check number of cloratore for AD00986
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00986';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 1 but found ' || v_count, v_count = 1 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_ADDUT_AD00229() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check number of cloratore for AD00229
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00229';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00229): expected 1 but found ' || v_count, v_count = 1 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_DISTR() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check total number of records in the support table
+    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'DI%';;
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR: total expected 6 but found ' || v_count, v_count = 6 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_DISTR_DI00914() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check number of cloratore for DI00914
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'DI00914';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (DI00914): expected 3 but found ' || v_count, v_count = 3 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
 
 
 
