@@ -2093,6 +2093,9 @@ BEGIN
     where
         acq_shape.ids_codi_1 = g.ids_codi_1;
 
+    -- fix anomalies #204
+    update acq_shape set UTENZE_MIS = 0 WHERE UTENZE_MIS IS NULL;
+
 	RETURN TRUE;
 
 END;
