@@ -183,13 +183,12 @@ class ResetStdaTables(BaseProcessTask):
 process_mapper = {
     u"Ripristino Tabelle Standalone": ResetStdaTables,
     u"Località Istat": LocalitaIstat,
-    u"Popolazione residente Istat per comune": PopolazioneResidenteIstatPerComune,
     u"Percentuale popolazione servita per località": PercentualePopolazioneServitaPerLocalita,
+    u"Popolazione residente Istat per comune": PopolazioneResidenteIstatPerComune,
     u"Percentuale popolazione servita sulla rete per comune": PercentualePopolazioneServitaSullaRetePerComune,
     u"Servizio utenza": ServizioUtenza,
     u"Abitanti equivalenti trattati da depuratori o scarico diretto": AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto,
-    u"Archivi pompe": ArchiviPompe,
-    u"Tabelle di relazione": GraphTemp,
+    u"Archivio pompe": ArchiviPompe,
     u"Acquedotto": Acquedotto,
     u"Fognatura": Fognatura,
     u"Generazione grafo (rete idrica e fognaria)": Networks
