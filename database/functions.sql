@@ -3015,7 +3015,7 @@ DECLARE
 	v_filters VARCHAR[] := ARRAY[
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=0',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=1',
-		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3 AND coalesce(t.d_comparto,''?'') != ''DEP''',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=4',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
 		'',
@@ -3488,15 +3488,15 @@ BEGIN
     INSERT INTO schema_acq(idgis, codice_schema_acq, denominazione_schema_acq)
     SELECT
         ot.idgis idgis,
-        string_agg(ot.codice, ';') codice_schema_acq,
-        string_agg(ot.denom, ';') denominazione_schema_acq
+        string_agg(ot.codice_schema_acq, ';') codice_schema_acq,
+        string_agg(ot.denominazione_schema_acq, ';') denominazione_schema_acq
     FROM (
         SELECT
-            ap.codice,
-            ap.denom,
+            ap.codice_schema_acq,
+            ap.denominazione_schema_acq,
             ar.idgis
         FROM
-            acq_area_poe ap
+            area_poe ap
         JOIN (
             SELECT idgis, geom FROM all_reti
             UNION ALL
@@ -3509,35 +3509,6 @@ BEGIN
 	) ot
     GROUP BY
         idgis;
-
-    -- section adduttrici (2.2)
-    INSERT INTO schema_acq(idgis, codice_schema_acq, denominazione_schema_acq)
-    select
-        distinct
-        idgis,
-        string_agg(codice, ';') as codice_schema_acq,
-        string_agg(denom, ';') as denominazione_schema_acq
-    from
-    (
-        select
-            distinct idgis, codice, denom
-        from
-        (
-            select aa.idgis, ac.geom
-            from acq_adduttrice aa, acq_condotta ac
-            where
-                aa.d_gestore = 'PUBLIACQUA' and aa.d_ambito in ('AT3', NULL) and aa.d_stato  not in ('IPR', 'IAC')
-            and ac.d_gestore = 'PUBLIACQUA' and ac.d_ambito in ('AT3', NULL) and ac.d_stato  in ('ATT', 'FIP', NULL) and ac.sn_fittizia in ('NO', NULL)
-            and aa.idgis = ac.id_rete
-        ) t, acq_area_poe g
-        where t.geom && g.geom
-        AND ST_INTERSECTS(ST_BUFFER(g.geom, -0.001), t.geom)
-        AND ST_TOUCHES(g.geom, t.geom) = FALSE
-        order by idgis, codice_schema_acq
-    ) d
-    group by d.idgis;
-
-
 
 	RETURN TRUE;
 END;
@@ -4182,8 +4153,6 @@ begin
 	DROP TABLE IF EXISTS FGN_CONDOTTA_NODES;
 	DROP TABLE IF EXISTS FGN_CONDOTTA_EDGES;
 	DELETE FROM STATS_CLORATORE;
-	DELETE FROM STATS_CLORATORE_ADDUT;
-	DELETE FROM STATS_CLORATORE_DISTR;
 	DELETE FROM SCHEMA_ACQ;
 	DELETE FROM UBIC_ALLACCIO;
 	DELETE FROM UBIC_CONTATORI_CASS_CONT;
