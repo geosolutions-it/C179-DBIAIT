@@ -56,7 +56,10 @@ CREATE TABLE DBIAIT_ANALYSIS.POP_RES_COMUNE (
 	perc_fgn 	double precision,
 	pop_ser_fgn INTEGER,
 	perc_dep 	double precision,
-	pop_ser_dep INTEGER
+	pop_ser_dep INTEGER,
+	ut_abit_tot INTEGER,
+	ut_abit_fgn INTEGER,
+	ut_abit_dep INTEGER
 );
 
 --
@@ -110,7 +113,8 @@ CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SAP(
 	ANNO_RIF				INTEGER,
 	U_AB					INTEGER,
 	DEFALCO					VARCHAR(2),
-	GRUPPO                  VARCHAR(1) NOT NULL DEFAULT 'A'
+	GRUPPO                  VARCHAR(1) NOT NULL DEFAULT 'A',
+	COMUNE_PBA              VARCHAR(8)
 );
 
 -------------------------------------------------

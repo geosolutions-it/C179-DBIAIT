@@ -355,7 +355,10 @@ BEGIN
 		perc_fgn = NULL,	--OK
 		pop_ser_fgn = NULL, --OK
 		perc_dep = NULL,	--OK		
-		pop_ser_dep = NULL;	--OK
+		pop_ser_dep = NULL, --OK
+		ut_abit_tot = NULL,
+		ut_abit_fgn = NULL,
+	    ut_abit_dep = NULL;
 
 	-- updating field pop_ser_acq
 	UPDATE POP_RES_COMUNE
@@ -375,7 +378,63 @@ BEGIN
 		GROUP BY t.pro_com
 	) t2
 	WHERE t2.pro_com = POP_RES_COMUNE.pro_com;
-
+    ------------------------------------------------------------------
+    -- requisito 20210422 (6.1)
+    -- ** Unita Abitative Totali
+    UPDATE POP_RES_COMUNE
+    SET ut_abit_tot = t.u_ab_tot
+    FROM (
+        select comune_pba, sum(u_ab) as u_ab_tot
+        from dbiait_analysis.utenza_sap
+        where gruppo = 'A'
+        group by comune_pba
+    ) t
+    WHERE pop_res_comune.pro_com = t.comune_pba;
+    -- ** Unita Abitative Fognatura
+    UPDATE POP_RES_COMUNE
+    SET ut_abit_fgn = t.u_ab_tot
+    FROM (
+        select comune_pba, sum(u_ab) as u_ab_tot
+        from dbiait_analysis.utenza_sap
+        where gruppo = 'A'
+        and (esente_fog <> 1 or esente_fog is null)
+        group by comune_pba
+    ) t
+    WHERE pop_res_comune.pro_com = t.comune_pba;
+    -- ** Unita Abitative Depurazione
+    UPDATE POP_RES_COMUNE
+    SET ut_abit_dep = t.u_ab_tot
+    FROM (
+        select comune_pba, sum(u_ab) as u_ab_tot
+        from dbiait_analysis.utenza_sap
+        where gruppo = 'A'
+        and (esente_dep <> 1 or esente_dep is null)
+        group by comune_pba
+    ) t
+    WHERE pop_res_comune.pro_com = t.comune_pba;
+    ------------------------------------------------------------------
+    -- requisito 20210422 (6.2)
+    -- ** Percentuale di Copertura Fognatura
+    UPDATE POP_RES_COMUNE
+    SET perc_fgn =
+        CASE WHEN COALESCE(ut_abit_tot,0)>0 THEN
+		    COALESCE(perc_acq,0)*COALESCE(ut_abit_fgn,0)/COALESCE(ut_abit_tot,0)
+		ELSE 0 END;
+	-- ** Percentuale di Copertura Depurazione
+    UPDATE POP_RES_COMUNE
+    SET perc_dep =
+        CASE WHEN COALESCE(ut_abit_tot,0)>0 THEN
+		    COALESCE(perc_acq,0)*COALESCE(ut_abit_dep,0)/COALESCE(ut_abit_tot,0)
+		ELSE 0 END;
+	------------------------------------------------------------------
+    -- requisito 20210422 (6.3)
+    -- ** Popolazione Servita Fognatura
+    UPDATE POP_RES_COMUNE
+    SET pop_ser_fgn = perc_fgn*pop_res/100;
+    -- ** Popolazione Servita Depurazione
+    UPDATE POP_RES_COMUNE
+    SET pop_ser_dep = perc_dep*pop_res/100;
+    ------------------------------------------------------------------
 	v_result:= TRUE;
     RETURN v_result;
 --EXCEPTION WHEN OTHERS THEN
@@ -3538,8 +3597,11 @@ BEGIN
             select aa.idgis, ac.geom
             from acq_adduttrice aa, acq_condotta ac
             where
-                aa.d_gestore = 'PUBLIACQUA' and aa.d_ambito in ('AT3', NULL) and aa.d_stato  not in ('IPR', 'IAC')
-            and ac.d_gestore = 'PUBLIACQUA' and ac.d_ambito in ('AT3', NULL) and ac.d_stato  in ('ATT', 'FIP', NULL) and ac.sn_fittizia in ('NO', NULL)
+                aa.d_gestore = 'PUBLIACQUA' and aa.d_ambito IN ('AT3', NULL)
+                and aa.d_stato NOT IN ('IPR', 'IAC')
+            and ac.d_gestore = 'PUBLIACQUA' and ac.d_ambito IN ('AT3', NULL)
+                and ac.d_stato in ('ATT', 'FIP', NULL)
+                and ac.sn_fittizia in ('NO', NULL)
             and aa.idgis = ac.id_rete
         ) t, acq_area_poe g
         where t.geom && g.geom
@@ -3548,8 +3610,6 @@ BEGIN
         order by idgis, codice_schema_acq
     ) d
     group by d.idgis;
-
-
 
 	RETURN TRUE;
 END;
@@ -3572,7 +3632,6 @@ begin
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UBIC_ALLACCIO';
 	DELETE FROM ubic_contatori_cass_cont;
 	DELETE FROM ubic_allaccio;
-
 
 	-- AGGIUNTA TUTTI GLI UBIC_CONTATORI DISPONIBILI SECONDO I FILTRI FORNITI
 	-- UTILIZZO DI UNA TABELLA DI SISTEMA PER EVITARE DI RIFARE LA SELECT CON I FILTRI
@@ -4141,7 +4200,10 @@ begin
 		perc_fgn = NULL,	
 		pop_ser_fgn = NULL, 
 		perc_dep = NULL,		
-		pop_ser_dep = NULL;																									
+		pop_ser_dep = NULL,
+		ut_abit_tot = NULL,
+		ut_abit_fgn = NULL,
+	    ut_abit_dep = NULL;
 	
 	DELETE FROM DISTRIB_COM_SERV;
 	DELETE FROM SUPPORT_POZZI_INPOTAB;

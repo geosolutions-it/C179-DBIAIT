@@ -1978,4 +1978,129 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 -----------------------------------------------------------------------------------------
-
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_pop_res() returns void as $$
+DECLARE
+    v_value INTEGER;
+    v_expected INTEGER := 1896;
+BEGIN
+    select pop_res INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (pop_res): expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_anno_rif() returns void as $$
+DECLARE
+    v_value INTEGER;
+    v_expected INTEGER := 2019;
+BEGIN
+    select anno_rif INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (anno_rif): expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_data_rif() returns void as $$
+DECLARE
+    v_value VARCHAR(10);
+    v_expected VARCHAR(10) := '2019_08_31';
+BEGIN
+    select TO_CHAR(data_rif,'YYYY_MM_DD') INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (data_rif): expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_pop_ser_dep() returns void as $$
+DECLARE
+    v_value INTEGER;
+    v_expected INTEGER := 19;
+BEGIN
+    select pop_ser_dep INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (pop_ser_dep): expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_pop_ser_fgn() returns void as $$
+DECLARE
+    v_value INTEGER;
+    v_expected INTEGER := 1042;
+BEGIN
+    select pop_ser_fgn INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (pop_ser_fgn): expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_pop_ser_acq() returns void as $$
+DECLARE
+    v_value INTEGER;
+    v_expected INTEGER := 1526;
+BEGIN
+    select pop_ser_acq INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (pop_ser_acq): expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_perc_acq() returns void as $$
+DECLARE
+    v_value NUMERIC;
+    v_expected NUMERIC := 80.46;
+BEGIN
+    select perc_acq INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (perc_acq): expected ' || v_expected || ' but found ' || v_value,
+        v_value BETWEEN v_expected - 0.01 AND v_expected + 0.01
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_perc_fgn() returns void as $$
+DECLARE
+    v_value NUMERIC;
+    v_expected NUMERIC := 54.96;
+BEGIN
+    select perc_fgn INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (perc_fgn): expected ' || v_expected || ' but found ' || v_value,
+        v_value BETWEEN v_expected - 0.01 AND v_expected + 0.01
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_perc_dep() returns void as $$
+DECLARE
+    v_value NUMERIC;
+    v_expected NUMERIC := 0.98;
+BEGIN
+    select perc_dep INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (perc_dep): expected ' || v_expected || ' but found ' || v_value,
+        v_value BETWEEN v_expected - 0.01 AND v_expected + 0.01
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
