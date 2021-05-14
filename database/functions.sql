@@ -3155,24 +3155,30 @@ DECLARE
 BEGIN
 	
 	DELETE FROM DEPURATO_INCOLL;
-	
-	INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
-	SELECT DISTINCT t.codice_ato, ad.codice_ato, 3 from (
-		SELECT distinct aa.codice_ato, ac.id_rete
-		from fgn_trattamento aa, fgn_condotta ac
-		WHERE aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL) AND aa.d_stato IN ('ATT','FIP','PIF','RIS')
-		and st_buffer(aa.geom, v_tol)&&ac.geom and st_intersects(ac.geom, st_buffer(aa.geom, v_tol))
-	) t, fgn_collettore ad
-	WHERE t.id_rete=ad.idgis
-	AND ad.d_gestore = 'PUBLIACQUA' AND ad.d_ambito IN ('AT3', NULL) AND ad.d_stato IN ('ATT','FIP','PIF','RIS');
-	
-	--INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
-	--select a.codice_ato, c.codice_ato, NULL 
-	--from fgn_trattamento a left JOIN collett_tronchi c
-	--on c.geom&&ST_BUFFER(a.geom, v_tol) and ST_INTERSECTS(c.geom, ST_BUFFER(a.geom, v_tol))
-	--WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
-	--AND c.codice_ato is not NULL;
-		
+
+	with v_bacino as (
+        select f.codice_ato, b.geom
+        from dbiait_analysis.FGN_TRATTAMENTO f, dbiait_analysis.FGN_BACINO b
+        where
+            f.D_GESTORE = 'PUBLIACQUA' AND f.D_AMBITO in ('AT3', NULL) AND f.D_STATO IN ('ATT','FIP','PIF','RIS')
+            and f.ID_BACINO = b.IDGIS
+    ),
+    v_condotte as (
+        select cl.codice_ato, c.geom from
+        dbiait_analysis.FGN_CONDOTTA c, dbiait_analysis.FGN_COLLETTORE cl
+        where
+            c.D_GESTORE = 'PUBLIACQUA' AND c.D_AMBITO in ('AT3', NULL) AND c.D_STATO IN ('ATT', 'FIP', NULL) AND c.SN_FITTIZIA  in ('NO', NULL)
+            and c.ID_RETE = cl.IDGIS
+    )
+    INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
+    select DISTINCT
+        b.codice_ato as codice_opera,
+        c.codice_ato as codice_collettore,
+        3 as gestore_collettore
+    from v_bacino b, v_condotte c
+    where b.geom&&c.geom
+    and ST_INTERSECTS(b.geom, c.geom);
+
 	--LOG ANOMALIE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'DEPURATO_INCOLL';
 	

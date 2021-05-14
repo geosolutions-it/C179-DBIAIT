@@ -1957,4 +1957,25 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 -----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_depurato_incoll_DE00078() returns void as $$
+DECLARE
+    v_value VARCHAR(255);
+    v_expected VARCHAR(255) := 'CL00143;CL00144;CL00154';
+BEGIN
+    SELECT string_agg(ids_codice_collettore, ';')
+    INTO v_value
+    FROM(
+        select ids_codice, ids_codice_collettore
+        from dbiait_analysis.DEPURATO_INCOLL
+        where ids_codice = 'DE00078'
+        order by ids_codice_collettore
+    ) t
+    group by t.ids_codice;
+    perform test_assertTrue(
+        'test_case_depurato_incoll_DE00078: expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
 
