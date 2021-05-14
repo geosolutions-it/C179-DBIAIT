@@ -189,8 +189,8 @@ process_mapper = {
     u"Servizio utenza": ServizioUtenza,
     u"Abitanti equivalenti trattati da depuratori o scarico diretto": AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto,
     u"Archivio pompe": ArchiviPompe,
+	u"Tabelle di relazione": GraphTemp,
     u"Acquedotto": Acquedotto,
-    u"Fognatura": Fognatura,
-    u"Generazione grafo (rete idrica e fognaria)": Networks
+    u"Fognatura": Fognatura
 }
 

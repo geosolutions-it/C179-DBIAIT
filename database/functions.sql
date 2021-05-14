@@ -1765,7 +1765,7 @@ BEGIN
     ) w WHERE w.idgis = FGN_COND_ALTRO.idgis;
 
     -- fix anomalies 203
-        UPDATE FGN_COND_ALTRO
+    UPDATE FGN_COND_ALTRO
     SET
          lu_allacci_c	  = COALESCE(lu_allacci_c, 0)
         ,lu_allacci_c_ril = COALESCE(lu_allacci_c_ril, 0)
@@ -2028,6 +2028,7 @@ BEGIN
             join utenza_sap us on
                 us.id_ubic_contatore = idgis_divisionale
              where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
+             AND us.gruppo = 'A'
         )bb
         on aa.id_cassetta=bb.id_cass_cont
     )
@@ -2092,6 +2093,11 @@ BEGIN
         ) g
     where
         acq_shape.ids_codi_1 = g.ids_codi_1;
+
+    -- fix anomalies #204
+    UPDATE acq_shape
+        SET UTENZE_MIS = 0
+	    WHERE UTENZE_MIS IS NULL;
 
 	RETURN TRUE;
 
@@ -3531,7 +3537,7 @@ BEGIN
             and aa.idgis = ac.id_rete
         ) t, acq_area_poe g
         where t.geom && g.geom
-        AND ST_INTERSECTS(ST_BUFFER(g.geom, -0.001), t.geom)
+        AND ST_INTERSECTS(ST_BUFFER(g.geom, -1*v_tol), t.geom)
         AND ST_TOUCHES(g.geom, t.geom) = FALSE
         order by idgis, codice_schema_acq
     ) d
@@ -3862,7 +3868,6 @@ BEGIN
         FROM (
             select c_idgis, r_idgis from (
                 select c.idgis as c_idgis, r.idgis as r_idgis,
-                    --ST_Distance(c.geom, r.geom),
                     ROW_NUMBER() OVER(PARTITION BY c.idgis ORDER BY ST_Distance(r.geom, c.geom) ASC) AS rank
                     from acq_ubic_contatore c, FGN_RETE_RACC r
                     where exists(
@@ -3871,13 +3876,13 @@ BEGIN
                         join utenza_sap us on ufa.id_ubic_contatore = us.id_ubic_contatore
                         where fgn_idrete is null and esente_fog = 0
                         and c.idgis = ufa.id_ubic_contatore
-                        --and c.idgis in ('PAAUCO00000002029321','PAAUCO00000002029178','PAAUCO00000002027995')
                     )
                 and r.geom && ST_buffer(c.geom, v_buff)
                 and ST_intersects(r.geom, ST_buffer(c.geom, v_buff))
                 ORDER BY c.idgis, ST_Distance(r.geom, c.geom) ASC
             ) t where t.rank = 1
-        ) t WHERE t.c_idgis = ubic_f_allaccio.id_ubic_contatore;
+        ) t
+        WHERE t.c_idgis = ubic_f_allaccio.id_ubic_contatore;
 
     END LOOP;
 
@@ -4182,8 +4187,6 @@ begin
 	DROP TABLE IF EXISTS FGN_CONDOTTA_NODES;
 	DROP TABLE IF EXISTS FGN_CONDOTTA_EDGES;
 	DELETE FROM STATS_CLORATORE;
-	DELETE FROM STATS_CLORATORE_ADDUT;
-	DELETE FROM STATS_CLORATORE_DISTR;
 	DELETE FROM SCHEMA_ACQ;
 	DELETE FROM UBIC_ALLACCIO;
 	DELETE FROM UBIC_CONTATORI_CASS_CONT;

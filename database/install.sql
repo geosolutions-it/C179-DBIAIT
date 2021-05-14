@@ -896,14 +896,7 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_CAPT_ACCORPAM(
     denom	VARCHAR(200)
 );
 
---DROP TABLE IF EXISTS DBIAIT_ANALYSIS.area_poe;
---CREATE TABLE DBIAIT_ANALYSIS.area_poe
---(
---    codice_schema_acq varchar(32),
---    denominazione_schema_acq character varying(100),
---	PRIMARY KEY(codice_schema_acq)
---);
---SELECT AddGeometryColumn ('dbiait_analysis', 'area_poe', 'geom', 25832, 'MULTIPOLYGON', 2);
+DROP TABLE IF EXISTS DBIAIT_ANALYSIS.area_poe;
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.schema_acq;
 CREATE TABLE DBIAIT_ANALYSIS.schema_acq(
@@ -1039,7 +1032,6 @@ CREATE TABLE DBIAIT_ANALYSIS.support_codice_capt_accorp(
 -----------------------------------------------------------------------------------------------------------------------
 CREATE INDEX localita_geom_idx ON localita USING GIST (geom);
 CREATE INDEX confine_comunale_geom_idx ON confine_comunale USING GIST (geom);
---CREATE INDEX area_poe_geom_idx ON area_poe USING GIST (geom);
 -----------------------------------------------------------------------------------------------------------------------
 -- VACUUM ANALYZE VERBOSE;
 -----------------------------------------------------------------------------------------------------------------------
