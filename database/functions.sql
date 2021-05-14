@@ -2028,6 +2028,7 @@ BEGIN
             join utenza_sap us on
                 us.id_ubic_contatore = idgis_divisionale
              where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
+             AND us.gruppo = 'A'
         )bb
         on aa.id_cassetta=bb.id_cass_cont
     )
