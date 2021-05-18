@@ -3412,43 +3412,18 @@ BEGIN
     -- truncate old table
 	DELETE FROM stats_cloratore;
 
-    -- run procedure
-	--INSERT INTO stats_cloratore (id_rete, counter)
-	--SELECT
-	--	id_rete,
-	--	count(*) as cc
-	--FROM
-	--	acq_condotta ac,
-	--	acq_cloratore ac2
-	--WHERE
-	--	st_intersects(ac.geom,
-	--	ac2.geom)
-	--GROUP BY
-	--	id_rete;
-
-	-- ADDUTTRICI
 	INSERT INTO stats_cloratore(id_rete, counter)
 	select codice_ato, count(idgis) from (
         select distinct m.codice_ato, c.idgis from
         (
         select a.codice_ato, c.geom
-        from acq_adduttrice a, acq_condotta c
-        where a.idgis = c.id_rete
-        and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
-        and c.d_gestore = 'PUBLIACQUA' and c.d_ambito in ('AT3', null) and c.d_stato in ('ATT', 'FIP', NULL) and c.sn_fittizia in ('NO', NULL)
-        and c.d_tipo_acqua = 'ATR'
-        ) m, acq_cloratore c
-        where m.geom && st_buffer(c.geom, v_tol)
-        and ST_INTERSECTS(m.geom, st_buffer(c.geom, v_tol))
-    ) t group by t.codice_ato;
-
-	-- DISTRIBUZIONI
-	INSERT INTO stats_cloratore (id_rete, counter)
-	select codice_ato, count(idgis) from (
-        select distinct m.codice_ato, c.idgis from
-        (
-        select a.codice_ato, c.geom
-        from acq_rete_distrib a, acq_condotta c
+        from (
+            -- ADDUTTRICI
+            select codice_ato, idgis from acq_adduttrice
+            UNION ALL
+            -- DISTRIBUZIONI
+            select codice_ato, idgis from acq_rete_distrib
+        ) a, acq_condotta c
         where a.idgis = c.id_rete
         and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
         and c.d_gestore = 'PUBLIACQUA' and c.d_ambito in ('AT3', null) and c.d_stato in ('ATT', 'FIP', NULL) and c.sn_fittizia in ('NO', NULL)
