@@ -3419,10 +3419,10 @@ BEGIN
         select a.codice_ato, c.geom
         from (
             -- ADDUTTRICI
-            select codice_ato, idgis from acq_adduttrice
+            select codice_ato, idgis, d_gestore, d_ambito, d_stato from acq_adduttrice
             UNION ALL
             -- DISTRIBUZIONI
-            select codice_ato, idgis from acq_rete_distrib
+            select codice_ato, idgis, d_gestore, d_ambito, d_stato from acq_rete_distrib
         ) a, acq_condotta c
         where a.idgis = c.id_rete
         and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
