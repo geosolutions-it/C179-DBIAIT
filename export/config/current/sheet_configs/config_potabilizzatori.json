@@ -46,6 +46,7 @@
             {"name":"acq_auth_potab.a_vol_uscita", "alias":"a_vol_uscita"},
             {"name":"acq_auth_potab.a_anno_ristr_elmec", "alias":"a_anno_ristr_elmec"},
             {"name":"acq_auth_potab.a_potenza_instal", "alias":"a_potenza_instal"},
+			{"name":"acq_auth_potab.consumo_ee", "alias":"consumo_ee"},
             {"name":"acq_potabiliz.codice_ato", "alias":"codice_ato"},
             {"name":"acq_potabiliz.denom", "alias":"denom"},
             {"name":"acq_potabiliz.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
@@ -148,6 +149,7 @@
             {"name":"acq_auth_potab.a_vol_uscita", "alias":"a_vol_uscita"},
             {"name":"acq_auth_potab.a_anno_ristr_elmec", "alias":"a_anno_ristr_elmec"},
             {"name":"acq_auth_potab.a_potenza_instal", "alias":"a_potenza_instal"},
+			{"name":"acq_auth_potab.consumo_ee", "alias":"consumo_ee"},
             {"name":"a_acq_potabiliz.codice_ato", "alias":"codice_ato"},
             {"name":"a_acq_potabiliz.denom", "alias":"denom"},
             {"name":"a_acq_potabiliz.quota", "alias":"quota", "function": "FROM_FLOAT_TO_INT"},
@@ -306,6 +308,7 @@
                 }
             ]},
       {"id":"32300", "transformation":{"func":"DIRECT", "params":{"field":"potenza_instal"}}},
+	  {"id":"32400", "transformation":{"func":"DIRECT", "params":{"field":"consumo_ee"}}},
       {"id":"32500", "transformation":{"func":"DIRECT", "params":{"field":"presid_imp"}}},
       {"id":"32600", "transformation":{"func":"DIRECT", "params":{"field":"sn_saltuario"}}},
       {"id":"32800", "transformation":{"func":"DIRECT", "params":{"field":"riserva_acqua"}}},
