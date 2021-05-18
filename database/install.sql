@@ -109,7 +109,8 @@ CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SAP(
 	DT_RIF_VOL_ERO			DATE,
 	ANNO_RIF				INTEGER,
 	U_AB					INTEGER,
-	DEFALCO					VARCHAR(2)
+	DEFALCO					VARCHAR(2),
+	GRUPPO                  VARCHAR(1) NOT NULL DEFAULT 'A'
 );
 
 -------------------------------------------------
@@ -887,8 +888,7 @@ CREATE TABLE DBIAIT_ANALYSIS.STATS_CLORATORE(
 	id_rete		VARCHAR(32),
 	counter	bigint
 );
-
------
+-----------------------------------------------------------
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.ACQ_CAPT_ACCORPAM;
 CREATE TABLE DBIAIT_ANALYSIS.ACQ_CAPT_ACCORPAM(

@@ -40,6 +40,7 @@
                 {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
                 {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+				{"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
                 {"name": "acq_captazione.data_agg","alias": "data_agg"},
                 {"name": "acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
@@ -151,6 +152,7 @@
                 {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
                 {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+				{"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
                 {"name": "a_acq_captazione.data_agg","alias": "data_agg"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
@@ -473,6 +475,7 @@
         {"id": "11100","transformation": { "func": "DIRECT", "params": { "field": "sn_inv_norm_coll" }}},
         {"id": "11300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" }}},
         {"id": "10400","transformation": { "func": "DIRECT", "params": { "field": "denominazi" }}},
+		{"id": "111200","transformation": { "func": "DIRECT", "params": { "field": "sn_uso_plurimo"}}},
         {"id": "11800","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor" }}, "validations": [{
                     "func": "IF",
                     "params": {
@@ -549,7 +552,7 @@
                 }
             ]},
 
-        {"id": "9000","transformation": { "func": "DOMAIN", "params": { "field": "d_classific", "domain_name": "D_CLASSIFIC" }}},
+        {"id": "9000","transformation": { "func": "DOMAIN", "params": { "field": "d_classific", "domain_name": "D_CLASSIF_OPERA" }}},
         {"id": "9900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name": "D_STATO_CONS" }},"validations": [{
                     "func": "IF",
                     "params": {

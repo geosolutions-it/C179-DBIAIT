@@ -1419,6 +1419,14 @@ BEGIN
 	WHERE t.idgis = ACQ_COND_ALTRO.id_rete
 	AND ACQ_COND_ALTRO.tipo_infr = 'ADDUZIONI';
 
+    -- fix anomalies 202
+    UPDATE ACQ_COND_ALTRO
+    SET
+         nr_allacci_sim = COALESCE(nr_allacci_sim, 0)
+        ,lu_allacci_sim = COALESCE(lu_allacci_sim, 0)
+        ,nr_allacci_ril = COALESCE(nr_allacci_ril, 0)
+        ,lu_allacci_ril = COALESCE(lu_allacci_ril, 0);
+
 	--GROUP BY x ACQ_LUNGHEZZA_ALLACCI
 	INSERT INTO acq_lunghezza_allacci(idgis, codice_ato, tipo_infr, nr_allacci_ril, lung_alla_ril, nr_allacci, lung_alla)
 	SELECT id_rete, codice_ato, tipo_infr, sum(nr_allacci_ril), sum(lu_allacci_ril)/1000, sum(nr_allacci_sim), sum(lu_allacci_sim)/1000
@@ -1756,6 +1764,17 @@ BEGIN
         ) x GROUP BY x.idgis
     ) w WHERE w.idgis = FGN_COND_ALTRO.idgis;
 
+    -- fix anomalies 203
+        UPDATE FGN_COND_ALTRO
+    SET
+         lu_allacci_c	  = COALESCE(lu_allacci_c, 0)
+        ,lu_allacci_c_ril = COALESCE(lu_allacci_c_ril, 0)
+        ,lu_allacci_i	  = COALESCE(lu_allacci_i, 0)
+        ,lu_allacci_i_ril = COALESCE(lu_allacci_i_ril, 0)
+        ,nr_allacci_c	  = COALESCE(nr_allacci_c, 0)
+        ,nr_allacci_c_ril = COALESCE(nr_allacci_c_ril, 0)
+        ,nr_allacci_i	  = COALESCE(nr_allacci_i, 0)
+        ,nr_allacci_i_ril = COALESCE(nr_allacci_i_ril, 0);
 
 	--
 	INSERT INTO FGN_LUNGHEZZA_ALLACCI(
@@ -2009,6 +2028,7 @@ BEGIN
             join utenza_sap us on
                 us.id_ubic_contatore = idgis_divisionale
              where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY')
+             AND us.gruppo = 'A'
         )bb
         on aa.id_cassetta=bb.id_cass_cont
     )
@@ -2030,6 +2050,7 @@ BEGIN
             join utenza_sap us on
                 auc.idgis = us.id_ubic_contatore
             where
+                us.gruppo='A' AND
                 COALESCE(us.cattariffa,'?') not in (
                     'APB_REFIND',
                     'APBLREFIND',
@@ -2055,6 +2076,7 @@ BEGIN
             join utenza_sap us on
                 auc.idgis = us.id_ubic_contatore
             where
+                us.gruppo='A' AND
                 COALESCE(us.cattariffa,'?') not in (
                     'APB_REFIND',
                     'APBLREFIND',
@@ -2071,6 +2093,9 @@ BEGIN
         ) g
     where
         acq_shape.ids_codi_1 = g.ids_codi_1;
+
+    -- fix anomalies #204
+    update acq_shape set UTENZE_MIS = 0 WHERE UTENZE_MIS IS NULL;
 
 	RETURN TRUE;
 
@@ -2485,6 +2510,7 @@ BEGIN
 	AND determine_fgn_allacci()
 	AND populate_fgn_volumi_utenze()
 	AND populate_ubic_f_allaccio()
+	AND populate_ubic_f_allaccio_nearest()
 	and populate_utenze_fognature_collettori()
 	AND populate_fgn_shape();
 END;
@@ -3380,23 +3406,57 @@ $$  LANGUAGE plpgsql
 --------
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_stats_cloratore(
 ) RETURNS BOOLEAN AS $$
+DECLARE
+    v_tol DOUBLE PRECISION := snap_tolerance();
 BEGIN
     -- truncate old table
 	DELETE FROM stats_cloratore;
 
     -- run procedure
+	--INSERT INTO stats_cloratore (id_rete, counter)
+	--SELECT
+	--	id_rete,
+	--	count(*) as cc
+	--FROM
+	--	acq_condotta ac,
+	--	acq_cloratore ac2
+	--WHERE
+	--	st_intersects(ac.geom,
+	--	ac2.geom)
+	--GROUP BY
+	--	id_rete;
+
+	-- ADDUTTRICI
+	INSERT INTO stats_cloratore(id_rete, counter)
+	select codice_ato, count(idgis) from (
+        select distinct m.codice_ato, c.idgis from
+        (
+        select a.codice_ato, c.geom
+        from acq_adduttrice a, acq_condotta c
+        where a.idgis = c.id_rete
+        and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
+        and c.d_gestore = 'PUBLIACQUA' and c.d_ambito in ('AT3', null) and c.d_stato in ('ATT', 'FIP', NULL) and c.sn_fittizia in ('NO', NULL)
+        and c.d_tipo_acqua = 'ATR'
+        ) m, acq_cloratore c
+        where m.geom && st_buffer(c.geom, v_tol)
+        and ST_INTERSECTS(m.geom, st_buffer(c.geom, v_tol))
+    ) t group by t.codice_ato;
+
+	-- DISTRIBUZIONI
 	INSERT INTO stats_cloratore (id_rete, counter)
-	SELECT
-		id_rete,
-		count(*) as cc
-	FROM
-		acq_condotta ac,
-		acq_cloratore ac2
-	WHERE
-		st_intersects(ac.geom,
-		ac2.geom)
-	GROUP BY
-		id_rete;
+	select codice_ato, count(idgis) from (
+        select distinct m.codice_ato, c.idgis from
+        (
+        select a.codice_ato, c.geom
+        from acq_rete_distrib a, acq_condotta c
+        where a.idgis = c.id_rete
+        and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
+        and c.d_gestore = 'PUBLIACQUA' and c.d_ambito in ('AT3', null) and c.d_stato in ('ATT', 'FIP', NULL) and c.sn_fittizia in ('NO', NULL)
+        and c.d_tipo_acqua = 'ATR'
+        ) m, acq_cloratore c
+        where m.geom && st_buffer(c.geom, v_tol)
+        and ST_INTERSECTS(m.geom, st_buffer(c.geom, v_tol))
+    ) t group by t.codice_ato;
 
 	RETURN TRUE;
 END;
@@ -3404,7 +3464,6 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
-
 -------------------------------------------------------------------------------------------------------
 -- Create the schema acquedottistico for impianti/reti
 --
@@ -3630,19 +3689,24 @@ begin
         FROM
             utenza_sap us
         where
+            gruppo = 'A' AND
             cattariffa not in ('APB_REFIND',
-            'APBLREFIND',
-            'APBNREFCIV',
-            'APBHSUBDIS')),
-        utenze_condominiali as (
+                'APBLREFIND',
+                'APBNREFCIV',
+                'APBHSUBDIS'
+            )
+    ),
+    utenze_condominiali as (
         SELECT
             id_ubic_contatore,
             tipo_uso
         FROM
             utenza_sap us
         where
-            cattariffa IN ('APB_CONDOM','APB_CONMIS')),
-        utenze_indirette as (
+            gruppo = 'A' AND
+            cattariffa IN ('APB_CONDOM','APB_CONMIS')
+    ),
+    utenze_indirette as (
         SELECT
             id_ubic_contatore,
             tipo_uso,
@@ -3653,19 +3717,24 @@ begin
             cattariffa not in ('APB_REFIND',
             'APBLREFIND',
             'APBNREFCIV',
-            'APBHSUBDIS')),
-        utenze_misuratore as (
+            'APBHSUBDIS')
+    ),
+    utenze_misuratore as (
         SELECT
             id_ubic_contatore,
             nr_contat
         FROM
             utenza_sap us
         where
-            nr_contat >= 1 and cattariffa not in ('APB_REFIND',
+            gruppo = 'A' and
+            nr_contat >= 1 and
+            cattariffa not in (
+            'APB_REFIND',
             'APBLREFIND',
             'APBNREFCIV',
-            'APBHSUBDIS')),
-        volume_utenze as (
+            'APBHSUBDIS')
+    ),
+    volume_utenze as (
         SELECT
             id_ubic_contatore,
             vol_acq_ero,
@@ -3676,31 +3745,34 @@ begin
             cattariffa not in ('APB_REFIND',
             'APBLREFIND',
             'APBNREFCIV',
-            'APBHSUBDIS')),
-        n_allacci as (select id_rete, count(*) as nr_allacci
-            FROM acq_allaccio aa
-            join acq_cond_altro aca
-            on aa.id_condotta =aca.idgis
-            join acq_rete_distrib ard
-            on ard.idgis=aca.id_rete
-            WHERE ard.d_gestore = 'PUBLIACQUA' AND ard.d_ambito IN ('AT3', NULL) AND ard.d_stato NOT IN ('IPR','IAC') group by 1
-        ),
-        distrib_and_addr as (
-            SELECT distinct ua.acq_idrete, idgis
-            FROM (
-                SELECT distinct idgis, d_gestore,d_ambito, d_stato FROM acq_rete_distrib
-                UNION ALL
-                SELECT distinct idgis, d_gestore,d_ambito, d_stato from acq_adduttrice
-            ) ard
-            JOIN ubic_allaccio ua ON
-                ard.idgis = ua.acq_idrete
-            WHERE
-                ard.d_gestore = 'PUBLIACQUA'
-                AND ard.d_ambito IN ('AT3',
-                null)
-                AND ard.d_stato NOT IN ('IPR',
-                'IAC')
-        )
+            'APBHSUBDIS')
+    ),
+    n_allacci as (
+        select id_rete, count(*) as nr_allacci
+        FROM acq_allaccio aa
+        join acq_cond_altro aca
+        on aa.id_condotta =aca.idgis
+        join acq_rete_distrib ard
+        on ard.idgis=aca.id_rete
+        WHERE ard.d_gestore = 'PUBLIACQUA' AND ard.d_ambito IN ('AT3', NULL) AND ard.d_stato NOT IN ('IPR','IAC')
+        group by 1
+    ),
+    distrib_and_addr as (
+        SELECT distinct ua.acq_idrete, idgis
+        FROM (
+            SELECT distinct idgis, d_gestore,d_ambito, d_stato FROM acq_rete_distrib
+            UNION ALL
+            SELECT distinct idgis, d_gestore,d_ambito, d_stato from acq_adduttrice
+        ) ard
+        JOIN ubic_allaccio ua ON
+            ard.idgis = ua.acq_idrete
+        WHERE
+            ard.d_gestore = 'PUBLIACQUA'
+            AND ard.d_ambito IN ('AT3',
+            null)
+            AND ard.d_stato NOT IN ('IPR',
+            'IAC')
+    )
 	SELECT
 		ua.acq_idrete,
 		count(ud.id_ubic_contatore) as nr_utenze_dirette,
@@ -3739,7 +3811,55 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
 
+-------------------------------------------------------------------------------------------------------
+-- Requirements 20210422: (4). Utenze su Adduzione\Rete e Collettore\Fognatura
+-- Utenza servite da fognatura fuori dalla rete di raccolta (integrazione id 138)
+-- This function assign the nearest polygon from the FGN_RETE_RACC to the ubic_contatore
+-- not inside polygons.
+-- To increase performance we progressively increase the search radius to calculate the minimum distance
+-- between not assicgned "contatori" and the polygons in that search radius.
+--
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.populate_ubic_f_allaccio_nearest()
+--
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_ubic_f_allaccio_nearest(
+) RETURNS BOOLEAN AS $$
+DECLARE
+    v_prog_buff NUMERIC[] := ARRAY[100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000];
+    v_buff NUMERIC;
+BEGIN
 
+    FOR v_index in array_lower(v_prog_buff, 1)..array_upper(v_prog_buff, 1) LOOP
+        v_buff := v_prog_buff[v_index];
+
+        UPDATE ubic_f_allaccio
+        set fgn_sn_alla = 'NO', fgn_idrete = t.r_idgis
+        FROM (
+            select c_idgis, r_idgis from (
+                select c.idgis as c_idgis, r.idgis as r_idgis,
+                    ROW_NUMBER() OVER(PARTITION BY c.idgis ORDER BY ST_Distance(r.geom, c.geom) ASC) AS rank
+                    from acq_ubic_contatore c, FGN_RETE_RACC r
+                    where exists(
+                        select ufa.id_ubic_contatore
+                        from ubic_f_allaccio ufa
+                        join utenza_sap us on ufa.id_ubic_contatore = us.id_ubic_contatore
+                        where fgn_idrete is null and esente_fog = 0
+                        and c.idgis = ufa.id_ubic_contatore
+                    )
+                and r.geom && ST_buffer(c.geom, v_buff)
+                and ST_intersects(r.geom, ST_buffer(c.geom, v_buff))
+                ORDER BY c.idgis, ST_Distance(r.geom, c.geom) ASC
+            ) t where t.rank = 1
+        ) t
+        WHERE t.c_idgis = ubic_f_allaccio.id_ubic_contatore;
+
+    END LOOP;
+
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
 -------------------------------------------------------------------------------------------------------
 -- Calcola la tabella ubic_f_allaccio partendo da acq_allacci #221
 --
@@ -3908,15 +4028,15 @@ begin
 			esente_fog,
 			cattariffa,
 			vol_fgn_fatt,
-			vol_fgn_ero
-		FROM
-			(
+			vol_fgn_ero,
+			us.gruppo
+		FROM (
 			SELECT
 				idgis
 			FROM
 				fgn_rete_racc frr
 			WHERE frr.d_gestore = 'PUBLIACQUA' AND frr.d_ambito IN ('AT3', NULL) AND frr.d_stato NOT IN ('IPR','IAC')
-		union all
+		    union all
 			SELECT
 				idgis
 			FROM
@@ -3930,8 +4050,8 @@ begin
 	)
 	SELECT
 		fgn_idrete,
-		SUM(CASE WHEN ut.esente_fog = 0 THEN 1 ELSE 0 END) nr_utenze_totali,
-		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') THEN 1 ELSE 0 END) utenze_industriali,
+		SUM(CASE WHEN ut.esente_fog = 0 AND ut.gruppo = 'A' THEN 1 ELSE 0 END) nr_utenze_totali,
+		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') AND ut.gruppo = 'A' THEN 1 ELSE 0 END) utenze_industriali,
 		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') THEN vol_fgn_fatt ELSE 0 END) volume_utenze_industriali,
 		SUM(CASE WHEN ut.esente_fog = 0 THEN vol_fgn_fatt ELSE 0 END) volume_utenze_totali
 	FROM

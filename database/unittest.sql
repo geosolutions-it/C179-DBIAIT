@@ -1689,11 +1689,21 @@ DECLARE
   v_expected       BIGINT:=1;
   v_denom          VARCHAR;
 BEGIN
-    select count(0) INTO v_count from dbiait_analysis.support_codice_capt_accorp where idgis='PAACAP00000000012960' ;
-    perform test_assertTrue('populate_codice_capt_accorp (PAACAP00000000012960):, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+    select count(0) INTO v_count
+    from dbiait_analysis.support_codice_capt_accorp
+    where idgis='PAACAP00000000012960' ;
+    perform test_assertTrue(
+        'populate_codice_capt_accorp (PAACAP00000000012960):, expected ' || v_expected || ' but found ' || v_count,
+        v_count = v_expected
+    );
 
-    select COALESCE(denom, '?') INTO v_denom from dbiait_analysis.support_codice_capt_accorp where idgis='PAACAP00000000012960' ;
-    perform test_assertTrue('populate_codice_capt_accorp (PAACAP00000000012960):, expected <NULL> but found ' || v_denom, v_denom = '?' );
+    select COALESCE(denom, '?') INTO v_denom
+    from dbiait_analysis.support_codice_capt_accorp
+    where idgis='PAACAP00000000012960';
+    perform test_assertTrue(
+        'populate_codice_capt_accorp (PAACAP00000000012960):, expected <NULL> but found ' || v_denom,
+        v_denom = '?'
+    );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
@@ -1703,15 +1713,150 @@ DECLARE
   v_expected       BIGINT:=1;
   v_denom          VARCHAR;
 BEGIN
-    select count(0) INTO v_count from dbiait_analysis.support_codice_capt_accorp where idgis='PAACAP00000000011433' ;
-    perform test_assertTrue('populate_codice_capt_accorp (PAACAP00000000011433):, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
+    select count(0) INTO v_count
+    from dbiait_analysis.support_codice_capt_accorp
+    where idgis='PAACAP00000000011433' ;
+    perform test_assertTrue(
+        'populate_codice_capt_accorp (PAACAP00000000011433):, expected ' || v_expected || ' but found ' || v_count,
+        v_count = v_expected
+    );
 
-    select COALESCE(denom, '?') INTO v_denom from dbiait_analysis.support_codice_capt_accorp where idgis='PAACAP00000000011433' ;
-    perform test_assertTrue('populate_codice_capt_accorp (PAACAP00000000011433):, expected <NULL> but found ' || v_denom, v_denom = '?' );
+    select COALESCE(denom, '?') INTO v_denom
+    from dbiait_analysis.support_codice_capt_accorp
+    where idgis='PAACAP00000000011433';
+    perform test_assertTrue(
+        'populate_codice_capt_accorp (PAACAP00000000011433):, expected <NULL> but found ' || v_denom,
+        v_denom = '?'
+    );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
-
-
-
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_ADDUT() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check total number of records in the support table
+    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'AD%';
+    perform test_assertTrue('populate_STATS_CLORATORE (ADDUTTRICI): total expected 37 but found ' || v_count, v_count = 37 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_ADDUT_AD00985() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check number of cloratore for AD00985
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00985';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00985): expected 2 but found ' || v_count, v_count = 2 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_ADDUT_AD00986() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check number of cloratore for AD00986
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00986';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 1 but found ' || v_count, v_count = 1 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_ADDUT_AD00229() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check number of cloratore for AD00229
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00229';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00229): expected 1 but found ' || v_count, v_count = 1 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_DISTR() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check total number of records in the support table
+    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'DI%';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR: total expected 6 but found ' || v_count, v_count = 6 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_DISTR_DI00914() returns void as $$
+DECLARE
+    v_count BIGINT:=0;
+BEGIN
+    -- Check number of cloratore for DI00914
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'DI00914';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (DI00914): expected 3 but found ' || v_count, v_count = 3 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_UBIC_F_ALLACCIO_PAAUCO00000002029321() returns void as $$
+DECLARE
+    v_idrete VARCHAR2(32);
+    v_expected VARCHAR2(32) := 'PAFRRC00000000001403';
+BEGIN
+    select fgn_idrete into v_idrete from dbiait_analysis.UBIC_F_ALLACCIO
+    where id_ubic_contatore = 'PAAUCO00000002029321';
+    perform test_assertTrue(
+        'test_case_UBIC_F_ALLACCIO_PAAUCO00000002029321: expected ' || v_expected || ' but found ' || v_idrete,
+        v_idrete = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_UBIC_F_ALLACCIO_PAAUCO00000002029178() returns void as $$
+DECLARE
+    v_idrete VARCHAR2(32);
+    v_expected VARCHAR2(32) := 'PAFRRC00000000001404';
+BEGIN
+    select fgn_idrete into v_idrete from dbiait_analysis.UBIC_F_ALLACCIO
+    where id_ubic_contatore = 'PAAUCO00000002029178';
+    perform test_assertTrue(
+        'test_case_UBIC_F_ALLACCIO_PAAUCO00000002029178: expected ' || v_expected || ' but found ' || v_idrete,
+        v_idrete = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_UBIC_F_ALLACCIO_PAAUCO00000002027995() returns void as $$
+DECLARE
+    v_idrete VARCHAR2(32);
+    v_expected VARCHAR2(32) := 'PAFRRC00000000001264';
+BEGIN
+    select fgn_idrete into v_idrete from dbiait_analysis.UBIC_F_ALLACCIO
+    where id_ubic_contatore = 'PAAUCO00000002027995';
+    perform test_assertTrue(
+        'test_case_UBIC_F_ALLACCIO_PAAUCO00000002027995: expected ' || v_expected || ' but found ' || v_idrete,
+        v_idrete = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000755126() returns void as $$
+DECLARE
+    v_count INTEGER;
+    v_expected INTEGER := 36;
+BEGIN
+    select utenze_mis INTO v_count from dbiait_analysis.acq_shape where ids_codi_1 = 'PAACON00000000755126';
+    perform test_assertTrue(
+        'test_case_acq_shape_utenze_mis_PAACON00000000755126: expected ' || v_expected || ' but found ' || v_count,
+        v_count = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_NULL() returns void as $$
+DECLARE
+    v_count INTEGER;
+    v_expected INTEGER := 0;
+BEGIN
+    select count(0) INTO v_count from dbiait_analysis.acq_shape where UTENZE_MIS is null;
+    perform test_assertTrue(
+        'test_case_acq_shape_utenze_mis_NULL: expected ' || v_expected || ' but found ' || v_count,
+        v_count = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
 
