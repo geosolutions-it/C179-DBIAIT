@@ -147,7 +147,7 @@ class Acquedotto(BaseProcessTask):
 
 class ArchiviPompe(BaseProcessTask):
     algorithm = u"populate_archivi_pompe"
-    name = u"Archivi pompe"
+    name = u"Archivio pompe"
 
     @classmethod
     def process_pre_send(cls):
