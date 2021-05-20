@@ -1772,7 +1772,7 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check number of cloratore for DI00914
-    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'DI00914';
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAARDI00000000001409';
     perform test_assertTrue('populate_STATS_CLORATORE_DISTR (DI00914): expected 3 but found ' || v_count, v_count = 3 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
