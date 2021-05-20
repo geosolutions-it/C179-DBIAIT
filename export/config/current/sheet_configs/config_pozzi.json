@@ -931,8 +931,19 @@
       {"id": "17900","transformation": { "func": "DIRECT", "params": { "field": "sn_rispetto"}}},
       {"id": "18000","transformation": { "func": "DIRECT", "params": { "field": "sn_protezione"}}},
 
-      {"id":"16800", "transformation":{"func":"DIRECT", "params":{"field":"sum_potenza"}}},
-
+      {"id":"16800", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "sum_potenza",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ sum_potenza }"
+                 }
+             }
+         }
+      },
       {"id":"18800", "transformation":{
          "func": "IF",
          "params": {

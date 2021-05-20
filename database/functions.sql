@@ -1959,11 +1959,12 @@ BEGIN
 
     -- AGGIUNTA COUNTER E LUNGHEZZE
     UPDATE ACQ_SHAPE
-    SET
-        allacci = counter,
-        lunghezza_ = lung
+    SET allacci = counter, lunghezza_ = lung
     FROM (select id_condotta, count(nr_cont_cass) as counter,sum(lungh_all) as lung from acq_allaccio group by 1) c
     WHERE c.id_condotta = ACQ_SHAPE.ids_codi_1;
+    --Fix ID: 208
+    UPDATE ACQ_SHAPE SET allacci = 0 WHERE allacci is null;
+    UPDATE ACQ_SHAPE SET lunghezza_ = 0 WHERE lunghezza_ is null;
 
     UPDATE ACQ_SHAPE
     SET
@@ -2466,6 +2467,11 @@ BEGIN
     group by
         1) c
     WHERE c.ids_codi_1 = FGN_SHAPE.ids_codi_1;
+
+    --Fix ID: 209
+    UPDATE FGN_SHAPE SET allacci = 0 WHERE allacci is null;
+    UPDATE FGN_SHAPE SET allacci_in = 0 WHERE allacci_in is null;
+    UPDATE FGN_SHAPE SET lunghezza_ = 0 WHERE lunghezza_ is null;
 
 	--(riparazioni_allacci, riparazioni_rete)
 	UPDATE FGN_SHAPE
@@ -3413,16 +3419,16 @@ BEGIN
 	DELETE FROM stats_cloratore;
 
 	INSERT INTO stats_cloratore(id_rete, counter)
-	select codice_ato, count(idgis) from (
-        select distinct m.codice_ato, c.idgis from
+	select id_rete, count(idgis) from (
+        select distinct m.id_rete, c.idgis from
         (
-        select a.codice_ato, c.geom
+        select a.idgis id_rete, c.geom
         from (
             -- ADDUTTRICI
-            select codice_ato, idgis, d_gestore, d_ambito, d_stato from acq_adduttrice
+            select idgis, d_gestore, d_ambito, d_stato from acq_adduttrice
             UNION ALL
             -- DISTRIBUZIONI
-            select codice_ato, idgis, d_gestore, d_ambito, d_stato from acq_rete_distrib
+            select idgis, d_gestore, d_ambito, d_stato from acq_rete_distrib
         ) a, acq_condotta c
         where a.idgis = c.id_rete
         and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
@@ -3431,7 +3437,7 @@ BEGIN
         ) m, acq_cloratore c
         where m.geom && st_buffer(c.geom, v_tol)
         and ST_INTERSECTS(m.geom, st_buffer(c.geom, v_tol))
-    ) t group by t.codice_ato;
+    ) t group by t.id_rete;
 
 	RETURN TRUE;
 END;
@@ -3689,6 +3695,7 @@ begin
         FROM
             utenza_sap us
         where
+            gruppo = 'A' AND
             cattariffa not in ('APB_REFIND',
             'APBLREFIND',
             'APBNREFCIV',
@@ -3821,6 +3828,7 @@ BEGIN
                         where fgn_idrete is null and esente_fog = 0
                         and c.idgis = ufa.id_ubic_contatore
                     )
+                and r.d_gestore ='PUBLIACQUA' and r.d_ambito in ('AT3', null) AND r.d_stato not in ('IPR', 'IAC')
                 and r.geom && ST_buffer(c.geom, v_buff)
                 and ST_intersects(r.geom, ST_buffer(c.geom, v_buff))
                 ORDER BY c.idgis, ST_Distance(r.geom, c.geom) ASC

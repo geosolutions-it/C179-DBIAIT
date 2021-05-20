@@ -265,7 +265,20 @@
                 }
             ]},
 
-        {"id":"49200", "transformation":{"func":"DIRECT", "params":{"field":"sum_potenza"}}},
+        {"id":"49200", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "sum_potenza",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ sum_potenza }"
+                 }
+             }
+         }
+        },
+
         {"id":"50100", "transformation":{
            "func": "IF",
            "params": {
