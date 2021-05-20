@@ -1283,7 +1283,7 @@ DECLARE
   v_count       BIGINT:=0;
   v_expected    BIGINT:=dbiait_analysis._test_expected_count('STATS_CLORATORE');
 BEGIN
-    select count(0) into v_count from dbiait_analysis.STATS_CLORATORE;
+    select count(0) into v_count from dbiait_analysis.STATS_CLORATORE WHERE counter>0;
     perform test_assertTrue('count TAB STATS_CLORATORE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
@@ -1531,7 +1531,7 @@ BEGIN
     select COUNT(utenze_mis) INTO v_count
     from dbiait_analysis.acq_shape
     where utenze_mis IS NULL;
-    perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS NOT NULL, expected ' || v_expected || ' but found ' || v_count, v_count = 0 );
+    perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS NOT NULL, expected 0 but found ' || v_count, v_count = 0 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 ---------------------------------------------------------------------------------------------
@@ -1722,7 +1722,7 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check total number of records in the support table
-    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'AD%';
+    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete like 'PAAADD%' AND counter > 0;
     perform test_assertTrue('populate_STATS_CLORATORE (ADDUTTRICI): total expected 30 but found ' || v_count, v_count = 30 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
@@ -1732,7 +1732,7 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check number of cloratore for AD00985
-    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00985';
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAAADD00000000005181';
     perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00985): expected 2 but found ' || v_count, v_count = 2 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
@@ -1742,8 +1742,8 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check number of cloratore for AD00986
-    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00986';
-    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 1 but found ' || v_count, v_count = 1 );
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAAADD00000000005188';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 0 but found ' || v_count, v_count = 0 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
@@ -1752,8 +1752,8 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check number of cloratore for AD00229
-    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00229';
-    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00229): expected 1 but found ' || v_count, v_count = 1 );
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAAADD00000000005184';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00229): expected 0 but found ' || v_count, v_count = 0 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
@@ -1762,7 +1762,7 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check total number of records in the support table
-    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'DI%';
+    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'PAARDI%' and counter > 0;
     perform test_assertTrue('populate_STATS_CLORATORE_DISTR: total expected 6 but found ' || v_count, v_count = 6 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
@@ -1902,7 +1902,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_utenze_adduttrici_nr_utenze_dirette() returns void as $$
 DECLARE
   v_count BIGINT:=0;
-  v_expected BIGINT:=1493;
+  v_expected BIGINT:=1485;
 BEGIN
 
     select sum(nr_utenze_dirette) INTO v_count
@@ -1915,7 +1915,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_utenze_adduttrici_nr_utenze_indir_indirette() returns void as $$
 DECLARE
   v_count BIGINT:=0;
-  v_expected BIGINT:=2026;
+  v_expected BIGINT:=2021;
 BEGIN
 
     select sum(nr_utenze_indir_indirette) INTO v_count
@@ -1929,7 +1929,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_utenze_adduttrici_nr_utenze_indir_domestici() returns void as $$
 DECLARE
   v_count BIGINT:=0;
-  v_expected BIGINT:=1784;
+  v_expected BIGINT:=1776;
 BEGIN
 
     select sum(nr_utenze_indir_domestici) INTO v_count
@@ -1943,7 +1943,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_utenze_adduttrici_nr_utenze_indir_residente() returns void as $$
 DECLARE
   v_count BIGINT:=0;
-  v_expected BIGINT:=1582;
+  v_expected BIGINT:=1573;
 BEGIN
 
     select sum(nr_utenze_indir_residente) INTO v_count
@@ -1957,7 +1957,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_utenze_distribuzioni_nr_utenze_dirette() returns void as $$
 DECLARE
   v_count BIGINT:=0;
-  v_expected BIGINT:=394027;
+  v_expected BIGINT:=394034;
 BEGIN
 
     select sum(nr_utenze_dirette) INTO v_count
@@ -1971,7 +1971,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_utenze_distribuzioni_nr_utenze_indir_indirette() returns void as $$
 DECLARE
   v_count BIGINT:=0;
-  v_expected BIGINT:=682762;
+  v_expected BIGINT:=682766;
 BEGIN
 
     select sum(nr_utenze_indir_indirette) INTO v_count
@@ -1985,7 +1985,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_utenze_distribuzioni_nr_utenze_indir_domestici() returns void as $$
 DECLARE
   v_count BIGINT:=0;
-  v_expected BIGINT:=621861;
+  v_expected BIGINT:=621868;
 BEGIN
 
     select sum(nr_utenze_indir_domestici) INTO v_count
@@ -1999,7 +1999,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_utenze_distribuzioni_nr_utenze_indir_residente() returns void as $$
 DECLARE
   v_count BIGINT:=0;
-  v_expected BIGINT:=509475;
+  v_expected BIGINT:=509484;
 BEGIN
 
     select sum(nr_utenze_indir_residente) INTO v_count

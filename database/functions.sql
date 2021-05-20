@@ -3416,28 +3416,46 @@ DECLARE
     v_tol DOUBLE PRECISION := snap_tolerance();
 BEGIN
     -- truncate old table
+
 	DELETE FROM stats_cloratore;
 
 	INSERT INTO stats_cloratore(id_rete, counter)
-	select id_rete, count(idgis) from (
-        select distinct m.id_rete, c.idgis from
-        (
-        select a.idgis id_rete, c.geom
-        from (
-            -- ADDUTTRICI
-            select idgis, d_gestore, d_ambito, d_stato from acq_adduttrice
-            UNION ALL
-            -- DISTRIBUZIONI
-            select idgis, d_gestore, d_ambito, d_stato from acq_rete_distrib
-        ) a, acq_condotta c
-        where a.idgis = c.id_rete
-        and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
-        and c.d_gestore = 'PUBLIACQUA' and c.d_ambito in ('AT3', null) and c.d_stato in ('ATT', 'FIP', NULL) and c.sn_fittizia in ('NO', NULL)
-        and c.d_tipo_acqua = 'ATR'
-        ) m, acq_cloratore c
-        where m.geom && st_buffer(c.geom, v_tol)
-        and ST_INTERSECTS(m.geom, st_buffer(c.geom, v_tol))
-    ) t group by t.id_rete;
+	select DISTINCT idgis, 0 from (
+		-- ADDUTTRICI
+		select distinct idgis
+		from acq_adduttrice
+		where d_gestore = 'PUBLIACQUA' and d_ambito in ('AT3', null) and d_stato not in ('IPR', 'IAC')
+		UNION ALL
+		-- DISTRIBUZIONI
+		select distinct idgis
+		from acq_rete_distrib
+		where d_gestore = 'PUBLIACQUA' and d_ambito in ('AT3', null) and d_stato not in ('IPR', 'IAC')
+	) t;
+
+	UPDATE stats_cloratore
+	SET counter = x.counter
+	FROM (
+		select id_rete, count(idgis) counter from (
+	        select distinct m.id_rete, c.idgis from
+	        (
+	        select a.idgis id_rete, c.geom
+	        from (
+	            -- ADDUTTRICI
+	            select idgis, d_gestore, d_ambito, d_stato from acq_adduttrice
+	            UNION ALL
+	            -- DISTRIBUZIONI
+	            select idgis, d_gestore, d_ambito, d_stato from acq_rete_distrib
+	        ) a, acq_condotta c
+	        where a.idgis = c.id_rete
+	        and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
+	        and c.d_gestore = 'PUBLIACQUA' and c.d_ambito in ('AT3', null) and c.d_stato in ('ATT', 'FIP', NULL) and c.sn_fittizia in ('NO', NULL)
+	        and c.d_tipo_acqua = 'ATR'
+	        ) m, acq_cloratore c
+	        where m.geom && st_buffer(c.geom, v_tol)
+	        and ST_INTERSECTS(m.geom, st_buffer(c.geom, v_tol))
+	    ) t group by t.id_rete
+	) x
+	WHERE x.id_rete = stats_cloratore.id_rete;
 
 	RETURN TRUE;
 END;
