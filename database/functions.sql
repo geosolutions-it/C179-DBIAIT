@@ -2018,11 +2018,12 @@ BEGIN
 
     -- AGGIUNTA COUNTER E LUNGHEZZE
     UPDATE ACQ_SHAPE
-    SET
-        allacci = counter,
-        lunghezza_ = lung
+    SET allacci = counter, lunghezza_ = lung
     FROM (select id_condotta, count(nr_cont_cass) as counter,sum(lungh_all) as lung from acq_allaccio group by 1) c
     WHERE c.id_condotta = ACQ_SHAPE.ids_codi_1;
+    --Fix ID: 208
+    UPDATE ACQ_SHAPE SET allacci = 0 WHERE allacci is null;
+    UPDATE ACQ_SHAPE SET lunghezza_ = 0 WHERE lunghezza_ is null;
 
     UPDATE ACQ_SHAPE
     SET
@@ -2154,9 +2155,7 @@ BEGIN
         acq_shape.ids_codi_1 = g.ids_codi_1;
 
     -- fix anomalies #204
-    UPDATE acq_shape
-        SET UTENZE_MIS = 0
-	    WHERE UTENZE_MIS IS NULL;
+    update acq_shape set UTENZE_MIS = 0 WHERE UTENZE_MIS IS NULL;
 
 	RETURN TRUE;
 
@@ -2527,6 +2526,11 @@ BEGIN
     group by
         1) c
     WHERE c.ids_codi_1 = FGN_SHAPE.ids_codi_1;
+
+    --Fix ID: 209
+    UPDATE FGN_SHAPE SET allacci = 0 WHERE allacci is null;
+    UPDATE FGN_SHAPE SET allacci_in = 0 WHERE allacci_in is null;
+    UPDATE FGN_SHAPE SET lunghezza_ = 0 WHERE lunghezza_ is null;
 
 	--(riparazioni_allacci, riparazioni_rete)
 	UPDATE FGN_SHAPE
@@ -3477,53 +3481,47 @@ DECLARE
     v_tol DOUBLE PRECISION := snap_tolerance();
 BEGIN
     -- truncate old table
+
 	DELETE FROM stats_cloratore;
 
-    -- run procedure
-	--INSERT INTO stats_cloratore (id_rete, counter)
-	--SELECT
-	--	id_rete,
-	--	count(*) as cc
-	--FROM
-	--	acq_condotta ac,
-	--	acq_cloratore ac2
-	--WHERE
-	--	st_intersects(ac.geom,
-	--	ac2.geom)
-	--GROUP BY
-	--	id_rete;
-
-	-- ADDUTTRICI
 	INSERT INTO stats_cloratore(id_rete, counter)
-	select codice_ato, count(idgis) from (
-        select distinct m.codice_ato, c.idgis from
-        (
-        select a.codice_ato, c.geom
-        from acq_adduttrice a, acq_condotta c
-        where a.idgis = c.id_rete
-        and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
-        and c.d_gestore = 'PUBLIACQUA' and c.d_ambito in ('AT3', null) and c.d_stato in ('ATT', 'FIP', NULL) and c.sn_fittizia in ('NO', NULL)
-        and c.d_tipo_acqua = 'ATR'
-        ) m, acq_cloratore c
-        where m.geom && st_buffer(c.geom, v_tol)
-        and ST_INTERSECTS(m.geom, st_buffer(c.geom, v_tol))
-    ) t group by t.codice_ato;
+	select DISTINCT idgis, 0 from (
+		-- ADDUTTRICI
+		select distinct idgis
+		from acq_adduttrice
+		where d_gestore = 'PUBLIACQUA' and d_ambito in ('AT3', null) and d_stato not in ('IPR', 'IAC')
+		UNION ALL
+		-- DISTRIBUZIONI
+		select distinct idgis
+		from acq_rete_distrib
+		where d_gestore = 'PUBLIACQUA' and d_ambito in ('AT3', null) and d_stato not in ('IPR', 'IAC')
+	) t;
 
-	-- DISTRIBUZIONI
-	INSERT INTO stats_cloratore (id_rete, counter)
-	select codice_ato, count(idgis) from (
-        select distinct m.codice_ato, c.idgis from
-        (
-        select a.codice_ato, c.geom
-        from acq_rete_distrib a, acq_condotta c
-        where a.idgis = c.id_rete
-        and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
-        and c.d_gestore = 'PUBLIACQUA' and c.d_ambito in ('AT3', null) and c.d_stato in ('ATT', 'FIP', NULL) and c.sn_fittizia in ('NO', NULL)
-        and c.d_tipo_acqua = 'ATR'
-        ) m, acq_cloratore c
-        where m.geom && st_buffer(c.geom, v_tol)
-        and ST_INTERSECTS(m.geom, st_buffer(c.geom, v_tol))
-    ) t group by t.codice_ato;
+
+	UPDATE stats_cloratore
+	SET counter = x.counter
+	FROM (
+		select id_rete, count(idgis) counter from (
+	        select distinct m.id_rete, c.idgis from
+	        (
+	        select a.idgis id_rete, c.geom
+	        from (
+	            -- ADDUTTRICI
+	            select idgis, d_gestore, d_ambito, d_stato from acq_adduttrice
+	            UNION ALL
+	            -- DISTRIBUZIONI
+	            select idgis, d_gestore, d_ambito, d_stato from acq_rete_distrib
+	        ) a, acq_condotta c
+	        where a.idgis = c.id_rete
+	        and a.d_gestore = 'PUBLIACQUA' and a.d_ambito in ('AT3', null) and a.d_stato not in ('IPR', 'IAC')
+	        and c.d_gestore = 'PUBLIACQUA' and c.d_ambito in ('AT3', null) and c.d_stato in ('ATT', 'FIP', NULL) and c.sn_fittizia in ('NO', NULL)
+	        and c.d_tipo_acqua = 'ATR'
+	        ) m, acq_cloratore c
+	        where m.geom && st_buffer(c.geom, v_tol)
+	        and ST_INTERSECTS(m.geom, st_buffer(c.geom, v_tol))
+	    ) t group by t.id_rete
+	) x
+	WHERE x.id_rete = stats_cloratore.id_rete;
 
 	RETURN TRUE;
 END;
@@ -3810,6 +3808,7 @@ begin
         FROM
             utenza_sap us
         where
+            gruppo = 'A' AND
             cattariffa not in ('APB_REFIND',
             'APBLREFIND',
             'APBNREFCIV',
@@ -3942,6 +3941,7 @@ BEGIN
                         where fgn_idrete is null and esente_fog = 0
                         and c.idgis = ufa.id_ubic_contatore
                     )
+                and r.d_gestore ='PUBLIACQUA' and r.d_ambito in ('AT3', null) AND r.d_stato not in ('IPR', 'IAC')
                 and r.geom && ST_buffer(c.geom, v_buff)
                 and ST_intersects(r.geom, ST_buffer(c.geom, v_buff))
                 ORDER BY c.idgis, ST_Distance(r.geom, c.geom) ASC
@@ -4199,7 +4199,7 @@ begin
 		perc_acq = NULL,	
 		perc_fgn = NULL,	
 		pop_ser_fgn = NULL, 
-		perc_dep = NULL,		
+		perc_dep = NULL,																							
 		pop_ser_dep = NULL,
 		ut_abit_tot = NULL,
 		ut_abit_fgn = NULL,
