@@ -222,7 +222,21 @@
       {"id":"63800", "transformation": { "func": "ROUND", "params": {"field": "transformed_y_geom", "ndigits":  3}}},
       {"id":"63900", "transformation": { "func": "ROUND", "params": {"field": "transformed_x_geom", "ndigits":  3}}},
 
-      {"id":"64900", "transformation":{"func":"DIRECT", "params":{"field":"sum_potenza"}}},
+      {"id":"64900", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "sum_potenza",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ sum_potenza }"
+                 }
+             }
+         }
+      },
+
+
      {"id":"65900", "transformation":{
          "func": "IF",
          "params": {

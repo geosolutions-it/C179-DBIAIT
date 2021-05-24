@@ -224,13 +224,101 @@
         { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
         {"id": "119000", "transformation": {"func": "CONST", "params": { "value": "B" }}},
 
-        { "id": "113700", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dirette" } }},
-        { "id": "113800", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dir_dom_e_residente" } }},
-        { "id": "113900", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dir_residente" } }},
-        { "id": "114000", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_condominiali" } }},
-        { "id": "114100", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_indirette" } }},
-        { "id": "114200", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_domestici" } }},
-        { "id": "114300", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_residente" } }},
+        {"id":"113700", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_dirette",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_dirette }"
+                 }
+             }
+          }
+         },
+
+        {"id":"113800", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_dir_dom_e_residente",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_dir_dom_e_residente }"
+                 }
+             }
+          }
+         },
+        {"id":"113900", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_dir_residente",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_dir_residente }"
+                 }
+             }
+          }
+         },
+        {"id":"114000", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_condominiali",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_condominiali }"
+                 }
+             }
+          }
+         },
+        {"id":"114100", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_indir_indirette",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_indir_indirette }"
+                 }
+             }
+          }
+         },
+
+        {"id":"114200", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_indir_domestici",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_indir_domestici }"
+                 }
+             }
+          }
+         },
+
+        {"id":"114300", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_indir_residente",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_indir_residente }"
+                 }
+             }
+          }
+         },
+
         { "id": "99100", "transformation": { "func": "DIRECT", "params": { "field": "nr_allacci" } }},
         { "id": "54600", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
         { "id": "54700", "transformation": { "func": "DIRECT", "params": { "field": "volume_fatturato" } }},

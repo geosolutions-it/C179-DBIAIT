@@ -187,13 +187,103 @@
         {"id": "112500","transformation": {"func": "DIRECT", "params": {"field": "codice_schema_acq"}}},
         {"id": "112600","transformation": {"func": "DIRECT", "params": {"field": "denominazione_schema_acq"}}},
 
-        { "id": "117800", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dirette" } }},
-        { "id": "117900", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dir_dom_e_residente" } }},
-        { "id": "118000", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dir_residente" } }},
-        { "id": "118100", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_condominiali" } }},
-        { "id": "118200", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_indirette" } }},
-        { "id": "118300", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_domestici" } }},
-        { "id": "118400", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_residente" } }},
+        {"id":"117800", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_dirette",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_dirette }"
+                 }
+             }
+          }
+         },
+
+        {"id":"117900", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_dir_dom_e_residente",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_dir_dom_e_residente }"
+                 }
+             }
+          }
+         },
+
+        {"id":"118000", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_dir_residente",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_dir_residente }"
+                 }
+             }
+          }
+         },
+
+        {"id":"118100", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_condominiali",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_condominiali }"
+                 }
+             }
+          }
+         },
+
+        {"id":"118200", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_indir_indirette",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_indir_indirette }"
+                 }
+             }
+          }
+         },
+
+        {"id":"118300", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_indir_domestici",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_indir_domestici }"
+                 }
+             }
+          }
+         },
+
+        {"id":"118400", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_indir_residente",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_indir_residente }"
+                 }
+             }
+          }
+         },
 
         { "id": "117700", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
         { "id": "116600", "transformation": { "func": "DIRECT", "params": { "field": "volume_fatturato" } }},

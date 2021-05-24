@@ -4,24 +4,23 @@
    "sources":[
       {
          "fields":[
-            {"name":"archivio_pompe.codice_ato", "alias":"codice_ato"},
-            {"name":"archivio_pompe.d_stato_cons", "alias":"d_stato_cons"},
-            {"name":"archivio_pompe.anno_instal", "alias":"anno_instal"},
-            {"name":"archivio_pompe.anno_ristr", "alias":"anno_ristr"},
-            {"name":"archivio_pompe.potenza", "alias":"potenza"},
-            {"name":"archivio_pompe.portata", "alias":"portata"},
-            {"name":"archivio_pompe.prevalenza", "alias":"prevalenza"},
-            {"name":"archivio_pompe.sn_riserva", "alias":"sn_riserva", "function": "TO_BIT"},
-            {"name":"archivio_pompe.a_anno_instal", "alias":"a_anno_instal"},
-            {"name":"archivio_pompe.a_anno_ristr", "alias":"a_anno_ristr"},
-            {"name":"archivio_pompe.a_potenza", "alias":"a_potenza"},
-            {"name":"archivio_pompe.a_portata", "alias":"a_portata"},
-            {"name":"archivio_pompe.a_prevalenza", "alias":"a_prevalenza"}
+            {"name":"sollev_pompe.codice_ato", "alias":"codice_ato"},
+            {"name":"sollev_pompe.d_stato_cons", "alias":"d_stato_cons"},
+            {"name":"sollev_pompe.anno_instal", "alias":"anno_instal"},
+            {"name":"sollev_pompe.anno_ristr", "alias":"anno_ristr"},
+            {"name":"sollev_pompe.potenza", "alias":"potenza"},
+            {"name":"sollev_pompe.portata", "alias":"portata"},
+            {"name":"sollev_pompe.prevalenza", "alias":"prevalenza"},
+            {"name":"sollev_pompe.sn_riserva", "alias":"sn_riserva"},
+            {"name":"sollev_pompe.idx_anno_instal", "alias":"idx_anno_instal"},
+            {"name":"sollev_pompe.idx_anno_ristr", "alias":"idx_anno_ristr"},
+            {"name":"sollev_pompe.idx_potenza", "alias":"idx_potenza"},
+            {"name":"sollev_pompe.idx_portata", "alias":"idx_portata"},
+            {"name":"sollev_pompe.idx_prevalenza", "alias":"idx_prevalenza"}
          ],
          "table":{
-            "name":"archivio_pompe"
-         },
-         "filter": "WHERE archivio_pompe.tipo_oggetto = 'FGN_IMP_SOLLEV'"
+            "name":"sollev_pompe"
+         }
       }
    ],
    "columns":[
@@ -59,7 +58,7 @@
       {"id":"66900", "transformation":{"func":"DIRECT", "params":{"field":"portata"}}},
       {"id":"67000", "transformation":{"func":"DIRECT", "params":{"field":"prevalenza"}}},
       {"id":"67100", "transformation":{"func":"DIRECT", "params":{"field":"sn_riserva"}}},
-      {"id":"67200", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_instal", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+      {"id":"67200", "transformation":{"func":"DIRECT", "params":{"field":"idx_anno_instal"}}, "validations": [{
                 "func": "IF",
                 "params": {
                     "field": "67200",
@@ -95,7 +94,7 @@
                 "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 66600 è >= 2002 e <> 9999, allora il campo deve assumere valore A"
             }
         ]},
-        {"id":"67300", "transformation":{"func":"DOMAIN", "params":{"field":"a_anno_ristr", "domain_name": "D_AFFIDABILITA"}}, "validations": [{
+        {"id":"67300", "transformation":{"func":"DIRECT", "params":{"field":"idx_anno_ristr"}}, "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "67300",
@@ -113,8 +112,8 @@
                     "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 66700 >= 2002 allora il campo deve assumere valore A"
                 }
             ]},
-      {"id":"67400", "transformation":{"func":"DOMAIN", "params":{"field":"a_potenza", "domain_name": "D_AFFIDABILITA"}}},
-      {"id":"67500", "transformation":{"func":"DOMAIN", "params":{"field":"a_portata", "domain_name": "D_AFFIDABILITA"}}},
-      {"id":"67600", "transformation":{"func":"DOMAIN", "params":{"field":"a_prevalenza", "domain_name": "D_AFFIDABILITA"}}}
+      {"id":"67400", "transformation":{"func":"DIRECT", "params":{"field":"idx_potenza"}}},
+      {"id":"67500", "transformation":{"func":"DIRECT", "params":{"field":"idx_portata"}}},
+      {"id":"67600", "transformation":{"func":"DIRECT", "params":{"field":"idx_prevalenza"}}}
    ]
 }
