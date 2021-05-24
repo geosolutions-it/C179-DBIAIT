@@ -147,7 +147,7 @@ class Acquedotto(BaseProcessTask):
 
 class ArchiviPompe(BaseProcessTask):
     algorithm = u"populate_archivi_pompe"
-    name = u"Archivio pompe"
+    name = u"Archivi pompe"
 
     @classmethod
     def process_pre_send(cls):
@@ -189,7 +189,7 @@ process_mapper = {
     u"Servizio utenza": ServizioUtenza,
     u"Abitanti equivalenti trattati da depuratori o scarico diretto": AbitantiEquivalentiTrattatiDaDepuratoriOscaricoDiretto,
     u"Archivio pompe": ArchiviPompe,
-    u"Tabelle di relazione": GraphTemp,
+	u"Tabelle di relazione": GraphTemp,
     u"Acquedotto": Acquedotto,
     u"Fognatura": Fognatura
 }
