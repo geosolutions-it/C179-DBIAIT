@@ -313,9 +313,37 @@
         {"id": "76620", "transformation": {"func": "DIRECT", "params": { "field": "sn_lagunaggio" }}},
 
         {"id": "71900", "transformation": {"func": "DIRECT", "params": { "field": "denom" }}},
-        {"id": "73300", "transformation": {"func": "DIRECT", "params": { "field": "ae_tot" }}},
-        {"id": "73400", "transformation": {"func": "DIRECT", "params": { "field": "ae_civ" }}},
-        {"id": "72300", "transformation": {"func": "DIRECT", "params": { "field": "quota" }},"validations": [{
+
+        {"id":"73300", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "ae_tot",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ ae_tot }"
+                 }
+             }
+          }
+         },
+
+        {"id":"73400", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "ae_civ",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ ae_civ }"
+                 }
+             }
+          }
+         },
+
+        {"id": "72300", "transformation": { "func": "DIRECT", "params": { "field": "quota" } },
+            "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "72300",
@@ -327,7 +355,8 @@
                     },
                     "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|il valore 0 non e' ammissibile"
                 }
-            ]},
+            ]
+        },
         {"id": "72400", "transformation": {"func": "DIRECT", "params": { "field": "denominazi" }}},
         {"id": "72700", "transformation": {"func": "DIRECT", "params": { "field": "anno_costr" }},"validations": [{
                     "func": "IF",
