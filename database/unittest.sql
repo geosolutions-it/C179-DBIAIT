@@ -15,33 +15,6 @@
 -- RUN A SPECIFIC SUITE
 -- SELECT * FROM pgunit.test_run_suite('sqlexport');
 -- ==========================================================================================
--- TEST POPULATE STATS CLORATORE
--- ------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_populate_stats_cloratore(
-    v_run_proc BOOLEAN DEFAULT FALSE
-) returns void as $$
-DECLARE
-  new_id varchar;
-  new_count bigint;
-begin
-    -- run the new version of the procedure
-    IF v_run_proc THEN
-    	perform test_assertTrue('Verifica esito procedura', dbiait_analysis.populate_stats_cloratore() );
-    END IF;
-    --- check if the count of the selected id_rete is still the same
-    SELECT id_rete,counter INTO new_id, new_count FROM dbiait_analysis.stats_cloratore WHERE id_rete='PAARDI00000000001319';
-    perform test_assertTrue(new_id, 5 = new_count );
-    -- check if the total rows are the same
-    SELECT count(*) INTO new_count FROM DBIAIT_ANALYSIS.stats_cloratore;
-    perform test_assertTrue('numero totale di righe è cambiato', 43 = new_count );
-END;
-$$  LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public,pgunit;
-	
--- ------------------------------------------------------------------------------------------
--- TEST ACQ_SHAPE denominazione comuni accorpati
--- ------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_case_denom_acq_shape(
 ) returns void as $$
 DECLARE
@@ -1308,7 +1281,7 @@ DECLARE
   v_count       BIGINT:=0;
   v_expected    BIGINT:=dbiait_analysis._test_expected_count('STATS_CLORATORE');
 BEGIN
-    select count(0) into v_count from dbiait_analysis.STATS_CLORATORE;
+    select count(0) into v_count from dbiait_analysis.STATS_CLORATORE WHERE counter>0;
     perform test_assertTrue('count TAB STATS_CLORATORE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
@@ -1549,6 +1522,17 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 ---------------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_not_null() returns void as $$
+DECLARE
+  v_count       BIGINT:=0;
+BEGIN
+    select COUNT(utenze_mis) INTO v_count
+    from dbiait_analysis.acq_shape
+    where utenze_mis IS NULL;
+    perform test_assertTrue('ACQ_SHAPE:UTENZE_MIS NOT NULL, expected 0 but found ' || v_count, v_count = 0 );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+---------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000905600() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
@@ -1576,7 +1560,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000769625() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=111; -- (forse 111)
+  v_expected    BIGINT:=110;
 BEGIN
     select utenze_mis INTO v_count
     from dbiait_analysis.acq_shape
@@ -1588,7 +1572,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000758673() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=106;
+  v_expected    BIGINT:=105;
 BEGIN
     select utenze_mis INTO v_count
     from dbiait_analysis.acq_shape
@@ -1600,7 +1584,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000806238() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=33;
+  v_expected    BIGINT:=31;
 BEGIN
     select utenze_mis INTO v_count
     from dbiait_analysis.acq_shape
@@ -1744,8 +1728,8 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check total number of records in the support table
-    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'AD%';
-    perform test_assertTrue('populate_STATS_CLORATORE (ADDUTTRICI): total expected 37 but found ' || v_count, v_count = 37 );
+    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete like 'PAAADD%' AND counter > 0;
+    perform test_assertTrue('populate_STATS_CLORATORE (ADDUTTRICI): total expected 30 but found ' || v_count, v_count = 30 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
@@ -1754,7 +1738,7 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check number of cloratore for AD00985
-    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00985';
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAAADD00000000005181';
     perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00985): expected 2 but found ' || v_count, v_count = 2 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
@@ -1764,8 +1748,8 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check number of cloratore for AD00986
-    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00986';
-    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 1 but found ' || v_count, v_count = 1 );
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAAADD00000000005188';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 0 but found ' || v_count, v_count = 0 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
@@ -1774,8 +1758,8 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check number of cloratore for AD00229
-    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'AD00229';
-    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00229): expected 1 but found ' || v_count, v_count = 1 );
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAAADD00000000005184';
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00229): expected 0 but found ' || v_count, v_count = 0 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
@@ -1784,7 +1768,7 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check total number of records in the support table
-    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'DI%';;
+    select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'PAARDI%' and counter > 0;
     select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'DI%';
     perform test_assertTrue('populate_STATS_CLORATORE_DISTR: total expected 6 but found ' || v_count, v_count = 6 );
 END;
@@ -1795,7 +1779,7 @@ DECLARE
     v_count BIGINT:=0;
 BEGIN
     -- Check number of cloratore for DI00914
-    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'DI00914';
+    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAARDI00000000001409';
     perform test_assertTrue('populate_STATS_CLORATORE_DISTR (DI00914): expected 3 but found ' || v_count, v_count = 3 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
