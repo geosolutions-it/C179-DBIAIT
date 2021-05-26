@@ -12,11 +12,11 @@
                 {"name": "pompaggi_pompe.portata","alias": "portata"},
                 {"name": "pompaggi_pompe.prevalenza","alias": "prevalenza"},
                 {"name": "pompaggi_pompe.sn_riserva","alias": "sn_riserva"},
-                {"name": "pompaggi_pompe.idx_anno_instal","alias": "a_anno_instal"},
-                {"name": "pompaggi_pompe.idx_anno_ristr","alias": "a_anno_ristr"},
-                {"name": "pompaggi_pompe.idx_potenza","alias": "a_potenza"},
-                {"name": "pompaggi_pompe.idx_portata","alias": "a_portata"},
-                {"name": "pompaggi_pompe.idx_prevalenza","alias": "a_prevalenza"}
+                {"name": "pompaggi_pompe.idx_anno_instal","alias": "idx_anno_instal"},
+                {"name": "pompaggi_pompe.idx_anno_ristr","alias": "idx_anno_ristr"},
+                {"name": "pompaggi_pompe.idx_potenza","alias": "idx_potenza"},
+                {"name": "pompaggi_pompe.idx_portata","alias": "idx_portata"},
+                {"name": "pompaggi_pompe.idx_prevalenza","alias": "idx_prevalenza"}
             ],
              "table":{
                 "name":"pompaggi_pompe"
