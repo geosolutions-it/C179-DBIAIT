@@ -70,7 +70,6 @@ class BaseProcessTask(BaseTask):
                 result = cursor.fetchone()
         except Exception as e:
             print(e)
-            Task.objects.get(id=task_id)
             result = False
         print(f"procedure {settings.DATABASE_SCHEMAS[u'analysis']}.{self.algorithm} => { result }")
         return result
