@@ -1749,7 +1749,7 @@ DECLARE
 BEGIN
     -- Check number of cloratore for AD00986
     select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAAADD00000000005188';
-    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 0 but found ' || v_count, v_count = 0 );
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 1 but found ' || v_count, v_count = 1 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
@@ -1762,6 +1762,20 @@ BEGIN
     perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00229): expected 0 but found ' || v_count, v_count = 0 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+--------------------------------------------------------------------------------------------
+-- -- Il test e' stato commentato in quanto sul database non risulta presente il record.
+-- -- select codice_ato
+-- -- from dbiait_analysis.acq_adduttrice
+-- -- where codice_ato = 'AD00914'
+--CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_ADDUT_AD00914() returns void as $$
+--DECLARE
+--    v_count BIGINT:=0;
+--BEGIN
+--    -- Check number of cloratore for AD00914
+--    select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = '??????????????????';
+--    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00914): expected 3 but found ' || v_count, v_count = 3 );
+--END;
+--$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_case_STATS_CLORATORE_DISTR() returns void as $$
 DECLARE
@@ -2258,6 +2272,48 @@ BEGIN
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (perc_dep): expected ' || v_expected || ' but found ' || v_value,
         v_value BETWEEN v_expected - 0.01 AND v_expected + 0.01
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_ut_abit_tot() returns void as $$
+DECLARE
+    v_value INTEGER;
+    v_expected INTEGER := 1090;
+BEGIN
+    select ut_abit_tot INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (ut_abit_tot): expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_ut_abit_fgn() returns void as $$
+DECLARE
+    v_value INTEGER;
+    v_expected INTEGER := 750;
+BEGIN
+    select ut_abit_fgn INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (ut_abit_fgn): expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
+    );
+END;
+$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+-----------------------------------------------------------------------------------------
+CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_ut_abit_dep() returns void as $$
+DECLARE
+    v_value INTEGER;
+    v_expected INTEGER := 19;
+BEGIN
+    select ut_abit_dep INTO v_value
+    from POP_RES_COMUNE where pro_com = '48025';
+    perform test_assertTrue(
+        'test_case_pop_res_comune_LONDA (ut_abit_dep): expected ' || v_expected || ' but found ' || v_value,
+        v_value = v_expected
     );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;

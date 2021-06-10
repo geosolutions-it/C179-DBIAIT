@@ -32,6 +32,7 @@
             {"name":"acq_capt_conces.a_port_es", "alias":"a_port_es"},
             {"name":"acq_capt_conces.a_port_uti_max", "alias":"a_port_uti_max"},
             {"name":"acq_capt_conces.a_port_uti_min", "alias":"a_port_uti_min"},
+			{"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},																							  
             {"name":"acq_captazione.data_agg", "alias":"data_agg"},
             {"name":"acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
@@ -176,6 +177,7 @@
             {"name":"a_acq_capt_conces.a_port_es", "alias":"a_port_es"},
             {"name":"a_acq_capt_conces.a_port_uti_max", "alias":"a_port_uti_max"},
             {"name":"a_acq_capt_conces.a_port_uti_min", "alias":"a_port_uti_min"},
+			{"name":"a_acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},																							   
             {"name":"a_acq_captazione.data_agg", "alias":"data_agg"},
             {"name":"a_acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
@@ -932,6 +934,7 @@
       {"id": "17800","transformation": { "func": "DIRECT", "params": { "field": "sn_tut_ass"}}},
       {"id": "17900","transformation": { "func": "DIRECT", "params": { "field": "sn_rispetto"}}},
       {"id": "18000","transformation": { "func": "DIRECT", "params": { "field": "sn_protezione"}}},
+	  {"id": "111700","transformation": { "func": "DIRECT", "params": { "field": "sn_uso_plurimo"}}},																								  
 
       {"id":"16800", "transformation":{
          "func": "IF",
