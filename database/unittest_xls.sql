@@ -426,7 +426,7 @@ DECLARE
 BEGIN 
    SET search_path = public,dbiait_analysis; 
    SELECT count(0) INTO v_count FROM ( 
-   SELECT "codice_ato" "codice_ato","d_stato_cons" "d_stato_cons","anno_instal" "anno_instal","anno_ristr" "anno_ristr","potenza" "potenza","portata" "portata","prevalenza" "prevalenza","sn_riserva" "sn_riserva","idx_anno_instal" "a_anno_instal","idx_anno_ristr" "a_anno_ristr","idx_potenza" "a_potenza","idx_portata" "a_portata","idx_prevalenza" "a_prevalenza" FROM "pompaggi_pompe" "pompaggi_pompe"
+   SELECT "codice_ato" "codice_ato","d_stato_cons" "d_stato_cons","anno_instal" "anno_instal","anno_ristr" "anno_ristr","potenza" "potenza","portata" "portata","prevalenza" "prevalenza","sn_riserva" "sn_riserva","idx_anno_instal" "idx_anno_instal","idx_anno_ristr" "idx_anno_ristr","idx_potenza" "idx_potenza","idx_portata" "idx_portata","idx_prevalenza" "idx_prevalenza" FROM "pompaggi_pompe" "pompaggi_pompe"
    ) t; 
    SET search_path = public,pgunit; 
    PERFORM test_assertTrue('count XLS_POMPAGGI_POMPE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected); 
