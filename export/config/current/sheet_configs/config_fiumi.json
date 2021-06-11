@@ -46,6 +46,7 @@
                 {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
                 {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+				{"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
                 {"name": "fiumi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT"},
@@ -160,6 +161,7 @@
                 {"name": "a_acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
                 {"name": "a_acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "a_acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+				{"name": "a_acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT"},
                 {"name": "fiumi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT"},
@@ -240,6 +242,7 @@
         {"id": "4700","transformation": { "func": "DIRECT", "params": { "field": "sn_tut_ass"}}},
         {"id": "4800","transformation": { "func": "DIRECT", "params": { "field": "sn_rispetto"}}},
         {"id": "4900","transformation": { "func": "DIRECT", "params": { "field": "sn_protezione"}}},
+		{"id": "110900","transformation": { "func": "DIRECT", "params": { "field": "sn_uso_plurimo"}}},
 
         {"id": "1700","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
         {"id": "1700","transformation": {"func": "DECODE_COM", "params": {"field": "cod_comune"}}},
@@ -303,6 +306,7 @@
                     "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Dovrebbe essere >= al valore del campo ID 3500 (e non puo' essere vuoto)"
                 }
             ]},
+		
         {"id": "2700","transformation": { "func": "DIRECT", "params": { "field": "anno_costr"}},"validations": [{
                     "func": "IF",
                     "params": {

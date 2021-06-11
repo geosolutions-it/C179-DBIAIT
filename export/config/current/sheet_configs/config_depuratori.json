@@ -4,7 +4,7 @@
     "sources": [
         {
             "fields": [
-                 { "name": "fgn_trattamento.codice_ato", "alias": "codice_ato"},
+                { "name": "fgn_trattamento.codice_ato", "alias": "codice_ato"},
                 { "name": "fgn_trattamento.denom", "alias": "denom"},
                 { "name": "fgn_trattamento.quota", "alias": "quota", "function":  "FROM_FLOAT_TO_INT"},
                 { "name": "fgn_trattamento.d_corpo_ricet", "alias": "d_corpo_ricet"},
@@ -62,8 +62,8 @@
                 { "name": "fgn_auth_trattam.sn_essic_term", "alias": "sn_essic_term", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.sn_incen_term", "alias": "sn_incen_term", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.d_dest_fanghi", "alias": "d_dest_fanghi"},
-                { "name": "fgn_auth_trattam.liquami_civili", "alias": "liquami_civili"},
-                { "name": "fgn_auth_trattam.liquami_industr", "alias": "liquami_industr"},
+                { "name": "abitanti_trattati.vol_civ", "alias": "liquami_civili"},
+                { "name": "abitanti_trattati.vol_ind", "alias": "liquami_industr"},
                 { "name": "fgn_auth_trattam.percolati", "alias": "percolati"},
                 { "name": "fgn_auth_trattam.bottini", "alias": "bottini"},
                 { "name": "fgn_auth_trattam.umid_media_res", "alias": "umid_media_res"},
@@ -94,8 +94,8 @@
                 { "name": "fgn_auth_trattam.sn_strum_mis_port_out", "alias": "sn_strum_mis_port_out", "function": "TO_BIT"},
                 { "name": "stats_pompe.sum_potenza", "alias": "sum_potenza"},
                 { "name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
-                { "name":"abitanti_trattati.ae_tot", "alias": "ae_tot"},
-                { "name":"abitanti_trattati.ae_civ", "alias": "ae_civ"}
+                { "name": "abitanti_trattati.ae_tot", "alias": "ae_tot"},
+                { "name": "abitanti_trattati.ae_civ", "alias": "ae_civ"}
             ],
             "table": {
                 "name": "fgn_trattamento"
@@ -209,8 +209,8 @@
                 { "name": "fgn_auth_trattam.sn_essic_term", "alias": "sn_essic_term", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.sn_incen_term", "alias": "sn_incen_term", "function": "TO_BIT"},
                 { "name": "fgn_auth_trattam.d_dest_fanghi", "alias": "d_dest_fanghi"},
-                { "name": "fgn_auth_trattam.liquami_civili", "alias": "liquami_civili"},
-                { "name": "fgn_auth_trattam.liquami_industr", "alias": "liquami_industr"},
+                { "name": "abitanti_trattati.vol_civ", "alias": "liquami_civili"},
+                { "name": "abitanti_trattati.vol_ind", "alias": "liquami_industr"},
                 { "name": "fgn_auth_trattam.percolati", "alias": "percolati"},
                 { "name": "fgn_auth_trattam.bottini", "alias": "bottini"},
                 { "name": "fgn_auth_trattam.umid_media_res", "alias": "umid_media_res"},
@@ -313,9 +313,37 @@
         {"id": "76620", "transformation": {"func": "DIRECT", "params": { "field": "sn_lagunaggio" }}},
 
         {"id": "71900", "transformation": {"func": "DIRECT", "params": { "field": "denom" }}},
-        {"id": "73300", "transformation": {"func": "DIRECT", "params": { "field": "ae_tot" }}},
-        {"id": "73400", "transformation": {"func": "DIRECT", "params": { "field": "ae_civ" }}},
-        {"id": "72300", "transformation": {"func": "DIRECT", "params": { "field": "quota" }},"validations": [{
+
+        {"id":"73300", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "ae_tot",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ ae_tot }"
+                 }
+             }
+          }
+         },
+
+        {"id":"73400", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "ae_civ",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ ae_civ }"
+                 }
+             }
+          }
+         },
+
+        {"id": "72300", "transformation": { "func": "DIRECT", "params": { "field": "quota" } },
+            "validations": [{
                     "func": "IF",
                     "params": {
                         "field": "72300",
@@ -327,7 +355,8 @@
                     },
                     "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|il valore 0 non e' ammissibile"
                 }
-            ]},
+            ]
+        },
         {"id": "72400", "transformation": {"func": "DIRECT", "params": { "field": "denominazi" }}},
         {"id": "72700", "transformation": {"func": "DIRECT", "params": { "field": "anno_costr" }},"validations": [{
                     "func": "IF",

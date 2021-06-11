@@ -20,6 +20,12 @@
                 { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
                 { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
                 { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
+				{ "name": "acq_auth_rete_dist.pres_es_med", "alias": "pres_es_med"},
+				{ "name": "acq_auth_rete_dist.a_press_med", "alias": "a_press_med"},
+				{ "name": "acq_auth_rete_dist.nr_rip_all", "alias": "nr_rip_all"},
+				{ "name": "acq_auth_rete_dist.nr_rip_rete", "alias": "nr_rip_rete"},
+				{ "name": "acq_auth_rete_dist.sn_strum_mis_press", "alias": "sn_strum_mis_press", "function": "TO_BIT"},
+				{ "name": "acq_auth_rete_dist.sn_strum_mis_port", "alias": "sn_strum_mis_port", "function": "TO_BIT"},																		
                 { "name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
                  { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
@@ -125,6 +131,12 @@
                 { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
                 { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
                 { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
+				{ "name": "acq_auth_rete_dist.pres_es_med", "alias": "pres_es_med"},
+				{ "name": "acq_auth_rete_dist.a_press_med", "alias": "a_press_med"},
+				{ "name": "acq_auth_rete_dist.nr_rip_all", "alias": "nr_rip_all"},
+				{ "name": "acq_auth_rete_dist.nr_rip_rete", "alias": "nr_rip_rete"},
+				{ "name": "acq_auth_rete_dist.sn_strum_mis_press", "alias": "sn_strum_mis_press", "function": "TO_BIT"},
+				{ "name": "acq_auth_rete_dist.sn_strum_mis_port", "alias": "sn_strum_mis_port", "function": "TO_BIT"},																		
                 {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
@@ -224,19 +236,111 @@
         { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
         {"id": "119000", "transformation": {"func": "CONST", "params": { "value": "B" }}},
 
-        { "id": "113700", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dirette" } }},
-        { "id": "113800", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dir_dom_e_residente" } }},
-        { "id": "113900", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_dir_residente" } }},
-        { "id": "114000", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_condominiali" } }},
-        { "id": "114100", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_indirette" } }},
-        { "id": "114200", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_domestici" } }},
-        { "id": "114300", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_indir_residente" } }},
+        {"id":"113700", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_dirette",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_dirette }"
+                 }
+             }
+          }
+         },
+
+        {"id":"113800", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_dir_dom_e_residente",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_dir_dom_e_residente }"
+                 }
+             }
+          }
+         },
+        {"id":"113900", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_dir_residente",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_dir_residente }"
+                 }
+             }
+          }
+         },
+        {"id":"114000", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_condominiali",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_condominiali }"
+                 }
+             }
+          }
+         },
+        {"id":"114100", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_indir_indirette",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_indir_indirette }"
+                 }
+             }
+          }
+         },
+
+        {"id":"114200", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_indir_domestici",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_indir_domestici }"
+                 }
+             }
+          }
+         },
+
+        {"id":"114300", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_indir_residente",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_indir_residente }"
+                 }
+             }
+          }
+         },
+
         { "id": "99100", "transformation": { "func": "DIRECT", "params": { "field": "nr_allacci" } }},
         { "id": "54600", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
         { "id": "54700", "transformation": { "func": "DIRECT", "params": { "field": "volume_fatturato" } }},
         { "id": "100400", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_misuratore" } }},
         { "id": "118900", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
-
+		{ "id": "99800", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_med" } }},
+		{ "id": "100200", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_all" } }},
+		{ "id": "100300", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_rete" } }},
+		{ "id": "55000", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_press" } }},
+		{ "id": "55100", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" } }},
         { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom" } }},
         { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_immesso" } }},
         { "id": "54800", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm_terzi" } }},
@@ -253,6 +357,7 @@
         { "id": "99300", "transformation": { "func": "DOMAIN", "params": { "field": "a_ili", "domain_name": "D_AFFIDABILITA" } }},
         { "id": "99700", "transformation": { "func": "DOMAIN", "params": { "field": "a_pres_es_max", "domain_name": "D_AFFIDABILITA" } }},
         { "id": "100100", "transformation": { "func": "DOMAIN", "params": { "field": "a_pres_es_min", "domain_name": "D_AFFIDABILITA" } }},
+		{ "id": "99900", "transformation": { "func": "DOMAIN", "params": { "field": "a_press_med", "domain_name": "D_AFFIDABILITA" } }},																																  
 
         { "id": "55400", "transformation": { "func": "CONST", "params": { "value": "B" }} },
         { "id": "55600", "transformation": { "func": "CONST", "params": { "value": "C" }} },
