@@ -61,12 +61,16 @@ class BaseProcessTask(BaseTask):
         return current_task.pk
 
     def execute(self, task_id: int, *args, gpkg_path: str = None, **kwargs) -> None:
-        print(f"PROCESSING {self.name}...")
-        analysis_cursor = connection.cursor()
-        with analysis_cursor as cursor:
-            cursor.callproc(
-                f"{settings.DATABASE_SCHEMAS[u'analysis']}.{self.algorithm}")
-            result = cursor.fetchone()
+        try:
+            print(f"PROCESSING {self.name}...")
+            analysis_cursor = connection.cursor()
+            with analysis_cursor as cursor:
+                cursor.callproc(
+                    f"{settings.DATABASE_SCHEMAS[u'analysis']}.{self.algorithm}")
+                result = cursor.fetchone()
+        except Exception as e:
+            print(e)
+            result = False
         print(f"procedure {settings.DATABASE_SCHEMAS[u'analysis']}.{self.algorithm} => { result }")
         return result
 

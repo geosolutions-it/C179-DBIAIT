@@ -104,13 +104,13 @@ class BaseTask(GenericActor):
         task.save()
 
         logfile = pathlib.Path(task.logfile)
-
+        result = False
         try:
             # create task's log directory
             logfile.parent.mkdir(parents=True, exist_ok=True)
 
             with Tee(logfile, "a"):
-                self.execute(
+                result = self.execute(
                     task.id,
                     *task.params.get("args", []),
                     **task.params.get("kwargs", {}),
@@ -132,7 +132,7 @@ class BaseTask(GenericActor):
             except:
                 pass
         else:
-            task.status = TaskStatus.SUCCESS
+            task.status = TaskStatus.SUCCESS if result else TaskStatus.FAILED
             task.progress = 100
             task.save()
         finally:
