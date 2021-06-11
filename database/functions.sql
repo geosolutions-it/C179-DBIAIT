@@ -470,8 +470,8 @@ BEGIN
 		from(
 			SELECT codice_ato, l.pro_com::VARCHAR, popres, ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc 
 			FROM ACQ_RETE_DISTRIB r, LOCALITA l
-			WHERE r.D_GESTORE = ''PUBLIACQUA'' AND COALESCE(r.D_AMBITO, ''AT3'')=''AT3'' 
-				AND r.D_STATO NOT IN (''IPR'',''IAC'')
+			WHERE r.D_GESTORE = 'PUBLIACQUA' AND COALESCE(r.D_AMBITO, 'AT3')='AT3'
+				AND r.D_STATO NOT IN ('IPR','IAC')
 				AND r.geom && l.geom AND ST_INTERSECTS(r.geom, l.geom)
 		) t
 		group by t.codice_ato, t.pro_com
@@ -3366,7 +3366,7 @@ BEGIN
 				   from ' || v_table_name || '
 				   where st_numgeometries(geom)=1
 				) t
-				
+
 				UNION ALL
 				
 				select 
