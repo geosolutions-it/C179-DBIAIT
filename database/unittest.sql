@@ -608,7 +608,7 @@ BEGIN
         "XLS_COLLETTORI":       161,
         "XLS_CONDOTTEMARINE":   0,
         "XLS_DEPURAT_INCOLL":   43,
-        "XLS_DEPURAT_POMPE":    429,
+        "XLS_DEPURAT_POMPE":    425,
         "XLS_DEPURATORI":       154,
         "XLS_DISTRIB_COM_SERV": 451,
         "XLS_DISTRIB_LOC_SERV": 1430,
@@ -631,16 +631,16 @@ BEGIN
         "XLS_POMPAGGI_POMPE":   875,
         "XLS_POTAB_INCAPTAZ":   0,
         "XLS_POTAB_INRETI":     99,
-        "XLS_POTAB_POMPE":      221,
+        "XLS_POTAB_POMPE":      220,
         "XLS_POTABILIZZATORI":  142,
         "XLS_POZZI":            764,
         "XLS_POZZI_INPOTAB":    0,
-        "XLS_POZZI_INRETI":     576,
+        "XLS_POZZI_INRETI":     570,
         "XLS_POZZI_POMPE":      578,
         "XLS_POZZI_QUALITA":    0,
         "XLS_SCARICAT_INFOG":   1074,
         "XLS_SCARICATORI":      1118,
-        "XLS_SOLLEV_POMPE":     537,
+        "XLS_SOLLEV_POMPE":     536,
         "XLS_SOLLEVAMENTI":     250,
         "XLS_SORGENT_INPOTAB":  0,
         "XLS_SORGENTI":         934,
@@ -710,7 +710,7 @@ BEGIN
         "COLLET_COM_SERV": 					210,
         "FIUMI_INRETI": 					60,
         "LAGHI_INRETI": 					22,
-        "POZZI_INRETI": 					576,
+        "POZZI_INRETI": 					570,
         "SORGENTI_INRETI": 					838,
         "POTAB_INRETI": 					99,
         "ADDUT_INRETI": 					819,
@@ -722,14 +722,14 @@ BEGIN
         "ACQ_CONDOTTA_EDGES": 				153193,
         "FGN_CONDOTTA_NODES": 				82198,
         "FGN_CONDOTTA_EDGES": 				80517,
-        "STATS_CLORATORE": 					43,
+        "STATS_CLORATORE": 					36,
         "SCHEMA_ACQ": 						1173,
         "UBIC_ALLACCIO": 					423768,
         "UBIC_CONTATORI_CASS_CONT": 		423768,
         "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	390,
         "UBIC_CONTATORI_FGN": 				425971,
         "UBIC_F_ALLACCIO": 					425971,
-        "UTENZE_FOGNATURE_COLLETTORI": 		1075,
+        "UTENZE_FOGNATURE_COLLETTORI": 		1076,
         "SUPPORT_CODICE_CAPT_ACCORP": 		1853,
         "SUPPORT_POZZI_INPOTAB":            764
     }'::JSON)->v_table;
@@ -1633,7 +1633,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000856224() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=2;
+  v_expected    BIGINT:=1;
 BEGIN
     select utenze_mis INTO v_count
     from dbiait_analysis.acq_shape
@@ -2076,7 +2076,7 @@ CREATE OR REPLACE function dbiait_analysis.test_case_schema_acq_AD01093() return
 DECLARE
     v_code VARCHAR(128);
     v_denom VARCHAR(255);
-    v_exp_code VARCHAR(128) := 'DI01165;DI01166';
+    v_exp_code VARCHAR(128) := 'DI01165;DI01166-00';
     v_exp_denom VARCHAR(255) := 'CASOLE;LE MASSE';
 BEGIN
     SELECT codice_schema_acq, denominazione_schema_acq
@@ -2157,7 +2157,7 @@ DECLARE
     v_expected INTEGER := 1896;
 BEGIN
     select pop_res INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (pop_res): expected ' || v_expected || ' but found ' || v_value,
         v_value = v_expected
@@ -2171,7 +2171,7 @@ DECLARE
     v_expected INTEGER := 2019;
 BEGIN
     select anno_rif INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (anno_rif): expected ' || v_expected || ' but found ' || v_value,
         v_value = v_expected
@@ -2185,7 +2185,7 @@ DECLARE
     v_expected VARCHAR(10) := '2019_08_31';
 BEGIN
     select TO_CHAR(data_rif,'YYYY_MM_DD') INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (data_rif): expected ' || v_expected || ' but found ' || v_value,
         v_value = v_expected
@@ -2199,7 +2199,7 @@ DECLARE
     v_expected INTEGER := 19;
 BEGIN
     select pop_ser_dep INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (pop_ser_dep): expected ' || v_expected || ' but found ' || v_value,
         v_value = v_expected
@@ -2213,7 +2213,7 @@ DECLARE
     v_expected INTEGER := 1042;
 BEGIN
     select pop_ser_fgn INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (pop_ser_fgn): expected ' || v_expected || ' but found ' || v_value,
         v_value = v_expected
@@ -2227,7 +2227,7 @@ DECLARE
     v_expected INTEGER := 1526;
 BEGIN
     select pop_ser_acq INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (pop_ser_acq): expected ' || v_expected || ' but found ' || v_value,
         v_value = v_expected
@@ -2241,7 +2241,7 @@ DECLARE
     v_expected NUMERIC := 80.46;
 BEGIN
     select perc_acq INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (perc_acq): expected ' || v_expected || ' but found ' || v_value,
         v_value BETWEEN v_expected - 0.01 AND v_expected + 0.01
@@ -2255,7 +2255,7 @@ DECLARE
     v_expected NUMERIC := 54.96;
 BEGIN
     select perc_fgn INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (perc_fgn): expected ' || v_expected || ' but found ' || v_value,
         v_value BETWEEN v_expected - 0.01 AND v_expected + 0.01
@@ -2269,7 +2269,7 @@ DECLARE
     v_expected NUMERIC := 0.98;
 BEGIN
     select perc_dep INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (perc_dep): expected ' || v_expected || ' but found ' || v_value,
         v_value BETWEEN v_expected - 0.01 AND v_expected + 0.01
@@ -2283,7 +2283,7 @@ DECLARE
     v_expected INTEGER := 1090;
 BEGIN
     select ut_abit_tot INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (ut_abit_tot): expected ' || v_expected || ' but found ' || v_value,
         v_value = v_expected
@@ -2297,7 +2297,7 @@ DECLARE
     v_expected INTEGER := 750;
 BEGIN
     select ut_abit_fgn INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (ut_abit_fgn): expected ' || v_expected || ' but found ' || v_value,
         v_value = v_expected
@@ -2311,7 +2311,7 @@ DECLARE
     v_expected INTEGER := 19;
 BEGIN
     select ut_abit_dep INTO v_value
-    from POP_RES_COMUNE where pro_com = '48025';
+    from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
     perform test_assertTrue(
         'test_case_pop_res_comune_LONDA (ut_abit_dep): expected ' || v_expected || ' but found ' || v_value,
         v_value = v_expected
