@@ -1506,7 +1506,8 @@ BEGIN
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 ---------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_logstda_ubic_cont_non_allacciato_minus_fuori_rete_e_idrete_null() returns void as $$
+-- test_case_logstda_ubic_cont_non_allacciato_minus_fuori_rete_e_idrete_null
+CREATE OR REPLACE function dbiait_analysis.test_case_logstda_ubicont_nonall_minus_fuori_rete_idrete_null() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
   v_expected    BIGINT:=5620;
@@ -1632,7 +1633,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_acq_shape_utenze_mis_PAACON00000000856224() returns void as $$
 DECLARE
   v_count       BIGINT:=0;
-  v_expected    BIGINT:=2;18100
+  v_expected    BIGINT:=2;
 BEGIN
     select utenze_mis INTO v_count
     from dbiait_analysis.acq_shape
@@ -1800,8 +1801,8 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_case_UBIC_F_ALLACCIO_PAAUCO00000002029321() returns void as $$
 DECLARE
-    v_idrete VARCHAR2(32);
-    v_expected VARCHAR2(32) := 'PAFRRC00000000001403';
+    v_idrete VARCHAR(32);
+    v_expected VARCHAR(32) := 'PAFRRC00000000001403';
 BEGIN
     select fgn_idrete into v_idrete from dbiait_analysis.UBIC_F_ALLACCIO
     where id_ubic_contatore = 'PAAUCO00000002029321';
@@ -1814,8 +1815,8 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_case_UBIC_F_ALLACCIO_PAAUCO00000002029178() returns void as $$
 DECLARE
-    v_idrete VARCHAR2(32);
-    v_expected VARCHAR2(32) := 'PAFRRC00000000001404';
+    v_idrete VARCHAR(32);
+    v_expected VARCHAR(32) := 'PAFRRC00000000001404';
 BEGIN
     select fgn_idrete into v_idrete from dbiait_analysis.UBIC_F_ALLACCIO
     where id_ubic_contatore = 'PAAUCO00000002029178';
@@ -1828,8 +1829,8 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_case_UBIC_F_ALLACCIO_PAAUCO00000002027995() returns void as $$
 DECLARE
-    v_idrete VARCHAR2(32);
-    v_expected VARCHAR2(32) := 'PAFRRC00000000001264';
+    v_idrete VARCHAR(32);
+    v_expected VARCHAR(32) := 'PAFRRC00000000001264';
 BEGIN
     select fgn_idrete into v_idrete from dbiait_analysis.UBIC_F_ALLACCIO
     where id_ubic_contatore = 'PAAUCO00000002027995';

@@ -3573,7 +3573,7 @@ BEGIN
     from
     (
         select
-            distinct idgis, codice, denom
+            distinct t.idgis, codice, denom
         from
         (
             select aa.idgis, ac.geom
@@ -3589,7 +3589,7 @@ BEGIN
         where t.geom && g.geom
         AND ST_INTERSECTS(ST_BUFFER(g.geom, -1*v_tol), t.geom)
         AND ST_TOUCHES(g.geom, t.geom) = FALSE
-        order by idgis, codice_schema_acq
+        order by idgis, codice
     ) d
     group by d.idgis;
 
