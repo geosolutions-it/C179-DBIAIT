@@ -355,7 +355,10 @@ BEGIN
 		perc_fgn = NULL,	--OK
 		pop_ser_fgn = NULL, --OK
 		perc_dep = NULL,	--OK		
-		pop_ser_dep = NULL;	--OK
+		pop_ser_dep = NULL, --OK
+		ut_abit_tot = NULL,
+		ut_abit_fgn = NULL,
+	    ut_abit_dep = NULL;
 
 	-- updating field pop_ser_acq
 	UPDATE POP_RES_COMUNE
@@ -375,7 +378,63 @@ BEGIN
 		GROUP BY t.pro_com
 	) t2
 	WHERE t2.pro_com = POP_RES_COMUNE.pro_com;
-
+    ------------------------------------------------------------------
+    -- requisito 20210422 (6.1)
+    -- ** Unita Abitative Totali
+    UPDATE POP_RES_COMUNE
+    SET ut_abit_tot = t.u_ab_tot
+    FROM (
+        select comune_pba, sum(u_ab) as u_ab_tot
+        from dbiait_analysis.utenza_sap
+        where gruppo = 'A'
+        group by comune_pba
+    ) t
+    WHERE pop_res_comune.pro_com = t.comune_pba;
+    -- ** Unita Abitative Fognatura
+    UPDATE POP_RES_COMUNE
+    SET ut_abit_fgn = t.u_ab_tot
+    FROM (
+        select comune_pba, sum(u_ab) as u_ab_tot
+        from dbiait_analysis.utenza_sap
+        where gruppo = 'A'
+        and (esente_fog <> 1 or esente_fog is null)
+        group by comune_pba
+    ) t
+    WHERE pop_res_comune.pro_com = t.comune_pba;
+    -- ** Unita Abitative Depurazione
+    UPDATE POP_RES_COMUNE
+    SET ut_abit_dep = t.u_ab_tot
+    FROM (
+        select comune_pba, sum(u_ab) as u_ab_tot
+        from dbiait_analysis.utenza_sap
+        where gruppo = 'A'
+        and (esente_dep <> 1 or esente_dep is null)
+        group by comune_pba
+    ) t
+    WHERE pop_res_comune.pro_com = t.comune_pba;
+    ------------------------------------------------------------------
+    -- requisito 20210422 (6.2)
+    -- ** Percentuale di Copertura Fognatura
+    UPDATE POP_RES_COMUNE
+    SET perc_fgn =
+        CASE WHEN COALESCE(ut_abit_tot,0)>0 THEN
+		    COALESCE(perc_acq,0)*COALESCE(ut_abit_fgn,0)/COALESCE(ut_abit_tot,0)
+		ELSE 0 END;
+	-- ** Percentuale di Copertura Depurazione
+    UPDATE POP_RES_COMUNE
+    SET perc_dep =
+        CASE WHEN COALESCE(ut_abit_tot,0)>0 THEN
+		    COALESCE(perc_acq,0)*COALESCE(ut_abit_dep,0)/COALESCE(ut_abit_tot,0)
+		ELSE 0 END;
+	------------------------------------------------------------------
+    -- requisito 20210422 (6.3)
+    -- ** Popolazione Servita Fognatura
+    UPDATE POP_RES_COMUNE
+    SET pop_ser_fgn = perc_fgn*pop_res/100;
+    -- ** Popolazione Servita Depurazione
+    UPDATE POP_RES_COMUNE
+    SET pop_ser_dep = perc_dep*pop_res/100;
+    ------------------------------------------------------------------
 	v_result:= TRUE;
     RETURN v_result;
 --EXCEPTION WHEN OTHERS THEN
@@ -451,44 +510,40 @@ BEGIN
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UTENZA_SERVIZIO';
 	
 	--LOCALITA
-	EXECUTE '
-		INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
-		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.id_localita_istat
-		FROM acq_ubic_contatore uc, localita g
-		WHERE (g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom))
-		AND uc.id_impianto is not null';	
+    INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
+    SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.id_localita_istat
+    FROM acq_ubic_contatore uc, localita g
+    WHERE (g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom))
+    AND uc.id_impianto is not null;
 	-- ACQ_RETE_DISTRIB
-	EXECUTE '
-		INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
-		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
-		from acq_ubic_contatore uc, acq_rete_distrib g
-		WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
-		AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
-		AND uc.id_impianto is not null';
+    INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
+    SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
+    from acq_ubic_contatore uc, acq_rete_distrib g
+    WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+    AND g.D_GESTORE='PUBLIACQUA' AND g.D_STATO='ATT' AND g.D_AMBITO='AT3'
+    AND uc.id_impianto is not null;
 	-- FGN_RETE_RACC
-	EXECUTE '
-		INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
-		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
-		from acq_ubic_contatore uc, fgn_rete_racc g
-		WHERE (g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom))
-		AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
-		AND uc.id_impianto is not null';
+    INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
+    SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
+    from acq_ubic_contatore uc, fgn_rete_racc g
+    WHERE (g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom))
+    AND g.D_GESTORE='PUBLIACQUA' AND g.D_STATO='ATT' AND g.D_AMBITO='AT3'
+    AND uc.id_impianto is not null;
 	-- FGN_BACINO + FGN_TRATTAMENTO/FGN_PNT_SCARICO
-	EXECUTE '
-		INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
-		SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
-		from acq_ubic_contatore uc, (
-			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
-			from FGN_BACINO b, FGN_TRATTAMENTO t
-			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
-			AND ((t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE_ATO in (''DE00213'',''DE00214''))
-			UNION ALL
-			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
-			from FGN_BACINO b, FGN_PNT_SCARICO t
-			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
-			AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE = ''PUBLIACQUA''
-		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
-		AND uc.id_impianto is not null';
+    INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
+    SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
+    from acq_ubic_contatore uc, (
+        select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
+        from FGN_BACINO b, FGN_TRATTAMENTO t
+        WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
+        AND ((t.D_STATO='ATT' AND t.D_AMBITO='AT3' AND t.D_GESTORE in ('PUBLIACQUA','GIDA') ) OR t.CODICE_ATO in ('DE00213','DE00214'))
+        UNION ALL
+        select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
+        from FGN_BACINO b, FGN_PNT_SCARICO t
+        WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
+        AND t.D_STATO='ATT' AND t.D_AMBITO='AT3' AND t.D_GESTORE = 'PUBLIACQUA'
+    ) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+    AND uc.id_impianto is not null;
 
 	-- initialize table UTENZA_SERVIZIO.id_ubic_contatore with data from ACQ_UBIC_CONTATORE.idgis
 	--EXECUTE '
@@ -498,109 +553,98 @@ BEGIN
 	--WHERE u.id_impianto is not NULL
 	--AND c.D_STATO=''ATT'' AND u.idgis=c.id_ubic_contatore';
 
-	EXECUTE '
 	INSERT INTO utenza_servizio(impianto, id_ubic_contatore)
 	SELECT DISTINCT u.id_impianto, u.idgis
 	FROM ACQ_UBIC_CONTATORE u
-	WHERE u.id_impianto is not NULL';
+	WHERE u.id_impianto is not NULL;
 
 	-- update field ids_codice_orig_acq
-	EXECUTE '
-		UPDATE utenza_servizio 
-		SET ids_codice_orig_acq = t.codice 
-		FROM (
-			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
-			FROM UTENZA_SERVIZIO_ACQ
-			GROUP BY id_ubic_contatore
-			HAVING COUNT(id_ubic_contatore)=1
-		) t
-		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
+    UPDATE utenza_servizio
+    SET ids_codice_orig_acq = t.codice
+    FROM (
+        SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
+        FROM UTENZA_SERVIZIO_ACQ
+        GROUP BY id_ubic_contatore
+        HAVING COUNT(id_ubic_contatore)=1
+    ) t
+    WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
 	-- update field id_localita_istat
-	EXECUTE '
-		UPDATE utenza_servizio 
-		SET id_localita_istat = t.codice 
-		FROM (
-			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
-			FROM UTENZA_SERVIZIO_LOC
-			GROUP BY id_ubic_contatore
-			HAVING COUNT(id_ubic_contatore)=1
-		) t
-		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
+    UPDATE utenza_servizio
+    SET id_localita_istat = t.codice
+    FROM (
+        SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
+        FROM UTENZA_SERVIZIO_LOC
+        GROUP BY id_ubic_contatore
+        HAVING COUNT(id_ubic_contatore)=1
+    ) t
+    WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
 	-- update field ids_codice_orig_fgn
-	EXECUTE '
-		UPDATE utenza_servizio 
-		SET ids_codice_orig_fgn = t.codice 
-		FROM (
-			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
-			FROM UTENZA_SERVIZIO_FGN
-			GROUP BY id_ubic_contatore
-			HAVING COUNT(id_ubic_contatore)=1
-		) t
-		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
+    UPDATE utenza_servizio
+    SET ids_codice_orig_fgn = t.codice
+    FROM (
+        SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
+        FROM UTENZA_SERVIZIO_FGN
+        GROUP BY id_ubic_contatore
+        HAVING COUNT(id_ubic_contatore)=1
+    ) t
+    WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
 	-- update field ids_codice_orig_dep_sca
-	EXECUTE '
-		UPDATE utenza_servizio 
-		SET ids_codice_orig_dep_sca = t.codice 
-		FROM (
-			SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
-			FROM UTENZA_SERVIZIO_BAC
-			GROUP BY id_ubic_contatore
-			HAVING COUNT(id_ubic_contatore)=1
-		) t
-		WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp)';
-
+    UPDATE utenza_servizio
+    SET ids_codice_orig_dep_sca = t.codice
+    FROM (
+        SELECT MIN(impianto) as imp, id_ubic_contatore as id_cont, MIN(codice) as codice
+        FROM UTENZA_SERVIZIO_BAC
+        GROUP BY id_ubic_contatore
+        HAVING COUNT(id_ubic_contatore)=1
+    ) t
+    WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
 	-- Log duplicated items
-
-	EXECUTE '
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in localita''
+	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in localita'
 	FROM (
 		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.id_localita_istat
 		FROM acq_ubic_contatore uc, localita g
 		where g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null
-	) t group by t.id_ubic_contatore having count(0)>1';
-	
-	EXECUTE '
+	) t group by t.id_ubic_contatore having count(0)>1;
+
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in acquedotto''
+	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in acquedotto'
 	FROM(
 		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore uc, acq_rete_distrib g
 		WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
 		AND uc.id_impianto is not null
-	)t group by t.id_ubic_contatore having count(0)>1';
-	
-	EXECUTE '
+	)t group by t.id_ubic_contatore having count(0)>1;
+
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in fognatura''
+	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in fognatura'
 	FROM(
 		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore uc, fgn_rete_racc g
 		WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
-		AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
+		AND g.D_GESTORE='PUBLIACQUA' AND g.D_STATO='ATT' AND g.D_AMBITO='AT3'
 		AND uc.id_impianto is not null
-	)t group by t.id_ubic_contatore having count(0)>1';
-	
-	EXECUTE '
+	)t group by t.id_ubic_contatore having count(0)>1;
+
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT id_ubic_contatore, ''UTENZA_SERVIZIO'', ''Duplicati: '' || count(0) || '' in bacino''
+	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in bacino'
 	FROM(
 		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore uc, (
 			select t.codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_TRATTAMENTO t
 			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
-			AND ((t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE_ATO in (''DE00213'',''DE00214''))
+			AND ((t.D_STATO='ATT' AND t.D_AMBITO='AT3' AND t.D_GESTORE in ('PUBLIACQUA','GIDA') ) OR t.CODICE_ATO in ('DE00213','DE00214'))
 			UNION ALL
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
-			AND ((t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3'' AND t.D_GESTORE in (''PUBLIACQUA'',''GIDA'') ) OR t.CODICE in (''DE00213'',''DE00214''))
+			AND ((t.D_STATO='ATT' AND t.D_AMBITO='AT3' AND t.D_GESTORE in ('PUBLIACQUA','GIDA') ) OR t.CODICE in ('DE00213','DE00214'))
 		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null
-	)t group by t.id_ubic_contatore having count(0)>1';
+	)t group by t.id_ubic_contatore having count(0)>1;
 	
 	v_result:= TRUE;
     RETURN v_result;
@@ -1765,7 +1809,7 @@ BEGIN
     ) w WHERE w.idgis = FGN_COND_ALTRO.idgis;
 
     -- fix anomalies 203
-        UPDATE FGN_COND_ALTRO
+    UPDATE FGN_COND_ALTRO
     SET
          lu_allacci_c	  = COALESCE(lu_allacci_c, 0)
         ,lu_allacci_c_ril = COALESCE(lu_allacci_c_ril, 0)
@@ -3025,7 +3069,7 @@ DECLARE
 	v_filters VARCHAR[] := ARRAY[
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=0',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=1',
-		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3 AND coalesce(t.d_comparto,''?'') != ''DEP''',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=4',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
 		'',
@@ -3159,24 +3203,30 @@ DECLARE
 BEGIN
 	
 	DELETE FROM DEPURATO_INCOLL;
-	
-	INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
-	SELECT DISTINCT t.codice_ato, ad.codice_ato, 3 from (
-		SELECT distinct aa.codice_ato, ac.id_rete
-		from fgn_trattamento aa, fgn_condotta ac
-		WHERE aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL) AND aa.d_stato IN ('ATT','FIP','PIF','RIS')
-		and st_buffer(aa.geom, v_tol)&&ac.geom and st_intersects(ac.geom, st_buffer(aa.geom, v_tol))
-	) t, fgn_collettore ad
-	WHERE t.id_rete=ad.idgis
-	AND ad.d_gestore = 'PUBLIACQUA' AND ad.d_ambito IN ('AT3', NULL) AND ad.d_stato IN ('ATT','FIP','PIF','RIS');
-	
-	--INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
-	--select a.codice_ato, c.codice_ato, NULL 
-	--from fgn_trattamento a left JOIN collett_tronchi c
-	--on c.geom&&ST_BUFFER(a.geom, v_tol) and ST_INTERSECTS(c.geom, ST_BUFFER(a.geom, v_tol))
-	--WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
-	--AND c.codice_ato is not NULL;
-		
+
+	with v_bacino as (
+        select f.codice_ato, b.geom
+        from dbiait_analysis.FGN_TRATTAMENTO f, dbiait_analysis.FGN_BACINO b
+        where
+            f.D_GESTORE = 'PUBLIACQUA' AND f.D_AMBITO in ('AT3', NULL) AND f.D_STATO IN ('ATT','FIP','PIF','RIS')
+            and f.ID_BACINO = b.IDGIS
+    ),
+    v_condotte as (
+        select cl.codice_ato, c.geom from
+        dbiait_analysis.FGN_CONDOTTA c, dbiait_analysis.FGN_COLLETTORE cl
+        where
+            c.D_GESTORE = 'PUBLIACQUA' AND c.D_AMBITO in ('AT3', NULL) AND c.D_STATO IN ('ATT', 'FIP', NULL) AND c.SN_FITTIZIA  in ('NO', NULL)
+            and c.ID_RETE = cl.IDGIS
+    )
+    INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
+    select DISTINCT
+        b.codice_ato as codice_opera,
+        c.codice_ato as codice_collettore,
+        3 as gestore_collettore
+    from v_bacino b, v_condotte c
+    where b.geom&&c.geom
+    and ST_INTERSECTS(b.geom, c.geom);
+
 	--LOG ANOMALIE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'DEPURATO_INCOLL';
 	
@@ -3432,6 +3482,7 @@ BEGIN
 		where d_gestore = 'PUBLIACQUA' and d_ambito in ('AT3', null) and d_stato not in ('IPR', 'IAC')
 	) t;
 
+
 	UPDATE stats_cloratore
 	SET counter = x.counter
 	FROM (
@@ -3491,15 +3542,15 @@ BEGIN
     INSERT INTO schema_acq(idgis, codice_schema_acq, denominazione_schema_acq)
     SELECT
         ot.idgis idgis,
-        string_agg(ot.codice_schema_acq, ';') codice_schema_acq,
-        string_agg(ot.denominazione_schema_acq, ';') denominazione_schema_acq
+        string_agg(ot.codice, ';') codice_schema_acq,
+        string_agg(ot.denom, ';') denominazione_schema_acq
     FROM (
         SELECT
-            ap.codice_schema_acq,
-            ap.denominazione_schema_acq,
+            ap.codice,
+            ap.denom,
             ar.idgis
         FROM
-            area_poe ap
+            acq_area_poe ap
         JOIN (
             SELECT idgis, geom FROM all_reti
             UNION ALL
@@ -3512,6 +3563,36 @@ BEGIN
 	) ot
     GROUP BY
         idgis;
+
+    -- section adduttrici (2.2)
+    INSERT INTO schema_acq(idgis, codice_schema_acq, denominazione_schema_acq)
+    select
+        distinct
+        idgis,
+        string_agg(codice, ';') as codice_schema_acq,
+        string_agg(denom, ';') as denominazione_schema_acq
+    from
+    (
+        select
+            distinct idgis, codice, denom
+        from
+        (
+            select aa.idgis, ac.geom
+            from acq_adduttrice aa, acq_condotta ac
+            where
+                aa.d_gestore = 'PUBLIACQUA' and aa.d_ambito IN ('AT3', NULL)
+                and aa.d_stato NOT IN ('IPR', 'IAC')
+            and ac.d_gestore = 'PUBLIACQUA' and ac.d_ambito IN ('AT3', NULL)
+                and ac.d_stato in ('ATT', 'FIP', NULL)
+                and ac.sn_fittizia in ('NO', NULL)
+            and aa.idgis = ac.id_rete
+        ) t, acq_area_poe g
+        where t.geom && g.geom
+        AND ST_INTERSECTS(ST_BUFFER(g.geom, -1*v_tol), t.geom)
+        AND ST_TOUCHES(g.geom, t.geom) = FALSE
+        order by idgis, codice_schema_acq
+    ) d
+    group by d.idgis;
 
 	RETURN TRUE;
 END;
@@ -3534,7 +3615,6 @@ begin
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UBIC_ALLACCIO';
 	DELETE FROM ubic_contatori_cass_cont;
 	DELETE FROM ubic_allaccio;
-
 
 	-- AGGIUNTA TUTTI GLI UBIC_CONTATORI DISPONIBILI SECONDO I FILTRI FORNITI
 	-- UTILIZZO DI UNA TABELLA DI SISTEMA PER EVITARE DI RIFARE LA SELECT CON I FILTRI
@@ -4104,8 +4184,11 @@ begin
 		perc_acq = NULL,	
 		perc_fgn = NULL,	
 		pop_ser_fgn = NULL, 
-		perc_dep = NULL,		
-		pop_ser_dep = NULL;																									
+		perc_dep = NULL,																							
+		pop_ser_dep = NULL,
+		ut_abit_tot = NULL,
+		ut_abit_fgn = NULL,
+	    ut_abit_dep = NULL;
 	
 	DELETE FROM DISTRIB_COM_SERV;
 	DELETE FROM SUPPORT_POZZI_INPOTAB;
