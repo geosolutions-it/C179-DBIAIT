@@ -614,7 +614,7 @@ BEGIN
 		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
 		from acq_ubic_contatore uc, acq_rete_distrib g
 		WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
-		AND g.D_GESTORE=''PUBLIACQUA'' AND g.D_STATO=''ATT'' AND g.D_AMBITO=''AT3''
+		AND g.D_GESTORE='PUBLIACQUA' AND g.D_STATO='ATT' AND g.D_AMBITO='AT3'
 		AND uc.id_impianto is not null
 	)t group by t.id_ubic_contatore having count(0)>1;
 
