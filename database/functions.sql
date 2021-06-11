@@ -462,7 +462,6 @@ BEGIN
 	DELETE FROM DISTRIB_COM_SERV;
 	
 	-- populate table
-	EXECUTE '
 	INSERT INTO DISTRIB_COM_SERV(codice_opera, id_comune_istat, perc_popsrv)
 	select t1.codice_ato, t1.pro_com, 100*t1.pop_ser_acq/p.pop_res perc_acq
 	from (
@@ -476,7 +475,7 @@ BEGIN
 		) t
 		group by t.codice_ato, t.pro_com
 	) t1, POP_RES_COMUNE p
-	WHERE t1.pro_com=p.pro_com';
+	WHERE t1.pro_com=p.pro_com;
 	v_result:= TRUE;
     RETURN v_result;
 --EXCEPTION WHEN OTHERS THEN
