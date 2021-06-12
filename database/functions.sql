@@ -196,6 +196,33 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public;
 --------------------------------------------------------------------
+-- Create Spatial Indexes for all tables
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.create_spatial_indexes(
+) RETURNS BOOLEAN AS $$
+DECLARE
+	v_index_name VARCHAR(255);
+	v_rec RECORD;
+	v_result BOOLEAN := FALSE;
+BEGIN
+    FOR v_rec IN
+		select f_table_name, f_geometry_column
+        from geometry_columns where f_table_schema = 'dbiait_analysis'
+	LOOP
+	    v_index_name := v_rec.f_table_name || '_' || v_rec.f_geometry_column || '_idx';
+		EXECUTE 'DROP INDEX IF EXISTS ' || v_index_name;
+		EXECUTE 'CREATE INDEX ' || v_index_name || ' ON dbiait_analysis.' || v_rec.f_table_name || ' USING GIST (' || v_rec.f_geometry_column || ')';
+	END LOOP;
+	v_result := TRUE;
+	RETURN v_result;
+EXCEPTION WHEN OTHERS then
+    RAISE NOTICE 'Exception: %', SQLERRM;
+    RETURN v_result;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
+    SET search_path = public, DBIAIT_ANALYSIS;
+--------------------------------------------------------------------
 -- Decode a municipal code to obtain the code of grouped municipal
 -- This function uses the internal table "decod_com"
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.decode_municipal(
@@ -495,33 +522,33 @@ $$  LANGUAGE plpgsql
 -- 	select DBIAIT_ANALYSIS.populate_utenza_servizio();
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_utenza_servizio(
 ) RETURNS BOOLEAN AS $$
-DECLARE 
+DECLARE
 	v_result BOOLEAN := FALSE;
 BEGIN
-    SET work_mem = '256MB';
+    SET work_mem = '512MB';
 	-- reset dei dati
 	DELETE FROM UTENZA_SERVIZIO;
 	DELETE FROM UTENZA_SERVIZIO_LOC;
 	DELETE FROM UTENZA_SERVIZIO_ACQ;
 	DELETE FROM UTENZA_SERVIZIO_FGN;
 	DELETE FROM UTENZA_SERVIZIO_BAC;
-	
+
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UTENZA_SERVIZIO';
-	
-	--LOCALITA
+
+	--LOCALITA (59s)
     INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
     SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.id_localita_istat
     FROM acq_ubic_contatore uc, localita g
-    WHERE (g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom))
+    WHERE (g.geom && uc.geom) AND ST_INTERSECTS(g.geom, uc.geom)
     AND uc.id_impianto is not null;
-	-- ACQ_RETE_DISTRIB
+	-- ACQ_RETE_DISTRIB (9s)
     INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
     SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
     from acq_ubic_contatore uc, acq_rete_distrib g
     WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
     AND g.D_GESTORE='PUBLIACQUA' AND g.D_STATO='ATT' AND g.D_AMBITO='AT3'
     AND uc.id_impianto is not null;
-	-- FGN_RETE_RACC
+	-- FGN_RETE_RACC (7s)
     INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
     SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
     from acq_ubic_contatore uc, fgn_rete_racc g
@@ -529,6 +556,7 @@ BEGIN
     AND g.D_GESTORE='PUBLIACQUA' AND g.D_STATO='ATT' AND g.D_AMBITO='AT3'
     AND uc.id_impianto is not null;
 	-- FGN_BACINO + FGN_TRATTAMENTO/FGN_PNT_SCARICO
+	-- (12s)
     INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
     SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
     from acq_ubic_contatore uc, (
@@ -536,7 +564,13 @@ BEGIN
         from FGN_BACINO b, FGN_TRATTAMENTO t
         WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
         AND ((t.D_STATO='ATT' AND t.D_AMBITO='AT3' AND t.D_GESTORE in ('PUBLIACQUA','GIDA') ) OR t.CODICE_ATO in ('DE00213','DE00214'))
-        UNION ALL
+    ) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+    AND uc.id_impianto is not null;
+
+    -- (0.5s)
+    INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
+    SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
+    from acq_ubic_contatore uc, (
         select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
         from FGN_BACINO b, FGN_PNT_SCARICO t
         WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
@@ -551,13 +585,13 @@ BEGIN
 	--FROM ACQ_UBIC_CONTATORE u, ACQ_CONTATORE c
 	--WHERE u.id_impianto is not NULL
 	--AND c.D_STATO=''ATT'' AND u.idgis=c.id_ubic_contatore';
-
+	-- (1s)
 	INSERT INTO utenza_servizio(impianto, id_ubic_contatore)
 	SELECT DISTINCT u.id_impianto, u.idgis
 	FROM ACQ_UBIC_CONTATORE u
 	WHERE u.id_impianto is not NULL;
 
-	-- update field ids_codice_orig_acq
+	-- update field ids_codice_orig_acq (1.5 s)
     UPDATE utenza_servizio
     SET ids_codice_orig_acq = t.codice
     FROM (
@@ -567,7 +601,8 @@ BEGIN
         HAVING COUNT(id_ubic_contatore)=1
     ) t
     WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
-	-- update field id_localita_istat
+
+	-- update field id_localita_istat (1.5s)
     UPDATE utenza_servizio
     SET id_localita_istat = t.codice
     FROM (
@@ -577,7 +612,8 @@ BEGIN
         HAVING COUNT(id_ubic_contatore)=1
     ) t
     WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
-	-- update field ids_codice_orig_fgn
+
+	-- update field ids_codice_orig_fgn (1.5s)
     UPDATE utenza_servizio
     SET ids_codice_orig_fgn = t.codice
     FROM (
@@ -587,7 +623,8 @@ BEGIN
         HAVING COUNT(id_ubic_contatore)=1
     ) t
     WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
-	-- update field ids_codice_orig_dep_sca
+
+	-- update field ids_codice_orig_dep_sca (1.5s)
     UPDATE utenza_servizio
     SET ids_codice_orig_dep_sca = t.codice
     FROM (
@@ -597,7 +634,8 @@ BEGIN
         HAVING COUNT(id_ubic_contatore)=1
     ) t
     WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
-	-- Log duplicated items
+
+   -- Log duplicated items (55s)
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in localita'
 	FROM (
@@ -607,6 +645,7 @@ BEGIN
 		AND uc.id_impianto is not null
 	) t group by t.id_ubic_contatore having count(0)>1;
 
+	-- (6s)
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in acquedotto'
 	FROM(
@@ -617,6 +656,7 @@ BEGIN
 		AND uc.id_impianto is not null
 	)t group by t.id_ubic_contatore having count(0)>1;
 
+	-- (4s)
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in fognatura'
 	FROM(
@@ -627,6 +667,7 @@ BEGIN
 		AND uc.id_impianto is not null
 	)t group by t.id_ubic_contatore having count(0)>1;
 
+	-- (12s)
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in bacino'
 	FROM(
@@ -636,7 +677,16 @@ BEGIN
 			from FGN_BACINO b, FGN_TRATTAMENTO t
 			WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
 			AND ((t.D_STATO='ATT' AND t.D_AMBITO='AT3' AND t.D_GESTORE in ('PUBLIACQUA','GIDA') ) OR t.CODICE_ATO in ('DE00213','DE00214'))
-			UNION ALL
+		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
+		AND uc.id_impianto is not null
+	)t group by t.id_ubic_contatore having count(0)>1;
+
+	--(0.5s)
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in bacino'
+	FROM(
+		SELECT uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
+		from acq_ubic_contatore uc, (
 			select t.codice as codice_ato, b.geom, t.D_GESTORE, t.D_STATO, t.D_AMBITO
 			from FGN_BACINO b, FGN_PNT_SCARICO t
 			WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
@@ -644,7 +694,7 @@ BEGIN
 		) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
 		AND uc.id_impianto is not null
 	)t group by t.id_ubic_contatore having count(0)>1;
-	
+
 	v_result:= TRUE;
     RETURN v_result;
 --EXCEPTION WHEN OTHERS THEN

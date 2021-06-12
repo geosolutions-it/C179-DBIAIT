@@ -141,6 +141,8 @@ class ImportTask(BaseTask):
             cursor.execute(
                 f"GRANT SELECT ON ALL TABLES IN SCHEMA "
                 f"dbiait_analysis TO {' '.join(settings.DBIAIT_ANL_SELECT_ROLES)};")
+            cursor.execute(
+                f"SELECT DBIAIT_ANALYSIS.create_spatial_indexes();")
             print(f"Starting vacuum: {datetime.now()}")
             cursor.execute("VACUUM ANALYZE VERBOSE;")
             print(f"Finish vacuum: {datetime.now()}")
