@@ -84,7 +84,7 @@ class BaseTask(GenericActor):
     # --- Dramatiq Actor functionality ---
 
     class Meta:
-        max_retries = 1
+        max_retries = 0
         abstract = True
 
     def perform(self, task_id: int) -> None:
