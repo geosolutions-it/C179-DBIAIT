@@ -141,3 +141,5 @@ class FreezeTask(BaseTask):
             cursor.execute(f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA dbiait_freeze TO {' '.join(settings.DBIAIT_FRZ_ADMIN_ROLES)};")
 
         print(f"Finished FREEZE execution of of year: {ref_year}")
+        return True
+

@@ -148,3 +148,5 @@ class ImportTask(BaseTask):
             print(f"Finish vacuum: {datetime.now()}")
 
         print(f"Finished IMPORT execution of package from: {gpkg_path}")
+        return True
+

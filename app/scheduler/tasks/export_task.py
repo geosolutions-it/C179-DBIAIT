@@ -92,7 +92,7 @@ class ExportTask(BaseTask):
         """
         Method executing data export.
         """
-
+        result = False
         try:
             orm_task = Task.objects.get(pk=task_id)
         except ObjectDoesNotExist:
@@ -118,9 +118,10 @@ class ExportTask(BaseTask):
                 export_file = os.path.join(settings.EXPORT_FOLDER, f"task_{orm_task.id}")
                 shutil.make_archive(export_file, "zip", tmp_export_directory)
                 print(f"Zip created")
-
+                result = True
         except Exception as e:
             print("Exception: " + str(e))
 
         orm_task.progress = 100
         orm_task.save()
+        return result
