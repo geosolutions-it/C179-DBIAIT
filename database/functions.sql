@@ -576,7 +576,11 @@ BEGIN
         WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
         AND t.D_STATO='ATT' AND t.D_AMBITO='AT3' AND t.D_GESTORE = 'PUBLIACQUA'
     ) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
-    AND uc.id_impianto is not null;
+    AND uc.id_impianto is not null
+    AND not EXISTS(
+    	select 0 from UTENZA_SERVIZIO_BAC
+    	where id_ubic_contatore = uc.idgis
+    );
 
 	-- initialize table UTENZA_SERVIZIO.id_ubic_contatore with data from ACQ_UBIC_CONTATORE.idgis
 	--EXECUTE '
