@@ -127,10 +127,20 @@
         { "id": "117300", "transformation": { "func": "DIRECT",  "params": { "field": "utenze_totali" } }},
         { "id": "117400", "transformation": { "func": "DIRECT",  "params": { "field": "nr_utenze_industriali" } }},
         { "id": "117500", "transformation": { "func": "DIRECT",  "params": { "field": "volume_utenze_industriali" } }},
-
-        { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
         { "id": "101900", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" } }},
-        { "id": "68300", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
+        { "id": "68300", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "lunghezza",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ lunghezza }"
+                 }
+             }
+          }
+         },
         { "id": "68500", "transformation": { "func": "DIRECT", "params": { "field": "vol_idraulici" } } },
         { "id": "68600", "transformation": { "func": "DIRECT", "params": { "field": "sn_scar_sup" } }, "validations": [{
                     "func": "IF",

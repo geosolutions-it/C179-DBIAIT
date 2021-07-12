@@ -183,7 +183,7 @@ begin
     END IF;
 --- check if the output of the selected idgis is the expected
     SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001299';
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01165 ma trovata ' || cod_schema , 'DI01165' = cod_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01165 ma trovata ' || cod_schema , 'DI01166-00;DI01165-00' = cod_schema );
     perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected CASOLE ma trovata ' || denom_schema , 'CASOLE' = denom_schema );
 
     --- check if the output of the selected idgis is the expected
@@ -607,7 +607,7 @@ BEGIN
         "XLS_COLLETT_TRONCHI":  6013,
         "XLS_COLLETTORI":       161,
         "XLS_CONDOTTEMARINE":   0,
-        "XLS_DEPURAT_INCOLL":   43,
+        "XLS_DEPURAT_INCOLL":   138,
         "XLS_DEPURAT_POMPE":    425,
         "XLS_DEPURATORI":       154,
         "XLS_DISTRIB_COM_SERV": 451,
@@ -723,7 +723,7 @@ BEGIN
         "FGN_CONDOTTA_NODES": 				82198,
         "FGN_CONDOTTA_EDGES": 				80517,
         "STATS_CLORATORE": 					36,
-        "SCHEMA_ACQ": 						1173,
+        "SCHEMA_ACQ": 						1825,
         "UBIC_ALLACCIO": 					423768,
         "UBIC_CONTATORI_CASS_CONT": 		423768,
         "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	390,
@@ -1750,7 +1750,7 @@ DECLARE
 BEGIN
     -- Check number of cloratore for AD00986
     select counter INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete = 'PAAADD00000000005188';
-    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 1 but found ' || v_count, v_count = 1 );
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR (AD00986): expected 0 but found ' || v_count, v_count = 0 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
@@ -1785,7 +1785,7 @@ BEGIN
     -- Check total number of records in the support table
     select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'PAARDI%' and counter > 0;
     select count(0) INTO v_count from dbiait_analysis.STATS_CLORATORE WHERE id_rete LIKE 'DI%';
-    perform test_assertTrue('populate_STATS_CLORATORE_DISTR: total expected 6 but found ' || v_count, v_count = 6 );
+    perform test_assertTrue('populate_STATS_CLORATORE_DISTR: total expected 0 but found ' || v_count, v_count = 0 );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 --------------------------------------------------------------------------------------------
@@ -2076,7 +2076,7 @@ CREATE OR REPLACE function dbiait_analysis.test_case_schema_acq_AD01093() return
 DECLARE
     v_code VARCHAR(128);
     v_denom VARCHAR(255);
-    v_exp_code VARCHAR(128) := 'DI01165;DI01166-00';
+    v_exp_code VARCHAR(128) := 'DI01165-00;DI01166-00';
     v_exp_denom VARCHAR(255) := 'CASOLE;LE MASSE';
 BEGIN
     SELECT codice_schema_acq, denominazione_schema_acq
@@ -2196,7 +2196,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_pop_ser_dep() returns void as $$
 DECLARE
     v_value INTEGER;
-    v_expected INTEGER := 19;
+    v_expected INTEGER := 27;
 BEGIN
     select pop_ser_dep INTO v_value
     from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
@@ -2210,7 +2210,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_pop_ser_fgn() returns void as $$
 DECLARE
     v_value INTEGER;
-    v_expected INTEGER := 1042;
+    v_expected INTEGER := 1048;
 BEGIN
     select pop_ser_fgn INTO v_value
     from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
@@ -2252,7 +2252,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_perc_fgn() returns void as $$
 DECLARE
     v_value NUMERIC;
-    v_expected NUMERIC := 54.96;
+    v_expected NUMERIC := 55.26;
 BEGIN
     select perc_fgn INTO v_value
     from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
@@ -2266,7 +2266,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_perc_dep() returns void as $$
 DECLARE
     v_value NUMERIC;
-    v_expected NUMERIC := 0.98;
+    v_expected NUMERIC := 1.42;
 BEGIN
     select perc_dep INTO v_value
     from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
@@ -2280,7 +2280,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_ut_abit_tot() returns void as $$
 DECLARE
     v_value INTEGER;
-    v_expected INTEGER := 1090;
+    v_expected INTEGER := 1076;
 BEGIN
     select ut_abit_tot INTO v_value
     from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
@@ -2294,7 +2294,7 @@ $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
 CREATE OR REPLACE function dbiait_analysis.test_case_pop_res_comune_LONDA_ut_abit_fgn() returns void as $$
 DECLARE
     v_value INTEGER;
-    v_expected INTEGER := 750;
+    v_expected INTEGER := 739;
 BEGIN
     select ut_abit_fgn INTO v_value
     from dbiait_analysis.POP_RES_COMUNE where pro_com = '48025';
