@@ -188,8 +188,8 @@ begin
 
     --- check if the output of the selected idgis is the expected
     SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001402';
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01215 ma trovata ' || cod_schema , 'DI01215' = cod_schema );
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected POGGIO DI LORO ma trovata ' || denom_schema , 'POGGIO DI LORO' = denom_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01215 ma trovata ' || cod_schema , 'DI01215-02;DI01215-01' = cod_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected POGGIO DI LORO ma trovata ' || denom_schema , 'Poggio di Loro;San Clemente Valle' = denom_schema );
 
 END;
 $$  LANGUAGE plpgsql
