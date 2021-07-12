@@ -184,7 +184,7 @@ begin
 --- check if the output of the selected idgis is the expected
     SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001299';
     perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01165 ma trovata ' || cod_schema , 'DI01166-00;DI01165-00' = cod_schema );
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected CASOLE ma trovata ' || denom_schema , 'CASOLE' = denom_schema );
+    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected CASOLE ma trovata ' || denom_schema , 'LE MASSE;CASOLE' = denom_schema );
 
     --- check if the output of the selected idgis is the expected
     SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001402';
@@ -716,7 +716,7 @@ BEGIN
         "ADDUT_INRETI": 					819,
         "ACCUMULI_INRETI": 					914,
         "ACCUMULI_INADD": 					783,
-        "DEPURATO_INCOLL": 					43,
+        "DEPURATO_INCOLL": 					138,
         "SCARICATO_INFOG": 					1074,
         "ACQ_CONDOTTA_NODES": 				161569,
         "ACQ_CONDOTTA_EDGES": 				153193,
