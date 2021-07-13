@@ -1,6 +1,4 @@
 {
-   "xls_sheet_configs_": [
-   ],
    "xls_sheet_configs": [
       "sheet_configs/config_accumuli.json",
       "sheet_configs/config_accumuli_inadd.json",

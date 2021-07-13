@@ -555,7 +555,7 @@
 
         {"id": "6300","transformation": { "func": "DIRECT", "params": { "field": "data_agg"}}},
 
-        {"id": "2000","transformation": { "func": "DOMAIN", "params": { "field": "d_classific", "domain_name":  "D_CLASSIFIC"}}},
+        {"id": "2000","transformation": { "func": "DOMAIN", "params": { "field": "d_classific", "domain_name":  "D_CLASSIF_OPERA"}}},
         {"id": "2900","transformation": { "func": "DOMAIN", "params": { "field": "d_stato_cons", "domain_name":  "D_STATO_CONS"}}, "validations": [{
                     "func": "IF",
                     "params": {

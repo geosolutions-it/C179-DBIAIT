@@ -127,6 +127,7 @@
         { "id": "117300", "transformation": { "func": "DIRECT",  "params": { "field": "utenze_totali" } }},
         { "id": "117400", "transformation": { "func": "DIRECT",  "params": { "field": "nr_utenze_industriali" } }},
         { "id": "117500", "transformation": { "func": "DIRECT",  "params": { "field": "volume_utenze_industriali" } }},
+
         { "id": "101900", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" } }},
         { "id": "68300", "transformation":{
          "func": "IF",
