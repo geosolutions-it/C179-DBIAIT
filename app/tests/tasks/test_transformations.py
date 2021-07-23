@@ -33,12 +33,12 @@ class TransformationTestCase(SimpleTestCase):
         mocked_domains = Domains()
         mocked_domains._data = {
                 "D_T_CLORAZ": {
-                    "CLO": 2,
-                    "ALT": 5,
-                    "NES": 1,
-                    "BIO": 4,
-                    "IPO": 3,
-                    "MIS": 5
+                    "CLO": "2",
+                    "ALT": "5",
+                    "NES": "1",
+                    "BIO": "4",
+                    "IPO": "3",
+                    "MIS": "5"
                 }
         }
         actual = self.sut.from_name('DOMAIN', {"field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ"})\

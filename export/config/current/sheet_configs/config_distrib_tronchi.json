@@ -8,8 +8,8 @@
                 { "name": "distrib_tronchi.idgis", "alias": "idgis"},
                 { "name": "distrib_tronchi.idgis_rete", "alias": "idgis_rete"},
                 { "name": "distrib_tronchi.id_tipo_telecon", "alias": "id_tipo_telecon"},
-                { "name": "distrib_tronchi.id_materiale", "alias": "id_materiale"},
-                { "name": "distrib_tronchi.id_conservazione", "alias": "id_conservazione"},
+                { "name": "distrib_tronchi.id_materiale", "alias": "id_materiale", "function": "TO_NUM"},
+                { "name": "distrib_tronchi.id_conservazione", "alias": "id_conservazione", "function": "TO_NUM"},
                 { "name": "distrib_tronchi.diametro", "alias": "diametro"},
                 { "name": "distrib_tronchi.anno", "alias": "anno"},
                 { "name": "distrib_tronchi.lunghezza", "alias": "lunghezza"},
@@ -20,7 +20,7 @@
                 { "name": "distrib_tronchi.pressione", "alias": "pressione"},
                 { "name": "distrib_tronchi.note", "alias": "note"},
                 { "name": "distrib_tronchi.geom", "alias": "geom"},
-                { "name": "acq_condotta.data_esercizio", "alias": "data_esercizio","function": "TO_YEAR"}
+                { "name": "acq_condotta.data_esercizio", "alias": "data_esercizio", "function": "TO_YEAR"}
             ],
             "table": {
                 "name": "distrib_tronchi"
