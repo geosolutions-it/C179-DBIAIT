@@ -1,9 +1,5 @@
-import fiona
 import pathlib
-import shapely.wkb
-
 from django.conf import settings
-from shapely.geometry import mapping
 from django.db import connections, ProgrammingError
 from app.scheduler.tasks.import_definitions.base_import import initQgis
 from app.scheduler.tasks.export_definitions.config_scraper import ShpExportConfig

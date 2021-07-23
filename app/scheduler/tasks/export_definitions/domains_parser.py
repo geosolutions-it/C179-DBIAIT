@@ -1,4 +1,5 @@
 import copy
+import ast
 from django.db import connection
 from app.scheduler.utils import Schema, dictfetchall
 
@@ -42,4 +43,7 @@ class Domains:
         """
         Method translating valore_gis of a certain dominio_gis into valore_netsic
         """
-        return self._data[dominio_gis][valore_gis]
+        result = self._data[dominio_gis][valore_gis]
+        if result and result.replace(".", "").isdigit():
+            result = ast.literal_eval(result)
+        return result

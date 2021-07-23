@@ -14,7 +14,7 @@
             {"name":"fgn_auth_sfioro.larg_uti_poz_scol", "alias":"larg_uti_poz_scol"},
             {"name":"fgn_auth_sfioro.lung_uti_poz_scol", "alias":"lung_uti_poz_scol"},
             {"name":"fgn_sfioro.rapporto_diluiz", "alias":"rapporto_diluiz"},
-            {"name":"fgn_auth_sfioro.sn_strum_mis_port", "alias":"sn_strum_mis_port", "function": "TO_BIT"},
+            {"name":"fgn_auth_sfioro.sn_strum_mis_port", "alias":"sn_strum_mis_port", "function": "TO_BIT", "cast": "INTEGER"},
             {"name":"fgn_auth_sfioro.tipo_recapito", "alias":"tipo_recapito"},
             {"name":"fgn_auth_sfioro.bacino_recet", "alias":"bacino_recet"},
             {"name":"fgn_sfioro.d_stato_cons", "alias":"d_stato_cons"},
@@ -28,7 +28,7 @@
             {"name":"fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name":"fgn_sfioro.sn_bypass", "alias": "sn_bypass", "function":  "TO_BIT"}
+            {"name":"fgn_sfioro.sn_bypass", "alias": "sn_bypass", "function":  "TO_BIT", "cast": "INTEGER"}
          ],
          "table":{
             "name":"fgn_sfioro"
@@ -71,7 +71,7 @@
             {"name":"fgn_auth_sfioro.larg_uti_poz_scol", "alias":"larg_uti_poz_scol"},
             {"name":"fgn_auth_sfioro.lung_uti_poz_scol", "alias":"lung_uti_poz_scol"},
             {"name":"a_fgn_sfioro.rapporto_diluiz", "alias":"rapporto_diluiz"},
-            {"name":"fgn_auth_sfioro.sn_strum_mis_port", "alias":"sn_strum_mis_port", "function": "TO_BIT"},
+            {"name":"fgn_auth_sfioro.sn_strum_mis_port", "alias":"sn_strum_mis_port", "function": "TO_BIT", "cast": "INTEGER"},
             {"name":"fgn_auth_sfioro.tipo_recapito", "alias":"tipo_recapito"},
             {"name":"fgn_auth_sfioro.bacino_recet", "alias":"bacino_recet"},
             {"name":"a_fgn_sfioro.d_stato_cons", "alias":"d_stato_cons"},
@@ -243,10 +243,10 @@
       {"id": "83500","transformation": {"func": "DECODE_COM", "params": { "field": "cod_comune" }}},
 
       {"id":"83900", "transformation":{"func":"CASE", "params":{"field":"d_materiale", "cond": [
-         {"case": "WHEN", "operator": "=", "value": "MUR", "result": "1"},
-         {"case": "WHEN", "operator": "=", "value": "CA", "result": "2"},
-         {"case": "WHEN", "operator": "=", "value": "PIE", "result": "3"},
-         {"case": "ELSE", "result": "4"}
+         {"case": "WHEN", "operator": "=", "value": "MUR", "result": 1},
+         {"case": "WHEN", "operator": "=", "value": "CA", "result": 2},
+         {"case": "WHEN", "operator": "=", "value": "PIE", "result": 3},
+         {"case": "ELSE", "result": 4}
       ]}}}
    ]
 }

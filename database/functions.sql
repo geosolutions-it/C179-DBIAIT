@@ -165,6 +165,20 @@ CREATE OR REPLACE FUNCTION public.TO_BIT(
 		end;
 $$  LANGUAGE sql;
 --------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.TO_NUM(
+	v_value anyelement
+) RETURNS NUMERIC AS $$
+BEGIN
+    IF pg_typeof(v_value)::VARCHAR = 'bit' THEN
+        RETURN (v_value::VARCHAR)::NUMERIC;
+    ELSE
+        RETURN v_value::NUMERIC;
+    END IF;
+EXCEPTION WHEN OTHERS THEN
+    RETURN NULL;
+END;
+$$  LANGUAGE plpgsql;
+--------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.GB_X(
 	v_geom GEOMETRY
 ) RETURNS DOUBLE PRECISION AS $$

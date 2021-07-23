@@ -8,8 +8,8 @@
             {"name":"fognat_tronchi.codice_ato", "alias": "codice_ato"},
             {"name":"fognat_tronchi.idgis_rete", "alias": "idgis_rete"},
             {"name":"fognat_tronchi.recapito", "alias": "recapito"},
-            {"name":"fognat_tronchi.id_materiale", "alias": "id_materiale"},
-            {"name":"fognat_tronchi.id_conservazione", "alias": "id_conservazione"},
+            {"name":"fognat_tronchi.id_materiale", "alias": "id_materiale", "function": "TO_NUM"},
+            {"name":"fognat_tronchi.id_conservazione", "alias": "id_conservazione", "function": "TO_NUM"},
             {"name":"fognat_tronchi.diametro", "alias": "diametro"},
             {"name":"fognat_tronchi.anno", "alias": "anno"},
             {"name":"fognat_tronchi.funziona_gravita", "alias": "funziona_gravita"},
@@ -19,7 +19,7 @@
             {"name":"fognat_tronchi.idx_anno", "alias": "idx_anno"},
             {"name":"fognat_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
             {"name":"fognat_tronchi.depurazione", "alias": "depurazione"},
-            {"name":"fognat_tronchi.id_refluo_trasportato", "alias": "id_refluo_trasportato"},
+            {"name":"fognat_tronchi.id_refluo_trasportato", "alias": "id_refluo_trasportato", "function": "TO_NUM"},
             {"name":"fgn_condotta.data_esercizio", "alias": "data_esercizio"}
          ],
          "table":{
