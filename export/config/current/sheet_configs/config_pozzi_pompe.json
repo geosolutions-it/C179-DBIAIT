@@ -11,7 +11,7 @@
             {"name":"pozzi_pompe.potenza", "alias":"potenza"},
             {"name":"pozzi_pompe.portata", "alias":"portata"},
             {"name":"pozzi_pompe.prevalenza", "alias":"prevalenza"},
-            {"name":"pozzi_pompe.sn_riserva", "alias":"sn_riserva"},
+            {"name":"pozzi_pompe.sn_riserva", "alias":"sn_riserva", "function": "TO_BIT", "cast": "INTEGER"},
             {"name":"pozzi_pompe.idx_anno_instal", "alias":"idx_anno_instal"},
             {"name":"pozzi_pompe.idx_anno_ristr", "alias":"idx_anno_ristr"},
             {"name":"pozzi_pompe.idx_potenza", "alias":"idx_potenza"},

@@ -860,9 +860,9 @@
       ]},
 
       {"id":"24100", "transformation":{"func":"CONST", "params":{"value":"3003"}}},
-      {"id":"26700", "transformation":{"func":"CONST", "params":{"value":"0"}}},
-      {"id":"26800", "transformation":{"func":"CONST", "params":{"value":"1"}}},
-      {"id":"26900", "transformation":{"func":"CONST", "params":{"value":"0"}}},
+      {"id":"26700", "transformation":{"func":"CONST", "params":{"value": 0}}},
+      {"id":"26800", "transformation":{"func":"CONST", "params":{"value": 1}}},
+      {"id":"26900", "transformation":{"func":"CONST", "params":{"value": 0}}},
 
       {"id":"24400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
       {"id":"24400", "transformation": {"func":"DECODE_COM", "params": { "field": "cod_comune" }}},

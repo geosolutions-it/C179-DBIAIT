@@ -12,7 +12,7 @@
                 {"name": "collett_tronchi.id_conservazione", "alias": "id_conservazione", "function": "TO_NUM"},
                 {"name": "collett_tronchi.diametro", "alias": "diametro"},
                 {"name": "collett_tronchi.anno", "alias": "anno"},
-                {"name": "collett_tronchi.funziona_gravita", "alias": "funziona_gravita"},
+                {"name": "collett_tronchi.funziona_gravita", "alias": "funziona_gravita", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "collett_tronchi.lunghezza", "alias": "lunghezza"},
                 {"name": "collett_tronchi.idx_materiale", "alias": "idx_materiale"},
                 {"name": "collett_tronchi.idx_diametro", "alias": "idx_diametro"},

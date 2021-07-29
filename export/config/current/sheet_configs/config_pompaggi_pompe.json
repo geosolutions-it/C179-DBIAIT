@@ -11,7 +11,7 @@
                 {"name": "pompaggi_pompe.potenza","alias": "potenza"},
                 {"name": "pompaggi_pompe.portata","alias": "portata"},
                 {"name": "pompaggi_pompe.prevalenza","alias": "prevalenza"},
-                {"name": "pompaggi_pompe.sn_riserva","alias": "sn_riserva"},
+                {"name": "pompaggi_pompe.sn_riserva","alias": "sn_riserva", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "pompaggi_pompe.idx_anno_instal","alias": "idx_anno_instal"},
                 {"name": "pompaggi_pompe.idx_anno_ristr","alias": "idx_anno_ristr"},
                 {"name": "pompaggi_pompe.idx_potenza","alias": "idx_potenza"},
