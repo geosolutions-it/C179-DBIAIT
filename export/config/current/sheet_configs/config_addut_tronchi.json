@@ -8,7 +8,7 @@
                 {"name": "addut_tronchi.idgis", "alias": "idgis"},
                 {"name": "addut_tronchi.idgis_rete", "alias": "idgis_rete"},
                 {"name": "addut_tronchi.id_tipo_telecon", "alias": "id_tipo_telecon"},
-                {"name": "addut_tronchi.id_materiale", "alias": "id_materiale"},
+                {"name": "addut_tronchi.id_materiale", "alias": "id_materiale", "function": "TO_NUM"},
                 {"name": "addut_tronchi.id_conservazione", "alias": "id_conservazione", "function": "TO_NUM"},
                 {"name": "addut_tronchi.diametro", "alias": "diametro"},
                 {"name": "addut_tronchi.anno", "alias": "anno"},
