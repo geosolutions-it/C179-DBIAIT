@@ -164,9 +164,9 @@
 				{"name": "a_acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "fiumi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
-                {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT"},
-                {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT"},
-                {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT"},
+                {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT", "cast": "INTEGER"},
+                {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT", "cast": "INTEGER"},
+                {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT", "cast": "INTEGER"},
                 { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
                 { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"}
             ],

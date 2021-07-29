@@ -17,7 +17,7 @@
                 { "name": "distrib_tronchi.idx_diametro", "alias": "idx_diametro"},
                 { "name": "distrib_tronchi.idx_anno", "alias": "idx_anno"},
                 { "name": "distrib_tronchi.idx_lunghezza", "alias": "idx_lunghezza"},
-                { "name": "distrib_tronchi.pressione", "alias": "pressione"},
+                { "name": "distrib_tronchi.pressione", "alias": "pressione", "cast": "INTEGER"},
                 { "name": "distrib_tronchi.note", "alias": "note"},
                 { "name": "distrib_tronchi.geom", "alias": "geom"},
                 { "name": "acq_condotta.data_esercizio", "alias": "data_esercizio", "function": "TO_YEAR"}

@@ -11,7 +11,7 @@
                 {"name": "depurato_pompe.potenza","alias": "potenza"},
                 {"name": "depurato_pompe.portata","alias": "portata"},
                 {"name": "depurato_pompe.prevalenza","alias": "prevalenza"},
-                {"name": "depurato_pompe.sn_riserva","alias": "sn_riserva"},
+                {"name": "depurato_pompe.sn_riserva","alias": "sn_riserva", "cast": "INTEGER"},
                 {"name": "depurato_pompe.idx_anno_instal","alias": "idx_anno_instal"},
                 {"name": "depurato_pompe.idx_anno_ristr","alias": "idx_anno_ristr"},
                 {"name": "depurato_pompe.idx_potenza","alias": "idx_potenza"},
