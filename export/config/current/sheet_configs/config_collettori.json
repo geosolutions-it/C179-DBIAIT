@@ -72,7 +72,7 @@
                 { "name": "fgn_auth_collet.n_scar_piena",  "alias": "n_scar_piena" },
                 { "name": "fgn_auth_collet.d_telecont",  "alias": "d_telecont" },
                 { "name": "fgn_auth_collet.nr_rip",  "alias": "nr_rip" },
-                { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port", "function": "TO_BIT" },
+                { "name": "fgn_auth_collet.sn_strum_mis_port",  "alias": "sn_strum_mis_port", "function": "TO_BIT", "cast": "INTEGER"},
                 { "name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
                 {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
                 {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
