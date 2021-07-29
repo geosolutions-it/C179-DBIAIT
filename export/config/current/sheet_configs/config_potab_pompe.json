@@ -11,7 +11,7 @@
                 {"name": "potab_pompe.potenza","alias": "potenza"},
                 {"name": "potab_pompe.portata","alias": "portata"},
                 {"name": "potab_pompe.prevalenza","alias": "prevalenza"},
-                {"name": "potab_pompe.sn_riserva","alias": "sn_riserva", "function": "TO_BIT", "cast": "INTEGER"},
+                {"name": "potab_pompe.sn_riserva","alias": "sn_riserva", "cast": "INTEGER"},
                 {"name": "potab_pompe.idx_anno_instal","alias": "idx_anno_instal"},
                 {"name": "potab_pompe.idx_anno_ristr","alias": "idx_anno_ristr"},
                 {"name": "potab_pompe.idx_potenza","alias": "idx_potenza"},

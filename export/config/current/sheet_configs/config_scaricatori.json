@@ -85,7 +85,7 @@
             {"name":"a_fgn_sfioro.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_fgn_sfioro.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
             { "name": "localita.denominazi", "alias": "denominazi" },
-            {"name":"a_fgn_sfioro.sn_bypass", "alias": "sn_bypass", "function":  "TO_BIT"}
+            {"name":"a_fgn_sfioro.sn_bypass", "alias": "sn_bypass", "function":  "TO_BIT", "cast": "INTEGER"}
          ],
          "table":{
             "name":"a_fgn_sfioro"
