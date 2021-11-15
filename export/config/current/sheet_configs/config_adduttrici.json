@@ -18,8 +18,6 @@
                 {"name": "acq_auth_adduttr.sn_strum_mis_port","alias": "sn_strum_mis_port", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza"},
                 {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
-                { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
-                { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
                 {"name": "stats_cloratore.counter","alias": "count_cloratori"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
@@ -68,17 +66,6 @@
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="
-                },
-                {
-                    "type": "left",
-                    "table": {
-                        "name": "schema_acq"
-                    },
-                    "on": [
-                        "acq_adduttrice.idgis",
-                        "schema_acq.idgis"
-                    ],
-                    "cond": "="
                 },{
                     "type": "left",
                     "table": {
@@ -109,8 +96,6 @@
                 {"name": "acq_auth_adduttr.sn_strum_mis_port","alias": "sn_strum_mis_port", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza"},
                 {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc"},
-                { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
-                { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
                 { "name": "stats_cloratore.counter","alias": "count_cloratori"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
@@ -159,17 +144,6 @@
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="
-                },
-                {
-                    "type": "left",
-                    "table": {
-                        "name": "schema_acq"
-                    },
-                    "on": [
-                        "a_acq_adduttrice.idgis",
-                        "schema_acq.idgis"
-                    ],
-                    "cond": "="
                 },{
                     "type": "left",
                     "table": {
@@ -205,8 +179,6 @@
           }
          },
 
-        {"id": "112500","transformation": {"func": "DIRECT", "params": {"field": "codice_schema_acq"}}},
-        {"id": "112600","transformation": {"func": "DIRECT", "params": {"field": "denominazione_schema_acq"}}},
 
         {"id":"117800", "transformation":{
          "func": "IF",

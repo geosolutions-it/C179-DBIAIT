@@ -47,8 +47,6 @@
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT", "cast": "INTEGER"},
             {"name": "acq_auth_capt.sn_strum_mis_press","alias": "sn_strum_mis_press", "function": "TO_BIT", "cast": "INTEGER"},
             {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"},
-            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
-            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
             {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"}
          ],
@@ -132,17 +130,6 @@
                      "acq_captazione.codice_ato"
                  ],
                  "cond": "="
-            },
-            {
-                "type": "left",
-                "table": {
-                    "name": "schema_acq"
-                },
-                "on": [
-                    "acq_captazione.idgis",
-                    "schema_acq.idgis"
-                ],
-                "cond": "="
             }
          ],
          "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3"
@@ -192,8 +179,6 @@
             {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT", "cast": "INTEGER"},
             {"name": "acq_auth_capt.sn_strum_mis_press","alias": "sn_strum_mis_press", "function": "TO_BIT", "cast": "INTEGER"},
             {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"},
-            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
-            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
             {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"}
          ],
@@ -277,26 +262,12 @@
                      "a_acq_captazione.codice_ato"
                  ],
                  "cond": "="
-            },
-            {
-                "type": "left",
-                "table": {
-                    "name": "schema_acq"
-                },
-                "on": [
-                    "a_acq_captazione.idgis",
-                    "schema_acq.idgis"
-                ],
-                "cond": "="
             }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.sub_funzione = 3"
       }
    ],
    "columns":[
-
-        {"id": "111500","transformation": { "func": "DIRECT", "params": { "field": "codice_schema_acq"}}},
-        {"id": "111600","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
 
         {"id": "111300","transformation": { "func": "DIRECT", "params": { "field": "codice_accorp_capt"}}},
         {"id": "111400","transformation": { "func": "DIRECT", "params": { "field": "denom_accorp"}}},

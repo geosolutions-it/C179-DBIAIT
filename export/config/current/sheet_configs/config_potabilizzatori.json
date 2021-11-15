@@ -62,9 +62,7 @@
             {"name":"acq_potabiliz.cod_comune", "alias":"cod_comune"},
             {"name":"acq_potabiliz.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"acq_potabiliz.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            { "name": "localita.denominazi", "alias": "denominazi" },
-            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
-            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"}
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"acq_potabiliz"
@@ -91,17 +89,7 @@
                      "acq_potabiliz.geom"
                  ],
                  "cond": "ST_INTERSECTS"
-            },{
-                    "type": "left",
-                    "table": {
-                        "name": "schema_acq"
-                    },
-                    "on": [
-                        "acq_potabiliz.idgis",
-                        "schema_acq.idgis"
-                    ],
-                    "cond": "="
-                }
+            }
          ],
          "filter": "WHERE acq_potabiliz.d_gestore = 'PUBLIACQUA' AND acq_potabiliz.d_ambito IN ('AT3', NULL) AND acq_potabiliz.d_stato NOT IN ('IPR', 'IAC')"
       },
@@ -165,9 +153,7 @@
             {"name":"a_acq_potabiliz.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_potabiliz.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_acq_potabiliz.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            { "name": "localita.denominazi", "alias": "denominazi" },
-            { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
-            { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"}
+            { "name": "localita.denominazi", "alias": "denominazi" }
          ],
          "table":{
             "name":"a_acq_potabiliz"
@@ -194,26 +180,12 @@
                      "a_acq_potabiliz.geom"
                  ],
                  "cond": "ST_INTERSECTS"
-             },
-                {
-                    "type": "left",
-                    "table": {
-                        "name": "schema_acq"
-                    },
-                    "on": [
-                        "a_acq_potabiliz.idgis",
-                        "schema_acq.idgis"
-                    ],
-                    "cond": "="
-                }
+             }
          ],
          "filter": "WHERE a_acq_potabiliz.d_gestore = 'PUBLIACQUA' AND a_acq_potabiliz.d_ambito IN ('AT3', NULL) AND a_acq_potabiliz.d_stato NOT IN ('IPR', 'IAC')"
       }
    ],
    "columns":[
-
-      {"id": "112300","transformation": { "func": "DIRECT", "params": { "field": "codice_schema_acq"}}},
-      {"id": "112400","transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq"}}},
 
       {"id":"30900", "transformation":{"func":"DIRECT", "params":{"field":"codice_ato"}}},
       {"id":"31000", "transformation":{"func":"DIRECT", "params":{"field":"denom"}}},

@@ -902,14 +902,6 @@ CREATE TABLE DBIAIT_ANALYSIS.ACQ_CAPT_ACCORPAM(
 
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.area_poe;
 
-DROP TABLE IF EXISTS DBIAIT_ANALYSIS.schema_acq;
-CREATE TABLE DBIAIT_ANALYSIS.schema_acq(
-    idgis       VARCHAR(32),
-	codice_schema_acq		text,
-    denominazione_schema_acq	text,
-    primary key (idgis)
-);
-
 DROP TABLE IF EXISTS DBIAIT_ANALYSIS.acq_allaccio;
 CREATE TABLE DBIAIT_ANALYSIS.acq_allaccio(
     id_cassetta       VARCHAR(32),

@@ -166,37 +166,6 @@ $$  LANGUAGE plpgsql
     SET search_path = public,pgunit;
 
 -- ------------------------------------------------------------------------------------------
--- TEST POPULATE SCHEMA ACQ (ACQUEDOTTISTICO)
--- ------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_populate_schema_acq(
-    v_run_proc BOOLEAN DEFAULT FALSE
-) returns void as $$
-DECLARE
-  cod_schema varchar;
-  denom_schema varchar;
-  error varchar;
-
-begin
-    -- run the new version of the procedure
-    IF v_run_proc THEN
-	    perform test_assertTrue('Verifica esito procedura', dbiait_analysis.populate_schema_acq() );
-    END IF;
---- check if the output of the selected idgis is the expected
-    SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001299';
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01165 ma trovata ' || cod_schema , 'DI01166-00;DI01165-00' = cod_schema );
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected CASOLE ma trovata ' || denom_schema , 'LE MASSE;CASOLE' = denom_schema );
-
-    --- check if the output of the selected idgis is the expected
-    SELECT codice_schema_acq,denominazione_schema_acq INTO cod_schema, denom_schema FROM dbiait_analysis.schema_acq sa WHERE idgis='PAARDI00000000001402';
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected DI01215 ma trovata ' || cod_schema , 'DI01215-02;DI01215-01' = cod_schema );
-    perform test_assertTrue('Schema Acquedottistico denominazione schema non valida expected POGGIO DI LORO ma trovata ' || denom_schema , 'Poggio di Loro;San Clemente Valle' = denom_schema );
-
-END;
-$$  LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public,pgunit;
-
--- ------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_case_populate_ubic_allaccio(
     v_run_proc BOOLEAN DEFAULT FALSE
 ) returns void as $$
@@ -723,7 +692,6 @@ BEGIN
         "FGN_CONDOTTA_NODES": 				82198,
         "FGN_CONDOTTA_EDGES": 				80517,
         "STATS_CLORATORE": 					36,
-        "SCHEMA_ACQ": 						1825,
         "UBIC_ALLACCIO": 					423768,
         "UBIC_CONTATORI_CASS_CONT": 		423768,
         "UTENZE_DISTRIBUZIONI_ADDUTTRICI": 	390,
@@ -1285,16 +1253,7 @@ BEGIN
     perform test_assertTrue('count TAB STATS_CLORATORE, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
--- ------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_count_SCHEMA_ACQ_tab() returns void as $$
-DECLARE
-  v_count       BIGINT:=0;
-  v_expected    BIGINT:=dbiait_analysis._test_expected_count('SCHEMA_ACQ');
-BEGIN
-    select count(0) into v_count from dbiait_analysis.SCHEMA_ACQ;
-    perform test_assertTrue('count TAB SCHEMA_ACQ, expected ' || v_expected || ' but found ' || v_count, v_count = v_expected );
-END;
-$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
+
 -- ------------------------------------------------------------------------------------------
 CREATE OR REPLACE function dbiait_analysis.test_case_count_UBIC_ALLACCIO_tab() returns void as $$
 DECLARE
@@ -1402,7 +1361,6 @@ BEGIN
         left join dbiait_analysis.acq_vol_utenze acq_vol_utenze on acq_vol_utenze.ids_codice_orig_acq = acq_rete_distrib.codice_ato
         left join dbiait_analysis.utenze_distribuzioni_adduttrici utenze_distribuzioni_adduttrici on utenze_distribuzioni_adduttrici.id_rete = acq_rete_distrib.idgis
         left join dbiait_analysis.stats_cloratore stats_cloratore on acq_rete_distrib.idgis = stats_cloratore.id_rete
-        left join dbiait_analysis.schema_acq schema_acq on acq_rete_distrib.idgis = schema_acq.idgis
     where acq_rete_distrib.d_gestore = 'PUBLIACQUA'
         and acq_rete_distrib.d_ambito in ('AT3', null)
         and acq_rete_distrib.d_stato not in ('IPR', 'IAC')
@@ -1424,7 +1382,6 @@ BEGIN
         left join dbiait_analysis.acq_vol_utenze acq_vol_utenze on acq_vol_utenze.ids_codice_orig_acq = acq_rete_distrib.codice_ato
         left join dbiait_analysis.utenze_distribuzioni_adduttrici utenze_distribuzioni_adduttrici on utenze_distribuzioni_adduttrici.id_rete = acq_rete_distrib.idgis
         left join dbiait_analysis.stats_cloratore stats_cloratore on acq_rete_distrib.idgis = stats_cloratore.id_rete
-        left join dbiait_analysis.schema_acq schema_acq on acq_rete_distrib.idgis = schema_acq.idgis
     where acq_rete_distrib.d_gestore = 'PUBLIACQUA'
         and acq_rete_distrib.d_ambito in ('AT3', null)
         and acq_rete_distrib.d_stato not in ('IPR', 'IAC')
@@ -1446,7 +1403,6 @@ BEGIN
         left join dbiait_analysis.acq_vol_utenze acq_vol_utenze on acq_vol_utenze.ids_codice_orig_acq = acq_rete_distrib.codice_ato
         left join dbiait_analysis.utenze_distribuzioni_adduttrici utenze_distribuzioni_adduttrici on utenze_distribuzioni_adduttrici.id_rete = acq_rete_distrib.idgis
         left join dbiait_analysis.stats_cloratore stats_cloratore on acq_rete_distrib.idgis = stats_cloratore.id_rete
-        left join dbiait_analysis.schema_acq schema_acq on acq_rete_distrib.idgis = schema_acq.idgis
     where acq_rete_distrib.d_gestore = 'PUBLIACQUA'
         and acq_rete_distrib.d_ambito in ('AT3', null)
         and acq_rete_distrib.d_stato not in ('IPR', 'IAC')
@@ -2068,32 +2024,6 @@ BEGIN
     perform test_assertTrue(
         'test_case_fgn_cond_altro_allacci_NULL: expected ' || v_expected || ' but found ' || v_count,
         v_count = v_expected
-    );
-END;
-$$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
---------------------------------------------------------------------------------------------
-CREATE OR REPLACE function dbiait_analysis.test_case_schema_acq_AD01093() returns void as $$
-DECLARE
-    v_code VARCHAR(128);
-    v_denom VARCHAR(255);
-    v_exp_code VARCHAR(128) := 'DI01165-00;DI01166-00';
-    v_exp_denom VARCHAR(255) := 'CASOLE;LE MASSE';
-BEGIN
-    SELECT codice_schema_acq, denominazione_schema_acq
-    INTO v_code, v_denom
-    FROM dbiait_analysis.schema_acq
-    WHERE idgis IN (
-        select idgis
-        from dbiait_analysis.acq_adduttrice
-        where codice_ato = 'AD01093'
-    );
-    perform test_assertTrue(
-        'test_case_schema_acq_AD01093: expected (code) ' || v_exp_code || ' but found ' || v_code,
-        v_code = v_exp_code
-    );
-    perform test_assertTrue(
-        'test_case_schema_acq_AD01093: expected (denom) ' || v_exp_denom || ' but found ' || v_denom,
-        v_denom = v_exp_denom
     );
 END;
 $$  LANGUAGE plpgsql SECURITY DEFINER SET search_path = public,pgunit;
