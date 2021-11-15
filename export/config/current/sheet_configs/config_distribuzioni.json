@@ -38,8 +38,6 @@
                 { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
                 { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_allacci","alias": "nr_allacci"},
-                { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
-                { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
                 { "name": "stats_cloratore.counter","alias": "count_cloratori"},
                 { "name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza"}
             ],
@@ -98,17 +96,6 @@
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="
-                },
-                {
-                    "type": "left",
-                    "table": {
-                        "name": "schema_acq"
-                    },
-                    "on": [
-                        "acq_rete_distrib.idgis",
-                        "schema_acq.idgis"
-                    ],
-                    "cond": "="
                 }
             ],
             "filter": "WHERE acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND acq_rete_distrib.d_ambito IN ('AT3', NULL) AND acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
@@ -149,8 +136,6 @@
                 { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
                 { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_allacci","alias": "nr_allacci"},
-                { "name": "schema_acq.codice_schema_acq", "alias": "codice_schema_acq"},
-                { "name": "schema_acq.denominazione_schema_acq", "alias": "denominazione_schema_acq"},
                 { "name": "stats_cloratore.counter","alias": "count_cloratori"},
                 { "name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza"}
             ],
@@ -209,17 +194,6 @@
                         "stats_cloratore.id_rete"
                     ],
                     "cond": "="
-                },
-                {
-                    "type": "left",
-                    "table": {
-                        "name": "schema_acq"
-                    },
-                    "on": [
-                        "a_acq_rete_distrib.idgis",
-                        "schema_acq.idgis"
-                    ],
-                    "cond": "="
                 }
             ],
             "filter": "WHERE a_acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND a_acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND a_acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
@@ -229,8 +203,6 @@
 
 
         { "id": "114600", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
-        { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "codice_schema_acq" } }},
-        { "id": "113600", "transformation": { "func": "DIRECT", "params": { "field": "denominazione_schema_acq" } }},
 
         { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } }},
         { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},

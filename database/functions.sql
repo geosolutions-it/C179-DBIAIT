@@ -2237,7 +2237,6 @@ BEGIN
 	AND populate_acq_shape_utenze_mis()
 	AND populate_utenze_distribuzioni_adduttrici()
     AND populate_stats_cloratore()
-	AND populate_schema_acq()
 	AND populate_codice_capt_accorp();
 END;
 $$  LANGUAGE plpgsql
@@ -3581,92 +3580,6 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
--------------------------------------------------------------------------------------------------------
--- Create the schema acquedottistico for impianti/reti
---
--- Example:
--- SELECT DBIAIT_ANALYSIS.populate_schema_acq()
---
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_schema_acq(
-) RETURNS BOOLEAN AS $$
-DECLARE
-	v_tol DOUBLE PRECISION := snap_tolerance();
-BEGIN
-
-	DELETE FROM schema_acq;
-
-	WITH
-	    all_reti as(
-            SELECT idgis, geom FROM acq_rete_distrib ard),
-        all_impianti as(
-            SELECT idgis, geom FROM acq_captazione fis
-            UNION ALL
-            SELECT idgis, geom FROM acq_accumulo acq
-            UNION ALL
-            SELECT idgis, geom FROM acq_potabiliz ap
-            UNION ALL
-            SELECT idgis, geom FROM acq_pompaggio acp)
-    INSERT INTO schema_acq(idgis, codice_schema_acq, denominazione_schema_acq)
-    SELECT
-        ot.idgis idgis,
-        string_agg(ot.codice, ';') codice_schema_acq,
-        string_agg(ot.denom, ';') denominazione_schema_acq
-    FROM (
-        SELECT
-            ap.codice,
-            ap.denom,
-            ar.idgis
-        FROM
-            acq_area_poe ap
-        JOIN (
-            SELECT idgis, geom FROM all_reti
-            UNION ALL
-            SELECT idgis, geom FROM all_impianti
-            ORDER BY idgis desc
-         ) ar ON
-         ap.geom && ar.geom
-         AND ST_INTERSECTS(ST_BUFFER(ap.geom, -1*v_tol), ar.geom)
-		 AND ST_TOUCHES(ap.geom, ar.geom) = FALSE
-	) ot
-    GROUP BY
-        idgis;
-
-    -- section adduttrici (2.2)
-    INSERT INTO schema_acq(idgis, codice_schema_acq, denominazione_schema_acq)
-    select
-        distinct
-        idgis,
-        string_agg(codice, ';') as codice_schema_acq,
-        string_agg(denom, ';') as denominazione_schema_acq
-    from
-    (
-        select
-            distinct t.idgis, codice, denom
-        from
-        (
-            select aa.idgis, ac.geom
-            from acq_adduttrice aa, acq_condotta ac
-            where
-                aa.d_gestore = 'PUBLIACQUA' and aa.d_ambito IN ('AT3', NULL)
-                and aa.d_stato NOT IN ('IPR', 'IAC')
-            and ac.d_gestore = 'PUBLIACQUA' and ac.d_ambito IN ('AT3', NULL)
-                and ac.d_stato in ('ATT', 'FIP', NULL)
-                and ac.sn_fittizia in ('NO', NULL)
-            and aa.idgis = ac.id_rete
-        ) t, acq_area_poe g
-        where t.geom && g.geom
-        AND ST_INTERSECTS(ST_BUFFER(g.geom, -1*v_tol), t.geom)
-        AND ST_TOUCHES(g.geom, t.geom) = FALSE
-        order by idgis, codice
-    ) d
-    group by d.idgis;
-
-	RETURN TRUE;
-END;
-$$  LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public, DBIAIT_ANALYSIS;
-
 
 -------------------------------------------------------------------------------------------------------
 -- Calcola la tabella ubic_allaccio partendo da acq_allacci #221
@@ -4307,7 +4220,6 @@ begin
 	DROP TABLE IF EXISTS FGN_CONDOTTA_NODES;
 	DROP TABLE IF EXISTS FGN_CONDOTTA_EDGES;
 	DELETE FROM STATS_CLORATORE;
-	DELETE FROM SCHEMA_ACQ;
 	DELETE FROM UBIC_ALLACCIO;
 	DELETE FROM UBIC_CONTATORI_CASS_CONT;
 	DELETE FROM UTENZE_DISTRIBUZIONI_ADDUTTRICI;
