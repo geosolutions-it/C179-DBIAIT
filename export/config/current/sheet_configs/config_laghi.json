@@ -109,8 +109,8 @@
                 {"name": "acq_auth_capt.bacino","alias": "bacino"},
                 {"name": "a_acq_captazione.corso_acqua","alias": "corso_acqua"},
                 {"name": "acq_auth_capt.d_classific","alias": "d_classific"},
-                {"name": "acq_capt_conces.estremi_conces","alias": "estremi_conces"},
-                {"name": "acq_capt_conces.port_potab","alias": "port_potab"},
+                {"name": "a_acq_capt_conces.estremi_conces","alias": "estremi_conces"},
+                {"name": "a_acq_capt_conces.port_potab","alias": "port_potab"},
                 {"name": "a_acq_captazione.anno_costr","alias": "anno_costr"},
                 {"name": "a_acq_captazione.anno_ristr","alias": "anno_ristr"},
                 {"name": "a_acq_captazione.d_stato_cons","alias": "d_stato_cons"},
@@ -118,9 +118,9 @@
                 {"name": "acq_auth_capt.utilizzo_annuo","alias": "utilizzo_annuo"},
                 {"name": "acq_auth_capt.area_bac_affer","alias": "area_bac_affer"},
                 {"name": "a_acq_captazione.volume_medio_prel","alias": "volume_medio_prel"},
-                {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
-                {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
-                {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
+                {"name": "a_acq_capt_conces.port_uti_max","alias": "port_uti_max"},
+                {"name": "a_acq_capt_conces.port_uti_min","alias": "port_uti_min"},
+                {"name": "a_acq_capt_conces.port_deriv","alias": "port_deriv"},
                 {"name": "a_acq_captazione.volume_invaso","alias": "volume_invaso"},
                 {"name": "a_acq_captazione.altezza_diga","alias": "altezza_diga"},
                 {"name": "acq_auth_capt.sn_inv_norm_coll","alias": "sn_inv_norm_coll", "function": "TO_BIT", "cast": "INTEGER"},
@@ -135,11 +135,11 @@
                 {"name": "a_acq_captazione.a_anno_costr","alias": "a_anno_costr"},
                 {"name": "a_acq_captazione.a_anno_ristr","alias": "a_anno_ristr"},
                 {"name": "a_acq_captazione.a_volume","alias": "a_volume"},
-                {"name": "acq_capt_conces.a_port_es","alias": "a_port_es"},
-                {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
-                {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
-                {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
-				{"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT", "cast": "INTEGER"},
+                {"name": "a_acq_capt_conces.a_port_es","alias": "a_port_es"},
+                {"name": "a_acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
+                {"name": "a_acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
+                {"name": "a_acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
+				{"name": "a_acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "a_acq_captazione.data_agg","alias": "data_agg"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
@@ -167,11 +167,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "acq_capt_conces"
+                        "name": "a_acq_capt_conces"
                     },
                     "on": [
                         "a_acq_captazione.idgis",
-                        "acq_capt_conces.id_captazione"
+                        "a_acq_capt_conces.id_captazione"
                     ],
                     "cond": "="
                 },
