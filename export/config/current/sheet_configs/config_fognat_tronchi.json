@@ -13,7 +13,7 @@
             {"name":"fognat_tronchi.diametro", "alias": "diametro"},
             {"name":"fognat_tronchi.anno", "alias": "anno"},
             {"name":"fognat_tronchi.funziona_gravita", "alias": "funziona_gravita", "cast": "INTEGER"},
-            {"name":"fognat_tronchi.lunghezza", "alias": "lunghezza"},
+            {"name":"fognat_tronchi.lunghezza", "alias": "lunghezza", "cast": "NUMERIC(18,6)"},
             {"name":"fognat_tronchi.idx_materiale", "alias": "idx_materiale"},
             {"name":"fognat_tronchi.idx_diametro", "alias": "idx_diametro"},
             {"name":"fognat_tronchi.idx_anno", "alias": "idx_anno"},
