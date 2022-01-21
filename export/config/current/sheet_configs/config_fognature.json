@@ -15,17 +15,17 @@
                 {"name": "fgn_auth_rete_racc.nr_rip","alias": "nr_rip"},
                 {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"},
                 {"name": "fgn_lunghezza_rete.tipo_infr","alias": "tipo_infr"},
-                {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"},
-                {"name": "fgn_lunghezza_allacci_id_rete.lunghezza_allaccio","alias": "lunghezza_allaccio"},
+                {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza", "cast": "NUMERIC(18,6)"},
+                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep", "cast": "NUMERIC(18,6)"},
+                {"name": "fgn_lunghezza_allacci_id_rete.lunghezza_allaccio","alias": "lunghezza_allaccio", "cast": "NUMERIC(18,6)"},
                 {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
                 {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"},
                 {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"},
                 {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
-                {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista"},
-                {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera"}
+                {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista", "cast": "NUMERIC(18,6)"},
+                {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera", "cast": "NUMERIC(18,6)"}
             ],
             "table": {
                 "name": "a_fgn_rete_racc"
@@ -318,9 +318,32 @@
           }
          },
         {"id": "59600","transformation": { "func": "DIRECT", "params": { "field": "denom"}}},
-        {"id": "60000","transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena"}}},
-        {"id": "60100","transformation": { "func": "DIRECT", "params": { "field": "episodi_allag"}}},
-
+        {"id":"60000", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "n_scar_piena",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ n_scar_piena }"
+                 }
+             }
+          }
+         },
+        {"id":"60100", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "episodi_allag",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ episodi_allag }"
+                 }
+             }
+          }
+         },
         {"id": "101300", "transformation": {
                 "func": "CASE",
                 "params": {
@@ -328,7 +351,7 @@
                     "cond": [
                          {"case": "WHEN", "operator": ">", "value": 0, "result": 0},
                          {"case": "WHEN", "operator": "=", "value": 0, "result": 1},
-                         {"case": "ELSE", "result": null}
+                         {"case": "ELSE", "result": 0}
                     ]
                 }
             }, "validations": [{
@@ -358,8 +381,32 @@
         },
         {"id": "60300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port"}}},
         {"id": "60900","transformation": { "func": "DIRECT", "params": { "field": "data_agg"}}},
-        {"id": "101400","transformation": { "func": "DIRECT", "params": { "field": "nr_rip"}}},
-        {"id": "101600","transformation": { "func": "DIRECT", "params": { "field": "nr_rip_allac"}}},
+        {"id":"101400", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_rip",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_rip }"
+                 }
+             }
+          }
+         },
+        {"id":"101600", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_rip_allac",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_rip_allac }"
+                 }
+             }
+          }
+         },
 
         {"id":"59800", "transformation":{
          "func": "IF",
