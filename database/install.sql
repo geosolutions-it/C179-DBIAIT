@@ -114,7 +114,8 @@ CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SAP(
 	U_AB					INTEGER,
 	DEFALCO					VARCHAR(2),
 	GRUPPO                  VARCHAR(1) NOT NULL DEFAULT 'A',
-	COMUNE_PBA              VARCHAR(8)
+	COMUNE_PBA              VARCHAR(8),
+	ESCLUSIONE_M2_M3A       BOOL NULL,
 );
 
 -------------------------------------------------
