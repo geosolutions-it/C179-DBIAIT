@@ -14,7 +14,6 @@
                 {"name": "a_fgn_rete_racc.data_agg","alias": "data_agg"},
                 {"name": "fgn_auth_rete_racc.nr_rip","alias": "nr_rip"},
                 {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"},
-                {"name": "fgn_lunghezza_rete.tipo_infr","alias": "tipo_infr"},
                 {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza", "cast": "NUMERIC(18,6)"},
                 {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep", "cast": "NUMERIC(18,6)"},
                 {"name": "fgn_lunghezza_allacci_id_rete.lunghezza_allaccio","alias": "lunghezza_allaccio", "cast": "NUMERIC(18,6)"},
@@ -22,8 +21,6 @@
                 {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"},
-                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"},
-                {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
                 {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista", "cast": "NUMERIC(18,6)"},
                 {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera", "cast": "NUMERIC(18,6)"}
             ],
@@ -107,18 +104,15 @@
                 {"name": "fgn_rete_racc.data_agg","alias": "data_agg"},
                 {"name": "fgn_auth_rete_racc.nr_rip","alias": "nr_rip"},
                 {"name": "fgn_auth_rete_racc.nr_rip_allac","alias": "nr_rip_allac"},
-                {"name": "fgn_lunghezza_rete.tipo_infr","alias": "tipo_infr"},
-                {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza"},
-                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep"},
-                {"name": "fgn_lunghezza_allacci_id_rete.lunghezza_allaccio","alias": "lunghezza_allaccio"},
+                {"name": "fgn_lunghezza_rete.lunghezza","alias": "lunghezza", "cast": "NUMERIC(18,6)"},
+                {"name": "fgn_lunghezza_rete.lunghezza_dep","alias": "lunghezza_dep", "cast": "NUMERIC(18,6)"},
+                {"name": "fgn_lunghezza_allacci_id_rete.lunghezza_allaccio","alias": "lunghezza_allaccio", "cast": "NUMERIC(18,6)"},
                 {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
                 {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
                 {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"},
-                {"name": "fgn_vol_utenze.vol_utenze_auth","alias": "vol_utenze_auth"},
-                {"name": "fgn_vol_utenze.vol_fatturato","alias": "vol_fatturato"},
-                {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista"},
-                {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera"}
+                {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista", "cast": "NUMERIC(18,6)"},
+                {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera", "cast": "NUMERIC(18,6)"}
             ],
             "table": {
                 "name": "fgn_rete_racc"
@@ -177,6 +171,32 @@
                 }
             ],
             "filter": "WHERE fgn_rete_racc.d_gestore = 'PUBLIACQUA' AND fgn_rete_racc.d_ambito IN ('AT3', NULL) AND fgn_rete_racc.d_stato NOT IN ('IPR', 'IAC')"
+        },
+        {
+           "fields":[
+                {"name": "fognature_da_accodare.codice_ato","alias": "codice_ato"},
+                {"name": "fognature_da_accodare.denom","alias": "denom"},
+                {"name": "fognature_da_accodare.n_scar_piena","alias": "n_scar_piena"},
+                {"name": "fognature_da_accodare.episodi_allag","alias": "episodi_allag"},
+                {"name": "fognature_da_accodare.sn_strum_mis_port","alias": "sn_strum_mis_port", "function": "TO_BIT", "cast": "INTEGER"},
+                {"name": "fognature_da_accodare.d_telecont","alias": "d_telecont"},
+                {"name": "fognature_da_accodare.d_stato","alias": "d_stato"},
+                {"name": "fognature_da_accodare.data_agg","alias": "data_agg"},
+                {"name": "fognature_da_accodare.nr_rip","alias": "nr_rip"},
+                {"name": "fognature_da_accodare.nr_rip_allac","alias": "nr_rip_allac"},
+                {"name": "fognature_da_accodare.lunghezza","alias": "lunghezza", "cast": "NUMERIC(18,6)"},
+                {"name": "fognature_da_accodare.lunghezza_dep","alias": "lunghezza_dep", "cast": "NUMERIC(18,6)"},
+                {"name": "fognature_da_accodare.lunghezza_allaccio","alias": "lunghezza_allaccio", "cast": "NUMERIC(18,6)"},
+                {"name": "fognature_da_accodare.utenze_totali","alias": "utenze_totali"},
+                {"name": "fognature_da_accodare.nr_utenze_industriali","alias": "nr_utenze_industriali"},
+                {"name": "fognature_da_accodare.volume_utenze_totali","alias": "volume_utenze_totali"},
+                {"name": "fognature_da_accodare.volume_utenze_industriali","alias": "volume_utenze_industriali"},
+                {"name": "fognature_da_accodare.lung_rete_mista","alias": "lung_rete_mista", "cast": "NUMERIC(18,6)"},
+                {"name": "fognature_da_accodare.lung_rete_nera","alias": "lung_rete_nera", "cast": "NUMERIC(18,6)"}
+           ],
+           "table":{
+              "name": "fognature_da_accodare"
+           }
         }
     ],
     "columns": [
@@ -423,6 +443,7 @@
          },
 
         {"id": "60400","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT"}}},
+
         {"id": "60500","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO"}}},
 
         {"id": "60600","transformation": { "func": "CONST", "params": { "value": "B"}}},
