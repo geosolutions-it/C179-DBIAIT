@@ -3753,7 +3753,7 @@ begin
                 'APBLREFIND',
                 'APBNREFCIV',
                 'APBHSUBDIS'
-            )
+            ) AND esclusione_m2_m3a is false
     ),
     utenze_condominiali as (
         SELECT
@@ -3764,6 +3764,7 @@ begin
         where
             gruppo = 'A' AND
             cattariffa IN ('APB_CONDOM','APB_CONMIS')
+            AND esclusione_m2_m3a is false
     ),
     utenze_indirette as (
         SELECT
@@ -3778,6 +3779,7 @@ begin
             'APBLREFIND',
             'APBNREFCIV',
             'APBHSUBDIS')
+            AND esclusione_m2_m3a is false
     ),
     utenze_misuratore as (
         SELECT
@@ -3793,6 +3795,7 @@ begin
             'APBLREFIND',
             'APBNREFCIV',
             'APBHSUBDIS')
+            AND esclusione_m2_m3a is false
     ),
     volume_utenze as (
         SELECT
@@ -3806,6 +3809,7 @@ begin
             'APBLREFIND',
             'APBNREFCIV',
             'APBHSUBDIS')
+            AND esclusione_m2_m3a is false
     ),
     n_allacci as (
         select id_rete, count(*) as nr_allacci
@@ -4090,7 +4094,8 @@ begin
 			cattariffa,
 			vol_fgn_fatt,
 			vol_fgn_ero,
-			us.gruppo
+			us.gruppo,
+			us.esclusione_m2_m3a
 		FROM (
 			SELECT
 				idgis
@@ -4111,7 +4116,7 @@ begin
 	)
 	SELECT
 		fgn_idrete,
-		SUM(CASE WHEN ut.esente_fog = 0 AND ut.gruppo = 'A' THEN 1 ELSE 0 END) nr_utenze_totali,
+		SUM(CASE WHEN ut.esente_fog = 0 AND ut.gruppo = 'A' AND ut.esclusione_m2_m3a is false THEN 1 ELSE 0 END) nr_utenze_totali,
 		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') AND ut.gruppo = 'A' THEN 1 ELSE 0 END) utenze_industriali,
 		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') THEN vol_fgn_fatt ELSE 0 END) volume_utenze_industriali,
 		SUM(CASE WHEN ut.esente_fog = 0 THEN vol_fgn_fatt ELSE 0 END) volume_utenze_totali

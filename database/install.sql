@@ -114,7 +114,8 @@ CREATE TABLE DBIAIT_ANALYSIS.UTENZA_SAP(
 	U_AB					INTEGER,
 	DEFALCO					VARCHAR(2),
 	GRUPPO                  VARCHAR(1) NOT NULL DEFAULT 'A',
-	COMUNE_PBA              VARCHAR(8)
+	COMUNE_PBA              VARCHAR(8),
+	ESCLUSIONE_M2_M3A       BOOL NULL,
 );
 
 -------------------------------------------------
@@ -1031,3 +1032,26 @@ CREATE INDEX confine_comunale_geom_idx ON confine_comunale USING GIST (geom);
 -----------------------------------------------------------------------------------------------------------------------
 -- VACUUM ANALYZE VERBOSE;
 -----------------------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE DBIAIT_ANALYSIS.fognature_da_accodare(
+    codice_ato                   VARCHAR(32),
+    denom                        VARCHAR(100),
+    lunghezza                    double precision,
+    lunghezza_allaccio           double precision,
+    nr_rip_allac                 INTEGER,
+    lung_rete_mista              double precision,
+    lung_rete_nera               double precision,
+    volume_utenze_totali         double precision,
+    utenze_totali                INTEGER,
+    nr_utenze_industriali        INTEGER,
+    volume_utenze_industriali    double precision,
+    n_scar_piena                 INTEGER,
+    episodi_allag                INTEGER,
+    lunghezza_dep                double precision,
+    sn_strum_mis_port            VARCHAR(32),
+    nr_rip                       INTEGER,
+    d_telecont                   VARCHAR(3),
+    d_stato                      VARCHAR(3),
+    data_agg                     timestamp
+);

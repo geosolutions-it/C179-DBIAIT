@@ -6,7 +6,7 @@
             "fields": [
                 {"name": "acq_adduttrice.codice_ato", "alias": "codice_ato"},
                 {"name": "acq_adduttrice.denom","alias": "denom"},
-                {"name": "acq_adduttrice.portata_media","alias": "portata_media"},
+                {"name": "acq_adduttrice.portata_media","alias": "portata_media", "cast": "NUMERIC(18,6)"},
                 {"name": "acq_adduttrice.d_stato","alias": "d_stato"},
                 {"name": "acq_adduttrice.a_portata_media","alias": "a_portata_media"},
                 {"name": "acq_adduttrice.data_agg","alias": "data_agg"},
@@ -160,7 +160,7 @@
         }
     ],
     "columns": [
-        { "id": "118600", "transformation": { "func": "CONST",  "params":{"value":"C"}} },
+        { "id": "118600", "transformation": { "func": "CONST",  "params":{"value":"A"}} },
         { "id": "118500", "transformation": { "func": "CONST",  "params":{"value":"A"}} },
         { "id": "40500", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
         { "id": "98900", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
@@ -277,11 +277,32 @@
              }
           }
          },
-
-        { "id": "117700", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
-
-        { "id": "116600", "transformation": { "func": "DIRECT", "params": { "field": "volume_fatturato" } }},
-
+         {"id":"117700", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "volume_erogato",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ volume_erogato }"
+                 }
+             }
+          }
+         },
+        {"id":"116600", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "volume_erogato",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ volume_erogato }"
+                 }
+             }
+          }
+         },
         {"id":"116900", "transformation":{
          "func": "IF",
          "params": {
@@ -302,11 +323,37 @@
         { "id": "39400", "transformation": { "func": "DIRECT",  "params": { "field": "codice_ato" } }},
         { "id": "39500", "transformation": { "func": "DIRECT",  "params": { "field": "denom" } }},
         { "id": "39600", "transformation": { "func": "DIRECT",  "params": { "field": "portata_media" } }},
-        { "id": "39700", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza" } }},
         { "id": "39900", "transformation": { "func": "DIRECT",  "params": { "field": "sn_strum_mis_port" } }},
 
+        {"id":"39700", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "lunghezza",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ lunghezza }"
+                 }
+             }
+          }
+         },
+
         { "id": "40600", "transformation": { "func": "DIRECT",  "params": { "field": "data_agg" } }},
-        { "id": "98800", "transformation": { "func": "DIRECT",  "params": { "field": "lunghezza_tlc" } }},
+        {"id":"98800", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "lunghezza_tlc",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ lunghezza_tlc }"
+                 }
+             }
+          }
+         },
+
         { "id": "99000", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" }}},
 
         {"id":"40300", "transformation":{"func":"DOMAIN", "params":{"field":"d_stato", "domain_name": "D_STATO"}}},
