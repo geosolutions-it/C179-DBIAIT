@@ -555,7 +555,7 @@
             ]},
         {"id": "73900", "transformation": {"func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" }}},
         {"id": "74500", "transformation": {"func": "DOMAIN", "params": { "field": "d_tipo_tratt_acqua", "domain_name": "D_T_TRATTAM_ACQUA" }}},
-        {"id": "76400", "transformation": {"func": "CONST", "params": { "value": "1" }}},
+        {"id": "76400", "transformation": {"func": "CONST", "params": { "value": "0" }}},
         {"id": "76800", "transformation": {"func": "DOMAIN", "params": { "field": "d_tipo_tratt_fanghi", "domain_name": "D_T_TRATTAM_FANGHI" }}},
         {"id": "77110", "transformation": {"func": "DOMAIN", "params": { "field": "d_digest_anae", "domain_name": "D_DIGEST_ANAE" }}},
         {"id": "77500", "transformation": {"func": "DOMAIN", "params": { "field": "d_disidrat", "domain_name": "D_DISIDRAT" }}},
