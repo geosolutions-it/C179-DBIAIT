@@ -4112,7 +4112,7 @@ begin
 	)
 	SELECT
 		fgn_idrete,
-		SUM(CASE WHEN ut.esente_fog = 0 AND ut.gruppo = 'A' AND ut.esclusione_m2_m3a is false AND ut.cattariffa not in ('APB_REFIND', 'APBLREFIND', 'APBNREFCIV') THEN 1 ELSE 0 END) nr_utenze_totali,
+		SUM(CASE WHEN ut.esente_fog = 0 AND ut.gruppo = 'A' AND (ut.esclusione_m2_m3a is false OR (ut.esclusione_m2_m3a is true and ut.cattariffa in ('APB_REFIND', 'APBLREFIND', 'APBNREFCIV'))) THEN 1 ELSE 0 END) nr_utenze_totali,
 		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') AND ut.gruppo = 'A' THEN 1 ELSE 0 END) utenze_industriali,
 		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') THEN vol_fgn_fatt ELSE 0 END) volume_utenze_industriali,
 		SUM(CASE WHEN ut.esente_fog = 0 THEN vol_fgn_fatt ELSE 0 END) volume_utenze_totali
