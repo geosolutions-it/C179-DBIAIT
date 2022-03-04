@@ -3770,7 +3770,8 @@ begin
         SELECT
             id_ubic_contatore,
             tipo_uso,
-            u_ab
+            u_ab,
+            u_ab_conmis
         FROM
             utenza_sap us
         where
@@ -3840,7 +3841,7 @@ begin
 		sum(case when ud.tipo_uso = 'DOMESTICO RESIDENTE' then 1 else 0 end) nr_utenze_dir_residente,
 		count(uc.id_ubic_contatore) as nr_utenze_condominiali,
 		sum(uind.u_ab) as nr_utenze_indir_indirette,
-		sum(case when uind.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then u_ab else 0 end) nr_utenze_indir_domestici,
+		sum(case when uind.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then u_ab else 0 end) - sum(case when uind.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then u_ab_conmis else 0 end) nr_utenze_indir_domestici,
 		sum(case when uind.tipo_uso = 'DOMESTICO RESIDENTE' then u_ab else 0 end) nr_utenze_indir_residente,
 		count(um.nr_contat) as nr_utenze_misuratore,
 		sum(vu.vol_acq_ero) volume_erogato,
