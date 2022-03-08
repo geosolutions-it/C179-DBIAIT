@@ -3907,7 +3907,7 @@ BEGIN
                         where fgn_idrete is null and esente_fog = 0
                         and c.idgis = ufa.id_ubic_contatore
                     )
-                and r.d_gestore ='PUBLIACQUA' and r.d_ambito in ('AT3', null) AND r.d_stato not in ('IPR', 'IAC')
+                and r.d_gestore ='PUBLIACQUA' and r.d_ambito in ('AT3', null) AND r.d_stato not in ('IPR', 'IAC', 'NAC')
                 and r.geom && ST_buffer(c.geom, v_buff)
                 and ST_intersects(r.geom, ST_buffer(c.geom, v_buff))
                 ORDER BY c.idgis, ST_Distance(r.geom, c.geom) ASC
@@ -4054,7 +4054,7 @@ begin
 					ubic_f_allaccio ua
 				where
 					fgn_idrete is null
-			) and ard.d_gestore ='PUBLIACQUA' and ard.d_ambito in ('AT3', null) AND ard.d_stato not in ('IPR', 'IAC')) yy
+			) and ard.d_gestore ='PUBLIACQUA' and ard.d_ambito in ('AT3', null) AND ard.d_stato not in ('IPR', 'IAC', 'NAC')) yy
 	where
 		ubic_f_allaccio.id_ubic_contatore = yy.id_ubic_contatore;
 
