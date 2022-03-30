@@ -3717,7 +3717,7 @@ begin
 					ubic_allaccio ua
 				where
 					acq_idrete is null
-			)) yy
+			) AND ard.d_gestore='PUBLIACQUA' and ard.d_ambito in ('AT3', null) AND ard.d_stato not in ('IPR', 'IAC', 'NAC')) yy
 	where
 		ubic_allaccio.id_ubic_contatore = yy.id_ubic_contatore;
 
