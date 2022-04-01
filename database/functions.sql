@@ -541,7 +541,6 @@ DECLARE
 BEGIN
     SET work_mem = '512MB';
     -- update postgres index
-    SELECT VACUUM ANALYZE;
 	-- reset dei dati
 	DELETE FROM UTENZA_SERVIZIO;
 	DELETE FROM UTENZA_SERVIZIO_LOC;
