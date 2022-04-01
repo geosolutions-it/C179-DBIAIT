@@ -540,6 +540,8 @@ DECLARE
 	v_result BOOLEAN := FALSE;
 BEGIN
     SET work_mem = '512MB';
+    -- update postgres index
+    SELECT VACUUM ANALYZE;
 	-- reset dei dati
 	DELETE FROM UTENZA_SERVIZIO;
 	DELETE FROM UTENZA_SERVIZIO_LOC;
@@ -1111,7 +1113,7 @@ BEGIN
 			a.idgis,
 			r.idgis as idgis_rete,	
 			NULL,
-			a.d_materiale as d_materiale_idr, -- da all_domains
+        	CASE WHEN a.d_materiale = ''PP'' THEN ''ALT'' ELSE a.d_materiale END as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,
 			coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ),
 			CASE 
@@ -4229,6 +4231,8 @@ begin
 	DELETE FROM UBIC_F_ALLACCIO;
 	DELETE FROM UTENZE_FOGNATURE_COLLETTORI;
 	DELETE FROM SUPPORT_CODICE_CAPT_ACCORP;
+    -- update postgres index
+    ANALYZE;
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
