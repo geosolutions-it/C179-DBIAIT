@@ -10,7 +10,7 @@ id_tra_acarboni_attivi,D_ASS_CARB_ATT,PAC,PAC,2
 id_corso_acqua_classe,D_CLASSIF_OPERA,A1,A1,1
 id_corso_acqua_classe,D_CLASSIF_OPERA,A2,A2,2
 id_corso_acqua_classe,D_CLASSIF_OPERA,A3,A3,3
-id_corso_acqua_classe,D_CLASSIF_OPERA,B1,B1, 
+id_corso_acqua_classe,D_CLASSIF_OPERA,SA3,Sub.A3,4 
 id_corso_acqua_classe,D_CLASSIF_OPERA,NDF,Non Definito,5
 ,D_CORPO_RICET,PA-TORRENTE LIMENTRA DI SAMBUC,TORRENTE LIMENTRA DI SAMBUCA,TORRENTE LIMENTRA DI SAMBUCA
 ,D_CORPO_RICET,PA-BORRO DELLA CERVIA,BORRO DELLA CERVIA,BORRO DELLA CERVIA
@@ -108,6 +108,8 @@ id_corso_acqua_classe,D_CLASSIF_OPERA,NDF,Non Definito,5
 id_destinazione_fango,D_DEST_FANGHI,ALT,Altro,3
 id_destinazione_fango,D_DEST_FANGHI,DIS,Discarica,1
 id_destinazione_fango,D_DEST_FANGHI,RIU,Riutilizzo Agricolo,2
+id_destinazione_fango,D_DEST_FANGHI,COM,Compostaggio,4
+id_destinazione_fango,D_DEST_FANGHI,TER,Termovalorizzatori,5
 id_dig_anaerobica,D_DIGEST_ANAE,BIS,Bistadio,3
 id_dig_anaerobica,D_DIGEST_ANAE,MON,Monostadio,2
 id_dig_anaerobica,D_DIGEST_ANAE,NO,No,1
@@ -256,7 +258,7 @@ id_conserva,D_STATO_CONS,INS,Insufficiente,2
 id_conserva,D_STATO_CONS,SUF,Sufficiente,3
 id_conserva,D_STATO_CONS,BUO,Buono,4
 id_conserva,D_STATO_CONS,OTT,Ottimo,5
-id_conserva,D_STATO_CONS,INA,Inapplicabile,1
+id_conserva,D_STATO_CONS,INA,Inapplicabile,99
 id_conserva,D_STATO_CONS,SCO,Sconosciuto,1
 id_tipo_clorazione,D_T_CLORAZ,CLO,Clorogas,2
 id_tipo_clorazione,D_T_CLORAZ,ALT,Altro,5
@@ -280,7 +282,7 @@ id_tipo_telecontrollo,D_TELECONT,ASS,Assente,1
 id_tipo_telecontrollo,D_TELECONT,MAN,Manuale,2
 id_tipo_telecontrollo,D_TELECONT,SEM,Semi-automatico,3
 id_tipo_telecontrollo,D_TELECONT,AUT,Automatico,4
-id_tra_filtraz_rapida,D_T_FILTRAZ,GRA,Gravitƒ,3
+id_tra_filtraz_rapida,D_T_FILTRAZ,GRA,Gravita',3
 id_tra_filtraz_rapida,D_T_FILTRAZ,NES,Nessuna,1
 id_tra_filtraz_rapida,D_T_FILTRAZ,PRE,Pressione,2
 id_tra_filtraz_rapida,D_T_FILTRAZ,ALT,Altro,4

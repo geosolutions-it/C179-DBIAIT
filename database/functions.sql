@@ -540,7 +540,6 @@ DECLARE
 	v_result BOOLEAN := FALSE;
 BEGIN
     SET work_mem = '512MB';
-    -- update postgres index
 	-- reset dei dati
 	DELETE FROM UTENZA_SERVIZIO;
 	DELETE FROM UTENZA_SERVIZIO_LOC;
@@ -2226,7 +2225,7 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acquedotto(
 ) RETURNS BOOLEAN AS $$
 BEGIN
-    SET work_mem = '256MB';
+    SET work_mem = '512MB';
 	RETURN 
 		populate_distrib_tronchi() 
 	AND populate_addut_tronchi() 
@@ -2238,7 +2237,8 @@ BEGIN
 	AND populate_acq_shape_utenze_mis()
 	AND populate_utenze_distribuzioni_adduttrici()
     AND populate_stats_cloratore()
-	AND populate_codice_capt_accorp();
+	AND populate_codice_capt_accorp()
+	AND populate_codice_ato_rete_distribuzione();
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -4232,6 +4232,7 @@ begin
 	DELETE FROM SUPPORT_CODICE_CAPT_ACCORP;
     -- update postgres index
     ANALYZE;
+	DELETE FROM SUPPORT_CODICE_ATO_RETE_DISTRIBUZIONE;
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -4271,3 +4272,34 @@ $$  LANGUAGE plpgsql
     SET search_path = public, DBIAIT_ANALYSIS;
 -------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------
+-- Estrapola dal campo sist_acq_dep il codice della rete di distribuzione
+-- dal codice di sistema di sistema acquedottistico (ultimi 7 caratteri)
+-- poi estrae descrizione scehma e codice schema dalla tabella di relazione.
+-- Questo vale per lo sheet "config_adduttrici" #364
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.populate_codice_ato_rete_distribuzione()
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_codice_ato_rete_distribuzione(
+) RETURNS BOOLEAN AS $$
+begin
+    DELETE FROM support_codice_ato_rete_distribuzione;
+    INSERT INTO support_codice_ato_rete_distribuzione
+    WITH codice_ato_rete_distribuzione AS (
+        SELECT
+            right(aa.sist_acq_dep, 7) as ato,
+            idgis
+        FROM
+            acq_adduttrice aa
+		group by ato,idgis)
+    SELECT
+        codice_sistema_idrico,
+        denom_acq_sistema_idrico,
+        card.idgis
+    FROM
+        codice_ato_rete_distribuzione card
+    JOIN tabella_sa_di_csv tsdc ON
+        tsdc.codice_ato_di = card.ato;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;

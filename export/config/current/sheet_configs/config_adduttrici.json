@@ -30,7 +30,9 @@
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_residente","alias": "nr_utenze_indir_residente"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_misuratore","alias": "nr_utenze_misuratore"},
                 { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
-                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"}
+                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
+                { "name": "support_codice_ato_rete_distribuzione.codice_sistema_idrico","alias": "codice_sistema_idrico"},
+                { "name": "support_codice_ato_rete_distribuzione.denom_acq_sistema_idrico","alias": "denom_acq_sistema_idrico"}
             ],
             "table": {
                 "name": "acq_adduttrice"
@@ -78,6 +80,16 @@
                         "acq_adduttrice.idgis"
                     ],
                     "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "support_codice_ato_rete_distribuzione"
+                    },
+                    "on": [
+                        "support_codice_ato_rete_distribuzione.idgis",
+                        "acq_adduttrice.idgis"
+                    ],
+                    "cond": "="
                 }
             ],
             "filter": "WHERE acq_adduttrice.d_gestore = 'PUBLIACQUA' AND acq_adduttrice.d_ambito IN ('AT3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
@@ -110,7 +122,9 @@
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_residente","alias": "nr_utenze_indir_residente"},
                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_misuratore","alias": "nr_utenze_misuratore"},
                 { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
-                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"}
+                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
+                { "name": "support_codice_ato_rete_distribuzione.codice_sistema_idrico","alias": "codice_sistema_idrico"},
+                { "name": "support_codice_ato_rete_distribuzione.denom_acq_sistema_idrico","alias": "denom_acq_sistema_idrico"}
             ],
             "table": {
                 "name": "a_acq_adduttrice"
@@ -155,6 +169,16 @@
                     },
                     "on": [
                         "utenze_distribuzioni_adduttrici.id_rete",
+                        "a_acq_adduttrice.idgis"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "support_codice_ato_rete_distribuzione"
+                    },
+                    "on": [
+                        "support_codice_ato_rete_distribuzione.idgis",
                         "a_acq_adduttrice.idgis"
                     ],
                     "cond": "="
@@ -328,6 +352,9 @@
         { "id": "39500", "transformation": { "func": "DIRECT",  "params": { "field": "denom" } }},
         { "id": "39600", "transformation": { "func": "DIRECT",  "params": { "field": "portata_media" } }},
         { "id": "39900", "transformation": { "func": "DIRECT",  "params": { "field": "sn_strum_mis_port" } }},
+
+        { "id": "112500", "transformation": { "func": "DIRECT",  "params": { "field": "codice_sistema_idrico" } }},
+        { "id": "112600", "transformation": { "func": "DIRECT",  "params": { "field": "denom_acq_sistema_idrico" } }},
 
         { "id": "117690", "transformation": { "func": "DIRECT",  "params": { "field": "vol_immesso" } }},
         { "id": "118490", "transformation": { "func": "DIRECT",  "params": { "field": "a_vol_immesso" } }},
