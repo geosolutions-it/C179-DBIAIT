@@ -11,6 +11,8 @@
                 {"name": "acq_adduttrice.a_portata_media","alias": "a_portata_media"},
                 {"name": "acq_adduttrice.data_agg","alias": "data_agg"},
                 {"name": "acq_adduttrice.nr_rip","alias": "nr_rip"},
+                {"name": "acq_adduttrice.vol_immesso","alias": "vol_immesso"},
+                {"name": "acq_adduttrice.a_vol_immesso","alias": "a_vol_immesso"},
 				{"name": "acq_adduttrice.vol_acq_terzi","alias": "vol_acq_terzi"},
 				{"name": "acq_adduttrice.a_vol_acq_terzi","alias": "a_vol_acq_terzi"},
 				{"name": "acq_adduttrice.vol_ced_terzi","alias": "vol_ced_terzi"},
@@ -101,6 +103,8 @@
                 {"name": "a_acq_adduttrice.a_portata_media","alias": "a_portata_media"},
                 {"name": "a_acq_adduttrice.data_agg","alias": "data_agg"},
                 {"name": "a_acq_adduttrice.nr_rip","alias": "nr_rip"},
+                {"name": "a_acq_adduttrice.vol_immesso","alias": "vol_immesso"},
+                {"name": "a_acq_adduttrice.a_vol_immesso","alias": "a_vol_immesso"},
 				{"name": "a_acq_adduttrice.vol_acq_terzi","alias": "vol_acq_terzi"},
 				{"name": "a_acq_adduttrice.a_vol_acq_terzi","alias": "a_vol_acq_terzi"},
 				{"name": "a_acq_adduttrice.vol_ced_terzi","alias": "vol_ced_terzi"},
@@ -351,6 +355,9 @@
 
         { "id": "112500", "transformation": { "func": "DIRECT",  "params": { "field": "codice_sistema_idrico" } }},
         { "id": "112600", "transformation": { "func": "DIRECT",  "params": { "field": "denom_acq_sistema_idrico" } }},
+
+        { "id": "117690", "transformation": { "func": "DIRECT",  "params": { "field": "vol_immesso" } }},
+        { "id": "118490", "transformation": { "func": "DIRECT",  "params": { "field": "a_vol_immesso" } }},
 
         {"id":"39700", "transformation":{
          "func": "IF",

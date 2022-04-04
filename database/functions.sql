@@ -1111,7 +1111,7 @@ BEGIN
 			a.idgis,
 			r.idgis as idgis_rete,	
 			NULL,
-			a.d_materiale as d_materiale_idr, -- da all_domains
+        	CASE WHEN a.d_materiale = ''PP'' THEN ''ALT'' ELSE a.d_materiale END as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,
 			coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ),
 			CASE 
@@ -3718,7 +3718,7 @@ begin
 					ubic_allaccio ua
 				where
 					acq_idrete is null
-			)) yy
+			) AND ard.d_gestore='PUBLIACQUA' and ard.d_ambito in ('AT3', null) AND ard.d_stato not in ('IPR', 'IAC', 'NAC')) yy
 	where
 		ubic_allaccio.id_ubic_contatore = yy.id_ubic_contatore;
 
@@ -4230,6 +4230,8 @@ begin
 	DELETE FROM UBIC_F_ALLACCIO;
 	DELETE FROM UTENZE_FOGNATURE_COLLETTORI;
 	DELETE FROM SUPPORT_CODICE_CAPT_ACCORP;
+    -- update postgres index
+    ANALYZE;
 	DELETE FROM SUPPORT_CODICE_ATO_RETE_DISTRIBUZIONE;
 	RETURN TRUE;
 END;

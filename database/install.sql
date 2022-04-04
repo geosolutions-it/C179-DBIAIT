@@ -1066,3 +1066,5 @@ CREATE TABLE dbiait_analysis.tabella_sa_di_csv (
 	codice_sistema_idrico varchar(8) NULL,
 	zona varchar(32) NULL
 );
+
+ALTER TABLE dbiait_analysis.fognat_com_serv ALTER COLUMN id_comune_istat TYPE varchar(8) USING id_comune_istat::varchar;
