@@ -1055,3 +1055,5 @@ CREATE TABLE DBIAIT_ANALYSIS.fognature_da_accodare(
     d_stato                      VARCHAR(3),
     data_agg                     timestamp
 );
+
+ALTER TABLE dbiait_analysis.fognat_com_serv ALTER COLUMN id_comune_istat TYPE varchar(8) USING id_comune_istat::varchar;
