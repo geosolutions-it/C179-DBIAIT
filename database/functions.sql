@@ -2101,7 +2101,20 @@ BEGIN
         WHERE d.dominio_gis = 'D_STATO'
         AND d.valore_gis = c.d_stato
     ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
-	
+
+    --(ids_codice)
+    UPDATE ACQ_SHAPE
+    SET ids_codice = t.annotazioni
+    FROM (
+    SELECT
+        DISTINCT(asi.annotazioni), ac.idgis
+    FROM
+        acq_condotta ac
+    JOIN acq_sist_idr asi ON
+        ac.id_sist_idr = asi.idgis
+    WHERE ac.idgis in (SELECT ids_codi_1 FROM acq_shape as2 )
+    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
+
 	-- LOG ANOMALIES
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ACQ_SHAPE';
 	
