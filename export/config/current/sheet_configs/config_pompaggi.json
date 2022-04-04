@@ -31,6 +31,8 @@
                 {"name": "stats_pompe.sum_potenza", "alias": "sum_potenza"},
                 {"name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
+                { "name": "acq_sist_idr.annotazioni", "alias": "annotazioni"},
+                { "name": "acq_sist_idr.descriz", "alias": "descriz"},
                 { "name": "acq_auth_pompag.consumo_ee", "alias": "consumo_ee"}
             ],
             "table": {
@@ -58,6 +60,17 @@
                       "acq_pompaggio.codice_ato"
                    ],
                    "cond":"="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "acq_sist_idr"
+                    },
+                    "on": [
+                        "acq_pompaggio.id_sist_idr",
+                        "acq_sist_idr.idgis"
+                    ],
+                    "cond": "="
                 },
                 {
                      "type": "left",
@@ -100,6 +113,8 @@
                 {"name": "stats_pompe.sum_potenza", "alias": "sum_potenza"},
                 {"name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
+                { "name": "acq_sist_idr.annotazioni", "alias": "annotazioni"},
+                { "name": "acq_sist_idr.descriz", "alias": "descriz"},
                 { "name": "acq_auth_pompag.consumo_ee", "alias": "consumo_ee"}
             ],
             "table": {
@@ -129,6 +144,17 @@
                    "cond":"="
                 },
                 {
+                    "type": "left",
+                    "table": {
+                        "name": "acq_sist_idr"
+                    },
+                    "on": [
+                        "a_acq_pompaggio.id_sist_idr",
+                        "acq_sist_idr.idgis"
+                    ],
+                    "cond": "="
+                },
+                {
                      "type": "left",
                      "table": {
                          "name": "localita"
@@ -150,6 +176,8 @@
         {"id": "113300","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor"}}},
         {"id": "113400","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor"}}},
 
+        {"id": "113000","transformation": {"func": "DIRECT", "params": {"field": "annotazioni"}}},
+        {"id": "113100","transformation": {"func": "DIRECT", "params": {"field": "descriz"}}},
 
         {"id": "48600","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
         {"id": "48600","transformation": {"func": "DECODE_COM", "params": {"field": "cod_comune"}}},

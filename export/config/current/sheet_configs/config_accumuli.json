@@ -28,6 +28,8 @@
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
+                { "name": "acq_sist_idr.annotazioni", "alias": "annotazioni"},
+                { "name": "acq_sist_idr.descriz", "alias": "descriz"},
                 { "name": "localita.denominazi", "alias": "denominazi"}
             ],
             "table": {
@@ -42,6 +44,17 @@
                     "on": [
                         "acq_accumulo.idgis",
                         "acq_auth_accum.id_accumulo"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "acq_sist_idr"
+                    },
+                    "on": [
+                        "acq_accumulo.id_sist_idr",
+                        "acq_sist_idr.idgis"
                     ],
                     "cond": "="
                 },
@@ -85,6 +98,8 @@
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
+                { "name": "acq_sist_idr.annotazioni", "alias": "annotazioni"},
+                { "name": "acq_sist_idr.descriz", "alias": "descriz"},
                 { "name": "localita.denominazi", "alias": "denominazi"}
             ],
             "table": {
@@ -99,6 +114,17 @@
                     "on": [
                         "a_acq_accumulo.idgis",
                         "acq_auth_accum.id_accumulo"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "acq_sist_idr"
+                    },
+                    "on": [
+                        "a_acq_accumulo.id_sist_idr",
+                        "acq_sist_idr.idgis"
                     ],
                     "cond": "="
                 },
@@ -125,6 +151,9 @@
 
         {"id": "43700","transformation": {"func": "DIRECT", "params": {"field": "codice_ato"}}},
         {"id": "43800","transformation": {"func": "DIRECT", "params": {"field": "denom"}}},
+
+        {"id": "112800","transformation": {"func": "DIRECT", "params": {"field": "annotazioni"}}},
+        {"id": "112900","transformation": {"func": "DIRECT", "params": {"field": "descriz"}}},
 
         {"id": "44500","transformation": {"func": "DIRECT", "params": {"field": "anno_costr"}},
             "validations": [{
