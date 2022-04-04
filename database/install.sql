@@ -1055,3 +1055,14 @@ CREATE TABLE DBIAIT_ANALYSIS.fognature_da_accodare(
     d_stato                      VARCHAR(3),
     data_agg                     timestamp
 );
+
+CREATE TABLE dbiait_analysis.tabella_sa_di_csv (
+	comune varchar(32) NULL,
+	sistemi_acq_old varchar(32) NULL,
+	idgis_di varchar(32) NULL,
+	codice_ato_di varchar(8) NULL,
+	denom_acq_sistema_idrico varchar(32) NULL,
+	idgis_si varchar(32) NULL,
+	codice_sistema_idrico varchar(8) NULL,
+	zona varchar(32) NULL
+);
