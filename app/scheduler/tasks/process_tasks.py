@@ -184,6 +184,16 @@ class ResetStdaTables(BaseProcessTask):
     def process_pre_send(cls):
         pass
 
+
+class PopulateDistribuzioni(BaseProcessTask):
+    algorithm = u"populate_accorpamento_distribuzioni"
+    name = u"Accorpamento Distribuzioni"
+
+    @classmethod
+    def process_pre_send(cls):
+        pass
+
+
 process_mapper = {
     u"Ripristino Tabelle Standalone": ResetStdaTables,
     u"Località Istat": LocalitaIstat,
@@ -195,6 +205,7 @@ process_mapper = {
     u"Archivio pompe": ArchiviPompe,
     u"Tabelle di relazione": GraphTemp,
     u"Acquedotto": Acquedotto,
-    u"Fognatura": Fognatura
+    u"Fognatura": Fognatura,
+    u"Accorpamento Distribuzioni": PopulateDistribuzioni
 }
 
