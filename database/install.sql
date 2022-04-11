@@ -1068,3 +1068,39 @@ CREATE TABLE dbiait_analysis.tabella_sa_di_csv (
 );
 
 ALTER TABLE dbiait_analysis.fognat_com_serv ALTER COLUMN id_comune_istat TYPE varchar(8) USING id_comune_istat::varchar;
+
+
+  CREATE TABLE dbiait_analysis.support_accorpamento_distribuzioni(
+    codice_sistem_idrico  varchar(32),
+    descrizione_rete_sistema_idrico  varchar(32),
+    d_stato  varchar(32),
+    a_vol_immesso  varchar(32),
+    a_ili  varchar(32),
+    a_press_med  varchar(32),
+    sn_strum_mis_press double precision,
+    sn_strum_mis_port double precision,
+    data_agg timestamp with time zone,
+    vol_immesso double precision,
+    vol_imm_terzi double precision,
+    vol_ceduto double precision,
+    sn_ili INTEGER,
+    pres_es_max double precision,
+    pres_es_min double precision,
+    pres_es_med double precision,
+    nr_rip_all INTEGER,
+    nr_rip_rete INTEGER,
+    lunghezza_tlc double precision,
+    nr_utenze_dirette INTEGER,
+    nr_utenze_dir_dom_e_residente INTEGER,
+    nr_utenze_dir_residente INTEGER,
+    nr_utenze_condominiali INTEGER,
+    nr_utenze_indir_indirette INTEGER,
+    nr_utenze_indir_domestici INTEGER,
+    nr_utenze_indir_residente INTEGER,
+    nr_utenze_misuratore INTEGER,
+    volume_erogato INTEGER,
+    volume_fatturato INTEGER,
+    nr_allacci INTEGER,
+    count_cloratori INTEGER,
+    lunghezza double precision
+);

@@ -4243,6 +4243,7 @@ begin
 	DELETE FROM UBIC_F_ALLACCIO;
 	DELETE FROM UTENZE_FOGNATURE_COLLETTORI;
 	DELETE FROM SUPPORT_CODICE_CAPT_ACCORP;
+	DELETE FROM support_accorpamento_distribuzioni;
     -- update postgres index
     ANALYZE;
 	DELETE FROM SUPPORT_CODICE_ATO_RETE_DISTRIBUZIONE;
@@ -4311,6 +4312,118 @@ begin
         codice_ato_rete_distribuzione card
     JOIN tabella_sa_di_csv tsdc ON
         tsdc.codice_ato_di = card.ato;
+	RETURN TRUE;
+END;
+$$  LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = public, DBIAIT_ANALYSIS;
+
+-------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------
+-- Calcolo delle distribuzioni accorpate per sistema idrico
+-- sfruttiamo la query original e gruppiamo per codice_sistema idrico e altre N informazioni
+-- poi saliamo su una tabella temporanea #
+-- Example:
+-- SELECT DBIAIT_ANALYSIS.populate_accorpamento_distribuzioni()
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_accorpamento_distribuzioni(
+) RETURNS BOOLEAN AS $$
+begin
+    DELETE FROM support_accorpamento_distribuzioni;
+
+    INSERT INTO support_accorpamento_distribuzioni
+    SELECT
+        aa.codice_sistema_idrico as "codice_sistem_idrico",
+        aa.denom_acq_sistema_idrico as "descrizione_rete_sistema_idrico",
+        aa.d_stato as "d_stato",
+        aa.a_vol_immesso as "a_vol_immesso",
+        aa.a_ili as "a_ili",
+        aa.a_press_med as "a_press_med",
+        MAX(aa.sn_strum_mis_press) as "sn_strum_mis_press",
+        MAX(aa.sn_strum_mis_port) as "sn_strum_mis_port",
+		MAX(aa.data_agg) as "data_agg",
+        SUM(aa.vol_immesso) as "vol_immesso",
+        SUM(aa.vol_imm_terzi) as "vol_imm_terzi",
+        SUM(aa.vol_ceduto) as "vol_ceduto",
+        SUM(aa.sn_ili) as "sn_ili",
+        SUM(aa.pres_es_max) as "pres_es_max",
+        MIN(aa.pres_es_min) as "pres_es_min",
+        AVG(aa.pres_es_med) as "pres_es_med",
+        SUM(aa.nr_rip_all) as "nr_rip_all",
+        SUM(aa.nr_rip_rete) as "nr_rip_rete",
+        SUM(aa.lunghezza_tlc) as "lunghezza_tlc",
+        SUM(aa.nr_utenze_dirette) as "nr_utenze_dirette",
+        SUM(aa.nr_utenze_dir_dom_e_residente) as "nr_utenze_dir_dom_e_residente",
+        SUM(aa.nr_utenze_dir_residente) as "nr_utenze_dir_residente",
+        SUM(aa.nr_utenze_condominiali) as "nr_utenze_condominiali",
+        SUM(aa.nr_utenze_indir_indirette) as "nr_utenze_indir_indirette",
+        SUM(aa.nr_utenze_indir_domestici) as "nr_utenze_indir_domestici",
+        SUM(aa.nr_utenze_indir_residente) as "nr_utenze_indir_residente",
+        SUM(aa.nr_utenze_misuratore) as "nr_utenze_misuratore",
+        SUM(aa.volume_erogato) as "volume_erogato",
+        SUM(aa.volume_fatturato) as "volume_fatturato",
+        SUM(aa.nr_allacci) as "nr_allacci",
+        SUM(aa.count_cloratori) as "count_cloratori",
+        SUM(aa.lunghezza) as "lunghezza"
+    FROM
+        (
+        SELECT
+            "acq_rete_distrib"."codice_ato" "codice_ato",
+            "acq_rete_distrib"."denom" "denom",
+            CAST("acq_rete_distrib"."vol_immesso" as numeric(18, 6)) "vol_immesso",
+            "acq_rete_distrib"."vol_imm_terzi" "vol_imm_terzi",
+            "acq_rete_distrib"."vol_ceduto" "vol_ceduto",
+            "acq_rete_distrib"."d_stato" "d_stato",
+            "acq_rete_distrib"."a_vol_immesso" "a_vol_immesso",
+            CAST("acq_rete_distrib"."a_vol_imm_terzi" as numeric(18, 6))  "a_vol_imm_terzi",
+            "acq_rete_distrib"."a_vol_ceduto" "a_vol_ceduto",
+            "acq_rete_distrib"."data_agg" "data_agg",
+            CAST(TO_BIT("acq_auth_rete_dist"."sn_ili") as INTEGER) "sn_ili",
+            "acq_auth_rete_dist"."a_ili" "a_ili",
+            "acq_auth_rete_dist"."pres_es_max" "pres_es_max",
+            "acq_auth_rete_dist"."a_pres_es_max" "a_pres_es_max",
+            "acq_auth_rete_dist"."pres_es_min" "pres_es_min",
+            "acq_auth_rete_dist"."a_pres_es_min" "a_pres_es_min",
+            "acq_auth_rete_dist"."pres_es_med" "pres_es_med",
+            "acq_auth_rete_dist"."a_press_med" "a_press_med",
+            "acq_auth_rete_dist"."nr_rip_all" "nr_rip_all",
+            "acq_auth_rete_dist"."nr_rip_rete" "nr_rip_rete",
+            CAST(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_press") as INTEGER) "sn_strum_mis_press",
+            CAST(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_port") as INTEGER) "sn_strum_mis_port",
+            CAST("acq_lunghezza_rete"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
+            "utenze_distribuzioni_adduttrici"."nr_utenze_dirette" "nr_utenze_dirette",
+            "utenze_distribuzioni_adduttrici"."nr_utenze_dir_dom_e_residente" "nr_utenze_dir_dom_e_residente",
+            "utenze_distribuzioni_adduttrici"."nr_utenze_dir_residente" "nr_utenze_dir_residente",
+            "utenze_distribuzioni_adduttrici"."nr_utenze_condominiali" "nr_utenze_condominiali",
+            "utenze_distribuzioni_adduttrici"."nr_utenze_indir_indirette" "nr_utenze_indir_indirette",
+            "utenze_distribuzioni_adduttrici"."nr_utenze_indir_domestici" "nr_utenze_indir_domestici",
+            "utenze_distribuzioni_adduttrici"."nr_utenze_indir_residente" "nr_utenze_indir_residente",
+            "utenze_distribuzioni_adduttrici"."nr_utenze_misuratore" "nr_utenze_misuratore",
+            "utenze_distribuzioni_adduttrici"."volume_erogato" "volume_erogato",
+            "utenze_distribuzioni_adduttrici"."volume_fatturato" "volume_fatturato",
+            "utenze_distribuzioni_adduttrici"."nr_allacci" "nr_allacci",
+            "stats_cloratore"."counter" "count_cloratori",
+            "tabella_sa_di_csv"."codice_sistema_idrico" "codice_sistema_idrico",
+            "tabella_sa_di_csv"."denom_acq_sistema_idrico" "denom_acq_sistema_idrico",
+            CAST("acq_lunghezza_rete"."lunghezza" as numeric(18, 6)) "lunghezza"
+        FROM
+            "acq_rete_distrib" "acq_rete_distrib"
+        LEFT JOIN "acq_auth_rete_dist" "acq_auth_rete_dist" on
+            "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib"
+        LEFT JOIN "acq_lunghezza_rete" "acq_lunghezza_rete" on
+            "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis"
+        LEFT JOIN "acq_vol_utenze" "acq_vol_utenze" on
+            "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato"
+        LEFT JOIN "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on
+            "utenze_distribuzioni_adduttrici"."id_rete" = "acq_rete_distrib"."idgis"
+        LEFT JOIN "stats_cloratore" "stats_cloratore" on
+            "acq_rete_distrib"."idgis" = "stats_cloratore"."id_rete"
+        LEFT JOIN "tabella_sa_di_csv" "tabella_sa_di_csv" on
+            "acq_rete_distrib"."idgis" = "tabella_sa_di_csv"."idgis_di"
+        WHERE
+            acq_rete_distrib.d_gestore = 'PUBLIACQUA'
+            AND acq_rete_distrib.d_ambito in ('AT3', null)
+            AND acq_rete_distrib.d_stato not in ('IPR', 'IAC')) aa
+    GROUP BY 1,2,3,4,5,6;
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
