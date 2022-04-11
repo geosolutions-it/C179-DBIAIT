@@ -4332,26 +4332,22 @@ begin
 
     INSERT INTO support_accorpamento_distribuzioni
     SELECT
-        aa.codice_sistema_idrico as "codice_opera",
+        aa.codice_sistema_idrico as "codice_sistem_idrico",
         aa.denom_acq_sistema_idrico as "descrizione_rete_sistema_idrico",
         aa.d_stato as "d_stato",
-        aa.sn_strum_mis_press as "sn_strum_mis_press",
-        aa.sn_strum_mis_port as "sn_strum_mis_port",
-        aa.data_agg as "aa.data_agg",
         aa.a_vol_immesso as "a_vol_immesso",
-        aa.vol_imm_terzi as "a_vol_imm_terzi",
-        aa.a_vol_ceduto as "a_vol_ceduto",
         aa.a_ili as "a_ili",
-        aa.a_pres_es_max as "a_pres_es_max",
-        aa.a_pres_es_min as "a_pres_es_min",
         aa.a_press_med as "a_press_med",
+        MAX(aa.sn_strum_mis_press) as "sn_strum_mis_press",
+        MAX(aa.sn_strum_mis_port) as "sn_strum_mis_port",
+		MAX(aa.data_agg) as "data_agg",
         SUM(aa.vol_immesso) as "vol_immesso",
         SUM(aa.vol_imm_terzi) as "vol_imm_terzi",
         SUM(aa.vol_ceduto) as "vol_ceduto",
         SUM(aa.sn_ili) as "sn_ili",
         SUM(aa.pres_es_max) as "pres_es_max",
-        SUM(aa.pres_es_min) as "pres_es_min",
-        SUM(aa.pres_es_med) as "pres_es_med",
+        MIN(aa.pres_es_min) as "pres_es_min",
+        AVG(aa.pres_es_med) as "pres_es_med",
         SUM(aa.nr_rip_all) as "nr_rip_all",
         SUM(aa.nr_rip_rete) as "nr_rip_rete",
         SUM(aa.lunghezza_tlc) as "lunghezza_tlc",
@@ -4378,7 +4374,7 @@ begin
             "acq_rete_distrib"."vol_ceduto" "vol_ceduto",
             "acq_rete_distrib"."d_stato" "d_stato",
             "acq_rete_distrib"."a_vol_immesso" "a_vol_immesso",
-            "acq_rete_distrib"."a_vol_imm_terzi" "a_vol_imm_terzi",
+            CAST("acq_rete_distrib"."a_vol_imm_terzi" as numeric(18, 6))  "a_vol_imm_terzi",
             "acq_rete_distrib"."a_vol_ceduto" "a_vol_ceduto",
             "acq_rete_distrib"."data_agg" "data_agg",
             CAST(TO_BIT("acq_auth_rete_dist"."sn_ili") as INTEGER) "sn_ili",
@@ -4427,7 +4423,7 @@ begin
             acq_rete_distrib.d_gestore = 'PUBLIACQUA'
             AND acq_rete_distrib.d_ambito in ('AT3', null)
             AND acq_rete_distrib.d_stato not in ('IPR', 'IAC')) aa
-    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13;
+    GROUP BY 1,2,3,4,5,6;
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
