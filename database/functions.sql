@@ -4245,7 +4245,6 @@ begin
 	DELETE FROM SUPPORT_CODICE_CAPT_ACCORP;
 	DELETE FROM support_accorpamento_distribuzioni;
     -- update postgres index
-    ANALYZE;
 	DELETE FROM SUPPORT_CODICE_ATO_RETE_DISTRIBUZIONE;
 	RETURN TRUE;
 END;
