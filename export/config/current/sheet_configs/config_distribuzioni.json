@@ -12,8 +12,6 @@
                 {"name": "support_accorpamento_distribuzioni.data_agg", "alias": "aa.data_agg"},
                 {"name": "support_accorpamento_distribuzioni.a_vol_immesso", "alias": "a_vol_immesso"},
                 {"name": "support_accorpamento_distribuzioni.a_ili", "alias": "a_ili"},
-                {"name": "support_accorpamento_distribuzioni.a_pres_es_max", "alias": "a_pres_es_max"},
-                {"name": "support_accorpamento_distribuzioni.a_pres_es_min", "alias": "a_pres_es_min"},
                 {"name": "support_accorpamento_distribuzioni.a_press_med", "alias": "a_press_med"},
                 {"name": "support_accorpamento_distribuzioni.vol_immesso", "alias": "vol_immesso"},
                 {"name": "support_accorpamento_distribuzioni.vol_imm_terzi", "alias": "vol_imm_terzi"},
