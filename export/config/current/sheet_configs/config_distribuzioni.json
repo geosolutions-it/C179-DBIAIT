@@ -4,82 +4,234 @@
     "sources": [
         {
             "fields": [
-                {"name": "support_accorpamento_distribuzioni.codice_sistem_idrico", "alias": "codice_sistem_idrico"},
-                {"name": "support_accorpamento_distribuzioni.descrizione_rete_sistema_idrico", "alias": "descrizione_rete_sistema_idrico"},
-                {"name": "support_accorpamento_distribuzioni.d_stato", "alias": "d_stato"},
-                {"name": "support_accorpamento_distribuzioni.sn_strum_mis_press", "alias": "sn_strum_mis_press"},
-                {"name": "support_accorpamento_distribuzioni.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
-                {"name": "support_accorpamento_distribuzioni.data_agg", "alias": "aa.data_agg"},
-                {"name": "support_accorpamento_distribuzioni.a_vol_immesso", "alias": "a_vol_immesso"},
-                {"name": "support_accorpamento_distribuzioni.a_ili", "alias": "a_ili"},
-                {"name": "support_accorpamento_distribuzioni.a_press_med", "alias": "a_press_med"},
-                {"name": "support_accorpamento_distribuzioni.vol_immesso", "alias": "vol_immesso"},
-                {"name": "support_accorpamento_distribuzioni.vol_imm_terzi", "alias": "vol_imm_terzi"},
-                {"name": "support_accorpamento_distribuzioni.vol_ceduto", "alias": "vol_ceduto"},
-                {"name": "support_accorpamento_distribuzioni.sn_ili", "alias": "sn_ili"},
-                {"name": "support_accorpamento_distribuzioni.pres_es_max", "alias": "pres_es_max"},
-                {"name": "support_accorpamento_distribuzioni.pres_es_min", "alias": "pres_es_min"},
-                {"name": "support_accorpamento_distribuzioni.pres_es_med", "alias": "pres_es_med"},
-                {"name": "support_accorpamento_distribuzioni.nr_rip_all", "alias": "nr_rip_all"},
-                {"name": "support_accorpamento_distribuzioni.nr_rip_rete", "alias": "nr_rip_rete"},
-                {"name": "support_accorpamento_distribuzioni.lunghezza_tlc", "alias": "lunghezza_tlc"},
-                {"name": "support_accorpamento_distribuzioni.nr_utenze_dirette", "alias": "nr_utenze_dirette"},
-                {"name": "support_accorpamento_distribuzioni.nr_utenze_dir_dom_e_residente", "alias": "nr_utenze_dir_dom_e_residente"},
-                {"name": "support_accorpamento_distribuzioni.nr_utenze_dir_residente", "alias": "nr_utenze_dir_residente"},
-                {"name": "support_accorpamento_distribuzioni.nr_utenze_condominiali", "alias": "nr_utenze_condominiali"},
-                {"name": "support_accorpamento_distribuzioni.nr_utenze_indir_indirette", "alias": "nr_utenze_indir_indirette"},
-                {"name": "support_accorpamento_distribuzioni.nr_utenze_indir_domestici", "alias": "nr_utenze_indir_domestici"},
-                {"name": "support_accorpamento_distribuzioni.nr_utenze_indir_residente", "alias": "nr_utenze_indir_residente"},
-                {"name": "support_accorpamento_distribuzioni.nr_utenze_misuratore", "alias": "nr_utenze_misuratore"},
-                {"name": "support_accorpamento_distribuzioni.volume_erogato", "alias": "volume_erogato"},
-                {"name": "support_accorpamento_distribuzioni.volume_fatturato", "alias": "volume_fatturato"},
-                {"name": "support_accorpamento_distribuzioni.nr_allacci", "alias": "nr_allacci"},
-                {"name": "support_accorpamento_distribuzioni.count_cloratori", "alias": "count_cloratori"},
-                {"name": "support_accorpamento_distribuzioni.lunghezza", "alias": "lunghezza"}
+                { "name": "acq_rete_distrib.codice_ato", "alias": "codice_ato"},
+                { "name": "acq_rete_distrib.denom", "alias": "denom"},
+                { "name": "acq_rete_distrib.vol_immesso", "alias": "vol_immesso", "cast": "NUMERIC(18,6)"},
+                { "name": "acq_rete_distrib.vol_imm_terzi", "alias": "vol_imm_terzi"},
+                { "name": "acq_rete_distrib.vol_ceduto", "alias": "vol_ceduto"},
+                { "name": "acq_rete_distrib.d_stato", "alias": "d_stato"},
+                { "name": "acq_rete_distrib.a_vol_immesso", "alias": "a_vol_immesso"},
+                { "name": "acq_rete_distrib.a_vol_imm_terzi", "alias": "a_vol_imm_terzi"},
+                { "name": "acq_rete_distrib.a_vol_ceduto", "alias": "a_vol_ceduto"},
+                { "name": "acq_rete_distrib.data_agg", "alias": "data_agg"},
+                { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili", "function": "TO_BIT", "cast": "INTEGER"},
+                { "name": "acq_auth_rete_dist.a_ili", "alias": "a_ili"},
+                { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
+                { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
+                { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
+                { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
+				{ "name": "acq_auth_rete_dist.pres_es_med", "alias": "pres_es_med"},
+				{ "name": "acq_auth_rete_dist.a_press_med", "alias": "a_press_med"},
+				{ "name": "acq_auth_rete_dist.nr_rip_all", "alias": "nr_rip_all"},
+				{ "name": "acq_auth_rete_dist.nr_rip_rete", "alias": "nr_rip_rete"},
+				{ "name": "acq_auth_rete_dist.sn_strum_mis_press", "alias": "sn_strum_mis_press", "function": "TO_BIT", "cast": "INTEGER"},
+				{ "name": "acq_auth_rete_dist.sn_strum_mis_port", "alias": "sn_strum_mis_port", "function": "TO_BIT", "cast": "INTEGER"},
+                { "name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc", "cast": "NUMERIC(18,6)"},
+                 { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_residente","alias": "nr_utenze_dir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_condominiali","alias": "nr_utenze_condominiali"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_indirette","alias": "nr_utenze_indir_indirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_domestici","alias": "nr_utenze_indir_domestici"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_residente","alias": "nr_utenze_indir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_misuratore","alias": "nr_utenze_misuratore"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_allacci","alias": "nr_allacci"},
+                { "name": "stats_cloratore.counter","alias": "count_cloratori"},
+                { "name": "tabella_sa_di_csv.codice_sistema_idrico","alias": "codice_sistema_idrico"},
+                { "name": "tabella_sa_di_csv.denom_acq_sistema_idrico","alias": "denom_acq_sistema_idrico"},
+                { "name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza", "cast": "NUMERIC(18,6)"}
             ],
             "table": {
-                "name": "support_accorpamento_distribuzioni"
-            }
+                "name": "acq_rete_distrib"
+            },
+            "join": [
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "acq_auth_rete_dist"
+                    },
+                    "on": [
+                        "acq_rete_distrib.idgis",
+                        "acq_auth_rete_dist.id_rete_distrib"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "acq_lunghezza_rete"
+                    },
+                    "on": [
+                        "acq_lunghezza_rete.idgis",
+                        "acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "acq_vol_utenze"
+                    },
+                    "on": [
+                        "acq_vol_utenze.ids_codice_orig_acq",
+                        "acq_rete_distrib.codice_ato"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_distribuzioni_adduttrici"
+                    },
+                    "on": [
+                        "utenze_distribuzioni_adduttrici.id_rete",
+                        "acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "stats_cloratore"
+                    },
+                    "on": [
+                        "acq_rete_distrib.idgis",
+                        "stats_cloratore.id_rete"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "tabella_sa_di_csv"
+                    },
+                    "on": [
+                        "acq_rete_distrib.idgis",
+                        "tabella_sa_di_csv.idgis_di"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND acq_rete_distrib.d_ambito IN ('AT3', NULL) AND acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
+        },
+        {
+            "fields": [
+                { "name": "a_acq_rete_distrib.codice_ato", "alias": "codice_ato"},
+                { "name": "a_acq_rete_distrib.denom", "alias": "denom"},
+                { "name": "a_acq_rete_distrib.vol_immesso", "alias": "vol_immesso", "cast": "NUMERIC(18,6)"},
+                { "name": "a_acq_rete_distrib.vol_imm_terzi", "alias": "vol_imm_terzi"},
+                { "name": "a_acq_rete_distrib.vol_ceduto", "alias": "vol_ceduto"},
+                { "name": "a_acq_rete_distrib.d_stato", "alias": "d_stato"},
+                { "name": "a_acq_rete_distrib.a_vol_immesso", "alias": "a_vol_immesso"},
+                { "name": "a_acq_rete_distrib.a_vol_imm_terzi", "alias": "a_vol_imm_terzi"},
+                { "name": "a_acq_rete_distrib.a_vol_ceduto", "alias": "a_vol_ceduto"},
+                { "name": "a_acq_rete_distrib.data_agg", "alias": "data_agg"},
+                { "name": "acq_auth_rete_dist.sn_ili", "alias": "sn_ili", "function": "TO_BIT", "cast": "INTEGER"},
+                { "name": "acq_auth_rete_dist.a_ili", "alias": "a_ili"},
+                { "name": "acq_auth_rete_dist.pres_es_max", "alias": "pres_es_max"},
+                { "name": "acq_auth_rete_dist.a_pres_es_max", "alias": "a_pres_es_max"},
+                { "name": "acq_auth_rete_dist.pres_es_min", "alias": "pres_es_min"},
+                { "name": "acq_auth_rete_dist.a_pres_es_min", "alias": "a_pres_es_min"},
+				{ "name": "acq_auth_rete_dist.pres_es_med", "alias": "pres_es_med"},
+				{ "name": "acq_auth_rete_dist.a_press_med", "alias": "a_press_med"},
+				{ "name": "acq_auth_rete_dist.nr_rip_all", "alias": "nr_rip_all"},
+				{ "name": "acq_auth_rete_dist.nr_rip_rete", "alias": "nr_rip_rete"},
+				{ "name": "acq_auth_rete_dist.sn_strum_mis_press", "alias": "sn_strum_mis_press", "function": "TO_BIT", "cast": "INTEGER"},
+				{ "name": "acq_auth_rete_dist.sn_strum_mis_port", "alias": "sn_strum_mis_port", "function": "TO_BIT", "cast": "INTEGER"},
+                {"name": "acq_lunghezza_rete.lunghezza_tlc","alias": "lunghezza_tlc", "cast": "NUMERIC(18,6)"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dirette","alias": "nr_utenze_dirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_dom_e_residente","alias": "nr_utenze_dir_dom_e_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_dir_residente","alias": "nr_utenze_dir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_condominiali","alias": "nr_utenze_condominiali"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_indirette","alias": "nr_utenze_indir_indirette"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_domestici","alias": "nr_utenze_indir_domestici"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_indir_residente","alias": "nr_utenze_indir_residente"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_utenze_misuratore","alias": "nr_utenze_misuratore"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
+                { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
+                { "name": "utenze_distribuzioni_adduttrici.nr_allacci","alias": "nr_allacci"},
+                { "name": "stats_cloratore.counter","alias": "count_cloratori"},
+                { "name": "tabella_sa_di_csv.codice_sistema_idrico","alias": "codice_sistema_idrico"},
+                { "name": "tabella_sa_di_csv.denom_acq_sistema_idrico","alias": "denom_acq_sistema_idrico"},
+                { "name": "acq_lunghezza_rete.lunghezza","alias": "lunghezza", "cast": "NUMERIC(18,6)"}
+            ],
+            "table": {
+                "name": "a_acq_rete_distrib"
+            },
+            "join": [
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "acq_auth_rete_dist"
+                    },
+                    "on": [
+                        "a_acq_rete_distrib.idgis",
+                        "acq_auth_rete_dist.id_rete_distrib"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "acq_lunghezza_rete"
+                    },
+                    "on": [
+                        "acq_lunghezza_rete.idgis",
+                        "a_acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "acq_vol_utenze"
+                    },
+                    "on": [
+                        "acq_vol_utenze.ids_codice_orig_acq",
+                        "a_acq_rete_distrib.codice_ato"
+                    ],
+                    "cond": "="
+                },{
+                    "type": "left",
+                    "table": {
+                        "name": "utenze_distribuzioni_adduttrici"
+                    },
+                    "on": [
+                        "utenze_distribuzioni_adduttrici.id_rete",
+                        "a_acq_rete_distrib.idgis"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "stats_cloratore"
+                    },
+                    "on": [
+                        "a_acq_rete_distrib.idgis",
+                        "stats_cloratore.id_rete"
+                    ],
+                    "cond": "="
+                },
+                {
+                    "type": "left",
+                    "table": {
+                        "name": "tabella_sa_di_csv"
+                    },
+                    "on": [
+                        "a_acq_rete_distrib.idgis",
+                        "tabella_sa_di_csv.idgis_di"
+                    ],
+                    "cond": "="
+                }
+            ],
+            "filter": "WHERE a_acq_rete_distrib.d_gestore = 'PUBLIACQUA' AND a_acq_rete_distrib.d_ambito IN ('ATO3', NULL) AND a_acq_rete_distrib.d_stato NOT IN ('IPR','IAC')"
         }
     ],
     "columns": [
-        { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistem_idrico" } }},
-        { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "descrizione_rete_sistema_idrico" } }},
-        { "id": "53700", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza" } }},
-        { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_immesso" } }},
-        { "id": "54600", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
-        { "id": "54700", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
-        { "id": "54800", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm_terzi" } }},
-        { "id": "54900", "transformation": { "func": "DIRECT", "params": { "field": "vol_ceduto" } }},
-		{ "id": "55000", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_press" } }},
-		{ "id": "55100", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" } }},
-        { "id": "55300", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } }},
-        { "id": "55400", "transformation": { "func": "CONST", "params": { "value": "B" }} },
-        { "id": "55500", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_immesso", "domain_name": "D_AFFIDABILITA" } }},
-        { "id": "55600", "transformation": { "func": "CONST", "params": { "value": "C" }} },
-        { "id": "55700", "transformation": { "func": "CONST", "params": { "value": "A" }} },
-        { "id": "55800", "transformation": { "func": "CONST", "params": { "value": "A" }} },
-        { "id": "55900", "transformation": { "func": "CONST", "params": { "value": "A" }} },
-        { "id": "56000", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } }},
-        { "id": "99100", "transformation": { "func": "DIRECT", "params": { "field": "nr_allacci" } }},
-        { "id": "99200", "transformation": { "func": "DIRECT", "params": { "field": "sn_ili" } }},
-        { "id": "99300", "transformation": { "func": "DOMAIN", "params": { "field": "a_ili", "domain_name": "D_AFFIDABILITA" } }},
-        { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
-        { "id": "99500", "transformation": { "func": "CONST", "params": { "value": "B" }} },
-        { "id": "99600", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_max" } }},
-        { "id": "99700", "transformation": { "func": "CONST", "params": { "value": "A" }} },
-		{ "id": "99800", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_med" } }},
-        { "id": "99900", "transformation": { "func": "CONST", "params": { "value": "C" }} },
-        { "id": "100000", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_min" } }},
-        { "id": "100100", "transformation": { "func": "CONST", "params": { "value": "A" }} },
-		{ "id": "100200", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_all" } }},
-		{ "id": "100300", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_rete" } }},
-        { "id": "100400", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_misuratore" } }},
-        { "id": "118900", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
 
 
         { "id": "114600", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
 
+        { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_ato" } }},
+        { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
         {"id": "119000", "transformation": {"func": "CONST", "params": { "value": "B" }}},
 
         { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistema_idrico" } }},
@@ -181,7 +333,38 @@
           }
          },
 
+        { "id": "99100", "transformation": { "func": "DIRECT", "params": { "field": "nr_allacci" } }},
+        { "id": "54600", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
+        { "id": "54700", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
+        { "id": "100400", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_misuratore" } }},
+        { "id": "118900", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
+		{ "id": "99800", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_med" } }},
+		{ "id": "100200", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_all" } }},
+		{ "id": "100300", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_rete" } }},
+		{ "id": "55000", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_press" } }},
+		{ "id": "55100", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" } }},
+        { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom" } }},
+        { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_immesso" } }},
+        { "id": "54800", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm_terzi" } }},
+        { "id": "54900", "transformation": { "func": "DIRECT", "params": { "field": "vol_ceduto" } }},
+        { "id": "56000", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } }},
+        { "id": "99200", "transformation": { "func": "DIRECT", "params": { "field": "sn_ili" } }},
+        { "id": "99600", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_max" } }},
+        { "id": "100000", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_min" } }},
+        { "id": "53700", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza" } }},
+        { "id": "55300", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } }},
+        { "id": "55500", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_immesso", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "55800", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_imm_terzi", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "55900", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_ceduto", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "99300", "transformation": { "func": "DOMAIN", "params": { "field": "a_ili", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "99700", "transformation": { "func": "DOMAIN", "params": { "field": "a_pres_es_max", "domain_name": "D_AFFIDABILITA" } }},
+        { "id": "100100", "transformation": { "func": "DOMAIN", "params": { "field": "a_pres_es_min", "domain_name": "D_AFFIDABILITA" } }},
+		{ "id": "99900", "transformation": { "func": "DOMAIN", "params": { "field": "a_press_med", "domain_name": "D_AFFIDABILITA" } }},
 
+        { "id": "55400", "transformation": { "func": "CONST", "params": { "value": "B" }} },
+        { "id": "55600", "transformation": { "func": "CONST", "params": { "value": "C" }} },
+        { "id": "55700", "transformation": { "func": "CONST", "params": { "value": "A" }} },
+        { "id": "99500", "transformation": { "func": "CONST", "params": { "value": "B" }} },
 
         {"id":"55200", "transformation":
             {
