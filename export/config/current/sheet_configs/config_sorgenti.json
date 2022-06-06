@@ -42,7 +42,9 @@
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
-            {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"}
+            {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"},
+                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -102,6 +104,17 @@
                    "support_codice_capt_accorp.idgis"
                  ],
                  "cond": "="
+            },
+           {
+                "type": "left",
+                "table": {
+                    "name": "support_sistema_idrico_rel_sa_localita"
+                },
+                "on": [
+                    "acq_captazione.id_sist_idr",
+                    "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                ],
+                "cond": "="
             }
          ],
          "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.d_stato NOT IN ('IPR', 'IAC') AND acq_captazione.sub_funzione = 4"
@@ -146,7 +159,9 @@
             {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
-            {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"}
+            {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"},
+                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -206,6 +221,17 @@
                    "support_codice_capt_accorp.idgis"
                  ],
                  "cond": "="
+            },
+           {
+                "type": "left",
+                "table": {
+                    "name": "support_sistema_idrico_rel_sa_localita"
+                },
+                "on": [
+                    "a_acq_captazione.id_sist_idr",
+                    "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                ],
+                "cond": "="
             }
          ],
          "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.d_stato NOT IN ('IPR', 'IAC') AND a_acq_captazione.sub_funzione = 4"
@@ -216,6 +242,9 @@
 
       {"id": "111800","transformation": { "func": "DIRECT", "params": { "field": "codice_accorp_capt"}}},
       {"id": "111900","transformation": { "func": "DIRECT", "params": { "field": "denom_accorp"}}},
+
+        {"id": "112000","transformation": { "func": "DIRECT", "params": { "field": "cod_sist_idr"}}},
+        {"id": "112100","transformation": { "func": "DIRECT", "params": { "field": "denom_sist_idr"}}},
 
       {"id":"26200", "transformation":{"func":"EXPR", "params":{"field":"volume_medio_prel", "expr": "_value_*1000/365/3600/24"}}, "validations": [{
               "func": "IF",

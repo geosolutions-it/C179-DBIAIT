@@ -1104,3 +1104,10 @@ ALTER TABLE dbiait_analysis.fognat_com_serv ALTER COLUMN id_comune_istat TYPE va
     count_cloratori INTEGER,
     lunghezza double precision
 );
+
+
+CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita (
+	idgis_sist_idr varchar(32) NULL,
+	cod_sist_idr varchar(8) NULL,
+	denom_sist_idr varchar(32) NULL
+);

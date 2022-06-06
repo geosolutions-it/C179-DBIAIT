@@ -62,7 +62,9 @@
             {"name":"acq_potabiliz.cod_comune", "alias":"cod_comune"},
             {"name":"acq_potabiliz.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"acq_potabiliz.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            { "name": "localita.denominazi", "alias": "denominazi" }
+            { "name": "localita.denominazi", "alias": "denominazi" },
+              { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
+              { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"}
          ],
          "table":{
             "name":"acq_potabiliz"
@@ -89,6 +91,17 @@
                      "acq_potabiliz.geom"
                  ],
                  "cond": "ST_INTERSECTS"
+            },
+           {
+                "type": "left",
+                "table": {
+                    "name": "support_sistema_idrico_rel_sa_localita"
+                },
+                "on": [
+                    "acq_potabiliz.id_sist_idr",
+                    "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                ],
+                "cond": "="
             }
          ],
          "filter": "WHERE acq_potabiliz.d_gestore = 'PUBLIACQUA' AND acq_potabiliz.d_ambito IN ('AT3', NULL) AND acq_potabiliz.d_stato NOT IN ('IPR', 'IAC')"
@@ -153,7 +166,9 @@
             {"name":"a_acq_potabiliz.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_potabiliz.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_acq_potabiliz.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            { "name": "localita.denominazi", "alias": "denominazi" }
+            { "name": "localita.denominazi", "alias": "denominazi" },
+              { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
+              { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"}
          ],
          "table":{
             "name":"a_acq_potabiliz"
@@ -180,7 +195,18 @@
                      "a_acq_potabiliz.geom"
                  ],
                  "cond": "ST_INTERSECTS"
-             }
+             },
+           {
+                "type": "left",
+                "table": {
+                    "name": "support_sistema_idrico_rel_sa_localita"
+                },
+                "on": [
+                    "a_acq_potabiliz.id_sist_idr",
+                    "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                ],
+                "cond": "="
+            }
          ],
          "filter": "WHERE a_acq_potabiliz.d_gestore = 'PUBLIACQUA' AND a_acq_potabiliz.d_ambito IN ('AT3', NULL) AND a_acq_potabiliz.d_stato NOT IN ('IPR', 'IAC')"
       }
@@ -221,6 +247,10 @@
                     "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Field greater than {REF_YEAR}"
                 }
             ]},
+
+        {"id": "112300","transformation": { "func": "DIRECT", "params": { "field": "cod_sist_idr"}}},
+        {"id": "112400","transformation": { "func": "DIRECT", "params": { "field": "denom_sist_idr"}}},
+
       {"id":"32100", "transformation":{"func":"DIRECT", "params":{"field":"vol_gg_trattabile"}}},
       {"id":"32200", "transformation":{"func":"DIRECT", "params":{"field":"vol_anno_trattabile"}}, "validations": [{
                     "func": "IF",

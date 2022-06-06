@@ -28,8 +28,8 @@
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
-                { "name": "acq_sist_idr.annotazioni", "alias": "annotazioni"},
-                { "name": "acq_sist_idr.descriz", "alias": "descriz"},
+                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"},
                 { "name": "localita.denominazi", "alias": "denominazi"}
             ],
             "table": {
@@ -50,11 +50,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "acq_sist_idr"
+                        "name": "support_sistema_idrico_rel_sa_localita"
                     },
                     "on": [
                         "acq_accumulo.id_sist_idr",
-                        "acq_sist_idr.idgis"
+                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
                     ],
                     "cond": "="
                 },
@@ -98,8 +98,8 @@
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
-                { "name": "acq_sist_idr.annotazioni", "alias": "annotazioni"},
-                { "name": "acq_sist_idr.descriz", "alias": "descriz"},
+                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"},
                 { "name": "localita.denominazi", "alias": "denominazi"}
             ],
             "table": {
@@ -120,11 +120,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "acq_sist_idr"
+                        "name": "support_sistema_idrico_rel_sa_localita"
                     },
                     "on": [
                         "a_acq_accumulo.id_sist_idr",
-                        "acq_sist_idr.idgis"
+                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
                     ],
                     "cond": "="
                 },
@@ -152,8 +152,8 @@
         {"id": "43700","transformation": {"func": "DIRECT", "params": {"field": "codice_ato"}}},
         {"id": "43800","transformation": {"func": "DIRECT", "params": {"field": "denom"}}},
 
-        {"id": "112800","transformation": {"func": "DIRECT", "params": {"field": "annotazioni"}}},
-        {"id": "112900","transformation": {"func": "DIRECT", "params": {"field": "descriz"}}},
+        {"id": "112800","transformation": {"func": "DIRECT", "params": {"field": "cod_sist_idr"}}},
+        {"id": "112900","transformation": {"func": "DIRECT", "params": {"field": "denom_sist_idr"}}},
 
         {"id": "44500","transformation": {"func": "DIRECT", "params": {"field": "anno_costr"}},
             "validations": [{

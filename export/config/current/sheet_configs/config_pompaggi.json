@@ -31,8 +31,8 @@
                 {"name": "stats_pompe.sum_potenza", "alias": "sum_potenza"},
                 {"name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
-                { "name": "acq_sist_idr.annotazioni", "alias": "annotazioni"},
-                { "name": "acq_sist_idr.descriz", "alias": "descriz"},
+                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"},
                 { "name": "acq_auth_pompag.consumo_ee", "alias": "consumo_ee"}
             ],
             "table": {
@@ -64,11 +64,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "acq_sist_idr"
+                        "name": "support_sistema_idrico_rel_sa_localita"
                     },
                     "on": [
                         "acq_pompaggio.id_sist_idr",
-                        "acq_sist_idr.idgis"
+                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
                     ],
                     "cond": "="
                 },
@@ -113,8 +113,8 @@
                 {"name": "stats_pompe.sum_potenza", "alias": "sum_potenza"},
                 {"name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
-                { "name": "acq_sist_idr.annotazioni", "alias": "annotazioni"},
-                { "name": "acq_sist_idr.descriz", "alias": "descriz"},
+                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"},
                 { "name": "acq_auth_pompag.consumo_ee", "alias": "consumo_ee"}
             ],
             "table": {
@@ -146,11 +146,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "acq_sist_idr"
+                        "name": "support_sistema_idrico_rel_sa_localita"
                     },
                     "on": [
                         "a_acq_pompaggio.id_sist_idr",
-                        "acq_sist_idr.idgis"
+                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
                     ],
                     "cond": "="
                 },
@@ -176,8 +176,8 @@
         {"id": "113300","transformation": { "func": "DIRECT", "params": { "field": "anno_instal_clor"}}},
         {"id": "113400","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor"}}},
 
-        {"id": "113000","transformation": {"func": "DIRECT", "params": {"field": "annotazioni"}}},
-        {"id": "113100","transformation": {"func": "DIRECT", "params": {"field": "descriz"}}},
+        {"id": "113000","transformation": {"func": "DIRECT", "params": {"field": "cod_sist_idr"}}},
+        {"id": "113100","transformation": {"func": "DIRECT", "params": {"field": "denom_sist_idr"}}},
 
         {"id": "48600","transformation": {"func": "LSTRIP", "params": {"field": "cod_comune", "char": "0"}}},
         {"id": "48600","transformation": {"func": "DECODE_COM", "params": {"field": "cod_comune"}}},
