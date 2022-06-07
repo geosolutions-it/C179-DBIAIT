@@ -402,9 +402,6 @@ BEGIN
         1,
         2
 
-
-
-
 	v_result:= TRUE;
     RETURN v_result;
 --EXCEPTION WHEN OTHERS THEN
@@ -556,6 +553,50 @@ BEGIN
 		group by t.codice_ato, t.pro_com
 	) t1, POP_RES_COMUNE p
 	WHERE t1.pro_com=p.pro_com;
+
+    DELETE FROM support_distrib_com_serv_sistidr;
+    INSERT INTO support_distrib_com_serv_sistidr
+    select
+        cod_sist_idr,
+        dlss.id_localita_istat,
+        intersezione,
+        perc,
+        prl.popres,
+        l.pro_com,
+        ((perc*prl.popres)/100) as abitanti_serviti
+    from
+        distrib_loc_serv_sistidr dlss
+    join pop_res_loc prl
+    on
+        dlss.id_localita_istat = prl.id_localita_istat
+    join localita l
+    on dlss.id_localita_istat = l.id_localita_istat
+    group by 1,2,3,4,5,6;
+
+    DELETE FROM distrib_com_serv_sistidr;
+    INSERT INTO distrib_com_serv_sistidr
+    with abitanti_serviti as (
+    select
+        cod_sist_idr,
+        pro_com,
+        sum(abitanti_serviti) as sum_abitanti_serviti
+    from
+        support_distrib_com_serv_sistidr
+    group by
+        1,
+        2)
+    select
+        cod_sist_idr,
+        ass.pro_com,
+        (sum_abitanti_serviti / pop_res)* 100 as popolazione_servita
+    from
+        pop_res_comune prc
+    join abitanti_serviti ass
+        on
+        prc.pro_com = ass.pro_com::VARCHAR
+    where
+        ass.pro_com = '48021'
+
 	v_result:= TRUE;
     RETURN v_result;
 --EXCEPTION WHEN OTHERS THEN
