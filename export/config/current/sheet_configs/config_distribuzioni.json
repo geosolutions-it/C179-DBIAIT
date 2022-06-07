@@ -13,7 +13,7 @@
                 {"name": "support_accorpamento_distribuzioni.a_vol_immesso", "alias": "a_vol_immesso"},
                 {"name": "support_accorpamento_distribuzioni.a_ili", "alias": "a_ili"},
                 {"name": "support_accorpamento_distribuzioni.a_press_med", "alias": "a_press_med"},
-                {"name": "support_accorpamento_distribuzioni.vol_immesso", "alias": "vol_immesso"},
+                {"name": "support_accorpamento_distribuzioni.vol_imm", "alias": "vol_imm"},
                 {"name": "support_accorpamento_distribuzioni.vol_imm_terzi", "alias": "vol_imm_terzi"},
                 {"name": "support_accorpamento_distribuzioni.vol_ceduto", "alias": "vol_ceduto"},
                 {"name": "support_accorpamento_distribuzioni.sn_ili", "alias": "sn_ili"},
@@ -43,10 +43,10 @@
         }
     ],
     "columns": [
-        { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistem_idrico" } }},
-        { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "descrizione_rete_sistema_idrico" } }},
+        { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistem_idrico" } }},
+        { "id": "113600", "transformation": { "func": "DIRECT", "params": { "field": "descrizione_rete_sistema_idrico" } }},
         { "id": "53700", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza" } }},
-        { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_immesso" } }},
+        { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm" } }},
         { "id": "54600", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
         { "id": "54700", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
         { "id": "54800", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm_terzi" } }},
