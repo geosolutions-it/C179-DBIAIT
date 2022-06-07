@@ -4,18 +4,18 @@
    "sources":[
       {
          "fields":[
-            {"name":"distrib_com_serv.codice_opera", "alias":"codice_opera"},
-            {"name":"distrib_com_serv.id_comune_istat", "alias":"id_comune_istat"},
-            {"name":"distrib_com_serv.perc_popsrv", "alias":"perc_popsrv"}
+            {"name":"distrib_com_serv.cod_sist_idr", "alias":"cod_sist_idr"},
+            {"name":"distrib_com_serv.pro_com", "alias":"pro_com"},
+            {"name":"distrib_com_serv.popolazione_servita", "alias":"popolazione_servita"}
          ],
          "table":{
-            "name": "distrib_com_serv"
+            "name": "distrib_com_serv_sistidr"
          }
       }
    ],
    "columns":[
-      {"id": "57700","transformation": {"func": "DIRECT", "params": {"field": "codice_opera"}}},
-      {"id": "57900","transformation": {"func": "DECODE_COM", "params": { "field": "id_comune_istat" }}},
-      {"id": "58000","transformation": {"func": "DIRECT", "params": {"field": "perc_popsrv"}}}
+      {"id": "57700","transformation": {"func": "DIRECT", "params": {"field": "cod_sist_idr"}}},
+      {"id": "57900","transformation": {"func": "DECODE_COM", "params": { "field": "pro_com" }}},
+      {"id": "58000","transformation": {"func": "DIRECT", "params": {"field": "popolazione_servita"}}}
    ]
 }

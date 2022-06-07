@@ -1137,6 +1137,36 @@ CREATE TABLE dbiait_analysis.support_accorpamento_distribuzioni(
 );
 
 
+CREATE TABLE dbiait_analysis.int_loc_rete (
+	codice_ato varchar(20) NULL,
+	id_localita_istat varchar(20) NULL,
+	area_localita float8 NULL,
+	area_intersezione float8 NULL
+);
+
+CREATE TABLE dbiait_analysis.distrib_loc_serv_sistidr (
+	cod_sist_idr varchar(8) NULL,
+	id_localita_istat varchar(20) NULL,
+	intersezione float8 NULL,
+	perc float8 NULL
+);
+
+CREATE TABLE dbiait_analysis.support_distrib_com_serv_sistidr (
+	cod_sist_idr varchar(8) NULL,
+	id_localita_istat varchar(20) NULL,
+	intersezione float8 NULL,
+	perc float8 NULL,
+	popres int4 NOT NULL,
+	pro_com int4 NULL,
+	abitanti_serviti float8 NULL
+);
+
+CREATE TABLE dbiait_analysis.distrib_com_serv_sistidr (
+	cod_sist_idr varchar(8) NULL,
+	pro_com int4 NULL,
+	popolazione_servita float8 NULL
+);
+
 CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita (
 	idgis_sist_idr varchar(32) NULL,
 	cod_sist_idr varchar(8) NULL,
