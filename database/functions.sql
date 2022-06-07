@@ -950,47 +950,68 @@ BEGIN
 			,idx_lunghezza	
 			,' || v_field || '		
 		)
-		SELECT 
-			a.geom,
-			r.codice_ato, 
-			a.idgis as idgis, 
-			r.idgis as idgis_rete,
-			1,
-			a.d_materiale as d_materiale_idr, -- da all_domains
-			a.d_stato_cons,
-			a.d_diametro,
-			CASE 
-				WHEN a.data_esercizio IS NULL THEN 9999 
-				ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER 
-			END anno_messa_opera,
-			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
-			CASE 
-				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
-				ELSE ''B''
-			END idx_materiale,
-			CASE 
-				WHEN a.d_diametro IS NULL THEN ''X''
-				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-				ELSE ''B''
-			END idx_diametro, 
-			CASE 
-				WHEN a.data_esercizio IS NULL THEN ''X''
-				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-				ELSE ''B''
-			END idx_anno, 
-			CASE
-				WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-				ELSE ''B''
-			END idx_lunghezza,
+		select
+            x.geom,
+            rsd.cod_sist_idr as codice_ato,
+            x.idgis,
+            x.idgis_rete,
+            1,
+            x.d_materiale_idr,
+            x.d_stato_cons,
+            x.d_diametro,
+			x.anno_messa_opera,
+			x.LUNGHEZZA,
+			x.idx_materiale,
+			x.idx_diametro,
+			x.idx_anno,
+			x.idx_lunghezza,
 			' || v_column || '
-		FROM 
-			ACQ_CONDOTTA a,  
-			' || v_join_table || ' r
-		WHERE 
-			(a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR
-			a.D_STATO IS NULL) AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) AND (a.D_GESTORE
-			= ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
-			AND a.id_rete=r.idgis;
+        from
+            (SELECT
+                a.geom,
+                a.id_sist_idr,
+                a.idgis as idgis,
+                r.idgis as idgis_rete,
+                1,
+                a.d_materiale as d_materiale_idr, -- da all_domains
+                a.d_stato_cons,
+                a.d_diametro,
+                CASE
+                    WHEN a.data_esercizio IS NULL THEN 9999
+                    ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER
+                END anno_messa_opera,
+                ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
+                CASE
+                    WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+                    ELSE ''B''
+                END idx_materiale,
+                CASE
+                    WHEN a.d_diametro IS NULL THEN ''X''
+                    WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+                    ELSE ''B''
+                END idx_diametro,
+                CASE
+                    WHEN a.data_esercizio IS NULL THEN ''X''
+                    WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+                    ELSE ''B''
+                END idx_anno,
+                CASE
+                    WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+                    ELSE ''B''
+                END idx_lunghezza,
+                ' || v_column || '
+            FROM
+                ACQ_CONDOTTA a,
+                ' || v_join_table || ' r
+            WHERE
+                (a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR
+                a.D_STATO IS NULL) AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) AND (a.D_GESTORE
+                = ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
+                AND a.id_rete=r.idgis
+            ) as x
+            LEFT JOIN (
+                SELECT idgis_sist_idr,cod_sist_idr FROM rel_sa_di GROUP BY 1,2
+            ) rsd ON x.id_sist_idr = rsd.idgis_sist_idr;
 		';
 
 	--D_MATERIALE convertito in D_MATERIALE_IDR
@@ -1052,9 +1073,7 @@ BEGIN
 		SELECT idgis, idgis_rete, codice_ato, $1
 		FROM ' || v_table || ';
 	' using v_tipo_infr;
-	
 	RETURN TRUE;
-
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -2180,19 +2199,6 @@ BEGIN
         FROM acq_condotta c, all_domains d
         WHERE d.dominio_gis = 'D_STATO'
         AND d.valore_gis = c.d_stato
-    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
-
-    --(ids_codice)
-    UPDATE ACQ_SHAPE
-    SET ids_codice = t.annotazioni
-    FROM (
-    SELECT
-        DISTINCT(asi.annotazioni), ac.idgis
-    FROM
-        acq_condotta ac
-    JOIN acq_sist_idr asi ON
-        ac.id_sist_idr = asi.idgis
-    WHERE ac.idgis in (SELECT ids_codi_1 FROM acq_shape as2 )
     ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
 
 	-- LOG ANOMALIES
@@ -4326,6 +4332,7 @@ begin
 	DELETE FROM support_accorpamento_distribuzioni;
     -- update postgres index
 	DELETE FROM SUPPORT_CODICE_ATO_RETE_DISTRIBUZIONE;
+	DELETE FROM support_sistema_idrico_rel_sa_localita;
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -4376,21 +4383,34 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_codice_ato_rete_distribuzion
 begin
     DELETE FROM support_codice_ato_rete_distribuzione;
     INSERT INTO support_codice_ato_rete_distribuzione
-    WITH codice_ato_rete_distribuzione AS (
-        SELECT
-            right(aa.sist_acq_dep, 7) as ato,
-            idgis
-        FROM
-            acq_adduttrice aa
-		group by ato,idgis)
-    SELECT
-        codice_sistema_idrico,
-        denom_acq_sistema_idrico,
+    with codice_ato_rete_distribuzione as (
+    select
+        right(aa.sist_acq_dep, 7) as ato,
+        idgis
+    from
+        acq_adduttrice aa
+    group by
+        ato,
+        idgis)
+        select
+        cod_sist_idr,
+        denom_sist_idr,
         card.idgis
-    FROM
+    from
         codice_ato_rete_distribuzione card
-    JOIN tabella_sa_di_csv tsdc ON
-        tsdc.codice_ato_di = card.ato;
+    join rel_sa_di tsdc on
+        tsdc.codice_ato_rete_distrib = card.ato
+    join sistema_idrico on
+        tsdc.cod_sist_idr = sistema_idrico.idgis_sist_idr;
+
+    DELETE FROM support_sistema_idrico_rel_sa_localita;
+
+    INSERT INTO support_sistema_idrico_rel_sa_localita
+    select rsd.idgis_sist_idr, cod_sist_idr, denom_sist_idr
+    from rel_sa_di rsd
+    join sistema_idrico si on rsd.cod_sist_idr = si.idgis_sist_idr
+    group by 1,2,3;
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -4408,25 +4428,88 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_accorpamento_distribuzioni(
 ) RETURNS BOOLEAN AS $$
 begin
     DELETE FROM support_accorpamento_distribuzioni;
+    DELETE FROM support_accorpamento_raw_distribuzioni;
+
+    INSERT INTO support_accorpamento_raw_distribuzioni
+    select
+    	"acq_rete_distrib"."idgis" "idgis",
+        "acq_rete_distrib"."codice_ato" "codice_ato",
+        "acq_rete_distrib"."denom" "denom",
+        cast("acq_rete_distrib"."vol_immesso" as numeric(18, 6)) "vol_immesso",
+        "acq_rete_distrib"."vol_imm_terzi" "vol_imm_terzi",
+        "acq_rete_distrib"."vol_ceduto" "vol_ceduto",
+        "acq_rete_distrib"."d_stato" "d_stato",
+        "acq_rete_distrib"."a_vol_immesso" "a_vol_immesso",
+        "acq_rete_distrib"."a_vol_imm_terzi" "a_vol_imm_terzi",
+        "acq_rete_distrib"."a_vol_ceduto" "a_vol_ceduto",
+        "acq_rete_distrib"."data_agg" "data_agg",
+        cast(TO_BIT("acq_auth_rete_dist"."sn_ili") as INTEGER) "sn_ili",
+        "acq_auth_rete_dist"."a_ili" "a_ili",
+        "acq_auth_rete_dist"."pres_es_max" "pres_es_max",
+        "acq_auth_rete_dist"."a_pres_es_max" "a_pres_es_max",
+        "acq_auth_rete_dist"."pres_es_min" "pres_es_min",
+        "acq_auth_rete_dist"."a_pres_es_min" "a_pres_es_min",
+        "acq_auth_rete_dist"."pres_es_med" "pres_es_med",
+        "acq_auth_rete_dist"."a_press_med" "a_press_med",
+        "acq_auth_rete_dist"."nr_rip_all" "nr_rip_all",
+        "acq_auth_rete_dist"."nr_rip_rete" "nr_rip_rete",
+        cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_press") as INTEGER) "sn_strum_mis_press",
+        cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_port") as INTEGER) "sn_strum_mis_port",
+        cast("acq_lunghezza_rete"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
+        "utenze_distribuzioni_adduttrici"."nr_utenze_dirette" "nr_utenze_dirette",
+        "utenze_distribuzioni_adduttrici"."nr_utenze_dir_dom_e_residente" "nr_utenze_dir_dom_e_residente",
+        "utenze_distribuzioni_adduttrici"."nr_utenze_dir_residente" "nr_utenze_dir_residente",
+        "utenze_distribuzioni_adduttrici"."nr_utenze_condominiali" "nr_utenze_condominiali",
+        "utenze_distribuzioni_adduttrici"."nr_utenze_indir_indirette" "nr_utenze_indir_indirette",
+        "utenze_distribuzioni_adduttrici"."nr_utenze_indir_domestici" "nr_utenze_indir_domestici",
+        "utenze_distribuzioni_adduttrici"."nr_utenze_indir_residente" "nr_utenze_indir_residente",
+        "utenze_distribuzioni_adduttrici"."nr_utenze_misuratore" "nr_utenze_misuratore",
+        "utenze_distribuzioni_adduttrici"."volume_erogato" "volume_erogato",
+        "utenze_distribuzioni_adduttrici"."volume_fatturato" "volume_fatturato",
+        "utenze_distribuzioni_adduttrici"."nr_allacci" "nr_allacci",
+        "stats_cloratore"."counter" "count_cloratori",
+        "tabella_sa_di_csv"."codice_sistema_idrico" "codice_sistema_idrico",
+        "tabella_sa_di_csv"."denom_acq_sistema_idrico" "denom_acq_sistema_idrico",
+        cast("acq_lunghezza_rete"."lunghezza" as numeric(18, 6)) "lunghezza"
+    from
+        "acq_rete_distrib" "acq_rete_distrib"
+    left join "acq_auth_rete_dist" "acq_auth_rete_dist" on
+        "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib"
+    left join "acq_lunghezza_rete" "acq_lunghezza_rete" on
+        "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis"
+    left join "acq_vol_utenze" "acq_vol_utenze" on
+        "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato"
+    left join "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on
+        "utenze_distribuzioni_adduttrici"."id_rete" = "acq_rete_distrib"."idgis"
+    left join "stats_cloratore" "stats_cloratore" on
+        "acq_rete_distrib"."idgis" = "stats_cloratore"."id_rete"
+    left join "tabella_sa_di_csv" "tabella_sa_di_csv" on
+        "acq_rete_distrib"."idgis" = "tabella_sa_di_csv"."idgis_di"
+    where
+        acq_rete_distrib.d_gestore = 'PUBLIACQUA'
+        and acq_rete_distrib.d_ambito in ('AT3', null)
+        and acq_rete_distrib.d_stato not in ('IPR', 'IAC');
 
     INSERT INTO support_accorpamento_distribuzioni
-    SELECT
-        aa.codice_sistema_idrico as "codice_sistem_idrico",
-        aa.denom_acq_sistema_idrico as "descrizione_rete_sistema_idrico",
+    select
+        rel_sa_di.cod_sist_idr as "cod_sist_idr",
+        sistema_idrico.denom_sist_idr as "denom_sist_idr",
         aa.d_stato as "d_stato",
-        aa.a_vol_immesso as "a_vol_immesso",
+        sistema_idrico.a_vol_immesso as "a_vol_immesso",
         aa.a_ili as "a_ili",
-        aa.a_press_med as "a_press_med",
-        MAX(aa.sn_strum_mis_press) as "sn_strum_mis_press",
-        MAX(aa.sn_strum_mis_port) as "sn_strum_mis_port",
-		MAX(aa.data_agg) as "data_agg",
-        SUM(aa.vol_immesso) as "vol_immesso",
+        sistema_idrico.a_press_med as "a_press_med",
+        cast(sistema_idrico.vol_imm as numeric(18, 6)) as "vol_immesso",
+        cast(TO_BIT(sistema_idrico.sn_strum_mis_press) as INTEGER) as "sn_strum_mis_press",
+        cast(TO_BIT(sistema_idrico.sn_strum_mis_port) as INTEGER)  as "sn_strum_mis_port",
+        sistema_idrico.pres_es_max as "pres_es_max",
+        sistema_idrico.pres_es_med as "pres_es_med",
+        sistema_idrico.pres_es_min as "pres_es_min",
+        sistema_idrico.a_pres_es_max as "a_pres_es_max",
+        sistema_idrico.a_pres_es_min as "a_pres_es_min",
+        MAX(aa.data_agg) as "data_agg",
         SUM(aa.vol_imm_terzi) as "vol_imm_terzi",
         SUM(aa.vol_ceduto) as "vol_ceduto",
         SUM(aa.sn_ili) as "sn_ili",
-        SUM(aa.pres_es_max) as "pres_es_max",
-        MIN(aa.pres_es_min) as "pres_es_min",
-        AVG(aa.pres_es_med) as "pres_es_med",
         SUM(aa.nr_rip_all) as "nr_rip_all",
         SUM(aa.nr_rip_rete) as "nr_rip_rete",
         SUM(aa.lunghezza_tlc) as "lunghezza_tlc",
@@ -4443,68 +4526,16 @@ begin
         SUM(aa.nr_allacci) as "nr_allacci",
         SUM(aa.count_cloratori) as "count_cloratori",
         SUM(aa.lunghezza) as "lunghezza"
-    FROM
-        (
-        SELECT
-            "acq_rete_distrib"."codice_ato" "codice_ato",
-            "acq_rete_distrib"."denom" "denom",
-            CAST("acq_rete_distrib"."vol_immesso" as numeric(18, 6)) "vol_immesso",
-            "acq_rete_distrib"."vol_imm_terzi" "vol_imm_terzi",
-            "acq_rete_distrib"."vol_ceduto" "vol_ceduto",
-            "acq_rete_distrib"."d_stato" "d_stato",
-            "acq_rete_distrib"."a_vol_immesso" "a_vol_immesso",
-            CAST("acq_rete_distrib"."a_vol_imm_terzi" as numeric(18, 6))  "a_vol_imm_terzi",
-            "acq_rete_distrib"."a_vol_ceduto" "a_vol_ceduto",
-            "acq_rete_distrib"."data_agg" "data_agg",
-            CAST(TO_BIT("acq_auth_rete_dist"."sn_ili") as INTEGER) "sn_ili",
-            "acq_auth_rete_dist"."a_ili" "a_ili",
-            "acq_auth_rete_dist"."pres_es_max" "pres_es_max",
-            "acq_auth_rete_dist"."a_pres_es_max" "a_pres_es_max",
-            "acq_auth_rete_dist"."pres_es_min" "pres_es_min",
-            "acq_auth_rete_dist"."a_pres_es_min" "a_pres_es_min",
-            "acq_auth_rete_dist"."pres_es_med" "pres_es_med",
-            "acq_auth_rete_dist"."a_press_med" "a_press_med",
-            "acq_auth_rete_dist"."nr_rip_all" "nr_rip_all",
-            "acq_auth_rete_dist"."nr_rip_rete" "nr_rip_rete",
-            CAST(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_press") as INTEGER) "sn_strum_mis_press",
-            CAST(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_port") as INTEGER) "sn_strum_mis_port",
-            CAST("acq_lunghezza_rete"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
-            "utenze_distribuzioni_adduttrici"."nr_utenze_dirette" "nr_utenze_dirette",
-            "utenze_distribuzioni_adduttrici"."nr_utenze_dir_dom_e_residente" "nr_utenze_dir_dom_e_residente",
-            "utenze_distribuzioni_adduttrici"."nr_utenze_dir_residente" "nr_utenze_dir_residente",
-            "utenze_distribuzioni_adduttrici"."nr_utenze_condominiali" "nr_utenze_condominiali",
-            "utenze_distribuzioni_adduttrici"."nr_utenze_indir_indirette" "nr_utenze_indir_indirette",
-            "utenze_distribuzioni_adduttrici"."nr_utenze_indir_domestici" "nr_utenze_indir_domestici",
-            "utenze_distribuzioni_adduttrici"."nr_utenze_indir_residente" "nr_utenze_indir_residente",
-            "utenze_distribuzioni_adduttrici"."nr_utenze_misuratore" "nr_utenze_misuratore",
-            "utenze_distribuzioni_adduttrici"."volume_erogato" "volume_erogato",
-            "utenze_distribuzioni_adduttrici"."volume_fatturato" "volume_fatturato",
-            "utenze_distribuzioni_adduttrici"."nr_allacci" "nr_allacci",
-            "stats_cloratore"."counter" "count_cloratori",
-            "tabella_sa_di_csv"."codice_sistema_idrico" "codice_sistema_idrico",
-            "tabella_sa_di_csv"."denom_acq_sistema_idrico" "denom_acq_sistema_idrico",
-            CAST("acq_lunghezza_rete"."lunghezza" as numeric(18, 6)) "lunghezza"
-        FROM
-            "acq_rete_distrib" "acq_rete_distrib"
-        LEFT JOIN "acq_auth_rete_dist" "acq_auth_rete_dist" on
-            "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib"
-        LEFT JOIN "acq_lunghezza_rete" "acq_lunghezza_rete" on
-            "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis"
-        LEFT JOIN "acq_vol_utenze" "acq_vol_utenze" on
-            "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato"
-        LEFT JOIN "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on
-            "utenze_distribuzioni_adduttrici"."id_rete" = "acq_rete_distrib"."idgis"
-        LEFT JOIN "stats_cloratore" "stats_cloratore" on
-            "acq_rete_distrib"."idgis" = "stats_cloratore"."id_rete"
-        LEFT JOIN "tabella_sa_di_csv" "tabella_sa_di_csv" on
-            "acq_rete_distrib"."idgis" = "tabella_sa_di_csv"."idgis_di"
-        WHERE
-            acq_rete_distrib.d_gestore = 'PUBLIACQUA'
-            AND acq_rete_distrib.d_ambito in ('AT3', null)
-            AND acq_rete_distrib.d_stato not in ('IPR', 'IAC')) aa
-    GROUP BY 1,2,3,4,5,6;
+    from support_accorpamento_raw_distribuzioni as aa
+    join rel_sa_di on aa.idgis = rel_sa_di.idgis_rete_distrib
+    join sistema_idrico on sistema_idrico.idgis_sist_idr = rel_sa_di.cod_sist_idr
+    group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14;
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
+
+
+

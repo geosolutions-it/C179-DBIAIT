@@ -1056,37 +1056,68 @@ CREATE TABLE DBIAIT_ANALYSIS.fognature_da_accodare(
     data_agg                     timestamp
 );
 
-CREATE TABLE dbiait_analysis.tabella_sa_di_csv (
-	comune varchar(32) NULL,
-	sistemi_acq_old varchar(32) NULL,
-	idgis_di varchar(32) NULL,
-	codice_ato_di varchar(8) NULL,
-	denom_acq_sistema_idrico varchar(32) NULL,
-	idgis_si varchar(32) NULL,
-	codice_sistema_idrico varchar(8) NULL,
-	zona varchar(32) NULL
-);
-
 ALTER TABLE dbiait_analysis.fognat_com_serv ALTER COLUMN id_comune_istat TYPE varchar(8) USING id_comune_istat::varchar;
 
+CREATE TABLE dbiait_analysis.support_accorpamento_raw_distribuzioni (
+	codice_ato varchar(20) NULL,
+	denom varchar(40) NULL,
+	vol_immesso numeric(18, 6) NULL,
+	vol_imm_terzi float8 NULL,
+	vol_ceduto float8 NULL,
+	d_stato varchar(3) NULL,
+	a_vol_immesso varchar(3) NULL,
+	a_vol_imm_terzi varchar(3) NULL,
+	a_vol_ceduto varchar(3) NULL,
+	data_agg timestamptz NULL,
+	sn_ili int4 NULL,
+	a_ili varchar(3) NULL,
+	pres_es_max float8 NULL,
+	a_pres_es_max varchar(3) NULL,
+	pres_es_min float8 NULL,
+	a_pres_es_min varchar(3) NULL,
+	pres_es_med float8 NULL,
+	a_press_med varchar(3) NULL,
+	nr_rip_all int4 NULL,
+	nr_rip_rete int4 NULL,
+	sn_strum_mis_press int4 NULL,
+	sn_strum_mis_port int4 NULL,
+	lunghezza_tlc numeric(18, 6) NULL,
+	nr_utenze_dirette int4 NULL,
+	nr_utenze_dir_dom_e_residente int4 NULL,
+	nr_utenze_dir_residente int4 NULL,
+	nr_utenze_condominiali int4 NULL,
+	nr_utenze_indir_indirette int4 NULL,
+	nr_utenze_indir_domestici int4 NULL,
+	nr_utenze_indir_residente int4 NULL,
+	nr_utenze_misuratore int4 NULL,
+	volume_erogato float8 NULL,
+	volume_fatturato float8 NULL,
+	nr_allacci int4 NULL,
+	count_cloratori int8 NULL,
+	codice_sistema_idrico varchar(8) NULL,
+	denom_acq_sistema_idrico varchar(32) NULL,
+	lunghezza numeric(18, 6) NULL
+);
 
-  CREATE TABLE dbiait_analysis.support_accorpamento_distribuzioni(
+CREATE TABLE dbiait_analysis.support_accorpamento_distribuzioni(
     codice_sistem_idrico  varchar(32),
     descrizione_rete_sistema_idrico  varchar(32),
     d_stato  varchar(32),
     a_vol_immesso  varchar(32),
     a_ili  varchar(32),
     a_press_med  varchar(32),
+    vol_imm double precision,
     sn_strum_mis_press double precision,
     sn_strum_mis_port double precision,
-    data_agg timestamp with time zone,
-    vol_immesso double precision,
-    vol_imm_terzi double precision,
-    vol_ceduto double precision,
-    sn_ili INTEGER,
     pres_es_max double precision,
     pres_es_min double precision,
     pres_es_med double precision,
+    a_pres_es_max varchar(1),
+    a_pres_es_min varchar(1),
+    data_agg timestamp with time zone,
+    vol_imm_terzi double precision,
+    vol_ceduto double precision,
+    sn_ili INTEGER,
     nr_rip_all INTEGER,
     nr_rip_rete INTEGER,
     lunghezza_tlc double precision,
@@ -1104,6 +1135,7 @@ ALTER TABLE dbiait_analysis.fognat_com_serv ALTER COLUMN id_comune_istat TYPE va
     count_cloratori INTEGER,
     lunghezza double precision
 );
+
 
 CREATE TABLE dbiait_analysis.int_loc_rete (
 	codice_ato varchar(20) NULL,
@@ -1133,4 +1165,32 @@ CREATE TABLE dbiait_analysis.distrib_com_serv_sistidr (
 	cod_sist_idr varchar(8) NULL,
 	pro_com int4 NULL,
 	popolazione_servita float8 NULL
+);
+
+CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita (
+	idgis_sist_idr varchar(32) NULL,
+	cod_sist_idr varchar(8) NULL,
+	denom_sist_idr varchar(32) NULL
+);
+
+CREATE TABLE dbiait_analysis.rel_sa_di (
+	idgis_sist_idr varchar(32) NULL,
+	cod_sist_idr varchar(8) NULL,
+	idgis_rete_distrib varchar(32) NULL,
+	codice_ato_rete_distrib varchar(8) NULL
+);
+
+CREATE TABLE dbiait_analysis.sistema_idrico (
+	idgis_sist_idr varchar(8) NULL,
+	denom_sist_idr varchar(32) NULL,
+	vol_imm float4 NULL,
+	sn_strum_mis_press int4 NULL,
+	sn_strum_mis_port int4 NULL,
+	pres_es_max float8 NULL,
+	pres_es_med float8 NULL,
+	pres_es_min float8 NULL,
+	a_vol_immesso varchar(1) NULL,
+	a_pres_es_max varchar(1) NULL,
+	a_press_med varchar(1) NULL,
+	a_pres_es_min varchar(1) NULL
 );
