@@ -870,47 +870,68 @@ BEGIN
 			,idx_lunghezza	
 			,' || v_field || '		
 		)
-		SELECT 
-			a.geom,
-			r.codice_ato, 
-			a.idgis as idgis, 
-			r.idgis as idgis_rete,
-			1,
-			a.d_materiale as d_materiale_idr, -- da all_domains
-			a.d_stato_cons,
-			a.d_diametro,
-			CASE 
-				WHEN a.data_esercizio IS NULL THEN 9999 
-				ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER 
-			END anno_messa_opera,
-			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
-			CASE 
-				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
-				ELSE ''B''
-			END idx_materiale,
-			CASE 
-				WHEN a.d_diametro IS NULL THEN ''X''
-				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-				ELSE ''B''
-			END idx_diametro, 
-			CASE 
-				WHEN a.data_esercizio IS NULL THEN ''X''
-				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-				ELSE ''B''
-			END idx_anno, 
-			CASE
-				WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-				ELSE ''B''
-			END idx_lunghezza,
+		select
+            x.geom,
+            rsd.cod_sist_idr as codice_ato,
+            x.idgis,
+            x.idgis_rete,
+            1,
+            x.d_materiale_idr,
+            x.d_stato_cons,
+            x.d_diametro,
+			x.anno_messa_opera,
+			x.LUNGHEZZA,
+			x.idx_materiale,
+			x.idx_diametro,
+			x.idx_anno,
+			x.idx_lunghezza,
 			' || v_column || '
-		FROM 
-			ACQ_CONDOTTA a,  
-			' || v_join_table || ' r
-		WHERE 
-			(a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR
-			a.D_STATO IS NULL) AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) AND (a.D_GESTORE
-			= ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
-			AND a.id_rete=r.idgis;
+        from
+            (SELECT
+                a.geom,
+                a.id_sist_idr,
+                a.idgis as idgis,
+                r.idgis as idgis_rete,
+                1,
+                a.d_materiale as d_materiale_idr, -- da all_domains
+                a.d_stato_cons,
+                a.d_diametro,
+                CASE
+                    WHEN a.data_esercizio IS NULL THEN 9999
+                    ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER
+                END anno_messa_opera,
+                ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
+                CASE
+                    WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+                    ELSE ''B''
+                END idx_materiale,
+                CASE
+                    WHEN a.d_diametro IS NULL THEN ''X''
+                    WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+                    ELSE ''B''
+                END idx_diametro,
+                CASE
+                    WHEN a.data_esercizio IS NULL THEN ''X''
+                    WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+                    ELSE ''B''
+                END idx_anno,
+                CASE
+                    WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+                    ELSE ''B''
+                END idx_lunghezza,
+                ' || v_column || '
+            FROM
+                ACQ_CONDOTTA a,
+                ' || v_join_table || ' r
+            WHERE
+                (a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR
+                a.D_STATO IS NULL) AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) AND (a.D_GESTORE
+                = ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
+                AND a.id_rete=r.idgis
+            ) as x
+            LEFT JOIN (
+                SELECT idgis_sist_idr,cod_sist_idr FROM rel_sa_di GROUP BY 1,2
+            ) rsd ON x.id_sist_idr = rsd.idgis_sist_idr;
 		';
 
 	--D_MATERIALE convertito in D_MATERIALE_IDR
@@ -972,9 +993,7 @@ BEGIN
 		SELECT idgis, idgis_rete, codice_ato, $1
 		FROM ' || v_table || ';
 	' using v_tipo_infr;
-	
 	RETURN TRUE;
-
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -2100,19 +2119,6 @@ BEGIN
         FROM acq_condotta c, all_domains d
         WHERE d.dominio_gis = 'D_STATO'
         AND d.valore_gis = c.d_stato
-    ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
-
-    --(ids_codice)
-    UPDATE ACQ_SHAPE
-    SET ids_codice = t.annotazioni
-    FROM (
-    SELECT
-        DISTINCT(asi.annotazioni), ac.idgis
-    FROM
-        acq_condotta ac
-    JOIN acq_sist_idr asi ON
-        ac.id_sist_idr = asi.idgis
-    WHERE ac.idgis in (SELECT ids_codi_1 FROM acq_shape as2 )
     ) t WHERE t.idgis = ACQ_SHAPE.ids_codi_1;
 
 	-- LOG ANOMALIES
