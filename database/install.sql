@@ -1137,6 +1137,12 @@ CREATE TABLE dbiait_analysis.support_accorpamento_distribuzioni(
 );
 
 
+CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita (
+	idgis_sist_idr varchar(32) NULL,
+	cod_sist_idr varchar(8) NULL,
+	denom_sist_idr varchar(32) NULL
+);
+
 CREATE TABLE dbiait_analysis.rel_sa_di (
 	idgis_sist_idr varchar(32) NULL,
 	cod_sist_idr varchar(8) NULL,

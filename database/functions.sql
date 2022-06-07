@@ -4246,6 +4246,7 @@ begin
 	DELETE FROM support_accorpamento_distribuzioni;
     -- update postgres index
 	DELETE FROM SUPPORT_CODICE_ATO_RETE_DISTRIBUZIONE;
+	DELETE FROM support_sistema_idrico_rel_sa_localita;
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -4296,21 +4297,34 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_codice_ato_rete_distribuzion
 begin
     DELETE FROM support_codice_ato_rete_distribuzione;
     INSERT INTO support_codice_ato_rete_distribuzione
-    WITH codice_ato_rete_distribuzione AS (
-        SELECT
-            right(aa.sist_acq_dep, 7) as ato,
-            idgis
-        FROM
-            acq_adduttrice aa
-		group by ato,idgis)
-    SELECT
-        codice_sistema_idrico,
-        denom_acq_sistema_idrico,
+    with codice_ato_rete_distribuzione as (
+    select
+        right(aa.sist_acq_dep, 7) as ato,
+        idgis
+    from
+        acq_adduttrice aa
+    group by
+        ato,
+        idgis)
+        select
+        cod_sist_idr,
+        denom_sist_idr,
         card.idgis
-    FROM
+    from
         codice_ato_rete_distribuzione card
-    JOIN tabella_sa_di_csv tsdc ON
-        tsdc.codice_ato_di = card.ato;
+    join rel_sa_di tsdc on
+        tsdc.codice_ato_rete_distrib = card.ato
+    join sistema_idrico on
+        tsdc.cod_sist_idr = sistema_idrico.idgis_sist_idr;
+
+    DELETE FROM support_sistema_idrico_rel_sa_localita;
+
+    INSERT INTO support_sistema_idrico_rel_sa_localita
+    select rsd.idgis_sist_idr, cod_sist_idr, denom_sist_idr
+    from rel_sa_di rsd
+    join sistema_idrico si on rsd.cod_sist_idr = si.idgis_sist_idr
+    group by 1,2,3;
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -4436,3 +4450,6 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
+
+
+
