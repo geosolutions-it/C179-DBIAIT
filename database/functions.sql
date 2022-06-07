@@ -366,6 +366,45 @@ BEGIN
 		AND r.geom && l.geom AND ST_INTERSECTS(r.geom, l.geom)
 	) t
 	GROUP BY id_localita_istat, codice_ato;
+
+    DELETE FROM INT_LOC_RETE;
+    INSERT INTO int_loc_rete
+    SELECT codice_ato, id_localita_istat, ST_AREA(l.geom) as area_localita, ST_AREA(ST_INTERSECTION(r.geom,l.geom)) as area_intersezione
+    FROM ACQ_RETE_DISTRIB r, LOCALITA l
+    WHERE r.D_GESTORE = 'PUBLIACQUA' AND COALESCE(r.D_AMBITO, 'AT3')='AT3'
+    AND r.D_STATO NOT IN ('IPR','IAC')
+    AND r.geom && l.geom AND ST_INTERSECTS(r.geom, l.geom)
+
+
+    DELETE FROM distrib_loc_serv_sistidr;
+
+    insert into distrib_loc_serv_sistidr
+    with codice_sistema_idrico as (
+    select
+        codice_ato_rete_distrib,
+        cod_sist_idr
+    from
+        rel_sa_di rsd
+    group by
+        1,
+        2)
+    select
+        csi.cod_sist_idr,
+        ilr.id_localita_istat,
+        sum(ilr.area_intersezione) as intersezione,
+        sum(100 * ilr.area_intersezione / ilr.area_localita) perc
+    from
+        codice_sistema_idrico csi
+    join int_loc_rete ilr
+    on
+        csi.codice_ato_rete_distrib = ilr.codice_ato
+    group by
+        1,
+        2
+
+
+
+
 	v_result:= TRUE;
     RETURN v_result;
 --EXCEPTION WHEN OTHERS THEN

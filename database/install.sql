@@ -1104,3 +1104,17 @@ ALTER TABLE dbiait_analysis.fognat_com_serv ALTER COLUMN id_comune_istat TYPE va
     count_cloratori INTEGER,
     lunghezza double precision
 );
+
+CREATE TABLE dbiait_analysis.int_loc_rete (
+	codice_ato varchar(20) NULL,
+	id_localita_istat varchar(20) NULL,
+	area_localita float8 NULL,
+	area_intersezione float8 NULL
+);
+
+CREATE TABLE dbiait_analysis.distrib_loc_serv_sistidr (
+	cod_sist_idr varchar(8) NULL,
+	id_localita_istat varchar(20) NULL,
+	intersezione float8 NULL,
+	perc float8 NULL
+);
