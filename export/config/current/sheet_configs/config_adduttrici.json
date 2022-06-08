@@ -32,7 +32,7 @@
                 { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
                 { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
                 { "name": "support_codice_ato_rete_distribuzione.codice_sistema_idrico","alias": "codice_sistema_idrico"},
-                { "name": "support_codice_ato_rete_distribuzione.denom_sist_idr","alias": "denom_acq_sistema_idrico"}
+                { "name": "support_codice_ato_rete_distribuzione.denom_acq_sistema_idrico","alias": "denom_acq_sistema_idrico"}
             ],
             "table": {
                 "name": "acq_adduttrice"
@@ -124,7 +124,7 @@
                 { "name": "utenze_distribuzioni_adduttrici.volume_erogato","alias": "volume_erogato"},
                 { "name": "utenze_distribuzioni_adduttrici.volume_fatturato","alias": "volume_fatturato"},
                 { "name": "support_codice_ato_rete_distribuzione.codice_sistema_idrico","alias": "codice_sistema_idrico"},
-                { "name": "support_codice_ato_rete_distribuzione.denom_sist_idr","alias": "denom_acq_sistema_idrico"}
+                { "name": "support_codice_ato_rete_distribuzione.denom_acq_sistema_idrico","alias": "denom_acq_sistema_idrico"}
             ],
             "table": {
                 "name": "a_acq_adduttrice"
@@ -192,6 +192,7 @@
         { "id": "118500", "transformation": { "func": "CONST",  "params":{"value":"A"}} },
         { "id": "40500", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
         { "id": "98900", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
+        { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom" } }},
 
         {"id":"112700", "transformation":{
          "func": "IF",

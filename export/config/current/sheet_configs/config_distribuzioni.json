@@ -43,7 +43,7 @@
         }
     ],
     "columns": [
-        { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistem_idrico" } }},
+        { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistem_idrico" }}},
         { "id": "113600", "transformation": { "func": "DIRECT", "params": { "field": "descrizione_rete_sistema_idrico" } }},
         { "id": "53700", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza" } }},
         { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm" } }},
@@ -81,10 +81,6 @@
         { "id": "114600", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
 
         {"id": "119000", "transformation": {"func": "CONST", "params": { "value": "B" }}},
-
-        { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistema_idrico" } }},
-        { "id": "113600", "transformation": { "func": "DIRECT", "params": { "field": "denom_acq_sistema_idrico" } }},
-
 
         {"id":"113700", "transformation":{
          "func": "IF",
