@@ -45,6 +45,10 @@
     "columns": [
         { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistem_idrico" }}},
         { "id": "113600", "transformation": { "func": "DIRECT", "params": { "field": "descrizione_rete_sistema_idrico" } }},
+
+        { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistem_idrico" } }},
+        { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "descrizione_rete_sistema_idrico" } }},
+
         { "id": "53700", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza" } }},
         { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm" } }},
         { "id": "54600", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
