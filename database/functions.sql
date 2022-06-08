@@ -373,11 +373,9 @@ BEGIN
     FROM ACQ_RETE_DISTRIB r, LOCALITA l
     WHERE r.D_GESTORE = 'PUBLIACQUA' AND COALESCE(r.D_AMBITO, 'AT3')='AT3'
     AND r.D_STATO NOT IN ('IPR','IAC')
-    AND r.geom && l.geom AND ST_INTERSECTS(r.geom, l.geom)
-
+    AND r.geom && l.geom AND ST_INTERSECTS(r.geom, l.geom);
 
     DELETE FROM distrib_loc_serv_sistidr;
-
     insert into distrib_loc_serv_sistidr
     with codice_sistema_idrico as (
     select
@@ -400,7 +398,7 @@ BEGIN
         csi.codice_ato_rete_distrib = ilr.codice_ato
     group by
         1,
-        2
+        2;
 
 	v_result:= TRUE;
     RETURN v_result;
@@ -410,9 +408,9 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Update fields (pop_ser_acq and perc_acq) into the POP_RES_COMUNE table 
+-- Update fields (pop_ser_acq and perc_acq) into the POP_RES_COMUNE table
 -- using information from DISTRIB_LOC_SERV and POP_RES_LOC
 -- (Ref. 2.4. POPOLAZIONE RESIDENTE ISTAT PER COMUNE)
 -- OUT: BOOLEAN
@@ -420,18 +418,18 @@ $$  LANGUAGE plpgsql
 -- 	select DBIAIT_ANALYSIS.populate_pop_res_comune();
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_pop_res_comune(
 ) RETURNS BOOLEAN AS $$
-DECLARE 
+DECLARE
 	v_result BOOLEAN := FALSE;
 BEGIN
     SET work_mem = '256MB';
 	-- reset dei dati
 	UPDATE POP_RES_COMUNE
-	SET 
+	SET
 		pop_ser_acq = NULL, --OK (1)
 		perc_acq = NULL,	--OK (1)
 		perc_fgn = NULL,	--OK
 		pop_ser_fgn = NULL, --OK
-		perc_dep = NULL,	--OK		
+		perc_dep = NULL,	--OK
 		pop_ser_dep = NULL, --OK
 		ut_abit_tot = NULL,
 		ut_abit_fgn = NULL,
@@ -441,13 +439,13 @@ BEGIN
 	UPDATE POP_RES_COMUNE
 	SET pop_ser_acq = t2.ab_srv_com, perc_acq = 100*t2.ab_srv_com/POP_RES_COMUNE.pop_res
 	FROM (
-		SELECT t.pro_com, sum(t.ab_srv_loc) as ab_srv_com 
+		SELECT t.pro_com, sum(t.ab_srv_loc) as ab_srv_com
 		FROM(
-			SELECT 
+			SELECT
 				--locistat_2_procom(loc_serv.id_localita_istat) as pro_com,
-				loc_pop.pro_com,	
-				loc_serv.perc_popsrv*loc_pop.popres/100 as ab_srv_loc 
-			FROM 
+				loc_pop.pro_com,
+				loc_serv.perc_popsrv*loc_pop.popres/100 as ab_srv_loc
+			FROM
 			DISTRIB_LOC_SERV loc_serv,
 			POP_RES_LOC loc_pop
 			WHERE loc_serv.id_localita_istat = loc_pop.id_localita_istat
@@ -523,7 +521,7 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate the DISTRIB_COM_SERV table 
+-- Populate the DISTRIB_COM_SERV table
 -- using information from ACQ_RETE_DISTRIB, LOCALITA and POP_RES_COMUNE
 -- (Ref. 2.5. PERCENTUALE POPOLAZIONE SERVITA SULLA RETE PER COMUNE)
 -- OUT: BOOLEAN
@@ -531,20 +529,20 @@ $$  LANGUAGE plpgsql
 -- 	select DBIAIT_ANALYSIS.populate_distr_com_serv();
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_distr_com_serv(
 ) RETURNS BOOLEAN AS $$
-DECLARE 
+DECLARE
 	v_result BOOLEAN := FALSE;
 BEGIN
     SET work_mem = '256MB';
 	-- reset dei dati
 	DELETE FROM DISTRIB_COM_SERV;
-	
+
 	-- populate table
 	INSERT INTO DISTRIB_COM_SERV(codice_opera, id_comune_istat, perc_popsrv)
 	select t1.codice_ato, t1.pro_com, 100*t1.pop_ser_acq/p.pop_res perc_acq
 	from (
-		select codice_ato, pro_com, CEIL(sum(popres*perc)) pop_ser_acq 
+		select codice_ato, pro_com, CEIL(sum(popres*perc)) pop_ser_acq
 		from(
-			SELECT codice_ato, l.pro_com::VARCHAR, popres, ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc 
+			SELECT codice_ato, l.pro_com::VARCHAR, popres, ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc
 			FROM ACQ_RETE_DISTRIB r, LOCALITA l
 			WHERE r.D_GESTORE = 'PUBLIACQUA' AND COALESCE(r.D_AMBITO, 'AT3')='AT3'
 				AND r.D_STATO NOT IN ('IPR','IAC')
@@ -593,9 +591,7 @@ BEGIN
         pop_res_comune prc
     join abitanti_serviti ass
         on
-        prc.pro_com = ass.pro_com::VARCHAR
-    where
-        ass.pro_com = '48021'
+        prc.pro_com = ass.pro_com::VARCHAR;
 
 	v_result:= TRUE;
     RETURN v_result;
@@ -921,7 +917,7 @@ BEGIN
 		v_column := '
 			0::BIT,
 			CASE 
-				WHEN a.id_sist_prot_cat IS NULL THEN 0::BIT 
+				WHEN a.id_sist_prot_cat IS NULL THEN 0::BIT
 				ELSE 1::BIT
 			END
 		';
@@ -931,88 +927,75 @@ BEGIN
 	end IF;	
 
 	EXECUTE 'DELETE FROM ' || v_table || ';';
-	
+
+
 	EXECUTE '
 		INSERT INTO ' || v_table || '(
 			 geom
 			,codice_ato
-			,idgis	
-			,idgis_rete	
-			,id_tipo_telecon			
-			,id_materiale	
+			,idgis
+			,idgis_rete
+			,id_tipo_telecon
+			,id_materiale
 			,id_conservazione
-			,diametro		
-			,anno			
-			,lunghezza		
-			,idx_materiale	
-			,idx_diametro	
-			,idx_anno		
-			,idx_lunghezza	
-			,' || v_field || '		
+			,diametro
+			,anno
+			,lunghezza
+			,idx_materiale
+			,idx_diametro
+			,idx_anno
+			,idx_lunghezza
+			,' || v_field || '
 		)
-		select
-            x.geom,
-            rsd.cod_sist_idr as codice_ato,
-            x.idgis,
-            x.idgis_rete,
-            1,
-            x.d_materiale_idr,
-            x.d_stato_cons,
-            x.d_diametro,
-			x.anno_messa_opera,
-			x.LUNGHEZZA,
-			x.idx_materiale,
-			x.idx_diametro,
-			x.idx_anno,
-			x.idx_lunghezza,
+		SELECT
+			a.geom,
+			a.codice_ato as codice_ato,
+			a.idgis as idgis,
+			r.idgis as idgis_rete,
+			1,
+			a.d_materiale as d_materiale_idr, -- da all_domains
+			a.d_stato_cons,
+			a.d_diametro,
+			CASE
+				WHEN a.data_esercizio IS NULL THEN 9999
+				ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER
+			END anno_messa_opera,
+			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
+			CASE
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				ELSE ''B''
+			END idx_materiale,
+			CASE
+				WHEN a.d_diametro IS NULL THEN ''X''
+				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_diametro,
+			CASE
+				WHEN a.data_esercizio IS NULL THEN ''X''
+				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_anno,
+			CASE
+				WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_lunghezza,
 			' || v_column || '
-        from
-            (SELECT
-                a.geom,
-                a.id_sist_idr,
-                a.idgis as idgis,
-                r.idgis as idgis_rete,
-                1,
-                a.d_materiale as d_materiale_idr, -- da all_domains
-                a.d_stato_cons,
-                a.d_diametro,
-                CASE
-                    WHEN a.data_esercizio IS NULL THEN 9999
-                    ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER
-                END anno_messa_opera,
-                ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
-                CASE
-                    WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
-                    ELSE ''B''
-                END idx_materiale,
-                CASE
-                    WHEN a.d_diametro IS NULL THEN ''X''
-                    WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-                    ELSE ''B''
-                END idx_diametro,
-                CASE
-                    WHEN a.data_esercizio IS NULL THEN ''X''
-                    WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-                    ELSE ''B''
-                END idx_anno,
-                CASE
-                    WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-                    ELSE ''B''
-                END idx_lunghezza,
-                ' || v_column || '
-            FROM
-                ACQ_CONDOTTA a,
-                ' || v_join_table || ' r
-            WHERE
-                (a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR
-                a.D_STATO IS NULL) AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) AND (a.D_GESTORE
-                = ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
-                AND a.id_rete=r.idgis
-            ) as x
-            LEFT JOIN (
-                SELECT idgis_sist_idr,cod_sist_idr FROM rel_sa_di GROUP BY 1,2
-            ) rsd ON x.id_sist_idr = rsd.idgis_sist_idr;
+		FROM
+			ACQ_CONDOTTA a,
+			' || v_join_table || ' r
+		WHERE
+			(a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR
+			a.D_STATO IS NULL) AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) AND (a.D_GESTORE
+			= ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
+			AND a.id_rete=r.idgis;
 		';
+
+	--D_MATERIALE convertito in D_MATERIALE_IDR
+	EXECUTE '
+        update ' || v_table || ' set codice_ato =rsd.cod_sist_idr
+        from (select cod_sist_idr, idgis_rete_distrib from rel_sa_di group by 1,2) as rsd
+        where ' || v_table || '.idgis_rete = rsd.idgis_rete_distrib
+	';
 
 	--D_MATERIALE convertito in D_MATERIALE_IDR
 	EXECUTE '
@@ -4333,6 +4316,13 @@ begin
     -- update postgres index
 	DELETE FROM SUPPORT_CODICE_ATO_RETE_DISTRIBUZIONE;
 	DELETE FROM support_sistema_idrico_rel_sa_localita;
+	DELETE FROM support_accorpamento_raw_distribuzioni;
+	DELETE FROM support_accorpamento_distribuzioni;
+	DELETE FROM int_loc_rete;
+	DELETE FROM distrib_loc_serv_sistidr;
+	DELETE FROM support_distrib_com_serv_sistidr;
+	DELETE FROM distrib_com_serv_sistidr;
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -4536,6 +4526,3 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
-
-
-
