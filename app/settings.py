@@ -19,7 +19,7 @@ import ldap
 from app.utils import TemplateWithDefaults
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
-APP_VERSION = '1.36.0 (08/03/2022)'
+APP_VERSION = '1.37.0 (13/06/2022)'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
