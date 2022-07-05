@@ -1182,9 +1182,10 @@ CREATE TABLE dbiait_analysis.rel_sa_di (
 );
 
 CREATE TABLE dbiait_analysis.sistema_idrico (
-	idgis_sist_idr varchar(8) NULL,
+	idgis_sist_idr varchar(32) NULL,
+	cod_sist_idr varchar(8) NULL,
 	denom_sist_idr varchar(32) NULL,
-	vol_imm float4 NULL,
+	vol_imm float8 NULL,
 	sn_strum_mis_press int4 NULL,
 	sn_strum_mis_port int4 NULL,
 	pres_es_max float8 NULL,
