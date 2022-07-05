@@ -1059,6 +1059,7 @@ CREATE TABLE DBIAIT_ANALYSIS.fognature_da_accodare(
 ALTER TABLE dbiait_analysis.fognat_com_serv ALTER COLUMN id_comune_istat TYPE varchar(8) USING id_comune_istat::varchar;
 
 CREATE TABLE dbiait_analysis.support_accorpamento_raw_distribuzioni (
+	idgis varchar(20) NULL,
 	codice_ato varchar(20) NULL,
 	denom varchar(40) NULL,
 	vol_immesso numeric(18, 6) NULL,
@@ -1100,18 +1101,18 @@ CREATE TABLE dbiait_analysis.support_accorpamento_raw_distribuzioni (
 );
 
 CREATE TABLE dbiait_analysis.support_accorpamento_distribuzioni(
-    codice_sistem_idrico  varchar(32),
-    descrizione_rete_sistema_idrico  varchar(32),
+    cod_sist_idr  varchar(32),
+    denom_sist_idr  varchar(32),
     d_stato  varchar(32),
     a_vol_immesso  varchar(32),
     a_ili  varchar(32),
     a_press_med  varchar(32),
-    vol_imm double precision,
+    vol_immesso double precision,
     sn_strum_mis_press double precision,
     sn_strum_mis_port double precision,
     pres_es_max double precision,
-    pres_es_min double precision,
     pres_es_med double precision,
+    pres_es_min double precision,
     a_pres_es_max varchar(1),
     a_pres_es_min varchar(1),
     data_agg timestamp with time zone,

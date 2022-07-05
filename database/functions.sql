@@ -949,9 +949,9 @@ BEGIN
 		)
 		SELECT
 			a.geom,
-			a.codice_ato as codice_ato,
+			r.codice_ato as codice_ato,
 			a.idgis as idgis,
-			r.idgis as idgis_rete,
+			a.id_sist_idr as idgis_rete,
 			1,
 			a.d_materiale as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,
@@ -990,12 +990,20 @@ BEGIN
 			AND a.id_rete=r.idgis;
 		';
 
-	--D_MATERIALE convertito in D_MATERIALE_IDR
-	EXECUTE '
-        update ' || v_table || ' set codice_ato =rsd.cod_sist_idr
-        from (select cod_sist_idr, idgis_rete_distrib from rel_sa_di group by 1,2) as rsd
-        where ' || v_table || '.idgis_rete = rsd.idgis_rete_distrib
-	';
+	--UPDATE CODICE ATO WITH CODICE SISTEMA IDRICO
+	IF v_table = 'DISTRIB_TRONCHI' THEN
+        EXECUTE '
+            update ' || v_table || ' set codice_ato =rsd.cod_sist_idr
+            from (select cod_sist_idr, idgis_sist_idr from rel_sa_di group by 1,2) as rsd
+            where ' || v_table || '.idgis_rete = rsd.idgis_sist_idr
+        ';
+    else
+        	EXECUTE 'UPDATE ' || v_table || '
+            SET codice_ato = t.codice_ato
+            FROM ACQ_ADDUTTRICE t
+            WHERE t.idgis = ' || v_table || '.idgis_rete
+		';
+	end IF;
 
 	--D_MATERIALE convertito in D_MATERIALE_IDR
 	EXECUTE '
@@ -1004,7 +1012,7 @@ BEGIN
 		FROM ALL_DOMAINS d
 		WHERE d.valore_gis = COALESCE(' || v_table || '.id_materiale,''NULL'') AND d.dominio_gis = ''D_MATERIALE_IDR''
 	';
-	
+
 	EXECUTE '
 		UPDATE ' || v_table || ' SET idx_materiale = ''X'' WHERE id_materiale = ''1''
 	';
@@ -1022,33 +1030,33 @@ BEGIN
 		UPDATE ' || v_table || '
 		SET pressione = 1::BIT WHERE EXISTS(
 			SELECT * FROM (
-				SELECT a.idgis 
-				FROM 
+				SELECT a.idgis
+				FROM
 					acq_distretto d,
 					acq_condotta a
-				WHERE d_tipo = ''MIS'' 
+				WHERE d_tipo = ''MIS''
 				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
 				GROUP by a.idgis having count(*)>0
-			) t WHERE t.idgis = ' || v_table || '.idgis		
+			) t WHERE t.idgis = ' || v_table || '.idgis
 		);
 	';
-	
+
 	-- Aggiornamento tipo telecontrollo
 	EXECUTE '
 		UPDATE ' || v_table || '
 		SET id_tipo_telecon = 2 WHERE EXISTS(
 			SELECT * FROM (
-				SELECT a.idgis 
-				FROM 
+				SELECT a.idgis
+				FROM
 					acq_distretto d,
 					acq_condotta a
-				WHERE d_tipo = ''MIS'' 
+				WHERE d_tipo = ''MIS''
 				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
 				AND d.d_tipo = ''MIS''
-			) t WHERE t.idgis = ' || v_table || '.idgis		
+			) t WHERE t.idgis = ' || v_table || '.idgis
 		);
 	';
-	
+
 	-- ACQ_COND_ALTRO
 	DELETE FROM ACQ_COND_ALTRO WHERE tipo_infr = v_tipo_infr;
 	EXECUTE '
@@ -3824,6 +3832,7 @@ begin
 
 	delete from utenze_distribuzioni_adduttrici;
     insert into utenze_distribuzioni_adduttrici
+
     with utenze_dirette as (
         SELECT
             id_ubic_contatore,
@@ -3892,12 +3901,24 @@ begin
             'APBHSUBDIS')
     ),
     n_allacci as (
-        select id_rete, count(*) as nr_allacci
+         	with lung_rete as (select
+			idgis_sist_idr,
+			ard.idgis,
+			d_gestore,
+			d_ambito,
+			d_stato
+		from
+			acq_rete_distrib ard
+		join rel_sa_di rsd
+		on
+			ard.idgis = rsd.idgis_rete_distrib
+		group by 1,2,3,4,5)
+   select ard.idgis, count(*) as nr_allacci
         FROM acq_allaccio aa
         join acq_cond_altro aca
         on aa.id_condotta =aca.idgis
-        join acq_rete_distrib ard
-        on ard.idgis=aca.id_rete
+        join lung_rete ard
+        on ard.idgis_sist_idr=aca.id_rete
         WHERE ard.d_gestore = 'PUBLIACQUA' AND ard.d_ambito IN ('AT3', NULL) AND ard.d_stato NOT IN ('IPR','IAC')
         group by 1
     ),
@@ -3945,7 +3966,7 @@ begin
 	LEFT JOIN volume_utenze vu on
 		vu.id_ubic_contatore = ua.id_ubic_contatore
 	LEFT JOIN n_allacci nal on
-		nal.id_rete = ard.idgis
+		nal.idgis = ard.idgis
 	GROUP BY
 		ua.acq_idrete, nr_allacci;
 
@@ -4379,11 +4400,13 @@ begin
         idgis
     from
         acq_adduttrice aa
+    where
+        acq_adduttrice.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
     group by
         ato,
         idgis)
-        select
-        cod_sist_idr,
+    select
+        sistema_idrico.cod_sist_idr,
         denom_sist_idr,
         card.idgis
     from
@@ -4391,14 +4414,14 @@ begin
     join rel_sa_di tsdc on
         tsdc.codice_ato_rete_distrib = card.ato
     join sistema_idrico on
-        tsdc.cod_sist_idr = sistema_idrico.idgis_sist_idr;
+        tsdc.cod_sist_idr = sistema_idrico.cod_sist_idr;
 
     DELETE FROM support_sistema_idrico_rel_sa_localita;
 
     INSERT INTO support_sistema_idrico_rel_sa_localita
-    select rsd.idgis_sist_idr, cod_sist_idr, denom_sist_idr
+    select rsd.idgis_sist_idr, rsd.cod_sist_idr, denom_sist_idr
     from rel_sa_di rsd
-    join sistema_idrico si on rsd.cod_sist_idr = si.idgis_sist_idr
+    join sistema_idrico si on rsd.cod_sist_idr = si.cod_sist_idr
     group by 1,2,3;
 
 	RETURN TRUE;
@@ -4421,7 +4444,34 @@ begin
     DELETE FROM support_accorpamento_raw_distribuzioni;
 
     INSERT INTO support_accorpamento_raw_distribuzioni
-    select
+    with raw_lunghezza as (
+select idgis_rete_distrib, tipo_infr, lunghezza, lunghezza_tlc from (
+select
+	idgis_sist_idr,
+	tipo_infr,
+	lunghezza,
+	lunghezza_tlc
+	from (
+	select
+		idgis_sist_idr
+	from
+		acq_rete_distrib ard
+	join rel_sa_di rsd
+	on
+		ard.idgis = rsd.idgis_rete_distrib
+	where
+		ard.d_gestore = 'PUBLIACQUA'
+		and ard.d_ambito in ('AT3', null)
+		and ard.d_stato not in ('IPR', 'IAC')
+	group by
+		1) rigs
+join acq_lunghezza_rete on
+	rigs.idgis_sist_idr = acq_lunghezza_rete.idgis
+where codice_ato ='DISA001'
+) xx
+join rel_sa_di on rel_sa_di.idgis_sist_idr = xx.idgis_sist_idr
+)
+select
     	"acq_rete_distrib"."idgis" "idgis",
         "acq_rete_distrib"."codice_ato" "codice_ato",
         "acq_rete_distrib"."denom" "denom",
@@ -4445,7 +4495,7 @@ begin
         "acq_auth_rete_dist"."nr_rip_rete" "nr_rip_rete",
         cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_press") as INTEGER) "sn_strum_mis_press",
         cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_port") as INTEGER) "sn_strum_mis_port",
-        cast("acq_lunghezza_rete"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
+        cast("raw_lunghezza"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dirette" "nr_utenze_dirette",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dir_dom_e_residente" "nr_utenze_dir_dom_e_residente",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dir_residente" "nr_utenze_dir_residente",
@@ -4460,13 +4510,13 @@ begin
         "stats_cloratore"."counter" "count_cloratori",
         "tabella_sa_di_csv"."codice_sistema_idrico" "codice_sistema_idrico",
         "tabella_sa_di_csv"."denom_acq_sistema_idrico" "denom_acq_sistema_idrico",
-        cast("acq_lunghezza_rete"."lunghezza" as numeric(18, 6)) "lunghezza"
+        cast("raw_lunghezza"."lunghezza" as numeric(18, 6)) "lunghezza"
     from
         "acq_rete_distrib" "acq_rete_distrib"
     left join "acq_auth_rete_dist" "acq_auth_rete_dist" on
         "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib"
-    left join "acq_lunghezza_rete" "acq_lunghezza_rete" on
-        "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis"
+    left join "raw_lunghezza" "raw_lunghezza" on
+        "raw_lunghezza"."idgis_rete_distrib" = "acq_rete_distrib"."idgis"
     left join "acq_vol_utenze" "acq_vol_utenze" on
         "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato"
     left join "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on
@@ -4502,7 +4552,7 @@ begin
         SUM(aa.sn_ili) as "sn_ili",
         SUM(aa.nr_rip_all) as "nr_rip_all",
         SUM(aa.nr_rip_rete) as "nr_rip_rete",
-        SUM(aa.lunghezza_tlc) as "lunghezza_tlc",
+        aa.lunghezza_tlc as "lunghezza_tlc",
         SUM(aa.nr_utenze_dirette) as "nr_utenze_dirette",
         SUM(aa.nr_utenze_dir_dom_e_residente) as "nr_utenze_dir_dom_e_residente",
         SUM(aa.nr_utenze_dir_residente) as "nr_utenze_dir_residente",
@@ -4515,11 +4565,11 @@ begin
         SUM(aa.volume_fatturato) as "volume_fatturato",
         SUM(aa.nr_allacci) as "nr_allacci",
         SUM(aa.count_cloratori) as "count_cloratori",
-        SUM(aa.lunghezza) as "lunghezza"
+        aa.lunghezza
     from support_accorpamento_raw_distribuzioni as aa
     join rel_sa_di on aa.idgis = rel_sa_di.idgis_rete_distrib
-    join sistema_idrico on sistema_idrico.idgis_sist_idr = rel_sa_di.cod_sist_idr
-    group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14;
+    join sistema_idrico on sistema_idrico.cod_sist_idr = rel_sa_di.cod_sist_idr
+    group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,21,34;
 
 	RETURN TRUE;
 END;
