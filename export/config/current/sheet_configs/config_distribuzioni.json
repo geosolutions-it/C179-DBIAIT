@@ -4,8 +4,8 @@
     "sources": [
         {
             "fields": [
-                {"name": "support_accorpamento_distribuzioni.cod_sist_idr", "alias": "cod_sist_idr"},
-                {"name": "support_accorpamento_distribuzioni.denom_sist_idr", "alias": "denom_sist_idr"},
+                {"name": "support_accorpamento_distribuzioni.codice_sistem_idrico", "alias": "codice_sistem_idrico"},
+                {"name": "support_accorpamento_distribuzioni.descrizione_rete_sistema_idrico", "alias": "descrizione_rete_sistema_idrico"},
                 {"name": "support_accorpamento_distribuzioni.d_stato", "alias": "d_stato"},
                 {"name": "support_accorpamento_distribuzioni.sn_strum_mis_press", "alias": "sn_strum_mis_press"},
                 {"name": "support_accorpamento_distribuzioni.sn_strum_mis_port", "alias": "sn_strum_mis_port"},
@@ -13,13 +13,13 @@
                 {"name": "support_accorpamento_distribuzioni.a_vol_immesso", "alias": "a_vol_immesso"},
                 {"name": "support_accorpamento_distribuzioni.a_ili", "alias": "a_ili"},
                 {"name": "support_accorpamento_distribuzioni.a_press_med", "alias": "a_press_med"},
-                {"name": "support_accorpamento_distribuzioni.vol_immesso", "alias": "vol_immesso"},
+                {"name": "support_accorpamento_distribuzioni.vol_imm", "alias": "vol_imm"},
                 {"name": "support_accorpamento_distribuzioni.vol_imm_terzi", "alias": "vol_imm_terzi"},
                 {"name": "support_accorpamento_distribuzioni.vol_ceduto", "alias": "vol_ceduto"},
                 {"name": "support_accorpamento_distribuzioni.sn_ili", "alias": "sn_ili"},
-                {"name": "support_accorpamento_distribuzioni.pres_es_max", "alias": "pres_es_max", "cast": "NUMERIC(18,6)"},
-                {"name": "support_accorpamento_distribuzioni.pres_es_min", "alias": "pres_es_min", "cast": "NUMERIC(18,6)"},
-                {"name": "support_accorpamento_distribuzioni.pres_es_med", "alias": "pres_es_med", "cast": "NUMERIC(18,6)"},
+                {"name": "support_accorpamento_distribuzioni.pres_es_max", "alias": "pres_es_max"},
+                {"name": "support_accorpamento_distribuzioni.pres_es_min", "alias": "pres_es_min"},
+                {"name": "support_accorpamento_distribuzioni.pres_es_med", "alias": "pres_es_med"},
                 {"name": "support_accorpamento_distribuzioni.nr_rip_all", "alias": "nr_rip_all"},
                 {"name": "support_accorpamento_distribuzioni.nr_rip_rete", "alias": "nr_rip_rete"},
                 {"name": "support_accorpamento_distribuzioni.lunghezza_tlc", "alias": "lunghezza_tlc"},
@@ -43,12 +43,18 @@
         }
     ],
     "columns": [
-        { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "cod_sist_idr" }}},
-        { "id": "113600", "transformation": { "func": "DIRECT", "params": { "field": "denom_sist_idr" } }},
+        { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistem_idrico" }}},
+        { "id": "113600", "transformation": { "func": "DIRECT", "params": { "field": "descrizione_rete_sistema_idrico" } }},
 
-        { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "cod_sist_idr" } }},
-        { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom_sist_idr" } }},
+        { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "codice_sistem_idrico" } }},
+        { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "descrizione_rete_sistema_idrico" } }},
 
+        { "id": "53700", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza" } }},
+        { "id": "54500", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm" } }},
+        { "id": "54600", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
+        { "id": "54700", "transformation": { "func": "DIRECT", "params": { "field": "volume_erogato" } }},
+        { "id": "54800", "transformation": { "func": "DIRECT", "params": { "field": "vol_imm_terzi" } }},
+        { "id": "54900", "transformation": { "func": "DIRECT", "params": { "field": "vol_ceduto" } }},
 		{ "id": "55000", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_press" } }},
 		{ "id": "55100", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" } }},
         { "id": "55300", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } }},
@@ -59,7 +65,7 @@
         { "id": "55800", "transformation": { "func": "CONST", "params": { "value": "A" }} },
         { "id": "55900", "transformation": { "func": "CONST", "params": { "value": "A" }} },
         { "id": "56000", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } }},
-
+        { "id": "99100", "transformation": { "func": "DIRECT", "params": { "field": "nr_allacci" } }},
         { "id": "99200", "transformation": { "func": "DIRECT", "params": { "field": "sn_ili" } }},
         { "id": "99300", "transformation": { "func": "DOMAIN", "params": { "field": "a_ili", "domain_name": "D_AFFIDABILITA" } }},
         { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
@@ -72,155 +78,8 @@
         { "id": "100100", "transformation": { "func": "CONST", "params": { "value": "A" }} },
 		{ "id": "100200", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_all" } }},
 		{ "id": "100300", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_rete" } }},
+        { "id": "100400", "transformation": { "func": "DIRECT", "params": { "field": "nr_utenze_misuratore" } }},
         { "id": "118900", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
-
-        {"id":"55500", "transformation":{
-         "func": "IF",
-         "params": {
-             "field": "a_vol_immesso",
-             "cond": {
-                     "operator": "=",
-                     "value": null,
-                     "result": 0,
-                     "else": "{ 55500 }"
-                 }
-             }
-          }
-         },
-        {"id":"99400", "transformation":{
-         "func": "IF",
-         "params": {
-             "field": "lunghezza_tlc",
-             "cond": {
-                     "operator": "=",
-                     "value": null,
-                     "result": 0,
-                     "else": "{ lunghezza_tlc }"
-                 }
-             }
-          }
-         },
-        {"id":"118900", "transformation":{
-         "func": "IF",
-         "params": {
-             "field": "lunghezza_tlc",
-             "cond": {
-                     "operator": "=",
-                     "value": null,
-                     "result": 0,
-                     "else": "{ lunghezza_tlc }"
-                 }
-             }
-          }
-         },
-
-        {"id":"99100", "transformation":{
-         "func": "IF",
-         "params": {
-             "field": "nr_allacci",
-             "cond": {
-                     "operator": "=",
-                     "value": null,
-                     "result": 0,
-                     "else": "{ nr_allacci }"
-                 }
-             }
-          }
-         },
-
-        {"id":"100400", "transformation":{
-         "func": "IF",
-         "params": {
-             "field": "nr_utenze_misuratore",
-             "cond": {
-                     "operator": "=",
-                     "value": null,
-                     "result": 0,
-                     "else": "{ nr_utenze_misuratore }"
-                 }
-             }
-          }
-         },
-
-       {"id":"53700", "transformation":{
-               "func": "IF",
-               "params": {
-                   "field": "lunghezza",
-                   "cond": {
-                           "operator": "=",
-                           "value": null,
-                           "result": 0,
-                           "else": "{ lunghezza }"
-                       }
-                   }
-                }
-               },
-       {"id":"54500", "transformation":{
-               "func": "IF",
-               "params": {
-                   "field": "vol_immesso",
-                   "cond": {
-                           "operator": "=",
-                           "value": null,
-                           "result": 0,
-                           "else": "{ vol_immesso }"
-                       }
-                   }
-                }
-               },
-       {"id":"54600", "transformation":{
-               "func": "IF",
-               "params": {
-                   "field": "volume_erogato",
-                   "cond": {
-                           "operator": "=",
-                           "value": null,
-                           "result": 0,
-                           "else": "{ volume_erogato }"
-                       }
-                   }
-                }
-               },
-       {"id":"54700", "transformation":{
-               "func": "IF",
-               "params": {
-                   "field": "volume_erogato",
-                   "cond": {
-                           "operator": "=",
-                           "value": null,
-                           "result": 0,
-                           "else": "{ volume_erogato }"
-                       }
-                   }
-                }
-               },
-       {"id":"54800", "transformation":{
-               "func": "IF",
-               "params": {
-                   "field": "vol_imm_terzi",
-                   "cond": {
-                           "operator": "=",
-                           "value": null,
-                           "result": 0,
-                           "else": "{ vol_imm_terzi }"
-                       }
-                   }
-                }
-               },
-       {"id":"54900", "transformation":{
-               "func": "IF",
-               "params": {
-                   "field": "vol_ceduto",
-                   "cond": {
-                           "operator": "=",
-                           "value": null,
-                           "result": 0,
-                           "else": "{ vol_ceduto }"
-                       }
-                   }
-                }
-               },
-
 
 
         { "id": "114600", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
