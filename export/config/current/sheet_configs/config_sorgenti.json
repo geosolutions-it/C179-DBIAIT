@@ -39,7 +39,7 @@
             {"name":"acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
+            {"name":"acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
             {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"},
@@ -69,17 +69,6 @@
                "on":[
                   "acq_auth_capt.id_captazione",
                   "acq_captazione.idgis"
-               ],
-               "cond":"="
-            },
-            {
-               "type":"left",
-               "table":{
-                  "name":"sorgenti_inpotab"
-               },
-               "on":[
-                  "sorgenti_inpotab.ids_codice",
-                  "acq_captazione.codice_ato"
                ],
                "cond":"="
             },
@@ -156,7 +145,7 @@
             {"name":"a_acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            {"name":"sorgenti_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
+            {"name":"a_acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             { "name": "localita.denominazi", "alias": "denominazi" },
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
             {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"},
@@ -186,17 +175,6 @@
                "on":[
                   "acq_auth_capt.id_captazione",
                   "a_acq_captazione.idgis"
-               ],
-               "cond":"="
-            },
-            {
-               "type":"left",
-               "table":{
-                  "name":"sorgenti_inpotab"
-               },
-               "on":[
-                  "sorgenti_inpotab.ids_codice",
-                  "a_acq_captazione.codice_ato"
                ],
                "cond":"="
             },

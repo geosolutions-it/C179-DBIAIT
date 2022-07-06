@@ -44,7 +44,7 @@
                 {"name": "acq_captazione.data_agg","alias": "data_agg"},
                 {"name": "acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-                {"name": "laghi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
+                {"name": "acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT", "cast": "INTEGER"},
@@ -77,17 +77,6 @@
                         "acq_capt_conces.id_captazione"
                     ],
                     "cond": "="
-                },
-                {
-                   "type":"left",
-                   "table":{
-                      "name":"laghi_inpotab"
-                   },
-                   "on":[
-                      "laghi_inpotab.ids_codice",
-                      "acq_captazione.codice_ato"
-                   ],
-                   "cond":"="
                 },
                 {
                     "type": "left",
@@ -156,7 +145,7 @@
                 {"name": "a_acq_captazione.data_agg","alias": "data_agg"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-                {"name":"laghi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
+                {"name":"a_acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT", "cast": "INTEGER"},
@@ -189,17 +178,6 @@
                         "a_acq_capt_conces.id_captazione"
                     ],
                     "cond": "="
-                },
-                {
-                   "type":"left",
-                   "table":{
-                      "name":"laghi_inpotab"
-                   },
-                   "on":[
-                      "laghi_inpotab.ids_codice",
-                      "a_acq_captazione.codice_ato"
-                   ],
-                   "cond":"="
                 },
                 {
                     "type": "left",
