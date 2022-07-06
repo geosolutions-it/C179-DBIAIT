@@ -4401,7 +4401,7 @@ begin
     from
         acq_adduttrice aa
     where
-        acq_adduttrice.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+        aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
     group by
         ato,
         idgis)
