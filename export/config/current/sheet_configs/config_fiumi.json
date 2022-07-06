@@ -47,7 +47,7 @@
                 {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
 				{"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT", "cast": "INTEGER"},
-                {"name": "fiumi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
+                {"name": "acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT", "cast": "INTEGER"},
@@ -80,17 +80,6 @@
                         "acq_capt_conces.id_captazione"
                     ],
                     "cond": "="
-                },
-                {
-                   "type":"left",
-                   "table":{
-                      "name":"fiumi_inpotab"
-                   },
-                   "on":[
-                      "fiumi_inpotab.ids_codice",
-                      "acq_captazione.codice_ato"
-                   ],
-                   "cond":"="
                 },
                 {
                     "type": "left",
@@ -162,7 +151,7 @@
                 {"name": "a_acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "a_acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
 				{"name": "a_acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT", "cast": "INTEGER"},
-                {"name": "fiumi_inpotab.ids_codice", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
+                {"name": "a_acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT", "cast": "INTEGER"},
@@ -195,17 +184,6 @@
                         "a_acq_capt_conces.id_captazione"
                     ],
                     "cond": "="
-                },
-                {
-                   "type":"left",
-                   "table":{
-                      "name":"fiumi_inpotab"
-                   },
-                   "on":[
-                      "fiumi_inpotab.ids_codice",
-                      "a_acq_captazione.codice_ato"
-                   ],
-                   "cond":"="
                 },
                 {
                     "type": "left",
