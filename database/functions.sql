@@ -4445,33 +4445,38 @@ begin
 
     INSERT INTO support_accorpamento_raw_distribuzioni
     with raw_lunghezza as (
-select idgis_rete_distrib, tipo_infr, lunghezza, lunghezza_tlc from (
-select
-	idgis_sist_idr,
-	tipo_infr,
-	lunghezza,
-	lunghezza_tlc
-	from (
-	select
-		idgis_sist_idr
-	from
-		acq_rete_distrib ard
-	join rel_sa_di rsd
-	on
-		ard.idgis = rsd.idgis_rete_distrib
-	where
-		ard.d_gestore = 'PUBLIACQUA'
-		and ard.d_ambito in ('AT3', null)
-		and ard.d_stato not in ('IPR', 'IAC')
-	group by
-		1) rigs
-join acq_lunghezza_rete on
-	rigs.idgis_sist_idr = acq_lunghezza_rete.idgis
-) xx
-join rel_sa_di on rel_sa_di.idgis_sist_idr = xx.idgis_sist_idr
-)
-select
-    	"acq_rete_distrib"."idgis" "idgis",
+        select
+            idgis_rete_distrib,
+            tipo_infr,
+            lunghezza,
+            lunghezza_tlc
+        from
+            (
+            select
+                idgis_rete_distrib,
+                tipo_infr,
+                lunghezza,
+                lunghezza_tlc
+            from
+                (
+                select
+                    idgis_rete_distrib
+                from
+                    acq_rete_distrib ard
+                join rel_sa_di rsd
+            on
+                    ard.idgis = rsd.idgis_rete_distrib
+                where
+                    ard.d_gestore = 'PUBLIACQUA'
+                    and ard.d_ambito in ('AT3', null)
+                    and ard.d_stato not in ('IPR', 'IAC')
+                group by
+                    1) rigs
+            join acq_lunghezza_rete on
+                rigs.idgis_rete_distrib = acq_lunghezza_rete.idgis
+        ) xx)
+    select
+        "acq_rete_distrib"."idgis" "idgis",
         "acq_rete_distrib"."codice_ato" "codice_ato",
         "acq_rete_distrib"."denom" "denom",
         cast("acq_rete_distrib"."vol_immesso" as numeric(18, 6)) "vol_immesso",
