@@ -4467,7 +4467,6 @@ select
 		1) rigs
 join acq_lunghezza_rete on
 	rigs.idgis_sist_idr = acq_lunghezza_rete.idgis
-where codice_ato ='DISA001'
 ) xx
 join rel_sa_di on rel_sa_di.idgis_sist_idr = xx.idgis_sist_idr
 )
