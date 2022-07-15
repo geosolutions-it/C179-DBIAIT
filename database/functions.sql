@@ -3180,7 +3180,13 @@ DECLARE
 		'acq_accumulo'
 	];
 	v_tables VARCHAR[] := ARRAY[
-		'FIUMI_INRETI'
+		'FIUMI_INRETI',
+		'LAGHI_INRETI',
+		'POZZI_INRETI',
+		'SORGENTI_INRETI',
+		'POTAB_INRETI',
+		'ADDUT_INRETI',
+		'ACCUMULI_INRETI'
 	];
 
 	v_touch_flt VARCHAR[] := ARRAY[
@@ -3212,13 +3218,13 @@ DECLARE
 		'ids_codice, ids_codice_rete, id_gestore_rete'
 	];
 	v_filters VARCHAR[] := ARRAY[
-		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=0',
-		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=1',
-		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3 AND coalesce(t.d_comparto,''?'') != ''DEP''',
-		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=4',
-		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
-		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
-		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')'
+		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=0',
+		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=1',
+		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3 AND coalesce(t.d_comparto,''?'') != ''DEP''',
+		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=4',
+		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
+		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
+		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')'
 	];
 BEGIN
 
@@ -3232,21 +3238,21 @@ BEGIN
             EXECUTE '
                 INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
                 with unique_ato as (
+                    select
+                        distinct t.codice_ato
+                    from
+                        ' || v_in_tables[v_t] || ' t
+                    where
+                        ' || v_filters[v_t] || '
+                )
                 select
-                    distinct t.codice_ato
-                from
-                    ' || v_in_tables[v_t] || ' t
-                where
-                    ' || v_filters[v_t] || ')
-                select
-                    ' || v_in_fields[v_t] || '
+                    distinct ' || v_in_fields[v_t] || '
                 from
                     unique_ato bb
                 join ' || v_in_tables[v_t] || ' aa on
                     aa.codice_ato = bb.codice_ato
                 join rel_sa_di rsd on
-                    aa.id_sist_idr = rsd.idgis_sist_idr
-                group by 1,2,3';
+                    aa.id_sist_idr = rsd.idgis_sist_idr';
         else
             EXECUTE '
 				INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
@@ -3260,9 +3266,9 @@ BEGIN
 	                    aa.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND aa.d_gestore = ''PUBLIACQUA'' AND aa.d_ambito IN (''AT3'', NULL)
 	            )
 	            select
-	                ua.codice_ato,
+	                distinct (ua.codice_ato,
 	                rsd.cod_sist_idr,
-	                3
+	                3)
 	            from unique_ato ua
 	            join rel_sa_di rsd on rsd.codice_ato_rete_distrib = ua.cod_ato_rete_distrib
 	            ';
@@ -3271,20 +3277,20 @@ BEGIN
 
 		--LOG ANOMALIE
 		DELETE FROM LOG_STANDALONE WHERE alg_name = v_tables[v_t];
-	
+
 		-- Elementi che intersecano piu' di una rete
 		EXECUTE '
 		INSERT INTO LOG_STANDALONE (id, alg_name, description)
-		SELECT idgis, $1, ''Elemento intersecante piu'''' ('' || count(0) || '') di una rete'' 
+		SELECT idgis, $1, ''Elemento intersecante piu'''' ('' || count(0) || '') di una rete''
 		FROM (
 			SELECT t.idgis
 			FROM ' || v_in_tables[v_t] || ' t
-			LEFT JOIN acq_rete_distrib r 
+			LEFT JOIN acq_rete_distrib r
 				ON r.geom&&t.geom AND ST_INTERSECTS(r.geom, t.geom) ' || v_touch_flt[v_t] || '
 			WHERE r.codice_ato is NOT NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')
-			' || v_filters[v_t] || '
+			AND ' || v_filters[v_t] || '
 		) t2 group by t2.idgis having count(0) > 1;' USING v_tables[v_t];
-		
+
 		-- Elementi che non intersecano alcuna rete
 		EXECUTE '
 		INSERT INTO LOG_STANDALONE (id, alg_name, description)
@@ -3294,7 +3300,7 @@ BEGIN
 		    SELECT TRUE from ' || v_tables[v_t] || ' ai
             where t.codice_ato = ai.ids_codice
 		)
-		' || v_filters[v_t] USING v_tables[v_t];
+		AND ' || v_filters[v_t] USING v_tables[v_t];
 
 	END LOOP;
 
