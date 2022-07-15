@@ -346,9 +346,7 @@
           }
          },
 		{ "id": "116700", "transformation": { "func": "DIRECT", "params": { "field": "vol_acq_terzi" } }},
-		{ "id": "118700", "transformation": { "func": "DIRECT", "params": { "field": "a_vol_acq_terzi" } }},
 		{ "id": "116800", "transformation": { "func": "DIRECT", "params": { "field": "vol_ced_terzi" } }},
-		{ "id": "118800", "transformation": { "func": "DIRECT", "params": { "field": "a_vol_ced_terzi" } }},
         { "id": "39400", "transformation": { "func": "DIRECT",  "params": { "field": "codice_ato" } }},
         { "id": "39500", "transformation": { "func": "DIRECT",  "params": { "field": "denom" } }},
         { "id": "39600", "transformation": { "func": "DIRECT",  "params": { "field": "portata_media" } }},
@@ -358,7 +356,10 @@
         { "id": "112600", "transformation": { "func": "DIRECT",  "params": { "field": "denom_acq_sistema_idrico" } }},
 
         { "id": "117690", "transformation": { "func": "DIRECT",  "params": { "field": "vol_immesso" } }},
-        { "id": "118490", "transformation": { "func": "DIRECT",  "params": { "field": "a_vol_immesso" } }},
+
+        {"id":"118490", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_immesso", "domain_name": "D_AFFIDABILITA"}}},
+        {"id":"118700", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_acq_terzi", "domain_name": "D_AFFIDABILITA"}}},
+        {"id":"118800", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_ced_terzi", "domain_name": "D_AFFIDABILITA"}}},
 
         {"id":"39700", "transformation":{
          "func": "IF",

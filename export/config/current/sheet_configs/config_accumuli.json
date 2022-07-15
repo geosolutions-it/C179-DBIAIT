@@ -28,8 +28,8 @@
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
-                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
-                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita_acq_accumulo.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita_acq_accumulo.denom_sist_idr", "alias": "denom_sist_idr"},
                 { "name": "localita.denominazi", "alias": "denominazi"}
             ],
             "table": {
@@ -50,11 +50,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "support_sistema_idrico_rel_sa_localita"
+                        "name": "support_sistema_idrico_rel_sa_localita_acq_accumulo"
                     },
                     "on": [
                         "acq_accumulo.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                        "support_sistema_idrico_rel_sa_localita_acq_accumulo.idgis_sist_idr"
                     ],
                     "cond": "="
                 },
@@ -98,8 +98,8 @@
                 { "name": "acq_auth_accum.d_tipo_cloraz", "alias": "d_tipo_cloraz"},
                 { "name": "acq_auth_accum.anno_instal_clor", "alias": "anno_instal_clor"},
                 { "name": "acq_auth_accum.anno_ristr_clor", "alias": "anno_ristr_clor"},
-                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
-                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita_acq_accumulo.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "support_sistema_idrico_rel_sa_localita_acq_accumulo.denom_sist_idr", "alias": "denom_sist_idr"},
                 { "name": "localita.denominazi", "alias": "denominazi"}
             ],
             "table": {
@@ -120,11 +120,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "support_sistema_idrico_rel_sa_localita"
+                        "name": "support_sistema_idrico_rel_sa_localita_acq_accumulo"
                     },
                     "on": [
                         "a_acq_accumulo.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                        "support_sistema_idrico_rel_sa_localita_acq_accumulo.idgis_sist_idr"
                     ],
                     "cond": "="
                 },

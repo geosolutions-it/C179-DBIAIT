@@ -124,6 +124,12 @@
         { "id": "68200", "transformation": { "func": "DIRECT", "params": { "field": "denom" } } },
 
         { "id": "119300", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
+
+        { "id": "117300", "transformation": { "func": "CONST",  "params":{"value":"0"}} },
+        { "id": "117400", "transformation": { "func": "CONST",  "params":{"value":"0"}} },
+        { "id": "117500", "transformation": { "func": "CONST",  "params":{"value":"0"}} },
+
+
         { "id": "117300", "transformation": { "func": "DIRECT",  "params": { "field": "utenze_totali" } }},
         { "id": "117400", "transformation": { "func": "DIRECT",  "params": { "field": "nr_utenze_industriali" } }},
         { "id": "117500", "transformation": { "func": "DIRECT",  "params": { "field": "volume_utenze_industriali" } }},

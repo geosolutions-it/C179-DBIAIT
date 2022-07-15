@@ -997,12 +997,6 @@ BEGIN
             from (select cod_sist_idr, idgis_sist_idr from rel_sa_di group by 1,2) as rsd
             where ' || v_table || '.idgis_rete = rsd.idgis_sist_idr
         ';
-    else
-        	EXECUTE 'UPDATE ' || v_table || '
-            SET codice_ato = t.codice_ato
-            FROM ACQ_ADDUTTRICE t
-            WHERE t.idgis = ' || v_table || '.idgis_rete
-		';
 	end IF;
 
 	--D_MATERIALE convertito in D_MATERIALE_IDR
@@ -3186,13 +3180,7 @@ DECLARE
 		'acq_accumulo'
 	];
 	v_tables VARCHAR[] := ARRAY[
-		'FIUMI_INRETI', 
-		'LAGHI_INRETI',
-		'POZZI_INRETI',
-		'SORGENTI_INRETI',
-		'POTAB_INRETI',
-		'ADDUT_INRETI',
-		'ACCUMULI_INRETI'
+		'FIUMI_INRETI'
 	];
 
 	v_touch_flt VARCHAR[] := ARRAY[
@@ -3206,13 +3194,13 @@ DECLARE
 	];
 
 	v_in_fields VARCHAR[] := ARRAY[
+		'aa.codice_ato, rsd.cod_sist_idr, 3',
+		'aa.codice_ato, rsd.cod_sist_idr, 3',
+		'aa.codice_ato, rsd.cod_sist_idr, 3',
+		'aa.codice_ato, rsd.cod_sist_idr, 3',
+		'aa.codice_ato, rsd.cod_sist_idr, 3',
 		't.codice_ato, r.codice_ato, 3',
-		't.codice_ato, r.codice_ato, 3',
-		't.codice_ato, r.codice_ato, 3',
-		't.codice_ato, r.codice_ato, 3',
-		't.codice_ato, r.codice_ato, 3',
-		't.codice_ato, r.codice_ato, 3',
-		't.codice_ato, r.codice_ato, 3'
+		'aa.codice_ato, rsd.cod_sist_idr, 3'
 	];
 	v_out_fields VARCHAR[] := ARRAY[
 		'ids_codice, ids_codice_rete, id_gestore_rete',
@@ -3229,26 +3217,58 @@ DECLARE
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3 AND coalesce(t.d_comparto,''?'') != ''DEP''',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=4',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
-		'',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
 		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')'
 	];
 BEGIN
-	
+
 	FOR v_t IN array_lower(v_tables,1) .. array_upper(v_tables,1)
 	LOOP
 		-- Cleanup destination table
 		EXECUTE 'DELETE FROM ' || v_tables[v_t] || ';';
 
 		--Populate destination table
-		EXECUTE '
-		INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
-		SELECT DISTINCT ' || v_in_fields[v_t] || ' 
-		FROM ' || v_in_tables[v_t] || ' t
-		LEFT join acq_rete_distrib r
-		  ON r.geom&&t.geom AND ST_INTERSECTS(r.geom,t.geom) ' || v_touch_flt[v_t] || '
-		WHERE r.codice_ato is NOT NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')
-		' || v_filters[v_t];
-		
+	    IF v_tables[v_t] != 'ADDUT_INRETI' THEN
+            EXECUTE '
+                INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
+                with unique_ato as (
+                select
+                    distinct t.codice_ato
+                from
+                    ' || v_in_tables[v_t] || ' t
+                where
+                    ' || v_filters[v_t] || ')
+                select
+                    ' || v_in_fields[v_t] || '
+                from
+                    unique_ato bb
+                join ' || v_in_tables[v_t] || ' aa on
+                    aa.codice_ato = bb.codice_ato
+                join rel_sa_di rsd on
+                    aa.id_sist_idr = rsd.idgis_sist_idr
+                group by 1,2,3';
+        else
+            EXECUTE '
+				INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
+	            with unique_ato as (
+	                select
+	                    distinct codice_ato,
+	                    right(aa.sist_acq_dep, 7) as cod_ato_rete_distrib
+	                from
+	                    acq_adduttrice aa
+	                where
+	                    aa.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND aa.d_gestore = ''PUBLIACQUA'' AND aa.d_ambito IN (''AT3'', NULL)
+	            )
+	            select
+	                ua.codice_ato,
+	                rsd.cod_sist_idr,
+	                3
+	            from unique_ato ua
+	            join rel_sa_di rsd on rsd.codice_ato_rete_distrib = ua.cod_ato_rete_distrib
+	            ';
+        END IF;
+
+
 		--LOG ANOMALIE
 		DELETE FROM LOG_STANDALONE WHERE alg_name = v_tables[v_t];
 	
@@ -3437,6 +3457,7 @@ BEGIN
 		ON rr.geom&&sf.geom AND st_INTERSECTS(rr.geom,sf.geom)
 	WHERE sf.d_gestore = 'PUBLIACQUA' AND sf.d_ambito IN ('AT3', NULL) AND sf.d_stato IN ('ATT','FIP','PIF','RIS')
 	AND rr.d_gestore = 'PUBLIACQUA' AND rr.d_ambito IN ('AT3', NULL) AND rr.d_stato IN ('ATT','FIP','PIF','RIS')
+	and sf.sn_bypass = 'NO'
 	AND rr.codice_ato is not NULL;
 		
 	--LOG ANOMALIE
@@ -4416,14 +4437,89 @@ begin
     join sistema_idrico on
         tsdc.cod_sist_idr = sistema_idrico.cod_sist_idr;
 
-    DELETE FROM support_sistema_idrico_rel_sa_localita;
 
-    INSERT INTO support_sistema_idrico_rel_sa_localita
-    select rsd.idgis_sist_idr, rsd.cod_sist_idr, denom_sist_idr
-    from rel_sa_di rsd
-    join sistema_idrico si on rsd.cod_sist_idr = si.cod_sist_idr
-    group by 1,2,3;
+    DELETE FROM support_sistema_idrico_rel_sa_localita_captazione;
 
+    INSERT INTO support_sistema_idrico_rel_sa_localita_captazione
+    select
+        rsd.idgis_sist_idr,
+        rsd.cod_sist_idr,
+        denom_sist_idr
+    from
+        rel_sa_di rsd
+    join sistema_idrico si on
+        rsd.cod_sist_idr = si.cod_sist_idr
+    join acq_captazione aa on
+        aa.id_sist_idr = si.idgis_sist_idr
+    where
+        aa.d_stato in ('ATT', 'FIP', 'PIF', 'RIS')
+    group by
+        1,
+        2,
+        3
+
+
+    DELETE FROM support_sistema_idrico_rel_sa_localita_acq_accumulo;
+
+    INSERT INTO support_sistema_idrico_rel_sa_localita_acq_accumulo
+    select
+        rsd.idgis_sist_idr,
+        rsd.cod_sist_idr,
+        denom_sist_idr
+    from
+        rel_sa_di rsd
+    join sistema_idrico si on
+        rsd.cod_sist_idr = si.cod_sist_idr
+    join acq_accumulo aa on
+        aa.id_sist_idr = si.idgis_sist_idr
+    where
+        aa.d_stato in ('ATT', 'FIP', 'PIF', 'RIS')
+    group by
+        1,
+        2,
+        3
+
+    DELETE FROM support_sistema_idrico_rel_sa_localita_potabiliz;
+
+    INSERT INTO support_sistema_idrico_rel_sa_localita_potabiliz
+    select
+        rsd.idgis_sist_idr,
+        rsd.cod_sist_idr,
+        denom_sist_idr
+    from
+        rel_sa_di rsd
+    join sistema_idrico si on
+        rsd.cod_sist_idr = si.cod_sist_idr
+    join acq_potabiliz aa on
+        aa.id_sist_idr = si.idgis_sist_idr
+    where
+        aa.d_stato in ('ATT', 'FIP', 'PIF', 'RIS')
+    group by
+        1,
+        2,
+        3
+
+    DELETE FROM support_sistema_idrico_rel_sa_localita_pompaggio;
+
+    INSERT INTO support_sistema_idrico_rel_sa_localita_pompaggio
+    select
+        rsd.idgis_sist_idr,
+        rsd.cod_sist_idr,
+        denom_sist_idr
+    from
+        rel_sa_di rsd
+    join sistema_idrico si on
+        rsd.cod_sist_idr = si.cod_sist_idr
+    join acq_pompaggio aa on
+        aa.id_sist_idr = si.idgis_sist_idr
+    where
+        aa.d_stato in ('ATT', 'FIP', 'PIF', 'RIS')
+    group by
+        1,
+        2,
+        3
+
+--- captazione, pompaggi, potabilizzatori
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -4556,7 +4652,7 @@ begin
         SUM(aa.sn_ili) as "sn_ili",
         SUM(aa.nr_rip_all) as "nr_rip_all",
         SUM(aa.nr_rip_rete) as "nr_rip_rete",
-        aa.lunghezza_tlc as "lunghezza_tlc",
+        sum(aa.lunghezza_tlc) as "lunghezza_tlc",
         SUM(aa.nr_utenze_dirette) as "nr_utenze_dirette",
         SUM(aa.nr_utenze_dir_dom_e_residente) as "nr_utenze_dir_dom_e_residente",
         SUM(aa.nr_utenze_dir_residente) as "nr_utenze_dir_residente",
@@ -4569,11 +4665,11 @@ begin
         SUM(aa.volume_fatturato) as "volume_fatturato",
         SUM(aa.nr_allacci) as "nr_allacci",
         SUM(aa.count_cloratori) as "count_cloratori",
-        aa.lunghezza
+        sum(aa.lunghezza) as "lunghezza"
     from support_accorpamento_raw_distribuzioni as aa
     join rel_sa_di on aa.idgis = rel_sa_di.idgis_rete_distrib
     join sistema_idrico on sistema_idrico.cod_sist_idr = rel_sa_di.cod_sist_idr
-    group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,21,34;
+    group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14
 
 	RETURN TRUE;
 END;
