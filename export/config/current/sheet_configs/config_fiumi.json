@@ -47,7 +47,6 @@
                 {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
 				{"name": "acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT", "cast": "INTEGER"},
-                {"name": "acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT", "cast": "INTEGER"},
@@ -138,6 +137,8 @@
                 {"name": "acq_auth_capt.anno_instal_clor","alias": "anno_instal_clor"},
                 {"name": "acq_auth_capt.anno_ristr_clor","alias": "anno_ristr_clor"},
                 {"name": "acq_auth_capt.a_area_bac_affer","alias": "a_area_bac_affer"},
+                {"name": "acq_auth_capt.a_volume_imm","alias": "a_volume_imm"},
+                {"name": "acq_auth_capt.volume_imm","alias": "volume_imm"},
                 {"name": "a_acq_captazione.cod_comune", "alias":"cod_comune"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
@@ -151,7 +152,6 @@
                 {"name": "a_acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
                 {"name": "a_acq_capt_conces.a_port_deriv","alias": "a_port_deriv"},
 				{"name": "a_acq_capt_conces.sn_uso_plurimo","alias": "sn_uso_plurimo", "function": "TO_BIT", "cast": "INTEGER"},
-                {"name": "a_acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT", "cast": "INTEGER"},
@@ -831,31 +831,8 @@
         },
         {"id": "6200","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA"}}},
 
-        {"id":"3400", "transformation":{
-             "func": "IF",
-             "params": {
-                 "field": "cod_opera_inpotab_not_exist",
-                 "cond": {
-                         "operator": "=",
-                         "value": "",
-                         "result": "0",
-                         "else": "{ volume_medio_prel }"
-                     }
-                 }
-             }
-         },
+        {"id": "3400","transformation": { "func": "DIRECT", "params": { "field": "volume_imm"}}},
+        {"id": "5800","transformation": { "func": "DIRECT", "params": { "field": "a_volume_imm"}}}
 
-        {"id":"5800", "transformation":{
-            "func": "IF",
-            "params": {
-                "field": "cod_opera_inpotab_not_exist",
-                "cond": {
-                    "operator": "=",
-                    "value": "0",
-                    "result": "A",
-                    "else": "{ 5700 }"
-                }
-            }
-        }}
     ]
 }

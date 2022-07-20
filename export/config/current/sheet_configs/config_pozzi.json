@@ -25,6 +25,8 @@
             {"name":"acq_auth_capt.anno_instal_clor", "alias":"anno_instal_clor"},
             {"name":"acq_auth_capt.anno_ristr_clor", "alias":"anno_ristr_clor"},
             {"name":"acq_auth_capt.sn_epis_inq", "alias":"sn_epis_inq", "function": "TO_BIT", "cast": "INTEGER"},
+            {"name": "acq_auth_capt.a_volume_imm","alias": "a_volume_imm"},
+            {"name": "acq_auth_capt.volume_imm","alias": "volume_imm"},
             {"name":"acq_captazione.d_stato", "alias":"d_stato"},
             {"name":"acq_captazione.a_anno_costr", "alias":"a_anno_costr"},
             {"name":"acq_captazione.a_anno_ristr", "alias":"a_anno_ristr"},
@@ -37,7 +39,6 @@
             {"name":"acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            {"name":"acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             {"name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
             {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
             { "name": "localita.denominazi", "alias": "denominazi" },
@@ -158,6 +159,8 @@
             {"name":"acq_auth_capt.d_tipo_cloraz", "alias":"d_tipo_cloraz"},
             {"name":"acq_auth_capt.anno_instal_clor", "alias":"anno_instal_clor"},
             {"name":"acq_auth_capt.anno_ristr_clor", "alias":"anno_ristr_clor"},
+            {"name": "acq_auth_capt.a_volume_imm","alias": "a_volume_imm"},
+            {"name": "acq_auth_capt.volume_imm","alias": "volume_imm"},
             {"name":"acq_auth_capt.sn_epis_inq", "alias":"sn_epis_inq", "function": "TO_BIT", "cast": "INTEGER"},
             {"name":"a_acq_captazione.d_stato", "alias":"d_stato"},
             {"name":"a_acq_captazione.a_anno_costr", "alias":"a_anno_costr"},
@@ -171,7 +174,6 @@
             {"name":"a_acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            {"name":"a_acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             {"name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
             {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
             { "name": "localita.denominazi", "alias": "denominazi" },
@@ -955,18 +957,7 @@
       },
       {"id":"15400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
       {"id":"15400", "transformation":{"func":"DECODE_COM", "params": { "field": "cod_comune" }}},
-      {"id":"17100", "transformation":{
-         "func": "IF",
-         "params": {
-             "field": "cod_opera_inpotab_not_exist",
-             "cond": {
-                     "operator": "=",
-                     "value": 1,
-                     "result": "{ volume_medio_prel }",
-                     "else": 0
-                 }
-             }
-         }
-      }
+        {"id": "17100","transformation": { "func": "DIRECT", "params": { "field": "volume_imm"}}}
+
    ]
 }

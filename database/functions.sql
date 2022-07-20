@@ -928,7 +928,7 @@ BEGIN
 
 	EXECUTE 'DELETE FROM ' || v_table || ';';
 
-
+    -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
 	EXECUTE '
 		INSERT INTO ' || v_table || '(
 			 geom
@@ -951,7 +951,7 @@ BEGIN
 			a.geom,
 			r.codice_ato as codice_ato,
 			a.idgis as idgis,
-			a.id_sist_idr as idgis_rete,
+			a.id_sist_idr as idgis_rete, -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
 			1,
 			a.d_materiale as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,
@@ -991,6 +991,7 @@ BEGIN
 		';
 
 	--UPDATE CODICE ATO WITH CODICE SISTEMA IDRICO
+    -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
 	IF v_table = 'DISTRIB_TRONCHI' THEN
         EXECUTE '
             update ' || v_table || ' set codice_ato =rsd.cod_sist_idr
@@ -3409,6 +3410,62 @@ BEGIN
     from v_bacino b, v_condotte c
     where b.geom&&c.geom
     and ST_INTERSECTS(b.geom, c.geom);
+
+    INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
+    with depuratori as (
+           select * from (
+                with v_bacino as (
+                    select f.codice_ato, b.geom
+                    from dbiait_analysis.FGN_TRATTAMENTO f, dbiait_analysis.FGN_BACINO b
+                    where
+                        f.D_GESTORE = 'PUBLIACQUA' AND f.D_AMBITO in ('AT3', NULL) AND f.D_STATO IN ('ATT','FIP','PIF','RIS')
+                        and f.ID_BACINO = b.IDGIS
+                ),
+                v_condotte as (
+                    select cl.codice_ato, c.geom from
+                    dbiait_analysis.FGN_CONDOTTA c, dbiait_analysis.FGN_COLLETTORE cl
+                    where
+                        c.D_GESTORE = 'PUBLIACQUA' AND c.D_AMBITO in ('AT3', NULL) AND c.D_STATO IN ('ATT', 'FIP', NULL) AND c.SN_FITTIZIA  in ('NO', NULL)
+                        and c.ID_RETE = cl.IDGIS
+                )
+                select DISTINCT
+                    b.codice_ato as codice_opera,
+                    c.codice_ato,
+                    3 as gestore_collettore
+                from v_bacino b left join v_condotte c on b.geom&&c.geom
+                and ST_INTERSECTS(b.geom, c.geom)
+              ) as cc
+              where cc.codice_ato is null
+       ),
+       fognature as (
+            with v_bacino as (
+                select f.codice_ato, b.geom
+                from dbiait_analysis.FGN_TRATTAMENTO f, dbiait_analysis.FGN_BACINO b
+                where
+                    f.D_GESTORE = 'PUBLIACQUA' AND f.D_AMBITO in ('AT3', NULL) AND f.D_STATO IN ('ATT','FIP','PIF','RIS')
+                    and f.ID_BACINO = b.IDGIS
+            ),
+            no_intersection as (
+                select
+                    distinct frr.codice_ato,fc.geom
+                from
+                    fgn_condotta fc, fgn_rete_racc frr
+                where
+                    fc.id_rete = frr.idgis and
+                    fc.d_gestore = 'PUBLIACQUA' AND fc.d_ambito IN ('AT3', NULL) AND fc.d_stato IN ('ATT','FIP','PIF','RIS')
+        )
+        select DISTINCT
+            b.codice_ato as codice_opera,
+            frr.codice_ato,
+            3 as gestore_collettore
+        from v_bacino b join no_intersection frr on b.geom&&frr.geom
+        and ST_INTERSECTS(b.geom, frr.geom)
+       )
+       select f.*
+       from depuratori c
+       join fognature f
+       on c.codice_opera = f.codice_opera;
+
 
 	--LOG ANOMALIE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'DEPURATO_INCOLL';
