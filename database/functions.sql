@@ -3412,7 +3412,7 @@ BEGIN
     and ST_INTERSECTS(b.geom, c.geom);
 
     INSERT into DEPURATO_INCOLL(ids_codice, ids_codice_collettore, id_gestore_collettore)
-    with depuratori as (
+     with depuratori as (
            select * from (
                 with v_bacino as (
                     select f.codice_ato, b.geom
@@ -3459,7 +3459,7 @@ BEGIN
             frr.codice_ato,
             3 as gestore_collettore
         from v_bacino b join no_intersection frr on b.geom&&frr.geom
-        and ST_INTERSECTS(b.geom, frr.geom)
+        and ST_Within(frr.geom, b.geom)
        )
        select f.*
        from depuratori c
