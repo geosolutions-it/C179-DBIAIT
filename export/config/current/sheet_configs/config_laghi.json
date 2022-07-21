@@ -33,6 +33,8 @@
                 {"name": "acq_auth_capt.anno_ristr_clor","alias": "anno_ristr_clor"},
                 {"name": "acq_captazione.d_stato","alias": "d_stato"},
                 {"name": "acq_auth_capt.a_area_bac_affer","alias": "a_area_bac_affer"},
+                {"name": "acq_auth_capt.a_volume_imm","alias": "a_volume_imm"},
+                {"name": "acq_auth_capt.volume_imm","alias": "volume_imm"},
                 {"name": "acq_captazione.a_anno_costr","alias": "a_anno_costr"},
                 {"name": "acq_captazione.a_anno_ristr","alias": "a_anno_ristr"},
                 {"name": "acq_captazione.a_volume","alias": "a_volume"},
@@ -44,13 +46,12 @@
                 {"name": "acq_captazione.data_agg","alias": "data_agg"},
                 {"name": "acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-                {"name": "acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 {"name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT", "cast": "INTEGER"},
-                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
-                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"}
+                { "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.denom_sist_idr", "alias": "denom_sist_idr"}
             ],
             "table": {
                 "name": "acq_captazione"
@@ -92,11 +93,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "support_sistema_idrico_rel_sa_localita"
+                        "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di"
                     },
                     "on": [
                         "acq_captazione.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                        "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.idgis_sist_idr"
                     ],
                     "cond": "="
                 }
@@ -132,6 +133,8 @@
                 {"name": "a_acq_captazione.cod_comune", "alias":"cod_comune"},
                 {"name": "acq_auth_capt.anno_instal_clor","alias": "anno_instal_clor"},
                 {"name": "acq_auth_capt.anno_ristr_clor","alias": "anno_ristr_clor"},
+                {"name": "acq_auth_capt.a_volume_imm","alias": "a_volume_imm"},
+                {"name": "acq_auth_capt.volume_imm","alias": "volume_imm"},
                 {"name": "a_acq_captazione.d_stato","alias": "d_stato"},
                 {"name": "acq_auth_capt.a_area_bac_affer","alias": "a_area_bac_affer"},
                 {"name": "a_acq_captazione.a_anno_costr","alias": "a_anno_costr"},
@@ -145,13 +148,12 @@
                 {"name": "a_acq_captazione.data_agg","alias": "data_agg"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-                {"name":"a_acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 {"name": "acq_auth_capt.sn_tut_ass","alias": "sn_tut_ass", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_rispetto","alias": "sn_rispetto", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_protezione","alias": "sn_protezione", "function": "TO_BIT", "cast": "INTEGER"},
-                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
-                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"}
+                { "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.denom_sist_idr", "alias": "denom_sist_idr"}
             ],
             "table": {
                 "name": "a_acq_captazione"
@@ -836,20 +838,9 @@
                 }
             ]},
         {"id": "12900","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA" }}},
+
         {"id":"12500", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume", "domain_name": "D_AFFIDABILITA"}}},
 
-        {"id":"10400", "transformation":{
-             "func": "IF",
-             "params": {
-                 "field": "cod_opera_inpotab_not_exist",
-                 "cond": {
-                         "operator": "=",
-                         "value": 1,
-                         "result": "{ volume_medio_prel }",
-                         "else": 0
-                     }
-                 }
-             }
-         }
+        {"id": "10400","transformation": { "func": "DIRECT", "params": { "field": "volume_imm"}}}
     ]
 }

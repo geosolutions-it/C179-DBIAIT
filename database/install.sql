@@ -1196,3 +1196,28 @@ CREATE TABLE dbiait_analysis.sistema_idrico (
 	a_press_med varchar(1) NULL,
 	a_pres_es_min varchar(1) NULL
 );
+
+
+CREATE TABLE dbiait_analysis.rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di (
+	idgis_sist_idr varchar(32) NULL,
+	cod_sist_idr varchar(8) NULL,
+	denom_sist_idr varchar(32) NULL
+);
+
+CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita_pompaggio (
+	idgis_sist_idr varchar(32) NULL,
+	cod_sist_idr varchar(8) NULL,
+	denom_sist_idr varchar(32) NULL
+);
+
+CREATE TABLE dbiait_analysis.rel_sa_dsupport_sistema_idrico_rel_sa_localita_potabilizi (
+	idgis_sist_idr varchar(32) NULL,
+	cod_sist_idr varchar(8) NULL,
+	denom_sist_idr varchar(32) NULL
+);
+
+CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita_acq_accumulo (
+	idgis_sist_idr varchar(32) NULL,
+	cod_sist_idr varchar(8) NULL,
+	denom_sist_idr varchar(32) NULL
+);

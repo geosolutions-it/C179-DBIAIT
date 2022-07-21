@@ -10,7 +10,7 @@ id_tra_acarboni_attivi,D_ASS_CARB_ATT,PAC,PAC,2
 id_corso_acqua_classe,D_CLASSIF_OPERA,A1,A1,1
 id_corso_acqua_classe,D_CLASSIF_OPERA,A2,A2,2
 id_corso_acqua_classe,D_CLASSIF_OPERA,A3,A3,3
-id_corso_acqua_classe,D_CLASSIF_OPERA,SA3,Sub.A3,4 
+id_corso_acqua_classe,D_CLASSIF_OPERA,SA3,Sub.A3,4
 id_corso_acqua_classe,D_CLASSIF_OPERA,NDF,Non Definito,5
 ,D_CORPO_RICET,PA-TORRENTE LIMENTRA DI SAMBUC,TORRENTE LIMENTRA DI SAMBUCA,TORRENTE LIMENTRA DI SAMBUCA
 ,D_CORPO_RICET,PA-BORRO DELLA CERVIA,BORRO DELLA CERVIA,BORRO DELLA CERVIA
@@ -286,6 +286,13 @@ id_tra_filtraz_rapida,D_T_FILTRAZ,GRA,Gravita',3
 id_tra_filtraz_rapida,D_T_FILTRAZ,NES,Nessuna,1
 id_tra_filtraz_rapida,D_T_FILTRAZ,PRE,Pressione,2
 id_tra_filtraz_rapida,D_T_FILTRAZ,ALT,Altro,4
+id_linea_acqua,D_T_TRATTAM_ACQUA,NULL,Nessuno,99
+id_linea_acqua,D_T_TRATTAM_ACQUA,ALT,Altro,9
+id_linea_acqua,D_T_TRATTAM_ACQUA,IMH,IMHOFF,8
+id_linea_acqua,D_T_TRATTAM_ACQUA,AVA,con trattamento fino al TERZIARIO AVANZATO,7
+id_linea_acqua,D_T_TRATTAM_ACQUA,ter,con trattamento fino al TERZIARIO,6
+id_linea_acqua,D_T_TRATTAM_ACQUA,SEC,con trattamento fino al SECONDARIO,5
+id_linea_acqua,D_T_TRATTAM_ACQUA,PRI,Con trattamento fino al PRIMARIO,4
 id_linea_acqua,D_T_TRATTAM_ACQUA,SMA,Secondario Massa Adesa,3
 id_linea_acqua,D_T_TRATTAM_ACQUA,SMS,Secondario Massa Sospesa,2
 id_linea_acqua,D_T_TRATTAM_ACQUA,SOL,Solo Sedimentazione,1

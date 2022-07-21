@@ -25,6 +25,8 @@
             {"name":"acq_auth_capt.anno_instal_clor", "alias":"anno_instal_clor"},
             {"name":"acq_auth_capt.anno_ristr_clor", "alias":"anno_ristr_clor"},
             {"name":"acq_auth_capt.sn_epis_inq", "alias":"sn_epis_inq", "function": "TO_BIT", "cast": "INTEGER"},
+            {"name": "acq_auth_capt.a_volume_imm","alias": "a_volume_imm"},
+            {"name": "acq_auth_capt.volume_imm","alias": "volume_imm"},
             {"name":"acq_captazione.d_stato", "alias":"d_stato"},
             {"name":"acq_captazione.a_anno_costr", "alias":"a_anno_costr"},
             {"name":"acq_captazione.a_anno_ristr", "alias":"a_anno_ristr"},
@@ -37,7 +39,6 @@
             {"name":"acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            {"name":"acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             {"name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
             {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
             { "name": "localita.denominazi", "alias": "denominazi" },
@@ -49,8 +50,8 @@
             {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
             {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"},
-                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
-                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"}
+                { "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.denom_sist_idr", "alias": "denom_sist_idr"}
          ],
          "table":{
             "name":"acq_captazione"
@@ -125,16 +126,16 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "support_sistema_idrico_rel_sa_localita"
+                        "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di"
                     },
                     "on": [
                         "acq_captazione.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                        "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.idgis_sist_idr"
                     ],
                     "cond": "="
                 }
          ],
-         "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3"
+         "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3  AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
       },
       {
          "fields":[
@@ -158,6 +159,8 @@
             {"name":"acq_auth_capt.d_tipo_cloraz", "alias":"d_tipo_cloraz"},
             {"name":"acq_auth_capt.anno_instal_clor", "alias":"anno_instal_clor"},
             {"name":"acq_auth_capt.anno_ristr_clor", "alias":"anno_ristr_clor"},
+            {"name": "acq_auth_capt.a_volume_imm","alias": "a_volume_imm"},
+            {"name": "acq_auth_capt.volume_imm","alias": "volume_imm"},
             {"name":"acq_auth_capt.sn_epis_inq", "alias":"sn_epis_inq", "function": "TO_BIT", "cast": "INTEGER"},
             {"name":"a_acq_captazione.d_stato", "alias":"d_stato"},
             {"name":"a_acq_captazione.a_anno_costr", "alias":"a_anno_costr"},
@@ -171,7 +174,6 @@
             {"name":"a_acq_captazione.cod_comune", "alias":"cod_comune"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
             {"name":"a_acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-            {"name":"a_acq_captazione.codice_ato", "alias": "cod_opera_inpotab_not_exist", "function": "IS_NULL"},
             {"name":"stats_pompe.sum_potenza", "alias": "sum_potenza"},
             {"name":"stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
             { "name": "localita.denominazi", "alias": "denominazi" },
@@ -183,8 +185,8 @@
             {"name": "support_pozzi_inpotab.volume_medio_prel","alias": "support_vol_med_prel"},
             { "name": "support_codice_capt_accorp.codice_accorp_capt", "alias": "codice_accorp_capt"},
             {"name": "support_codice_capt_accorp.denom","alias": "denom_accorp"},
-                { "name": "support_sistema_idrico_rel_sa_localita.cod_sist_idr", "alias": "cod_sist_idr"},
-                { "name": "support_sistema_idrico_rel_sa_localita.denom_sist_idr", "alias": "denom_sist_idr"}
+                { "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.cod_sist_idr", "alias": "cod_sist_idr"},
+                { "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.denom_sist_idr", "alias": "denom_sist_idr"}
          ],
          "table":{
             "name":"a_acq_captazione"
@@ -259,11 +261,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "support_sistema_idrico_rel_sa_localita"
+                        "name": "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di"
                     },
                     "on": [
                         "a_acq_captazione.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                        "rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di.idgis_sist_idr"
                     ],
                     "cond": "="
                 }
@@ -955,18 +957,7 @@
       },
       {"id":"15400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
       {"id":"15400", "transformation":{"func":"DECODE_COM", "params": { "field": "cod_comune" }}},
-      {"id":"17100", "transformation":{
-         "func": "IF",
-         "params": {
-             "field": "cod_opera_inpotab_not_exist",
-             "cond": {
-                     "operator": "=",
-                     "value": 1,
-                     "result": "{ volume_medio_prel }",
-                     "else": 0
-                 }
-             }
-         }
-      }
+        {"id": "17100","transformation": { "func": "DIRECT", "params": { "field": "volume_imm"}}}
+
    ]
 }
