@@ -3206,7 +3206,7 @@ DECLARE
 		'aa.codice_ato, rsd.cod_sist_idr, 3',
 		'aa.codice_ato, rsd.cod_sist_idr, 3',
 		'aa.codice_ato, rsd.cod_sist_idr, 3',
-		't.codice_ato, r.codice_ato, 3',
+		'ua.codice_ato, rsd.codice_ato, 3',
 		'aa.codice_ato, rsd.cod_sist_idr, 3'
 	];
 	v_out_fields VARCHAR[] := ARRAY[
@@ -3224,8 +3224,17 @@ DECLARE
 		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3 AND coalesce(t.d_comparto,''?'') != ''DEP''',
 		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=4',
 		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
-		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
+		'',
 		't.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')'
+	];
+	v_and_filters VARCHAR[] := ARRAY[
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=0',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=1',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=3 AND coalesce(t.d_comparto,''?'') != ''DEP''',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND t.SUB_FUNZIONE=4',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')',
+		'',
+		'AND t.d_gestore = ''PUBLIACQUA'' AND t.d_ambito IN (''AT3'', NULL) AND t.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')'
 	];
 BEGIN
 
@@ -3267,16 +3276,12 @@ BEGIN
 	                    aa.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'') AND aa.d_gestore = ''PUBLIACQUA'' AND aa.d_ambito IN (''AT3'', NULL)
 	            )
 	            select
-	                distinct (ua.codice_ato,
-	                rsd.cod_sist_idr,
-	                3)
+	                distinct ua.codice_ato, rsd.cod_sist_idr, 3
 	            from unique_ato ua
 	            join rel_sa_di rsd on rsd.codice_ato_rete_distrib = ua.cod_ato_rete_distrib
 	            ';
         END IF;
 
-
-		--LOG ANOMALIE
 		DELETE FROM LOG_STANDALONE WHERE alg_name = v_tables[v_t];
 
 		-- Elementi che intersecano piu' di una rete
@@ -3289,7 +3294,7 @@ BEGIN
 			LEFT JOIN acq_rete_distrib r
 				ON r.geom&&t.geom AND ST_INTERSECTS(r.geom, t.geom) ' || v_touch_flt[v_t] || '
 			WHERE r.codice_ato is NOT NULL AND r.d_gestore=''PUBLIACQUA'' and r.d_ambito IN (''AT3'', NULL) and r.d_stato IN (''ATT'', ''FIP'', ''PIF'', ''RIS'')
-			AND ' || v_filters[v_t] || '
+			 ' || v_and_filters[v_t] || '
 		) t2 group by t2.idgis having count(0) > 1;' USING v_tables[v_t];
 
 		-- Elementi che non intersecano alcuna rete
@@ -3301,7 +3306,7 @@ BEGIN
 		    SELECT TRUE from ' || v_tables[v_t] || ' ai
             where t.codice_ato = ai.ids_codice
 		)
-		AND ' || v_filters[v_t] USING v_tables[v_t];
+		' || v_and_filters[v_t] USING v_tables[v_t];
 
 	END LOOP;
 
@@ -3485,7 +3490,7 @@ BEGIN
 	-- Elementi che non intersecano alcun tronco di collettore
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)	
 	select idgis, 'DEPURATO_INCOLL', 'Elemento non intersecante alcun tronco di collettore'
-	from fgn_trattamento a 
+	from fgn_trattamento a
 	WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
 	AND not exists(
 		select ids_codice
@@ -4519,7 +4524,7 @@ begin
     group by
         1,
         2,
-        3
+        3;
 
 
     DELETE FROM support_sistema_idrico_rel_sa_localita_acq_accumulo;
@@ -4540,7 +4545,7 @@ begin
     group by
         1,
         2,
-        3
+        3;
 
     DELETE FROM support_sistema_idrico_rel_sa_localita_potabiliz;
 
@@ -4560,7 +4565,7 @@ begin
     group by
         1,
         2,
-        3
+        3;
 
     DELETE FROM support_sistema_idrico_rel_sa_localita_pompaggio;
 
@@ -4580,7 +4585,7 @@ begin
     group by
         1,
         2,
-        3
+        3;
 
 --- captazione, pompaggi, potabilizzatori
 	RETURN TRUE;

@@ -10,8 +10,7 @@
          ],
          "table":{
             "name": "scaricato_infog"
-         },
-         "filter": "WHERE a_acq_captazione.d_gestore = 'PUBLIACQUA' AND a_acq_captazione.d_ambito IN ('AT3', NULL) AND a_acq_captazione.sub_funzione = 3"
+         }
       }
    ],
    "columns":[
