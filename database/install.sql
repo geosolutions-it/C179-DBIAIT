@@ -1198,7 +1198,7 @@ CREATE TABLE dbiait_analysis.sistema_idrico (
 );
 
 
-CREATE TABLE dbiait_analysis.rel_sasupport_sistema_idrico_rel_sa_localita_captazione_di (
+CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita_captazione (
 	idgis_sist_idr varchar(32) NULL,
 	cod_sist_idr varchar(8) NULL,
 	denom_sist_idr varchar(32) NULL
@@ -1210,7 +1210,7 @@ CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita_pompaggio (
 	denom_sist_idr varchar(32) NULL
 );
 
-CREATE TABLE dbiait_analysis.rel_sa_dsupport_sistema_idrico_rel_sa_localita_potabilizi (
+CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita_potabiliz (
 	idgis_sist_idr varchar(32) NULL,
 	cod_sist_idr varchar(8) NULL,
 	denom_sist_idr varchar(32) NULL
