@@ -195,11 +195,11 @@
                 {
                     "type": "left",
                     "table": {
-                        "name": "support_sistema_idrico_rel_sa_localita"
+                        "name": "support_sistema_idrico_rel_sa_localita_captazione"
                     },
                     "on": [
                         "a_acq_captazione.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita.idgis_sist_idr"
+                        "support_sistema_idrico_rel_sa_localita_captazione.idgis_sist_idr"
                     ],
                     "cond": "="
                 }
@@ -839,7 +839,7 @@
             ]},
         {"id": "12900","transformation": { "func": "DOMAIN", "params": { "field": "a_port_deriv", "domain_name":  "D_AFFIDABILITA" }}},
 
-        {"id":"12500", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume", "domain_name": "D_AFFIDABILITA"}}},
+        {"id":"12500", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume_imm", "domain_name": "D_AFFIDABILITA"}}},
 
         {"id": "10400","transformation": { "func": "DIRECT", "params": { "field": "volume_imm"}}}
     ]

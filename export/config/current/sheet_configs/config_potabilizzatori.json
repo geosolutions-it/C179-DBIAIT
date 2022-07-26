@@ -104,7 +104,7 @@
                 "cond": "="
             }
          ],
-         "filter": "WHERE acq_potabiliz.d_gestore = 'PUBLIACQUA' AND acq_potabiliz.d_ambito IN ('AT3', NULL) AND acq_potabiliz.d_stato NOT IN ('IPR', 'IAC')"
+         "filter": "WHERE acq_potabiliz.d_gestore = 'PUBLIACQUA' AND acq_potabiliz.d_ambito IN ('AT3', NULL) AND acq_potabiliz.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')"
       },
       {
          "fields":[
@@ -208,7 +208,7 @@
                 "cond": "="
             }
          ],
-         "filter": "WHERE a_acq_potabiliz.d_gestore = 'PUBLIACQUA' AND a_acq_potabiliz.d_ambito IN ('AT3', NULL) AND a_acq_potabiliz.d_stato NOT IN ('IPR', 'IAC')"
+         "filter": "WHERE a_acq_potabiliz.d_gestore = 'PUBLIACQUA' AND a_acq_potabiliz.d_ambito IN ('AT3', NULL) AND a_acq_potabiliz.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')"
       }
    ],
    "columns":[

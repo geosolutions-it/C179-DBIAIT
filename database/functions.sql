@@ -38,7 +38,7 @@ BEGIN
 EXCEPTION WHEN OTHERS THEN
 	RETURN NULL;
 END;
-$$  LANGUAGE plpgsql;	
+$$  LANGUAGE plpgsql;
 --------------------------------------------------------------------
 -- Convert a string into an integer
 -- Example:
@@ -111,11 +111,11 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION public.ST_TRANSFORM_RM40_ETRS89(
 	v_geom GEOMETRY
 ) RETURNS GEOMETRY AS $$
-DECLARE 
+DECLARE
 	v_folder VARCHAR := '/apps/pgsql/data/';
 BEGIN
 	RETURN ST_TRANSFORM(
-		v_geom, 
+		v_geom,
 		'+proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=1500000 +y_0=0 +ellps=intl +units=m +nadgrids=' || v_folder || 'gridRM40_ETRS89.gsb'
 	);
 EXCEPTION WHEN OTHERS THEN
@@ -136,21 +136,21 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public;	
+    SET search_path = public;
 --------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.IS_NULL(
 	v_value anyelement
 ) RETURNS INTEGER AS $$
-	SELECT 
+	SELECT
 		case when v_value IS NULL then 1
 		else 0
 		end;
-$$  LANGUAGE sql;	
+$$  LANGUAGE sql;
 --------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.TO_BIT(
 	v_value VARCHAR
 ) RETURNS BIT AS $$
-	SELECT 
+	SELECT
 		case when UPPER(v_value) IN ('SI','YES', 'S', 'Y', '1') then 1::BIT
 		else 0::BIT
 		end;
@@ -159,7 +159,7 @@ $$  LANGUAGE sql;
 CREATE OR REPLACE FUNCTION public.TO_BIT(
 	v_value INTEGER
 ) RETURNS BIT AS $$
-	SELECT 
+	SELECT
 		case when v_value = 1 then 1::BIT
 		else 0::BIT
 		end;
@@ -203,7 +203,7 @@ BEGIN
 	ELSE
 		RETURN ST_Y(ST_CENTROID(ST_TRANSFORM_RM40_ETRS89(v_geom)));
 	END IF;
-	
+
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -261,10 +261,10 @@ $$  LANGUAGE plpgsql
 -- OUT: BOOLEAN
 -- Example:
 -- 	select DBIAIT_ANALYSIS.populate_pop_res_loc();
---------------------------------------------------------------------	
+--------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_pop_res_loc(
 ) RETURNS BOOLEAN AS $$
-DECLARE 
+DECLARE
 	v_result BOOLEAN := FALSE;
 BEGIN
     SET work_mem = '256MB';
@@ -272,25 +272,25 @@ BEGIN
 	DELETE FROM POP_RES_LOC;
 
 	INSERT INTO POP_RES_LOC(anno_rif, data_rif, pro_com, id_localita_istat, popres)
-	SELECT 
+	SELECT
 		p.anno_rif,
 		p.data_rif,
 		l.pro_com,
 		id_localita_istat,
-		--loc.popres as popres_before, 
+		--loc.popres as popres_before,
 		ROUND(loc.popres::NUMERIC*(p.pop_res::NUMERIC/l.popres::NUMERIC)) popres
 	FROM LOCALITA loc,
 	(
 		SELECT anno_rif, data_rif, pro_com, pop_res
-		FROM POP_RES_COMUNE 
+		FROM POP_RES_COMUNE
 	) p,
 	(
-		SELECT pro_com, sum(popres) popres 
-		FROM LOCALITA 
+		SELECT pro_com, sum(popres) popres
+		FROM LOCALITA
 		GROUP BY pro_com
-	) l 
-	WHERE 
-		p.pro_com::VARCHAR = l.pro_com::VARCHAR 
+	) l
+	WHERE
+		p.pro_com::VARCHAR = l.pro_com::VARCHAR
 		AND l.pro_com = loc.pro_com;
 
 	-- update delta (group by pro_com)
@@ -298,7 +298,7 @@ BEGIN
 	SET popres = t.new_popres
 	FROM (
 		SELECT l.id_localita_istat, (l.popres + d.delta) new_popres
-		FROM 
+		FROM
 		(
 			SELECT DISTINCT ON (pro_com)
 				   pro_com,id_localita_istat,popres
@@ -309,7 +309,7 @@ BEGIN
 			SELECT p.pro_com, (p.pop_res - l.popres) delta
 			FROM pop_res_comune p,
 			(
-				SELECT pro_com, sum(popres) popres 
+				SELECT pro_com, sum(popres) popres
 				FROM POP_RES_LOC
 				GROUP BY pro_com
 			) l
@@ -319,7 +319,7 @@ BEGIN
 		WHERE l.pro_com = d.pro_com
 	) t
 	WHERE t.id_localita_istat = POP_RES_LOC.id_localita_istat;
-	
+
 	v_result:= TRUE;
 
     RETURN v_result;
@@ -329,9 +329,9 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the DISTRIB_LOC_SERV table using information 
+-- Populate data into the DISTRIB_LOC_SERV table using information
 -- from LOCALITA ISTAT (2011) and ACQ_RETE_DISTRIB
 -- (Ref. 2.3. Percentuale Popolazione Servita Per Localita)
 -- OUT: BOOLEAN
@@ -339,18 +339,18 @@ $$  LANGUAGE plpgsql
 -- 	select DBIAIT_ANALYSIS.populate_distrib_loc_serv();
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_distrib_loc_serv(
 ) RETURNS BOOLEAN AS $$
-DECLARE 
+DECLARE
 	v_result BOOLEAN := FALSE;
 BEGIN
     SET work_mem = '256MB';
 	DELETE FROM DISTRIB_LOC_SERV;
 
 	INSERT INTO DISTRIB_LOC_SERV(codice_opera, id_localita_istat, perc_popsrv)
-	SELECT 
-		codice_ato, 
-		id_localita_istat, 
-		--sum(popres), 
-		CASE 
+	SELECT
+		codice_ato,
+		id_localita_istat,
+		--sum(popres),
+		CASE
 			WHEN sum(perc)<0 THEN
 				0
 			WHEN sum(perc)>100 THEN
@@ -361,7 +361,7 @@ BEGIN
 	FROM (
 		SELECT codice_ato, id_localita_istat, popres, 100*ST_AREA(ST_INTERSECTION(r.geom,l.geom))/ST_AREA(l.geom) perc
 		FROM ACQ_RETE_DISTRIB r, LOCALITA l
-		WHERE r.D_GESTORE = 'PUBLIACQUA' AND COALESCE(r.D_AMBITO, 'AT3')='AT3' 
+		WHERE r.D_GESTORE = 'PUBLIACQUA' AND COALESCE(r.D_AMBITO, 'AT3')='AT3'
 		AND r.D_STATO NOT IN ('IPR','IAC')
 		AND r.geom && l.geom AND ST_INTERSECTS(r.geom, l.geom)
 	) t
@@ -604,7 +604,7 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate the UTENZA_SERVIZIO table 
+-- Populate the UTENZA_SERVIZIO table
 -- using information from ACQ_RETE_DISTRIB, LOCALITA and FGN_RETE_RACC, FGN_BACINO (FGN_TRATTAMENTO, FGN_PNT_SCARICO)
 -- (Ref. 4.2. SERVIZIO UTENZA)
 -- OUT: BOOLEAN
@@ -800,7 +800,7 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the ABITANTI_TRATTATI table 
+-- Populate data into the ABITANTI_TRATTATI table
 -- (Ref. 4.3. ABITANTI EQUIVALENTI TRATTATI DA DEPURATORI O SCARICO DIRETTO)
 -- OUT: BOOLEAN
 -- Example:
@@ -810,14 +810,14 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_abitanti_trattati(
 BEGIN
 	SET work_mem = '256MB';
 	DELETE FROM ABITANTI_TRATTATI;
-	
+
 	EXECUTE '
 	INSERT INTO ABITANTI_TRATTATI(codice,idgis,denom,vol_civ,vol_ind,anno,ae_civ,ae_ind,ae_tot,tipo)
 	--DEPURATORE
 	SELECT distinct b.codice, b.idgis, b.denom,0,0,0,0,0,0,''DEP''
-	FROM 
+	FROM
 		utenza_servizio us,
-		(select t.codice_ato as codice, t.idgis, t.denom  
+		(select t.codice_ato as codice, t.idgis, t.denom
 		FROM FGN_BACINO b, FGN_TRATTAMENTO t
 		WHERE b.SUB_FUNZIONE = 3 AND b.idgis = t.id_bacino
 		AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
@@ -826,9 +826,9 @@ BEGIN
 	UNION ALL
 	--SCARICO
 	SELECT distinct b.codice, b.idgis, b.denom,0,0,0,0,0,0,''SCA''
-	FROM 
+	FROM
 		utenza_servizio us,
-		(select t.codice, t.idgis, t.denom  
+		(select t.codice, t.idgis, t.denom
 		from FGN_BACINO b, FGN_PNT_SCARICO t
 		WHERE b.SUB_FUNZIONE = 1 AND b.idgis = t.id_bacino
 		AND t.D_GESTORE=''PUBLIACQUA'' AND t.D_STATO=''ATT'' AND t.D_AMBITO=''AT3''
@@ -837,7 +837,7 @@ BEGIN
 	';
 	-- Volume industriale ------------------------------------
 	-- (SCA)
-	UPDATE ABITANTI_TRATTATI 
+	UPDATE ABITANTI_TRATTATI
 	SET vol_ind = t.volume, anno = t.anno_rif
 	FROM (
 		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_fgn_ero) as volume
@@ -846,7 +846,7 @@ BEGIN
 		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
 	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='SCA';
 	-- (DEP)
-	UPDATE ABITANTI_TRATTATI 
+	UPDATE ABITANTI_TRATTATI
 	SET vol_ind = t.volume, anno = t.anno_rif
 	FROM (
 		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_dep_ero) as volume
@@ -857,7 +857,7 @@ BEGIN
 	---------------------------------------------------------
 	-- Volume civile ------------------------------------
 	-- (SCA)
-	UPDATE ABITANTI_TRATTATI 
+	UPDATE ABITANTI_TRATTATI
 	SET vol_civ = t.volume, anno = t.anno_rif
 	FROM (
 		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_fgn_ero) as volume
@@ -866,7 +866,7 @@ BEGIN
 		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
 	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='SCA';
 	-- (DEP)
-	UPDATE ABITANTI_TRATTATI 
+	UPDATE ABITANTI_TRATTATI
 	SET vol_civ = t.volume, anno = t.anno_rif
 	FROM (
 		SELECT srv.ids_codice_orig_dep_sca, sap.anno_rif, sum(vol_dep_ero) as volume
@@ -874,8 +874,8 @@ BEGIN
 		WHERE srv.id_ubic_contatore = sap.id_ubic_contatore and sap.cattariffa NOT IN ('APB_REFIND', 'APBLREFIND')
 		GROUP BY srv.ids_codice_orig_dep_sca, sap.anno_rif
 	) t WHERE t.ids_codice_orig_dep_sca = ABITANTI_TRATTATI.codice AND ABITANTI_TRATTATI.tipo='DEP';
-	
-	
+
+
 	UPDATE ABITANTI_TRATTATI SET ae_civ = vol_civ*1000/365/200, ae_ind = vol_ind*1000/220/200;
 	UPDATE ABITANTI_TRATTATI SET ae_tot = ae_civ + ae_ind;
 
@@ -884,9 +884,9 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the DISTRIB_TRONCHI/ADDUT_TRONCHI table 
+-- Populate data into the DISTRIB_TRONCHI/ADDUT_TRONCHI table
 -- (Ref. 5.1/5.2. Tronchi)
 -- OUT: BOOLEAN
 -- Example:
@@ -916,15 +916,15 @@ BEGIN
 		v_join_table := 'ACQ_ADDUTTRICE';
 		v_column := '
 			0::BIT,
-			CASE 
+			CASE
 				WHEN a.id_sist_prot_cat IS NULL THEN 0::BIT
 				ELSE 1::BIT
 			END
 		';
 	else
 		return false;
-	--	RAISE EXCEPTION 'Table ' || v_table || ' is not supported'; 
-	end IF;	
+	--	RAISE EXCEPTION 'Table ' || v_table || ' is not supported';
+	end IF;
 
 	EXECUTE 'DELETE FROM ' || v_table || ';';
 
@@ -1066,7 +1066,7 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the DISTRIB_TRONCHI table 
+-- Populate data into the DISTRIB_TRONCHI table
 -- (Ref. 5.1 DISTRIB_TRONCHI)
 -- OUT: BOOLEAN
 -- Example:
@@ -1079,9 +1079,9 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the ADDUT_TRONCHI table 
+-- Populate data into the ADDUT_TRONCHI table
 -- (Ref. 5.2. ADDUT_TRONCHI)
 -- OUT: BOOLEAN
 -- Example:
@@ -1094,9 +1094,9 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;		
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the ACQ_LUNGHEZZA_RETE table 
+-- Populate data into the ACQ_LUNGHEZZA_RETE table
 -- (Ref. 5.5. LUNGHEZZA RETE ACQUEDOTTO)
 -- OUT: BOOLEAN
 -- Example:
@@ -1106,7 +1106,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_lung_rete_acq(
 BEGIN
 
 	DELETE FROM ACQ_LUNGHEZZA_RETE;
-	
+
 	INSERT INTO ACQ_LUNGHEZZA_RETE(
 		idgis,
 		codice_ato,
@@ -1114,8 +1114,8 @@ BEGIN
 		lunghezza,
 		lunghezza_tlc
 	)
-	SELECT 
-		idgis_rete, codice_ato, 'DISTRIBUZIONE', sum(lunghezza) lung, 
+	SELECT
+		idgis_rete, codice_ato, 'DISTRIBUZIONE', sum(lunghezza) lung,
 		sum(case when id_tipo_telecon=2 then lunghezza else 0 end) lung_tlc
 	FROM distrib_tronchi
 	GROUP BY codice_ato, idgis_rete;
@@ -1127,21 +1127,21 @@ BEGIN
 		lunghezza,
 		lunghezza_tlc
 	)
-	SELECT 
-		idgis_rete, codice_ato, 'ADDUZIONE', sum(lunghezza) lung, 
+	SELECT
+		idgis_rete, codice_ato, 'ADDUZIONE', sum(lunghezza) lung,
 		sum(case when id_tipo_telecon=2 then lunghezza else 0 end) lung_tlc
 	FROM addut_tronchi
 	GROUP BY codice_ato, idgis_rete;
-	
+
 	RETURN TRUE;
-	
+
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;		
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the FOGNAT_TRONCHI/COLLET_TRONCHI table 
+-- Populate data into the FOGNAT_TRONCHI/COLLET_TRONCHI table
 -- (Ref. 6.1/6.2. Tronchi)
 -- OUT: BOOLEAN
 -- Example:
@@ -1166,58 +1166,58 @@ BEGIN
 		v_tipo_infr := 'COLLETTORI';
 	ELSE
 		return FALSE;
-	END IF;	
+	END IF;
 
 	EXECUTE 'DELETE FROM ' || v_table || ';';
-		
+
 	EXECUTE '
 		INSERT INTO ' || v_table || '(
 			 geom
 			,codice_ato
-			,idgis	
+			,idgis
 			,idgis_rete
-			,recapito			
-			,id_materiale	
+			,recapito
+			,id_materiale
 			,id_conservazione
-			,diametro		
-			,anno			
-			,lunghezza		
-			,idx_materiale	
-			,idx_diametro	
-			,idx_anno		
-			,idx_lunghezza	
+			,diametro
+			,anno
+			,lunghezza
+			,idx_materiale
+			,idx_diametro
+			,idx_anno
+			,idx_lunghezza
 			,id_refluo_trasportato
 			,funziona_gravita
-			,depurazione		
+			,depurazione
 		)
-		SELECT 
+		SELECT
 			a.geom,
-			r.codice_ato, 
+			r.codice_ato,
 			a.idgis,
-			r.idgis as idgis_rete,	
+			r.idgis as idgis_rete,
 			NULL,
         	CASE WHEN a.d_materiale = ''PP'' THEN ''ALT'' ELSE a.d_materiale END as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,
 			coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ),
-			CASE 
-				WHEN a.data_esercizio IS NULL THEN 9999 
-				ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER 
+			CASE
+				WHEN a.data_esercizio IS NULL THEN 9999
+				ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER
 			END anno_messa_opera,
 			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
-			CASE 
+			CASE
 				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
 				ELSE ''B''
 			END idx_materiale,
-			CASE 
+			CASE
 				WHEN coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NULL THEN ''X''
 				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
-			END idx_diametro, 
-			CASE 
+			END idx_diametro,
+			CASE
 				WHEN a.data_esercizio IS NULL THEN ''X''
 				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
-			END idx_anno, 
+			END idx_anno,
 			CASE
 				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
 				ELSE ''B''
@@ -1225,15 +1225,15 @@ BEGIN
 			a.d_tipo_acqua as id_refluo_trasportato,
 			0::BIT,
 			0::BIT
-		FROM 
+		FROM
 			FGN_CONDOTTA a
 			LEFT JOIN
 			' || v_join_table || ' r
 			ON a.id_rete = r.idgis
-		WHERE 
-			(a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) 
-			AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR a.D_STATO IS NULL) 
-			AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) 
+		WHERE
+			(a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null)
+			AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR a.D_STATO IS NULL)
+			AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null)
 			AND (a.D_TIPO_ACQUA in (''MIS'',''NER'',''SCA'') or a.D_TIPO_ACQUA IS NULL)
 			AND (a.D_GESTORE = ''PUBLIACQUA'') AND a.SUB_FUNZIONE = $1;' USING v_sub_funzione;
 
@@ -1265,7 +1265,7 @@ BEGIN
 		SET id_refluo_trasportato = ''1''
 		WHERE to_integer(id_refluo_trasportato, -9) = -9;
 	';
-	
+
 	-- valorizzazione funziona_gravita
 	EXECUTE '
 		UPDATE ' || v_table || '
@@ -1275,24 +1275,24 @@ BEGIN
 				FROM fgn_condotta c, all_domains d
 				WHERE c.d_funzionam = d.valore_gis AND d.dominio_gis=''D_F_FUNZIONAM_COND''
 				AND d.valore_netsic = ''1''
-			) t WHERE t.idgis = ' || v_table || '.idgis	
+			) t WHERE t.idgis = ' || v_table || '.idgis
 		);
 	';
-	
+
 	-- valorizzazione pressione di depurazione
 	EXECUTE '
 		UPDATE ' || v_table || '
 		SET depurazione = 1::BIT WHERE EXISTS(
 			SELECT * FROM (
-				select c.idgis 
-				FROM 
+				select c.idgis
+				FROM
 					fgn_condotta c,
 					fgn_trattamento d
 				where c.sist_acq_dep = d.business_id
-			) t WHERE t.idgis = ' || v_table || '.idgis		
+			) t WHERE t.idgis = ' || v_table || '.idgis
 		);
 	';
-	
+
 	--aggiornamento campo idx_materiale ad X nel caso che il campo id_materiale sia 1
 	EXECUTE '
 		UPDATE ' || v_table || '
@@ -1302,26 +1302,26 @@ BEGIN
 	-- Aggiornamento recapito (step 1)
 	EXECUTE '
 		UPDATE ' || v_table || '
-		SET recapito = t.codice_ato 
+		SET recapito = t.codice_ato
 		FROM (
-			SELECT fc.idgis, ft.codice_ato 
+			SELECT fc.idgis, ft.codice_ato
 			FROM fgn_condotta fc, fgn_trattamento ft
-			WHERE fc.sist_acq_dep = ft.business_id  
+			WHERE fc.sist_acq_dep = ft.business_id
 		) t WHERE ' || v_table || '.recapito IS NULL AND t.idgis = ' || v_table || '.idgis
 		;
 	';
 	-- Aggiornamento recapito (step 2)
 	EXECUTE '
 		UPDATE ' || v_table || '
-		SET recapito = t.recapito_prossimale 
+		SET recapito = t.recapito_prossimale
 		FROM (
-			SELECT fc.idgis, ft.recapito_prossimale 
+			SELECT fc.idgis, ft.recapito_prossimale
 			FROM fgn_condotta fc, fgn_pnt_scarico ft
-			WHERE fc.sist_acq_dep = ft.business_id  
+			WHERE fc.sist_acq_dep = ft.business_id
 		) t WHERE ' || v_table || '.recapito IS NULL AND t.idgis = ' || v_table || '.idgis
 		;
 	';
-	
+
 	-- FGN_COND_ALTRO
 	DELETE FROM FGN_COND_ALTRO WHERE tipo_infr = v_tipo_infr;
 	EXECUTE '
@@ -1329,12 +1329,12 @@ BEGIN
 		SELECT idgis, idgis_rete, codice_ato, $1
 		FROM ' || v_table || ';
 	' using v_tipo_infr;
-	
+
 	-- LOG
 	DELETE FROM LOG_STANDALONE WHERE alg_name = v_table;
 	EXECUTE '
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT idgis, ''' || v_table || ''', ''Campo recapito non valorizzato'' 
+	SELECT idgis, ''' || v_table || ''', ''Campo recapito non valorizzato''
 	FROM ' || v_table || ' WHERE recapito is NULL';
 
 	-- LOG
@@ -1351,7 +1351,7 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the FOGNAT_TRONCHI table 
+-- Populate data into the FOGNAT_TRONCHI table
 -- (Ref. 6.1. FOGNAT_TRONCHI)
 -- OUT: BOOLEAN
 -- Example:
@@ -1364,9 +1364,9 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the COLLETT_TRONCHI table 
+-- Populate data into the COLLETT_TRONCHI table
 -- (Ref. 6.2. COLLETT_TRONCHI)
 -- OUT: BOOLEAN
 -- Example:
@@ -1379,9 +1379,9 @@ END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the FGN_LUNGHEZZA_RETE table 
+-- Populate data into the FGN_LUNGHEZZA_RETE table
 -- (Ref. 6.5. LUNGHEZZA RETE FOGNATURA)
 -- OUT: BOOLEAN
 -- Example:
@@ -1974,18 +1974,18 @@ BEGIN
 
 	--
 	INSERT INTO FGN_LUNGHEZZA_ALLACCI(
-		idgis, codice_ato, tipo_infr, 
-		nr_allacci_c, lung_alla_c, 
-		nr_allacci_i, lung_alla_i, 
-		nr_allacci_c_ril, lung_alla_c_ril, 
+		idgis, codice_ato, tipo_infr,
+		nr_allacci_c, lung_alla_c,
+		nr_allacci_i, lung_alla_i,
+		nr_allacci_c_ril, lung_alla_c_ril,
 		nr_allacci_i_ril, lung_alla_i_ril
 	)
-	SELECT id_rete, codice_ato, tipo_infr, 
-		sum(nr_allacci_c), sum(lu_allacci_c)/1000, 
-		sum(nr_allacci_i), sum(lu_allacci_i)/1000, 
+	SELECT id_rete, codice_ato, tipo_infr,
+		sum(nr_allacci_c), sum(lu_allacci_c)/1000,
+		sum(nr_allacci_i), sum(lu_allacci_i)/1000,
 		sum(nr_allacci_c_ril), sum(lu_allacci_c_ril)/1000,
 		sum(nr_allacci_i_ril), sum(lu_allacci_i_ril)/1000
-	FROM FGN_COND_ALTRO 
+	FROM FGN_COND_ALTRO
 	WHERE id_rete is NOT NULL
 	GROUP BY id_rete, codice_ato, tipo_infr;
 
@@ -2051,12 +2051,12 @@ BEGIN
     group by id_rete;
 
 	RETURN TRUE;
-	
+
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
 -- Populate data for shape acquedotto
 -- (Ref. 5.4. SHAPE ACQUEDOTTO)
@@ -2066,7 +2066,7 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_shape(
 ) RETURNS BOOLEAN AS $$
 BEGIN
-	
+
 	DELETE FROM ACQ_SHAPE;
 
     INSERT INTO ACQ_SHAPE(
@@ -2189,13 +2189,13 @@ BEGIN
 
 	-- LOG ANOMALIES
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ACQ_SHAPE';
-	
+
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT ids_codi_1, 'ACQ_SHAPE', 'Tratto con tipo_acqua diverso da GREZZA o TRATTATA' 
+	SELECT ids_codi_1, 'ACQ_SHAPE', 'Tratto con tipo_acqua diverso da GREZZA o TRATTATA'
 	FROM ACQ_SHAPE WHERE tipo_acqua NOT IN ('GREZZA','TRATTATA');
-	
+
 	RETURN TRUE;
-	
+
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
@@ -2311,9 +2311,9 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acquedotto(
 ) RETURNS BOOLEAN AS $$
 BEGIN
     SET work_mem = '512MB';
-	RETURN 
-		populate_distrib_tronchi() 
-	AND populate_addut_tronchi() 
+	RETURN
+		populate_distrib_tronchi()
+	AND populate_addut_tronchi()
 	AND populate_lung_rete_acq()
 	AND determine_acq_allacci()
 	AND populate_acq_vol_utenze()
@@ -2705,9 +2705,9 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_fognatura(
 ) RETURNS BOOLEAN AS $$
 BEGIN
     SET work_mem = '256MB';
-	RETURN 
-		populate_fognat_tronchi() 
-	AND populate_collett_tronchi() 
+	RETURN
+		populate_fognat_tronchi()
+	AND populate_collett_tronchi()
 	AND populate_lung_rete_fgn()
 	AND determine_fgn_allacci()
 	AND populate_fgn_volumi_utenze()
@@ -2789,7 +2789,7 @@ $$  LANGUAGE plpgsql
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
     SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------
--- Populate data into the XXX_POMPE tables 
+-- Populate data into the XXX_POMPE tables
 --  * POZZI_POMPE
 --  * POTAB_POMPE
 --  * POMPAGGI_POMPE
@@ -2802,54 +2802,54 @@ $$  LANGUAGE plpgsql
 -- 	select DBIAIT_ANALYSIS.populate_archivi_pompe();
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_archivi_pompe(
 ) RETURNS BOOLEAN AS $$
-DECLARE 
+DECLARE
 	v_t INTEGER;
 	v_f INTEGER;
 	v_in_tables VARCHAR[] := ARRAY['acq_captazione', 'acq_potabiliz', 'acq_pompaggio', 'fgn_imp_sollev', 'fgn_trattamento'];
 	v_tables VARCHAR[] := ARRAY['POZZI_POMPE', 'POTAB_POMPE', 'POMPAGGI_POMPE', 'SOLLEV_POMPE', 'DEPURATO_POMPE'];
 	v_filters VARCHAR[] := ARRAY[
-		'p.tipo_oggetto = ''ACQ_CAPTAZIONE'' AND c.sub_funzione = 3', 
-		'p.tipo_oggetto = ''ACQ_POTABILIZ''',  
-		'p.tipo_oggetto = ''ACQ_POMPAGGIO''', 
-		'p.tipo_oggetto = ''FGN_IMP_SOLLEV''', 
+		'p.tipo_oggetto = ''ACQ_CAPTAZIONE'' AND c.sub_funzione = 3',
+		'p.tipo_oggetto = ''ACQ_POTABILIZ''',
+		'p.tipo_oggetto = ''ACQ_POMPAGGIO''',
+		'p.tipo_oggetto = ''FGN_IMP_SOLLEV''',
 		'p.tipo_oggetto = ''FGN_TRATTAMENTO'''
 	];
 	--POZZI_POMPE -> 	[acq_captazione]  -> tipo_oggetto = 'ACQ_CAPTAZIONE' AND c.sub_funzione = 3
 	--POTAB_POMPE -> 	[acq_potabiliz]   -> tipo_oggetto = 'ACQ_POTABILIZ'
 	--POMPAGGI_POMPE -> [acq_pompaggio]   -> tipo_oggetto = 'ACQ_POMPAGGIO'
-	--SOLLEV_POMPE -> 	[fgn_imp_sollev]  -> tipo_oggetto = 'FGN_IMP_SOLLEV' 
+	--SOLLEV_POMPE -> 	[fgn_imp_sollev]  -> tipo_oggetto = 'FGN_IMP_SOLLEV'
 	--DEPURATO_POMPE -> [fgn_trattamento] -> tipo_oggetto = 'FGN_TRATTAMENTO'
 	v_fields VARCHAR[] := ARRAY['IDX_ANNO_INSTAL', 'IDX_ANNO_RISTR', 'IDX_POTENZA', 'IDX_PORTATA', 'IDX_PREVALENZA'];
 BEGIN
     SET work_mem = '256MB';
 	DELETE FROM STATS_POMPE;
 	DELETE FROM SUPPORT_POZZI_INPOTAB;
-	
+
     FOR v_t IN array_lower(v_tables,1) .. array_upper(v_tables,1)
 	LOOP
-	
+
 		EXECUTE 'DELETE FROM ' || v_tables[v_t];
 		EXECUTE '
 			INSERT INTO ' || v_tables[v_t] || '(
 				CODICE_ATO, D_STATO_CONS, ANNO_INSTAL,
-				ANNO_RISTR, POTENZA, PORTATA, 
+				ANNO_RISTR, POTENZA, PORTATA,
 				PREVALENZA, SN_RISERVA,
 				IDX_ANNO_INSTAL, IDX_ANNO_RISTR,
 				IDX_POTENZA, IDX_PORTATA, IDX_PREVALENZA
 			)
-			SELECT 
-				c.CODICE_ATO, p.D_STATO_CONS, p.ANNO_INSTAL, 
-				p.ANNO_RISTR, p.POTENZA, p.PORTATA, 
-				p.PREVALENZA, 
-				CASE WHEN 
+			SELECT
+				c.CODICE_ATO, p.D_STATO_CONS, p.ANNO_INSTAL,
+				p.ANNO_RISTR, p.POTENZA, p.PORTATA,
+				p.PREVALENZA,
+				CASE WHEN
 					p.SN_RISERVA = ''NO'' THEN 0::BIT
 				ELSE 1::BIT END,
 				p.A_ANNO_INSTAL, p.A_ANNO_RISTR,
-				p.A_POTENZA, p.A_PORTATA, p.A_PREVALENZA				
+				p.A_POTENZA, p.A_PORTATA, p.A_PREVALENZA
 			FROM ' || v_in_tables[v_t] || ' c, ARCHIVIO_POMPE p
-			WHERE 
-				' || v_filters[v_t] ||' 
-				and c.d_gestore = ''PUBLIACQUA'' AND c.d_ambito IN (''AT3'', NULL) 
+			WHERE
+				' || v_filters[v_t] ||'
+				and c.d_gestore = ''PUBLIACQUA'' AND c.d_ambito IN (''AT3'', NULL)
 				and c.d_stato in (''ATT'',''FIP'')
 				and c.idgis = p.id_oggetto';
 
@@ -2859,22 +2859,22 @@ BEGIN
 					UPDATE ' || v_tables[v_t] || '
 					SET ' || v_fields[v_f] || ' = d.valore_netsic
 					FROM all_domains d
-					WHERE d.dominio_netsic = ''id_indice_idx'' 
+					WHERE d.dominio_netsic = ''id_indice_idx''
 					AND d.valore_gis = ' || v_tables[v_t] || '.' || v_fields[v_f] || ';';
-			END LOOP;		
-		
+			END LOOP;
+
 		-- Statistics
 		EXECUTE '
 		INSERT INTO STATS_POMPE(codice_ato, sum_potenza, avg_idx_potenza)
-		SELECT t1.codice_ato, t1.sum_potenza, t2.idx_potenza 
-		FROM 
+		SELECT t1.codice_ato, t1.sum_potenza, t2.idx_potenza
+		FROM
 		(
-			SELECT 
+			SELECT
 				codice_ato,
 				SUM(
 					CASE WHEN sn_riserva=0::BIT THEN potenza ELSE 0 END
 				) sum_potenza
-			FROM ' || v_tables[v_t] || ' 
+			FROM ' || v_tables[v_t] || '
 			GROUP BY codice_ato
 		) t1,
 		(
@@ -2885,7 +2885,7 @@ BEGIN
 					else ''B''
 			   end idx_potenza
 			FROM(
-				SELECT codice_ato, 
+				SELECT codice_ato,
 				ROUND(avg(
 					case when idx_potenza=''A'' then 1
 						 when idx_potenza=''C'' then 2
@@ -2898,82 +2898,82 @@ BEGIN
 			) t
 		) t2
 		WHERE t1.codice_ato = t2.codice_ato;';
-		
-	END LOOP;	
-	
+
+	END LOOP;
+
 	--
 	INSERT INTO SUPPORT_POZZI_INPOTAB(ids_codice, volume_medio_prel)
 	SELECT DISTINCT ON(codice_ato) codice_ato, volume_medio_prel
 	FROM (
-		select 
-			ac.codice_ato, 
+		select
+			ac.codice_ato,
 			case when pz.ids_codice is null then ac.volume_medio_prel
-			else 0 
-			end volume_medio_prel	
-		from a_acq_captazione ac 
+			else 0
+			end volume_medio_prel
+		from a_acq_captazione ac
 		left join pozzi_inpotab pz
 		on ac.codice_ato = pz.ids_codice
 		WHERE ac.d_gestore = 'PUBLIACQUA' AND ac.d_ambito IN ('AT3', NULL) AND ac.sub_funzione = 3
-		UNION ALL	
-		select 
-			ac.codice_ato, 
+		UNION ALL
+		select
+			ac.codice_ato,
 			case when pz.ids_codice is null then ac.volume_medio_prel
-			else 0 
+			else 0
 			end volume_medio_prel
-		from acq_captazione ac 
+		from acq_captazione ac
 		left join pozzi_inpotab pz
 		on ac.codice_ato = pz.ids_codice
-		WHERE ac.d_gestore = 'PUBLIACQUA' AND ac.d_ambito IN ('AT3', NULL) AND ac.sub_funzione = 3		
+		WHERE ac.d_gestore = 'PUBLIACQUA' AND ac.d_ambito IN ('AT3', NULL) AND ac.sub_funzione = 3
 	) t;
-	
+
 	RETURN TRUE;
 
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'dbiait_analysis'
-    SET search_path = public, DBIAIT_ANALYSIS;		
+    SET search_path = public, DBIAIT_ANALYSIS;
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 -- Partition table by year, note
 --
 -- select DBIAIT_FREEZE.initialize_freeze_table('acq_accumulo',2021,'example for 2021');
--- 
+--
 CREATE OR REPLACE FUNCTION DBIAIT_FREEZE.initialize_freeze_table(
 	v_table_name VARCHAR,
 	v_year INTEGER,
 	v_note TEXT
 ) RETURNS BOOLEAN AS $$
-DECLARE 
+DECLARE
 	v_count INTEGER:=0;
-	v_schema_anl VARCHAR(16) := 'dbiait_analysis';	
+	v_schema_anl VARCHAR(16) := 'dbiait_analysis';
 	v_schema_frz VARCHAR(16) := 'dbiait_freeze';
 	v_def_note VARCHAR(4000) := '';
 BEGIN
 	-- check if the child table (by year) already exists
 	SELECT count(0) INTO v_count
-	FROM information_schema.tables 
-	WHERE UPPER(table_schema) = UPPER(v_schema_frz) 
+	FROM information_schema.tables
+	WHERE UPPER(table_schema) = UPPER(v_schema_frz)
 	and UPPER(table_name) = UPPER(v_table_name || '_' || v_year)
 	and table_type = 'BASE TABLE';
-	
+
 	IF v_count = 0 THEN
 		-- create a child table with 2 additional fields (_year, _note)
 		EXECUTE 'CREATE TABLE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' AS TABLE ' || v_schema_anl || '.' || v_table_name;
-		
+
 		EXECUTE 'ALTER TABLE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' ADD COLUMN _year INTEGER NOT NULL DEFAULT ' || v_year;
-		
+
 		EXECUTE 'ALTER TABLE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' ADD COLUMN _note TEXT';
-		
+
 		IF v_note IS NOT NULL THEN
 			EXECUTE 'UPDATE ' || v_schema_frz || '.' || v_table_name || '_' || v_year || ' SET _note = $1 ' using v_note;
 		END IF;
 	ELSE
 		-- Raise an exception: we cannot initialize an existing partition
-		RAISE EXCEPTION 'Table % is already partitioned for year %', v_table_name, v_year; 
+		RAISE EXCEPTION 'Table % is already partitioned for year %', v_table_name, v_year;
 	END IF;
-	
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -2985,7 +2985,7 @@ $$  LANGUAGE plpgsql
 -- Remove all tables by year
 --
 -- select DBIAIT_FREEZE.freeze_tables(2021);
--- 
+--
 CREATE OR REPLACE FUNCTION DBIAIT_FREEZE.freeze_tables(
 	v_year INTEGER,
 	v_note TEXT
@@ -2996,12 +2996,12 @@ DECLARE
 	v_rec RECORD;
 	v_res BOOLEAN;
 BEGIN
-	FOR v_rec IN 
+	FOR v_rec IN
 		SELECT table_name::VARCHAR
-		FROM information_schema.tables 
-		WHERE UPPER(table_schema) = UPPER(v_schema_anl) 
+		FROM information_schema.tables
+		WHERE UPPER(table_schema) = UPPER(v_schema_anl)
 		and table_type = 'BASE TABLE'
-	LOOP	
+	LOOP
 		v_res := initialize_freeze_table(v_rec.table_name, v_year, v_note);
 	END LOOP;
 	RETURN TRUE;
@@ -3014,7 +3014,7 @@ $$  LANGUAGE plpgsql
 -- Remove a table by name, year
 --
 -- select DBIAIT_FREEZE.remove_freeze_table('acq_accumulo', 2021);
--- 
+--
 CREATE OR REPLACE FUNCTION DBIAIT_FREEZE.remove_freeze_table(
 	v_table_name VARCHAR,
 	v_year INTEGER
@@ -3033,7 +3033,7 @@ $$  LANGUAGE plpgsql
 -- Remove all tables by year
 --
 -- select DBIAIT_FREEZE.remove_freeze_tables(2021);
--- 
+--
 CREATE OR REPLACE FUNCTION DBIAIT_FREEZE.remove_freeze_tables(
 	v_year INTEGER
 ) RETURNS BOOLEAN AS $$
@@ -3041,13 +3041,13 @@ DECLARE
 	v_schema_frz VARCHAR(16) := 'dbiait_freeze';
 	v_rec RECORD;
 BEGIN
-	FOR v_rec IN 
+	FOR v_rec IN
 		SELECT table_name
-		FROM information_schema.tables 
-		WHERE UPPER(table_schema) = UPPER(v_schema_frz) 
+		FROM information_schema.tables
+		WHERE UPPER(table_schema) = UPPER(v_schema_frz)
 		and table_name like '%_' || v_year
 		and table_type = 'BASE TABLE'
-	LOOP	
+	LOOP
 		EXECUTE 'DROP TABLE IF EXISTS ' || v_schema_frz || '.' || v_rec.table_name;
 	END LOOP;
 
@@ -3070,35 +3070,35 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_addut_com_serv(
 ) RETURNS BOOLEAN AS $$
 BEGIN
-	
+
 	DELETE FROM addut_com_serv;
-	
+
 	INSERT into addut_com_serv(ids_codice, id_comune_istat)
 	select DISTINCT t.codice_ato, (c.pro_com::INTEGER)::VARCHAR from (
 		select aa.codice_ato, ac.geom
-		from acq_adduttrice aa, acq_condotta ac 
-		where aa.d_gestore='PUBLIACQUA' 
-		and aa.d_ambito IN ('AT3', NULL) 
+		from acq_adduttrice aa, acq_condotta ac
+		where aa.d_gestore='PUBLIACQUA'
+		and aa.d_ambito IN ('AT3', NULL)
 		--and aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
-		AND ac.d_stato IN ('ATT', 'FIP', NULL) 
+		AND ac.d_stato IN ('ATT', 'FIP', NULL)
 		and ac.sn_fittizia in ('NO', NULL)
-		and ac.id_rete = aa.idgis 
+		and ac.id_rete = aa.idgis
 	) t, confine_comunale c
 	where t.geom && c.geom and st_intersects(t.geom, c.geom);
-	
+
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ADDUT_COM_SERV';
-	
+
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	select codice_ato, 'ADDUT_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di un comune'  from (
 	select distinct t.codice_ato, c.pro_com from (
 		select aa.codice_ato, ac.geom
-		from acq_adduttrice aa, acq_condotta ac 
-		where aa.d_gestore='PUBLIACQUA' 
-		and aa.d_ambito IN ('AT3', NULL) 
+		from acq_adduttrice aa, acq_condotta ac
+		where aa.d_gestore='PUBLIACQUA'
+		and aa.d_ambito IN ('AT3', NULL)
 		--and aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
-		AND ac.d_stato IN ('ATT', 'FIP', NULL) 
+		AND ac.d_stato IN ('ATT', 'FIP', NULL)
 		and ac.sn_fittizia in ('NO', NULL)
-		and ac.id_rete = aa.idgis 
+		and ac.id_rete = aa.idgis
 	) t, confine_comunale c
 	where t.geom && c.geom and st_intersects(t.geom, c.geom)
 	) t2 group by t2.codice_ato having count(0) > 1;
@@ -3117,33 +3117,33 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_collet_com_serv(
 ) RETURNS BOOLEAN AS $$
 BEGIN
-	
+
 	DELETE FROM collet_com_serv;
-	
+
 	INSERT into collet_com_serv(ids_codice, id_comune_istat)
 	SELECT distinct t.codice_ato, c.pro_com FROM (
-		SELECT fc.codice_ato, fc2.geom 
-		FROM fgn_collettore fc, fgn_condotta fc2 
-		WHERE fc.d_gestore='PUBLIACQUA' 
-		and fc.d_ambito IN ('AT3', NULL) 
+		SELECT fc.codice_ato, fc2.geom
+		FROM fgn_collettore fc, fgn_condotta fc2
+		WHERE fc.d_gestore='PUBLIACQUA'
+		and fc.d_ambito IN ('AT3', NULL)
 		and fc.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
-		AND fc2.d_stato IN ('ATT', 'FIP', NULL) 
+		AND fc2.d_stato IN ('ATT', 'FIP', NULL)
 		AND fc2.sn_fittizia in ('NO', NULL)
 		AND fc.idgis=fc2.id_rete
 	) t, confine_comunale c
 	WHERE t.geom && c.geom and st_intersects(t.geom, c.geom);
-	
+
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'COLLET_COM_SERV';
-	
+
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT codice_ato, 'COLLET_COM_SERV', 'Tratto intersecante piu'' (' || count(0) || ') di un comune'  from (
 		select distinct t.codice_ato, c.pro_com from (
-		select fc.codice_ato, fc2.geom 
-		from fgn_collettore fc, fgn_condotta fc2 
-		where fc.d_gestore='PUBLIACQUA' 
-		and fc.d_ambito IN ('AT3', NULL) 
+		select fc.codice_ato, fc2.geom
+		from fgn_collettore fc, fgn_condotta fc2
+		where fc.d_gestore='PUBLIACQUA'
+		and fc.d_ambito IN ('AT3', NULL)
 		and fc.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
-		AND fc2.d_stato IN ('ATT', 'FIP', NULL) 
+		AND fc2.d_stato IN ('ATT', 'FIP', NULL)
 		AND fc2.sn_fittizia in ('NO', NULL)
 		and fc.idgis=fc2.id_rete
 		) t, confine_comunale c
@@ -3157,7 +3157,7 @@ $$  LANGUAGE plpgsql
     SET search_path = public, DBIAIT_ANALYSIS;
 ------------------------------------------------------------------------------------------------
 -- Populate tables:
---    FIUMI_INRETI 
+--    FIUMI_INRETI
 --    LAGHI_INRETI
 --    POZZI_INRETI
 --    SORGENTI_INRETI
@@ -3172,7 +3172,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_impianti_inreti(
 ) RETURNS BOOLEAN AS $$
 DECLARE
 	v_in_tables VARCHAR[] := ARRAY[
-		'acq_captazione', 
+		'acq_captazione',
 		'acq_captazione',
 		'acq_captazione',
 		'acq_captazione',
@@ -3201,13 +3201,13 @@ DECLARE
 	];
 
 	v_in_fields VARCHAR[] := ARRAY[
-		'aa.codice_ato, rsd.cod_sist_idr, 3',
-		'aa.codice_ato, rsd.cod_sist_idr, 3',
-		'aa.codice_ato, rsd.cod_sist_idr, 3',
-		'aa.codice_ato, rsd.cod_sist_idr, 3',
-		'aa.codice_ato, rsd.cod_sist_idr, 3',
+		't.codice_ato, rsd.cod_sist_idr, 3',
+		't.codice_ato, rsd.cod_sist_idr, 3',
+		't.codice_ato, rsd.cod_sist_idr, 3',
+		't.codice_ato, rsd.cod_sist_idr, 3',
+		't.codice_ato, rsd.cod_sist_idr, 3',
 		'ua.codice_ato, rsd.codice_ato, 3',
-		'aa.codice_ato, rsd.cod_sist_idr, 3'
+		't.codice_ato, rsd.cod_sist_idr, 3'
 	];
 	v_out_fields VARCHAR[] := ARRAY[
 		'ids_codice, ids_codice_rete, id_gestore_rete',
@@ -3259,10 +3259,11 @@ BEGIN
                     distinct ' || v_in_fields[v_t] || '
                 from
                     unique_ato bb
-                join ' || v_in_tables[v_t] || ' aa on
-                    aa.codice_ato = bb.codice_ato
+                join ' || v_in_tables[v_t] || ' t on
+                    t.codice_ato = bb.codice_ato
                 join rel_sa_di rsd on
-                    aa.id_sist_idr = rsd.idgis_sist_idr';
+                    t.id_sist_idr = rsd.idgis_sist_idr
+                where ' || v_filters[v_t] || '';
         else
             EXECUTE '
 				INSERT INTO ' || v_tables[v_t] || '(' || v_out_fields[v_t] || ')
@@ -3316,7 +3317,7 @@ $$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
 ------------------------------------------------------------------------------------------------
--- Populate table ACCUMULI_INADD
+-- Populate table ACCUMULI_INADDa
 -- Example:
 -- select DBIAIT_ANALYSIS.populate_accumuli_inadd();
 --
@@ -3325,36 +3326,36 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_accumuli_inadd(
 DECLARE
 	v_tol DOUBLE PRECISION := snap_tolerance();
 BEGIN
-	
+
 	DELETE FROM ACCUMULI_INADD;
-	
+
 	INSERT into ACCUMULI_INADD(ids_codice, ids_codice_adduzione, id_gestore_adduzione)
 	SELECT DISTINCT t.codice_ato, ad.codice_ato, 3 from (
 		SELECT distinct aa.codice_ato, ac.id_rete
 		from acq_accumulo aa, acq_condotta ac
-		WHERE aa.d_gestore = 'PUBLIACQUA' 
-		AND aa.d_ambito IN ('AT3', NULL) 
+		WHERE aa.d_gestore = 'PUBLIACQUA'
+		AND aa.d_ambito IN ('AT3', NULL)
 		AND aa.d_stato IN ('ATT','FIP','PIF','RIS')
-		AND ac.d_stato IN ('ATT', 'FIP', NULL) 
+		AND ac.d_stato IN ('ATT', 'FIP', NULL)
 		AND ac.sn_fittizia in ('NO', NULL)
 		and st_buffer(aa.geom, v_tol)&&ac.geom and st_intersects(ac.geom, st_buffer(aa.geom, v_tol))
 	) t, acq_adduttrice ad
 	WHERE t.id_rete=ad.idgis
 	AND ad.d_gestore = 'PUBLIACQUA' AND ad.d_ambito IN ('AT3', NULL) AND ad.d_stato IN ('ATT','FIP','PIF','RIS');
-	
+
 	--INSERT into ACCUMULI_INADD(ids_codice, ids_codice_adduzione, id_gestore_adduzione)
-	--select a.codice_ato, c.codice_ato, NULL 
+	--select a.codice_ato, c.codice_ato, NULL
 	--from acq_accumulo a left JOIN addut_tronchi c
 	--on c.geom&&ST_BUFFER(a.geom, v_tol) and ST_INTERSECTS(c.geom, ST_BUFFER(a.geom, v_tol))
 	--WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
 	--AND c.codice_ato is not NULL;
-		
+
 	--LOG ANOMALIE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'ACCUMULI_INADD';
-	
-	-- Elementi che intersecano piu' tronchi di adduzione	
-	INSERT INTO LOG_STANDALONE (id, alg_name, description) 
-	select a.idgis, 'ACCUMULI_INADD', 'Elemento intersecante piu'' (' || t.cnt || ') di un tronco di adduzione'  
+
+	-- Elementi che intersecano piu' tronchi di adduzione
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	select a.idgis, 'ACCUMULI_INADD', 'Elemento intersecante piu'' (' || t.cnt || ') di un tronco di adduzione'
 	FROM
 	(
 		select ids_codice, count(0) cnt
@@ -3362,19 +3363,19 @@ BEGIN
 		group by ids_codice having count(0) > 1
 	) t, acq_accumulo a
 	where a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
-	AND t.ids_codice = a.codice_ato;  
-	
+	AND t.ids_codice = a.codice_ato;
+
 	-- Elementi che non intersecano alcun tronco di adduzione
-	INSERT INTO LOG_STANDALONE (id, alg_name, description)	
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	select idgis, 'ACCUMULI_INADD', 'Elemento non intersecante alcun tronco di adduzione'
-	from acq_accumulo a 
+	from acq_accumulo a
 	where a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
 	AND NOT EXISTS(
 		select ids_codice
 		from ACCUMULI_INADD t
-		where t.ids_codice = a.codice_ato 
+		where t.ids_codice = a.codice_ato
 	);
-	
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -3390,7 +3391,7 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_depurato_incoll(
 DECLARE
 	v_tol DOUBLE PRECISION := snap_tolerance();
 BEGIN
-	
+
 	DELETE FROM DEPURATO_INCOLL;
 
 	with v_bacino as (
@@ -3474,10 +3475,10 @@ BEGIN
 
 	--LOG ANOMALIE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'DEPURATO_INCOLL';
-	
-	-- Elementi che intersecano piu' tronchi di collettore	
-	INSERT INTO LOG_STANDALONE (id, alg_name, description) 
-	select a.idgis, 'DEPURATO_INCOLL', 'Elemento intersecante piu'' (' || t.cnt || ') di un tronco di collettore'  
+
+	-- Elementi che intersecano piu' tronchi di collettore
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
+	select a.idgis, 'DEPURATO_INCOLL', 'Elemento intersecante piu'' (' || t.cnt || ') di un tronco di collettore'
 	FROM
 	(
 		select ids_codice, count(0) cnt
@@ -3485,19 +3486,19 @@ BEGIN
 		group by ids_codice having count(0) > 1
 	) t, fgn_trattamento a
 	WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
-	AND t.ids_codice = a.codice_ato;  
+	AND t.ids_codice = a.codice_ato;
 
 	-- Elementi che non intersecano alcun tronco di collettore
-	INSERT INTO LOG_STANDALONE (id, alg_name, description)	
+	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	select idgis, 'DEPURATO_INCOLL', 'Elemento non intersecante alcun tronco di collettore'
 	from fgn_trattamento a
 	WHERE a.d_gestore = 'PUBLIACQUA' AND a.d_ambito IN ('AT3', NULL) AND a.d_stato IN ('ATT','FIP','PIF','RIS')
 	AND not exists(
 		select ids_codice
 		from DEPURATO_INCOLL t
-		where t.ids_codice = a.codice_ato 
+		where t.ids_codice = a.codice_ato
 	);
-	
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -3515,29 +3516,29 @@ $$  LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_scaricato_infog(
 ) RETURNS BOOLEAN AS $$
 BEGIN
-	
+
 	DELETE FROM SCARICATO_INFOG;
-	
+
 	INSERT into SCARICATO_INFOG(ids_codice, ids_codice_fognatura, id_gestore_fognatura)
 	SELECT DISTINCT sf.codice_ato, rr.codice_ato, 3
 	FROM fgn_sfioro sf
-	LEFT JOIN fgn_rete_racc rr 
+	LEFT JOIN fgn_rete_racc rr
 		ON rr.geom&&sf.geom AND st_INTERSECTS(rr.geom,sf.geom)
 	WHERE sf.d_gestore = 'PUBLIACQUA' AND sf.d_ambito IN ('AT3', NULL) AND sf.d_stato IN ('ATT','FIP','PIF','RIS')
 	AND rr.d_gestore = 'PUBLIACQUA' AND rr.d_ambito IN ('AT3', NULL) AND rr.d_stato IN ('ATT','FIP','PIF','RIS')
 	and sf.sn_bypass = 'NO'
 	AND rr.codice_ato is not NULL;
-		
+
 	--LOG ANOMALIE
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'SCARICATO_INFOG';
-	
+
 	-- Elementi che intersecano piu' di una rete
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT idgis, 'SCARICATO_INFOG', 'Elemento intersecante piu'' (' || count(0) || ') di una rete' 
+	SELECT idgis, 'SCARICATO_INFOG', 'Elemento intersecante piu'' (' || count(0) || ') di una rete'
 	FROM (
 		SELECT sf.idgis
 		FROM fgn_sfioro sf
-		LEFT JOIN fgn_rete_racc rr 
+		LEFT JOIN fgn_rete_racc rr
 			ON rr.geom&&sf.geom AND st_INTERSECTS(rr.geom,sf.geom)
 		WHERE sf.d_gestore = 'PUBLIACQUA' AND sf.d_ambito IN ('AT3', NULL) AND sf.d_stato IN ('ATT','FIP','PIF','RIS')
 		AND rr.d_gestore = 'PUBLIACQUA' AND rr.d_ambito IN ('AT3', NULL) AND rr.d_stato IN ('ATT','FIP','PIF','RIS')
@@ -3546,9 +3547,9 @@ BEGIN
 
 	-- Elementi che non intersecano alcuna rete
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
-	SELECT sf.idgis, 'SCARICATO_INFOG', 'Elemento non intersecante alcuna rete' 
+	SELECT sf.idgis, 'SCARICATO_INFOG', 'Elemento non intersecante alcuna rete'
 	FROM fgn_sfioro sf
-	LEFT JOIN fgn_rete_racc rr 
+	LEFT JOIN fgn_rete_racc rr
 		ON rr.geom&&sf.geom AND st_INTERSECTS(rr.geom,sf.geom)
 	WHERE sf.d_gestore = 'PUBLIACQUA' AND sf.d_ambito IN ('AT3', NULL) AND sf.d_stato IN ('ATT','FIP','PIF','RIS')
 		AND rr.d_gestore = 'PUBLIACQUA' AND rr.d_ambito IN ('AT3', NULL) AND rr.d_stato IN ('ATT','FIP','PIF','RIS')
@@ -3596,16 +3597,16 @@ BEGIN
 	v_node_table := v_table_name || '_nodes';
 	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_node_table;
 	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_node_table || '(id INTEGER)';
-	PERFORM AddGeometryColumn ('dbiait_analysis', v_node_table, 'geom', 25832, 'POINT', 2); 
-	
+	PERFORM AddGeometryColumn ('dbiait_analysis', v_node_table, 'geom', 25832, 'POINT', 2);
+
 	EXECUTE '
 		INSERT INTO ' || v_node_table || ' (geom, id)
 		select geom, ROW_NUMBER () OVER () id from (
 
 			select distinct on (ST_ASTEXT(geom)) geom
 			from (
-				
-				select 
+
+				select
 				   st_snaptogrid(st_startpoint(t.geom), $1) geom
 				from (
 				   select st_geometryn(geom, 1) geom
@@ -3614,27 +3615,27 @@ BEGIN
 				) t
 
 				UNION ALL
-				
-				select 
+
+				select
 				   st_snaptogrid(st_endpoint(t.geom), $2) geom
 				from (
 				   select st_geometryn(geom, 1) geom
 				   from ' || v_table_name || '
 				   where st_numgeometries(geom)=1
 				) t
-				
+
 			) t2
-			
+
 		) t3
 	' USING v_tol, v_tol;
-	
+
 	EXECUTE 'CREATE INDEX ' || v_node_table || '_geom_idx ON ' || v_node_table || ' USING GIST(geom)';
-	
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
-    SET search_path = public, DBIAIT_ANALYSIS;	
+    SET search_path = public, DBIAIT_ANALYSIS;
 -------------------------------------------------------------------------------------------------------
 -- Create the network edges for a specified table
 -- Example:
@@ -3650,17 +3651,17 @@ BEGIN
 	v_edge_table := v_table_name || '_edges';
 	EXECUTE 'DROP TABLE IF EXISTS dbiait_analysis.' || v_edge_table;
 	EXECUTE 'CREATE TABLE dbiait_analysis.' || v_edge_table || '(id INTEGER, idgis VARCHAR(32), source INTEGER, target INTEGER)';
-	PERFORM AddGeometryColumn ('dbiait_analysis', v_edge_table, 'geom', 25832, 'LINESTRING', 2); 
-	
+	PERFORM AddGeometryColumn ('dbiait_analysis', v_edge_table, 'geom', 25832, 'LINESTRING', 2);
+
 	EXECUTE '
 		INSERT INTO ' || v_edge_table || ' (id, idgis, geom)
 		SELECT ROW_NUMBER () OVER () id, idgis, st_geometryn(geom, 1) geom
 		FROM ' || v_table_name || '
 		WHERE st_numgeometries(geom) = 1
 	';
-	
+
 	EXECUTE 'CREATE INDEX ' || v_edge_table || '_geom_idx ON ' || v_edge_table || ' USING GIST(geom)';
-	
+
 	--Update source field
 	EXECUTE '
 	update ' || v_edge_table || '
@@ -3679,7 +3680,7 @@ BEGIN
 	' USING v_tol, v_tol;
 	RETURN TRUE;
 END;
-$$  LANGUAGE plpgsql 
+$$  LANGUAGE plpgsql
     SECURITY DEFINER
     SET search_path = public, DBIAIT_ANALYSIS;
 -------------------------------------------------------------------------------------------------------
@@ -4352,19 +4353,19 @@ begin
 	DELETE FROM LOG_STANDALONE;
     DELETE FROM POP_RES_LOC;
 	DELETE FROM DISTRIB_LOC_SERV;
-	
+
 	UPDATE POP_RES_COMUNE
-	SET 
-		pop_ser_acq = NULL, 
-		perc_acq = NULL,	
-		perc_fgn = NULL,	
-		pop_ser_fgn = NULL, 
-		perc_dep = NULL,																							
+	SET
+		pop_ser_acq = NULL,
+		perc_acq = NULL,
+		perc_fgn = NULL,
+		pop_ser_fgn = NULL,
+		perc_dep = NULL,
 		pop_ser_dep = NULL,
 		ut_abit_tot = NULL,
 		ut_abit_fgn = NULL,
 	    ut_abit_dep = NULL;
-	
+
 	DELETE FROM DISTRIB_COM_SERV;
 	DELETE FROM SUPPORT_POZZI_INPOTAB;
 	DELETE FROM UTENZA_SERVIZIO;
@@ -4450,7 +4451,7 @@ begin
 	IF v_reset_before THEN
 		v_result := reset_proc_stda_tables();
 	END IF;
-	
+
 	IF v_result THEN
 		v_result:= create_networks()
 			and populate_temp_graph_tables()
@@ -4464,7 +4465,7 @@ begin
 			and populate_acquedotto()
 			and populate_fognatura();
 	END IF;
-	
+
 	RETURN v_result;
 END;
 $$  LANGUAGE plpgsql
@@ -4609,22 +4610,16 @@ begin
 
     INSERT INTO support_accorpamento_raw_distribuzioni
     with raw_lunghezza as (
-        select
-            idgis_rete_distrib,
-            tipo_infr,
-            lunghezza,
-            lunghezza_tlc
-        from
-            (
+           select distinct idgis_rete_distrib, tipo_infr, lunghezza,lunghezza_tlc from (
             select
-                idgis_rete_distrib,
+                idgis_sist_idr,
                 tipo_infr,
                 lunghezza,
                 lunghezza_tlc
             from
                 (
                 select
-                    idgis_rete_distrib
+                    idgis_sist_idr
                 from
                     acq_rete_distrib ard
                 join rel_sa_di rsd
@@ -4637,8 +4632,10 @@ begin
                 group by
                     1) rigs
             join acq_lunghezza_rete on
-                rigs.idgis_rete_distrib = acq_lunghezza_rete.idgis
-        ) xx)
+                rigs.idgis_sist_idr = acq_lunghezza_rete.idgis) xx
+            join rel_sa_di rsd2 on
+            xx.idgis_sist_idr = rsd2.idgis_sist_idr
+        )
     select
         "acq_rete_distrib"."idgis" "idgis",
         "acq_rete_distrib"."codice_ato" "codice_ato",
@@ -4737,7 +4734,7 @@ begin
     from support_accorpamento_raw_distribuzioni as aa
     join rel_sa_di on aa.idgis = rel_sa_di.idgis_rete_distrib
     join sistema_idrico on sistema_idrico.cod_sist_idr = rel_sa_di.cod_sist_idr
-    group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14
+    group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14;
 
 	RETURN TRUE;
 END;

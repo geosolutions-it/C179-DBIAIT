@@ -290,7 +290,7 @@ id_linea_acqua,D_T_TRATTAM_ACQUA,NULL,Nessuno,99
 id_linea_acqua,D_T_TRATTAM_ACQUA,ALT,Altro,9
 id_linea_acqua,D_T_TRATTAM_ACQUA,IMH,IMHOFF,8
 id_linea_acqua,D_T_TRATTAM_ACQUA,AVA,con trattamento fino al TERZIARIO AVANZATO,7
-id_linea_acqua,D_T_TRATTAM_ACQUA,ter,con trattamento fino al TERZIARIO,6
+id_linea_acqua,D_T_TRATTAM_ACQUA,TER,con trattamento fino al TERZIARIO,6
 id_linea_acqua,D_T_TRATTAM_ACQUA,SEC,con trattamento fino al SECONDARIO,5
 id_linea_acqua,D_T_TRATTAM_ACQUA,PRI,Con trattamento fino al PRIMARIO,4
 id_linea_acqua,D_T_TRATTAM_ACQUA,SMA,Secondario Massa Adesa,3

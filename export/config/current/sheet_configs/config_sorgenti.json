@@ -849,7 +849,7 @@
       {"id":"24400", "transformation":{"func":"LSTRIP", "params":{"field":"cod_comune", "char": "0"}}},
       {"id":"24400", "transformation": {"func":"DECODE_COM", "params": { "field": "cod_comune" }}},
 
-      {"id":"27800", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume", "domain_name": "D_AFFIDABILITA"}}},
+      {"id":"27800", "transformation":{"func":"DOMAIN", "params":{"field":"a_volume_imm", "domain_name": "D_AFFIDABILITA"}}},
 
         {"id": "26100","transformation": { "func": "DIRECT", "params": { "field": "volume_imm"}}}
 
