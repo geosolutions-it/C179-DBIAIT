@@ -951,7 +951,10 @@ BEGIN
 			a.geom,
 			r.codice_ato as codice_ato,
 			a.idgis as idgis,
-			a.id_sist_idr as idgis_rete, -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
+			CASE
+			    WHEN  '' || v_table || '' = ''DISTRIB_TRONCHI'' THEN a.id_sist_idr
+			    ELSE a.id_rete
+			END idgis_rete,
 			1,
 			a.d_materiale as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,

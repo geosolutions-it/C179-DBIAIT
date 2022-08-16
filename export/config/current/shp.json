@@ -1,16 +1,4 @@
 {
    "shp_files_configs": [
-      "shapefile_configs/config_accumuli.json",
-      "shapefile_configs/config_depuratori.json",
-      "shapefile_configs/config_fiumi.json",
-      "shapefile_configs/config_laghi.json",
-      "shapefile_configs/config_potabilizzatori.json",
-      "shapefile_configs/config_pozzi.json",
-      "shapefile_configs/config_pompaggi.json",
-      "shapefile_configs/config_scaricatori.json",
-      "shapefile_configs/config_sollevamenti.json",
-      "shapefile_configs/config_sorgenti.json",
-      "shapefile_configs/config_acq_shape.json",
-      "shapefile_configs/config_fgn_shape.json"
    ]
 }

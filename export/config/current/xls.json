@@ -1,57 +1,5 @@
 {
    "xls_sheet_configs": [
-      "sheet_configs/config_accumuli.json",
-      "sheet_configs/config_accumuli_inadd.json",
-      "sheet_configs/config_accumuli_inreti.json",
-
-      "sheet_configs/config_addut_com_serv.json",
-      "sheet_configs/config_addut_inreti.json",
-      "sheet_configs/config_addut_tronchi.json",
-      "sheet_configs/config_adduttrici.json",
-      "sheet_configs/config_collett_com_serv.json",
-      "sheet_configs/config_collett_tronchi.json",
-      "sheet_configs/config_collettori.json",
-      "sheet_configs/config_depurat_incoll.json",
-      "sheet_configs/config_depurat_pompe.json",
-      "sheet_configs/config_depuratori.json",
-      "sheet_configs/config_distrib_com_serv.json",
-      "sheet_configs/config_distrib_loc_serv.json",
-      "sheet_configs/config_distrib_tronchi.json",
-      "sheet_configs/config_distribuzioni.json",
-
-      "sheet_configs/config_fiumi.json",
-      "sheet_configs/config_fiumi_inpotab.json",
-      "sheet_configs/config_fiumi_inreti.json",
-      "sheet_configs/config_fognat_tronchi.json",
-
-      "sheet_configs/config_fognat_com_serv.json",
-      "sheet_configs/config_fognat_loc_serv.json",
-
-      "sheet_configs/config_fognature.json",
-      "sheet_configs/config_laghi.json",
-      "sheet_configs/config_laghi_inpotab.json",
-      "sheet_configs/config_laghi_inreti.json",
-
-      "sheet_configs/config_pompaggi.json",
-      "sheet_configs/config_pompaggi_inpotab.json",
-      "sheet_configs/config_pompaggi_inserba.json",
-      "sheet_configs/config_pompaggi_pompe.json",
-      "sheet_configs/config_potab_incaptaz.json",
-      "sheet_configs/config_potab_inreti.json",
-      "sheet_configs/config_potab_pompe.json",
-
-      "sheet_configs/config_potabilizzatori.json",
-      "sheet_configs/config_pozzi.json",
-      "sheet_configs/config_pozzi_inpotab.json",
-      "sheet_configs/config_pozzi_inreti.json",
-      "sheet_configs/config_pozzi_pompe.json",
-      "sheet_configs/config_scaricat_infog.json",
-      "sheet_configs/config_scaricatori.json",
-
-      "sheet_configs/config_sollev_pompe.json",
-      "sheet_configs/config_sollevamenti.json",
-      "sheet_configs/config_sorgenti.json",
-      "sheet_configs/config_sorgenti_inpotab.json",
-      "sheet_configs/config_sorgenti_inreti.json"
+      "sheet_configs/config_collettori.json"
    ]
 }
