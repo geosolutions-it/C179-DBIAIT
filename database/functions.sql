@@ -4514,7 +4514,7 @@ begin
 
     INSERT INTO support_sistema_idrico_rel_sa_localita_captazione
     select
-        rsd.idgis_sist_idr,
+        aa.codice_ato,
         rsd.cod_sist_idr,
         denom_sist_idr
     from
