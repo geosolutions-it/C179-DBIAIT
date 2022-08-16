@@ -4011,7 +4011,7 @@ begin
         join acq_cond_altro aca
         on aa.id_condotta =aca.idgis
         join lung_rete ard
-        on ard.idgis_sist_idr=aca.id_rete
+        on ard.idgis=aca.id_rete
         WHERE ard.d_gestore = 'PUBLIACQUA' AND ard.d_ambito IN ('AT3', NULL) AND ard.d_stato NOT IN ('IPR','IAC')
         group by 1
     ),
@@ -4612,33 +4612,6 @@ begin
     DELETE FROM support_accorpamento_raw_distribuzioni;
 
     INSERT INTO support_accorpamento_raw_distribuzioni
-    with raw_lunghezza as (
-           select distinct idgis_rete_distrib, tipo_infr, lunghezza,lunghezza_tlc from (
-            select
-                idgis_sist_idr,
-                tipo_infr,
-                lunghezza,
-                lunghezza_tlc
-            from
-                (
-                select
-                    idgis_sist_idr
-                from
-                    acq_rete_distrib ard
-                join rel_sa_di rsd
-            on
-                    ard.idgis = rsd.idgis_rete_distrib
-                where
-                    ard.d_gestore = 'PUBLIACQUA'
-                    and ard.d_ambito in ('AT3', null)
-                    and ard.d_stato not in ('IPR', 'IAC')
-                group by
-                    1) rigs
-            join acq_lunghezza_rete on
-                rigs.idgis_sist_idr = acq_lunghezza_rete.idgis) xx
-            join rel_sa_di rsd2 on
-            xx.idgis_sist_idr = rsd2.idgis_sist_idr
-        )
     select
         "acq_rete_distrib"."idgis" "idgis",
         "acq_rete_distrib"."codice_ato" "codice_ato",
@@ -4663,7 +4636,7 @@ begin
         "acq_auth_rete_dist"."nr_rip_rete" "nr_rip_rete",
         cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_press") as INTEGER) "sn_strum_mis_press",
         cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_port") as INTEGER) "sn_strum_mis_port",
-        cast("raw_lunghezza"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
+        cast("acq_lunghezza_rete"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dirette" "nr_utenze_dirette",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dir_dom_e_residente" "nr_utenze_dir_dom_e_residente",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dir_residente" "nr_utenze_dir_residente",
@@ -4678,13 +4651,13 @@ begin
         "stats_cloratore"."counter" "count_cloratori",
         "tabella_sa_di_csv"."codice_sistema_idrico" "codice_sistema_idrico",
         "tabella_sa_di_csv"."denom_acq_sistema_idrico" "denom_acq_sistema_idrico",
-        cast("raw_lunghezza"."lunghezza" as numeric(18, 6)) "lunghezza"
+        cast("acq_lunghezza_rete"."lunghezza" as numeric(18, 6)) "lunghezza"
     from
         "acq_rete_distrib" "acq_rete_distrib"
     left join "acq_auth_rete_dist" "acq_auth_rete_dist" on
         "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib"
-    left join "raw_lunghezza" "raw_lunghezza" on
-        "raw_lunghezza"."idgis_rete_distrib" = "acq_rete_distrib"."idgis"
+    left join "acq_lunghezza_rete" "acq_lunghezza_rete" on
+        "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis"
     left join "acq_vol_utenze" "acq_vol_utenze" on
         "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato"
     left join "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on
@@ -4696,7 +4669,8 @@ begin
     where
         acq_rete_distrib.d_gestore = 'PUBLIACQUA'
         and acq_rete_distrib.d_ambito in ('AT3', null)
-        and acq_rete_distrib.d_stato not in ('IPR', 'IAC');
+        and acq_rete_distrib.d_stato not in ('IPR', 'IAC')
+        and acq_lunghezza_rete.tipo_infr = 'DISTRIBUZIONE';
 
     INSERT INTO support_accorpamento_distribuzioni
     select
