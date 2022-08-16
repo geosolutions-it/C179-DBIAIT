@@ -67,8 +67,8 @@
                         "name": "support_sistema_idrico_rel_sa_localita_pompaggio"
                     },
                     "on": [
-                        "acq_pompaggio.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita_pompaggio.idgis_sist_idr"
+                        "acq_pompaggio.codice_ato",
+                        "support_sistema_idrico_rel_sa_localita_pompaggio.codice_ato"
                     ],
                     "cond": "="
                 },
@@ -149,8 +149,8 @@
                         "name": "support_sistema_idrico_rel_sa_localita_pompaggio"
                     },
                     "on": [
-                        "a_acq_pompaggio.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita_pompaggio.idgis_sist_idr"
+                        "a_acq_pompaggio.codice_ato",
+                        "support_sistema_idrico_rel_sa_localita_pompaggio.codice_ato"
                     ],
                     "cond": "="
                 },

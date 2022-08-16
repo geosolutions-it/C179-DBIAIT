@@ -53,8 +53,8 @@
                         "name": "support_sistema_idrico_rel_sa_localita_acq_accumulo"
                     },
                     "on": [
-                        "acq_accumulo.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita_acq_accumulo.idgis_sist_idr"
+                        "acq_accumulo.codice_ato",
+                        "support_sistema_idrico_rel_sa_localita_acq_accumulo.codice_ato"
                     ],
                     "cond": "="
                 },
@@ -123,8 +123,8 @@
                         "name": "support_sistema_idrico_rel_sa_localita_acq_accumulo"
                     },
                     "on": [
-                        "a_acq_accumulo.id_sist_idr",
-                        "support_sistema_idrico_rel_sa_localita_acq_accumulo.idgis_sist_idr"
+                        "a_acq_accumulo.codice_ato",
+                        "support_sistema_idrico_rel_sa_localita_acq_accumulo.codice_ato"
                     ],
                     "cond": "="
                 },

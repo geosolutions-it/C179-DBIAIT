@@ -98,8 +98,8 @@
                     "name": "support_sistema_idrico_rel_sa_localita_potabiliz"
                 },
                 "on": [
-                    "acq_potabiliz.id_sist_idr",
-                    "support_sistema_idrico_rel_sa_localita_potabiliz.idgis_sist_idr"
+                    "acq_potabiliz.codice_ato",
+                    "support_sistema_idrico_rel_sa_localita_potabiliz.codice_ato"
                 ],
                 "cond": "="
             }
@@ -202,8 +202,8 @@
                     "name": "support_sistema_idrico_rel_sa_localita_potabiliz"
                 },
                 "on": [
-                    "a_acq_potabiliz.id_sist_idr",
-                    "support_sistema_idrico_rel_sa_localita_potabiliz.idgis_sist_idr"
+                    "a_acq_potabiliz.codice_ato",
+                    "support_sistema_idrico_rel_sa_localita_potabiliz.codice_ato"
                 ],
                 "cond": "="
             }

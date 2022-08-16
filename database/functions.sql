@@ -4534,8 +4534,8 @@ begin
     DELETE FROM support_sistema_idrico_rel_sa_localita_acq_accumulo;
 
     INSERT INTO support_sistema_idrico_rel_sa_localita_acq_accumulo
-    select
-        rsd.idgis_sist_idr,
+ 	SELECT
+        aa.codice_ato,
         rsd.cod_sist_idr,
         denom_sist_idr
     from
@@ -4554,8 +4554,8 @@ begin
     DELETE FROM support_sistema_idrico_rel_sa_localita_potabiliz;
 
     INSERT INTO support_sistema_idrico_rel_sa_localita_potabiliz
-    select
-        rsd.idgis_sist_idr,
+ 	SELECT
+        aa.codice_ato,
         rsd.cod_sist_idr,
         denom_sist_idr
     from
@@ -4574,8 +4574,8 @@ begin
     DELETE FROM support_sistema_idrico_rel_sa_localita_pompaggio;
 
     INSERT INTO support_sistema_idrico_rel_sa_localita_pompaggio
-    select
-        rsd.idgis_sist_idr,
+ 	SELECT
+        aa.codice_ato,
         rsd.cod_sist_idr,
         denom_sist_idr
     from
