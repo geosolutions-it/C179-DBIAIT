@@ -966,7 +966,7 @@ BEGIN
 				ELSE ''B''
 			END idx_materiale,
 			CASE
-				WHEN a.d_diametro IS NULL THEN ''X''
+				WHEN a.d_diametro IS NULL THEN NULL
 				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro,
@@ -1209,7 +1209,7 @@ BEGIN
 				ELSE ''B''
 			END idx_materiale,
 			CASE
-				WHEN coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NULL THEN ''X''
+				WHEN coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NULL THEN NULL
 				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro,
@@ -2148,7 +2148,7 @@ BEGIN
     UPDATE ACQ_SHAPE
     SET
         profondita = c.prof_media,
-        idx_profon = case when c.prof_media <> 0 THEN 'A' ELSE 'X' END
+        idx_profon = case when c.prof_media >= 0 THEN 'A' ELSE NULL END
     FROM acq_condotta c
     WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
     --(press_med_eserc, riparazioni_allacci, riparazioni_rete, allacci, lunghezza_allacci)
@@ -2604,7 +2604,7 @@ BEGIN
 	SET  sezione = t.sezione
 		,prof_inizi = t.quota_in_rel
 		,prof_final = t.quota_fn_rel
-		,idx_profon = CASE WHEN t.quota_in_rel = 0 and t.quota_fn_rel = 0 THEN 'X' ELSE 'A' END
+		,idx_profon = CASE WHEN t.quota_in_rel = NULL and t.quota_fn_rel = NULL THEN NULL ELSE 'A' END
 	FROM (
 		SELECT
 			c.idgis,
