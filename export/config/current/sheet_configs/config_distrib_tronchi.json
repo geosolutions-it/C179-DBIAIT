@@ -46,17 +46,6 @@
                         "acq_condotta.idgis"
                     ],
                     "cond": "="
-                },
-              {
-                    "type": "left",
-                    "table": {
-                        "name": "sistema_idrico"
-                    },
-                    "on": [
-                        "distrib_tronchi.idgis_rete",
-                        "sistema_idrico.idgis"
-                    ],
-                    "cond": "="
                 }
             ]
         }

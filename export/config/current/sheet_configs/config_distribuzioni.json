@@ -37,7 +37,6 @@
                 {"name": "support_accorpamento_distribuzioni.count_cloratori", "alias": "count_cloratori"},
                 {"name": "support_accorpamento_distribuzioni.lunghezza", "alias": "lunghezza"},
                 {"name": "support_accorpamento_distribuzioni.a_pres_es_min", "alias": "a_pres_es_min"},
-                {"name": "support_accorpamento_distribuzioni.a_pres_es_med", "alias": "a_pres_es_med"},
                 {"name": "support_accorpamento_distribuzioni.a_pres_es_max", "alias": "a_pres_es_max"}
             ],
             "table": {
@@ -72,7 +71,7 @@
 
         { "id": "99800", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_med" } }},
 
-        { "id": "99900", "transformation": { "func": "DIRECT", "params": { "field": "a_pres_es_med" } }},
+        { "id": "99900", "transformation": { "func": "DIRECT", "params": { "field": "a_press_med" } }},
 
         { "id": "100000", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_min" } }},
 
