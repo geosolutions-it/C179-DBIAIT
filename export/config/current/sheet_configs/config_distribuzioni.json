@@ -35,7 +35,10 @@
                 {"name": "support_accorpamento_distribuzioni.volume_fatturato", "alias": "volume_fatturato"},
                 {"name": "support_accorpamento_distribuzioni.nr_allacci", "alias": "nr_allacci"},
                 {"name": "support_accorpamento_distribuzioni.count_cloratori", "alias": "count_cloratori"},
-                {"name": "support_accorpamento_distribuzioni.lunghezza", "alias": "lunghezza"}
+                {"name": "support_accorpamento_distribuzioni.lunghezza", "alias": "lunghezza"},
+                {"name": "support_accorpamento_distribuzioni.a_pres_es_min", "alias": "a_pres_es_min"},
+                {"name": "support_accorpamento_distribuzioni.a_pres_es_med", "alias": "a_pres_es_med"},
+                {"name": "support_accorpamento_distribuzioni.a_pres_es_max", "alias": "a_pres_es_max"}
             ],
             "table": {
                 "name": "support_accorpamento_distribuzioni"
@@ -65,11 +68,16 @@
         { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
         { "id": "99500", "transformation": { "func": "CONST", "params": { "value": "B" }} },
         { "id": "99600", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_max" } }},
-        { "id": "99700", "transformation": { "func": "CONST", "params": { "value": "A" }} },
-		{ "id": "99800", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_med" } }},
-        { "id": "99900", "transformation": { "func": "CONST", "params": { "value": "C" }} },
+        { "id": "99700", "transformation": { "func": "DIRECT", "params": { "field": "a_pres_es_max" } }},
+
+        { "id": "99800", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_med" } }},
+
+        { "id": "99900", "transformation": { "func": "DIRECT", "params": { "field": "a_pres_es_med" } }},
+
         { "id": "100000", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_min" } }},
-        { "id": "100100", "transformation": { "func": "CONST", "params": { "value": "A" }} },
+
+        { "id": "100100", "transformation": { "func": "DIRECT", "params": { "field": "a_pres_es_min" } }},
+
 		{ "id": "100200", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_all" } }},
 		{ "id": "100300", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_rete" } }},
         { "id": "118900", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
@@ -82,7 +90,7 @@
                      "operator": "=",
                      "value": null,
                      "result": 0,
-                     "else": "{ 55500 }"
+                     "else": "{ a_vol_immesso }"
                  }
              }
           }
@@ -241,7 +249,7 @@
           }
          },
 
-        {"id":"113900", "transformation":{
+        {"id":"113800", "transformation":{
          "func": "IF",
          "params": {
              "field": "nr_utenze_dir_dom_e_residente",
@@ -254,7 +262,7 @@
              }
           }
          },
-        {"id":"113800", "transformation":{
+        {"id":"113900", "transformation":{
          "func": "IF",
          "params": {
              "field": "nr_utenze_dir_residente",

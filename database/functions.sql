@@ -998,8 +998,8 @@ BEGIN
 	IF v_table = 'DISTRIB_TRONCHI' THEN
         EXECUTE '
             update ' || v_table || ' set codice_ato =rsd.cod_sist_idr
-            from (select cod_sist_idr, idgis_sist_idr from rel_sa_di group by 1,2) as rsd
-            where ' || v_table || '.idgis_rete = rsd.idgis_sist_idr
+            from (select cod_sist_idr, idgis_rete_distrib from rel_sa_di group by 1,2) as rsd
+            where ' || v_table || '.idgis_rete = rsd.idgis_rete_distrib
         ';
 	end IF;
 
