@@ -4668,14 +4668,13 @@ begin
         left join "stats_cloratore" "stats_cloratore" on
             "acq_rete_distrib"."idgis" = "stats_cloratore"."id_rete"
         left join "rel_sa_di" "rel_sa_di" on
-            "acq_rete_distrib"."idgis" = "rel_sa_di"."idgis_rete_distrib"
+            "acq_rete_distrib"."codice_ato" = "rel_sa_di"."codice_ato_rete_distrib"
         left join "sistema_idrico" "sistema_idrico" on
             "rel_sa_di"."idgis_sist_idr" = "sistema_idrico"."idgis_sist_idr"
         where
             acq_rete_distrib.d_gestore = 'PUBLIACQUA'
             and acq_rete_distrib.d_ambito in ('AT3', null)
-            and acq_rete_distrib.d_stato not in ('IPR', 'IAC')
-            and acq_lunghezza_rete.tipo_infr = 'DISTRIBUZIONE';
+            and acq_rete_distrib.d_stato not in ('IPR', 'IAC');
 
     INSERT INTO support_accorpamento_distribuzioni
     select
