@@ -101,8 +101,8 @@
                     "name": "support_sistema_idrico_rel_sa_localita_captazione"
                 },
                 "on": [
-                    "acq_captazione.id_sist_idr",
-                    "support_sistema_idrico_rel_sa_localita_captazione.idgis_sist_idr"
+                    "acq_captazione.codice_ato",
+                    "support_sistema_idrico_rel_sa_localita_captazione.codice_ato"
                 ],
                 "cond": "="
             }
@@ -208,8 +208,8 @@
                     "name": "support_sistema_idrico_rel_sa_localita_captazione"
                 },
                 "on": [
-                    "a_acq_captazione.id_sist_idr",
-                    "support_sistema_idrico_rel_sa_localita_captazione.idgis_sist_idr"
+                    "a_acq_captazione.codice_ato",
+                    "support_sistema_idrico_rel_sa_localita_captazione.codice_ato"
                 ],
                 "cond": "="
             }

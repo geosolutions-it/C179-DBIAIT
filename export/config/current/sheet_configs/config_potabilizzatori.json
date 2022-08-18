@@ -98,13 +98,13 @@
                     "name": "support_sistema_idrico_rel_sa_localita_potabiliz"
                 },
                 "on": [
-                    "acq_potabiliz.id_sist_idr",
-                    "support_sistema_idrico_rel_sa_localita_potabiliz.idgis_sist_idr"
+                    "acq_potabiliz.codice_ato",
+                    "support_sistema_idrico_rel_sa_localita_potabiliz.codice_ato"
                 ],
                 "cond": "="
             }
          ],
-         "filter": "WHERE acq_potabiliz.d_gestore = 'PUBLIACQUA' AND acq_potabiliz.d_ambito IN ('AT3', NULL) AND acq_potabiliz.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')"
+         "filter": "WHERE acq_potabiliz.d_gestore = 'PUBLIACQUA' AND acq_potabiliz.d_ambito IN ('AT3', NULL) AND acq_potabiliz.d_stato NOT IN ('IPR','IAC')"
       },
       {
          "fields":[
@@ -202,13 +202,13 @@
                     "name": "support_sistema_idrico_rel_sa_localita_potabiliz"
                 },
                 "on": [
-                    "a_acq_potabiliz.id_sist_idr",
-                    "support_sistema_idrico_rel_sa_localita_potabiliz.idgis_sist_idr"
+                    "a_acq_potabiliz.codice_ato",
+                    "support_sistema_idrico_rel_sa_localita_potabiliz.codice_ato"
                 ],
                 "cond": "="
             }
          ],
-         "filter": "WHERE a_acq_potabiliz.d_gestore = 'PUBLIACQUA' AND a_acq_potabiliz.d_ambito IN ('AT3', NULL) AND a_acq_potabiliz.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')"
+         "filter": "WHERE a_acq_potabiliz.d_gestore = 'PUBLIACQUA' AND a_acq_potabiliz.d_ambito IN ('AT3', NULL) AND a_acq_potabiliz.d_stato NOT IN ('IPR','IAC')"
       }
    ],
    "columns":[

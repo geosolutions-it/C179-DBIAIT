@@ -951,7 +951,10 @@ BEGIN
 			a.geom,
 			r.codice_ato as codice_ato,
 			a.idgis as idgis,
-			a.id_sist_idr as idgis_rete, -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
+			CASE
+			    WHEN  '' || v_table || '' = ''DISTRIB_TRONCHI'' THEN a.id_sist_idr
+			    ELSE a.id_rete
+			END idgis_rete,
 			1,
 			a.d_materiale as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,
@@ -966,7 +969,7 @@ BEGIN
 				ELSE ''B''
 			END idx_materiale,
 			CASE
-				WHEN a.d_diametro IS NULL THEN ''X''
+				WHEN a.d_diametro IS NULL THEN NULL
 				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro,
@@ -995,8 +998,8 @@ BEGIN
 	IF v_table = 'DISTRIB_TRONCHI' THEN
         EXECUTE '
             update ' || v_table || ' set codice_ato =rsd.cod_sist_idr
-            from (select cod_sist_idr, idgis_sist_idr from rel_sa_di group by 1,2) as rsd
-            where ' || v_table || '.idgis_rete = rsd.idgis_sist_idr
+            from (select cod_sist_idr, idgis_rete_distrib from rel_sa_di group by 1,2) as rsd
+            where ' || v_table || '.idgis_rete = rsd.idgis_rete_distrib
         ';
 	end IF;
 
@@ -1209,7 +1212,7 @@ BEGIN
 				ELSE ''B''
 			END idx_materiale,
 			CASE
-				WHEN coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NULL THEN ''X''
+				WHEN coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NULL THEN NULL
 				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro,
@@ -2148,7 +2151,7 @@ BEGIN
     UPDATE ACQ_SHAPE
     SET
         profondita = c.prof_media,
-        idx_profon = case when c.prof_media <> 0 THEN 'A' ELSE 'X' END
+        idx_profon = case when c.prof_media >= 0 THEN 'A' ELSE NULL END
     FROM acq_condotta c
     WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
     --(press_med_eserc, riparazioni_allacci, riparazioni_rete, allacci, lunghezza_allacci)
@@ -2604,7 +2607,7 @@ BEGIN
 	SET  sezione = t.sezione
 		,prof_inizi = t.quota_in_rel
 		,prof_final = t.quota_fn_rel
-		,idx_profon = CASE WHEN t.quota_in_rel = 0 and t.quota_fn_rel = 0 THEN 'X' ELSE 'A' END
+		,idx_profon = CASE WHEN t.quota_in_rel is NULL and t.quota_fn_rel is NULL THEN NULL ELSE 'A' END
 	FROM (
 		SELECT
 			c.idgis,
@@ -2619,8 +2622,8 @@ BEGIN
 					'ALTRO'
 				ELSE null
 			END sezione,
-			coalesce(quota_in_rel,0) quota_in_rel,
-			coalesce(quota_fn_rel,0) quota_fn_rel
+			quota_in_rel,
+			quota_fn_rel
 		FROM fgn_condotta c
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
 	--(copertura)
@@ -4008,7 +4011,7 @@ begin
         join acq_cond_altro aca
         on aa.id_condotta =aca.idgis
         join lung_rete ard
-        on ard.idgis_sist_idr=aca.id_rete
+        on ard.idgis=aca.id_rete
         WHERE ard.d_gestore = 'PUBLIACQUA' AND ard.d_ambito IN ('AT3', NULL) AND ard.d_stato NOT IN ('IPR','IAC')
         group by 1
     ),
@@ -4492,6 +4495,7 @@ begin
         acq_adduttrice aa
     where
         aa.d_stato IN ('ATT', 'FIP', 'PIF', 'RIS')
+        and aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL)
     group by
         ato,
         idgis)
@@ -4511,9 +4515,7 @@ begin
 
     INSERT INTO support_sistema_idrico_rel_sa_localita_captazione
     select
-        rsd.idgis_sist_idr,
-        rsd.cod_sist_idr,
-        denom_sist_idr
+        distinct aa.codice_ato, rsd.cod_sist_idr, denom_sist_idr
     from
         rel_sa_di rsd
     join sistema_idrico si on
@@ -4522,6 +4524,7 @@ begin
         aa.id_sist_idr = si.idgis_sist_idr
     where
         aa.d_stato in ('ATT', 'FIP', 'PIF', 'RIS')
+        and aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL)
     group by
         1,
         2,
@@ -4531,8 +4534,8 @@ begin
     DELETE FROM support_sistema_idrico_rel_sa_localita_acq_accumulo;
 
     INSERT INTO support_sistema_idrico_rel_sa_localita_acq_accumulo
-    select
-        rsd.idgis_sist_idr,
+ 	SELECT
+        aa.codice_ato,
         rsd.cod_sist_idr,
         denom_sist_idr
     from
@@ -4543,6 +4546,7 @@ begin
         aa.id_sist_idr = si.idgis_sist_idr
     where
         aa.d_stato in ('ATT', 'FIP', 'PIF', 'RIS')
+        and aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL)
     group by
         1,
         2,
@@ -4551,8 +4555,8 @@ begin
     DELETE FROM support_sistema_idrico_rel_sa_localita_potabiliz;
 
     INSERT INTO support_sistema_idrico_rel_sa_localita_potabiliz
-    select
-        rsd.idgis_sist_idr,
+ 	SELECT
+        aa.codice_ato,
         rsd.cod_sist_idr,
         denom_sist_idr
     from
@@ -4563,6 +4567,7 @@ begin
         aa.id_sist_idr = si.idgis_sist_idr
     where
         aa.d_stato in ('ATT', 'FIP', 'PIF', 'RIS')
+        and aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL)
     group by
         1,
         2,
@@ -4571,8 +4576,8 @@ begin
     DELETE FROM support_sistema_idrico_rel_sa_localita_pompaggio;
 
     INSERT INTO support_sistema_idrico_rel_sa_localita_pompaggio
-    select
-        rsd.idgis_sist_idr,
+ 	SELECT
+        aa.codice_ato,
         rsd.cod_sist_idr,
         denom_sist_idr
     from
@@ -4583,6 +4588,7 @@ begin
         aa.id_sist_idr = si.idgis_sist_idr
     where
         aa.d_stato in ('ATT', 'FIP', 'PIF', 'RIS')
+        and aa.d_gestore = 'PUBLIACQUA' AND aa.d_ambito IN ('AT3', NULL)
     group by
         1,
         2,
@@ -4609,33 +4615,6 @@ begin
     DELETE FROM support_accorpamento_raw_distribuzioni;
 
     INSERT INTO support_accorpamento_raw_distribuzioni
-    with raw_lunghezza as (
-           select distinct idgis_rete_distrib, tipo_infr, lunghezza,lunghezza_tlc from (
-            select
-                idgis_sist_idr,
-                tipo_infr,
-                lunghezza,
-                lunghezza_tlc
-            from
-                (
-                select
-                    idgis_sist_idr
-                from
-                    acq_rete_distrib ard
-                join rel_sa_di rsd
-            on
-                    ard.idgis = rsd.idgis_rete_distrib
-                where
-                    ard.d_gestore = 'PUBLIACQUA'
-                    and ard.d_ambito in ('AT3', null)
-                    and ard.d_stato not in ('IPR', 'IAC')
-                group by
-                    1) rigs
-            join acq_lunghezza_rete on
-                rigs.idgis_sist_idr = acq_lunghezza_rete.idgis) xx
-            join rel_sa_di rsd2 on
-            xx.idgis_sist_idr = rsd2.idgis_sist_idr
-        )
     select
         "acq_rete_distrib"."idgis" "idgis",
         "acq_rete_distrib"."codice_ato" "codice_ato",
@@ -4660,7 +4639,7 @@ begin
         "acq_auth_rete_dist"."nr_rip_rete" "nr_rip_rete",
         cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_press") as INTEGER) "sn_strum_mis_press",
         cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_port") as INTEGER) "sn_strum_mis_port",
-        cast("raw_lunghezza"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
+        cast("acq_lunghezza_rete"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dirette" "nr_utenze_dirette",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dir_dom_e_residente" "nr_utenze_dir_dom_e_residente",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dir_residente" "nr_utenze_dir_residente",
@@ -4673,27 +4652,29 @@ begin
         "utenze_distribuzioni_adduttrici"."volume_fatturato" "volume_fatturato",
         "utenze_distribuzioni_adduttrici"."nr_allacci" "nr_allacci",
         "stats_cloratore"."counter" "count_cloratori",
-        "tabella_sa_di_csv"."codice_sistema_idrico" "codice_sistema_idrico",
-        "tabella_sa_di_csv"."denom_acq_sistema_idrico" "denom_acq_sistema_idrico",
-        cast("raw_lunghezza"."lunghezza" as numeric(18, 6)) "lunghezza"
-    from
-        "acq_rete_distrib" "acq_rete_distrib"
-    left join "acq_auth_rete_dist" "acq_auth_rete_dist" on
-        "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib"
-    left join "raw_lunghezza" "raw_lunghezza" on
-        "raw_lunghezza"."idgis_rete_distrib" = "acq_rete_distrib"."idgis"
-    left join "acq_vol_utenze" "acq_vol_utenze" on
-        "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato"
-    left join "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on
-        "utenze_distribuzioni_adduttrici"."id_rete" = "acq_rete_distrib"."idgis"
-    left join "stats_cloratore" "stats_cloratore" on
-        "acq_rete_distrib"."idgis" = "stats_cloratore"."id_rete"
-    left join "tabella_sa_di_csv" "tabella_sa_di_csv" on
-        "acq_rete_distrib"."idgis" = "tabella_sa_di_csv"."idgis_di"
-    where
-        acq_rete_distrib.d_gestore = 'PUBLIACQUA'
-        and acq_rete_distrib.d_ambito in ('AT3', null)
-        and acq_rete_distrib.d_stato not in ('IPR', 'IAC');
+        "sistema_idrico"."cod_sist_idr" "codice_sistema_idrico",
+        "sistema_idrico"."denom_sist_idr" "denom_acq_sistema_idrico",
+        cast("acq_lunghezza_rete"."lunghezza" as numeric(18, 6)) "lunghezza"
+       from
+            "acq_rete_distrib" "acq_rete_distrib"
+        left join "acq_auth_rete_dist" "acq_auth_rete_dist" on
+            "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib"
+        left join "acq_lunghezza_rete" "acq_lunghezza_rete" on
+            "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis"
+        left join "acq_vol_utenze" "acq_vol_utenze" on
+            "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato"
+        left join "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on
+            "utenze_distribuzioni_adduttrici"."id_rete" = "acq_rete_distrib"."idgis"
+        left join "stats_cloratore" "stats_cloratore" on
+            "acq_rete_distrib"."idgis" = "stats_cloratore"."id_rete"
+        left join "rel_sa_di" "rel_sa_di" on
+            "acq_rete_distrib"."codice_ato" = "rel_sa_di"."codice_ato_rete_distrib"
+        left join "sistema_idrico" "sistema_idrico" on
+            "rel_sa_di"."idgis_sist_idr" = "sistema_idrico"."idgis_sist_idr"
+        where
+            acq_rete_distrib.d_gestore = 'PUBLIACQUA'
+            and acq_rete_distrib.d_ambito in ('AT3', null)
+            and acq_rete_distrib.d_stato not in ('IPR', 'IAC');
 
     INSERT INTO support_accorpamento_distribuzioni
     select

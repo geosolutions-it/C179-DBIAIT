@@ -125,9 +125,44 @@
 
         { "id": "119300", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
 
-        { "id": "117300", "transformation": { "func": "CONST",  "params":{"value":"0"}} },
-        { "id": "117400", "transformation": { "func": "CONST",  "params":{"value":"0"}} },
-        { "id": "117500", "transformation": { "func": "CONST",  "params":{"value":"0"}} },
+        { "id": "117300", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "utenze_totali",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ utenze_totali }"
+                 }
+             }
+          }
+         },
+        { "id": "117400", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "nr_utenze_industriali",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ nr_utenze_industriali }"
+                 }
+             }
+          }
+         },{ "id": "117500", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "volume_utenze_industriali",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ volume_utenze_industriali }"
+                 }
+             }
+          }
+         },
 
         { "id": "101900", "transformation": { "func": "DIRECT",  "params": { "field": "nr_rip" } }},
         { "id": "68300", "transformation":{
