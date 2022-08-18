@@ -2607,7 +2607,7 @@ BEGIN
 	SET  sezione = t.sezione
 		,prof_inizi = t.quota_in_rel
 		,prof_final = t.quota_fn_rel
-		,idx_profon = CASE WHEN t.quota_in_rel = NULL and t.quota_fn_rel = NULL THEN NULL ELSE 'A' END
+		,idx_profon = CASE WHEN t.quota_in_rel is NULL and t.quota_fn_rel is NULL THEN NULL ELSE 'A' END
 	FROM (
 		SELECT
 			c.idgis,
@@ -2622,8 +2622,8 @@ BEGIN
 					'ALTRO'
 				ELSE null
 			END sezione,
-			coalesce(quota_in_rel,0) quota_in_rel,
-			coalesce(quota_fn_rel,0) quota_fn_rel
+			quota_in_rel,
+			quota_fn_rel
 		FROM fgn_condotta c
 	) t WHERE t.idgis = FGN_SHAPE.ids_codi_1;
 	--(copertura)
