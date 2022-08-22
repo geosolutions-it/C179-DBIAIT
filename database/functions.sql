@@ -379,7 +379,7 @@ BEGIN
     insert into distrib_loc_serv_sistidr
     with codice_sistema_idrico as (
     select
-        codice_ato_rete_distrib,populate_tronchi_acq
+        codice_ato_rete_distrib,
         cod_sist_idr
     from
         rel_sa_di rsd
