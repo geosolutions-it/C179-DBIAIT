@@ -891,6 +891,7 @@ $$  LANGUAGE plpgsql
 -- OUT: BOOLEAN
 -- Example:
 -- 	select DBIAIT_ANALYSIS.populate_tronchi_acq('DISTRIB_TRONCHI');
+--  select DBIAIT_ANALYSIS.populate_tronchi_acq('ADDUT_TRONCHI');
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi_acq(
     v_table VARCHAR
 ) RETURNS BOOLEAN AS $$
