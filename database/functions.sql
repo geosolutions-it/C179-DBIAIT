@@ -893,190 +893,176 @@ $$  LANGUAGE plpgsql
 -- 	select DBIAIT_ANALYSIS.populate_tronchi_acq('DISTRIB_TRONCHI');
 --  select DBIAIT_ANALYSIS.populate_tronchi_acq('ADDUT_TRONCHI');
 CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_tronchi_acq(
-    v_table VARCHAR
+	v_table VARCHAR
 ) RETURNS BOOLEAN AS $$
 DECLARE
-    v_sub_funzione INTEGER := 0;
-    v_field VARCHAR(32);
-    v_and_condition VARCHAR(200);
-    v_column VARCHAR(200);
-    v_codice_ato VARCHAR(200);
-    v_rete VARCHAR(200);
-    v_join_table VARCHAR(32);
-    v_tipo_infr VARCHAR(32);
+	v_sub_funzione INTEGER := 0;
+	v_field VARCHAR(32);
+	v_column VARCHAR(200);
+	v_join_table VARCHAR(32);
+	v_tipo_infr VARCHAR(32);
 BEGIN
 
-    IF v_table = 'DISTRIB_TRONCHI' THEN
-        v_tipo_infr := 'DISTRIBUZIONI';
-        v_sub_funzione := 4;
-        v_field := '';
-        v_join_table := 'REL_SA_DI';
-        v_and_condition := 'a.id_sist_idr = r.idgis_sist_idr';
-        v_column := '0::BIT';
-       v_codice_ato := 'r.cod_sist_idr';
-       v_rete := 'a.id_sist_idr';
-    ELSIF v_table = 'ADDUT_TRONCHI' THEN
-        v_tipo_infr := 'ADDUZIONI';
-        v_sub_funzione := 1;
-        v_field := ',pressione, protezione_catodica';
-        v_join_table := 'ACQ_ADDUTTRICE';
-        v_and_condition := 'a.id_rete=r.idgis';
-       	v_codice_ato := 'r.codice_ato';
-       	v_rete := 'a.id_rete';
-        v_column := '
-            0::BIT as pressione,
-            CASE
-                WHEN a.id_sist_prot_cat IS NULL THEN 0::BIT
-                ELSE 1::BIT
-            END protezione_catodica
-        ';
-    else
-        return false;
-    --  RAISE EXCEPTION 'Table ' || v_table || ' is not supported';
-    end IF;
+	IF v_table = 'DISTRIB_TRONCHI' THEN
+		v_tipo_infr := 'DISTRIBUZIONI';
+		v_sub_funzione := 4;
+		v_field := 'pressione';
+		v_join_table := 'ACQ_RETE_DISTRIB';
+		v_column := '0::BIT';
+	ELSIF v_table = 'ADDUT_TRONCHI' THEN
+		v_tipo_infr := 'ADDUZIONI';
+		v_sub_funzione := 1;
+		v_field := 'pressione, protezione_catodica';
+		v_join_table := 'ACQ_ADDUTTRICE';
+		v_column := '
+			0::BIT,
+			CASE
+				WHEN a.id_sist_prot_cat IS NULL THEN 0::BIT
+				ELSE 1::BIT
+			END
+		';
+	else
+		return false;
+	--	RAISE EXCEPTION 'Table ' || v_table || ' is not supported';
+	end IF;
 
-    EXECUTE 'DELETE FROM ' || v_table || ';';
+	EXECUTE 'DELETE FROM ' || v_table || ';';
 
     -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
-    EXECUTE '
-        INSERT INTO ' || v_table || '(
-             geom
-            ,codice_ato
-            ,idgis
-            ,idgis_rete
-            ,id_tipo_telecon
-            ,id_materiale
-            ,id_conservazione
-            ,diametro
-            ,anno
-            ,lunghezza
-            ,idx_materiale
-            ,idx_diametro
-            ,idx_anno
-            ,idx_lunghezza
-            ' || v_field || '
-        )
-        select
-            distinct geom,
-            codice_ato,
-            idgis,
-            idgis_rete,
-            1,
-            d_materiale_idr,
-            d_stato_cons,
-            d_diametro,
-            anno_messa_opera,
-            LUNGHEZZA,
-            idx_materiale,
-            idx_diametro,
-            idx_anno,
-            idx_lunghezza
-            ' || v_field || '
-        from (
-            SELECT
-                a.geom,
-                ' || v_codice_ato || ' codice_ato,
-                a.idgis as idgis,
-                ' || v_rete || ' idgis_rete,
-                1,
-                a.d_materiale as d_materiale_idr, -- da all_domains
-                a.d_stato_cons,
-                a.d_diametro,
-                CASE
-                    WHEN a.data_esercizio IS NULL THEN 9999
-                    ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER
-                END anno_messa_opera,
-                ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
-                CASE
-                    WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
-                    ELSE ''B''
-                END idx_materiale,
-                CASE
-                    WHEN a.d_diametro IS NULL THEN NULL
-                    WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-                    ELSE ''B''
-                END idx_diametro,
-                CASE
-                    WHEN a.data_esercizio IS NULL THEN ''X''
-                    WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-                    ELSE ''B''
-                END idx_anno,
-                CASE
-                    WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
-                    ELSE ''B''
-                END idx_lunghezza,
-                ' || v_column || '
-            FROM
-                ACQ_CONDOTTA a,
-                ' || v_join_table || ' r
-            WHERE
-                (a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR
-                a.D_STATO IS NULL) AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) AND (a.D_GESTORE
-                = ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
-                AND ' || v_and_condition || '
-              ) ww where ww.idgis is not null;
-            ';
+	EXECUTE '
+		INSERT INTO ' || v_table || '(
+			 geom
+			,codice_ato
+			,idgis
+			,idgis_rete
+			,id_tipo_telecon
+			,id_materiale
+			,id_conservazione
+			,diametro
+			,anno
+			,lunghezza
+			,idx_materiale
+			,idx_diametro
+			,idx_anno
+			,idx_lunghezza
+			,' || v_field || '
+		)
+		SELECT
+			a.geom,
+			r.codice_ato as codice_ato,
+			a.idgis as idgis,
+			CASE
+			    WHEN  '' || v_table || '' = ''DISTRIB_TRONCHI'' THEN a.id_sist_idr
+			    ELSE a.id_rete
+			END idgis_rete,
+			1,
+			a.d_materiale as d_materiale_idr, -- da all_domains
+			a.d_stato_cons,
+			a.d_diametro,
+			CASE
+				WHEN a.data_esercizio IS NULL THEN 9999
+				ELSE TO_CHAR(a.data_esercizio, ''YYYY'')::INTEGER
+			END anno_messa_opera,
+			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
+			CASE
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				ELSE ''B''
+			END idx_materiale,
+			CASE
+				WHEN a.d_diametro IS NULL THEN NULL
+				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_diametro,
+			CASE
+				WHEN a.data_esercizio IS NULL THEN ''X''
+				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_anno,
+			CASE
+				WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				ELSE ''B''
+			END idx_lunghezza,
+			' || v_column || '
+		FROM
+			ACQ_CONDOTTA a,
+			' || v_join_table || ' r
+		WHERE
+			(a.D_AMBITO = ''AT3'' OR a.D_AMBITO IS null) AND (a.D_STATO = ''ATT'' OR a.D_STATO = ''FIP'' OR
+			a.D_STATO IS NULL) AND (a.SN_FITTIZIA = ''NO'' OR a.SN_FITTIZIA IS null) AND (a.D_GESTORE
+			= ''PUBLIACQUA'') AND a.SUB_FUNZIONE = ' || v_sub_funzione || '
+			AND a.id_rete=r.idgis;
+		';
 
-    --D_MATERIALE convertito in D_MATERIALE_IDR
-    EXECUTE '
-        UPDATE ' || v_table || '
-        SET id_materiale = d.valore_netsic
-        FROM ALL_DOMAINS d
-        WHERE d.valore_gis = COALESCE(' || v_table || '.id_materiale,''NULL'') AND d.dominio_gis = ''D_MATERIALE_IDR''
-    ';
+	--UPDATE CODICE ATO WITH CODICE SISTEMA IDRICO
+    -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
+	IF v_table = 'DISTRIB_TRONCHI' THEN
+        EXECUTE '
+            update ' || v_table || ' set codice_ato =rsd.cod_sist_idr
+            from (select cod_sist_idr, idgis_rete_distrib from rel_sa_di group by 1,2) as rsd
+            where ' || v_table || '.idgis_rete = rsd.idgis_rete_distrib
+        ';
+	end IF;
 
-    EXECUTE '
-        UPDATE ' || v_table || ' SET idx_materiale = ''X'' WHERE id_materiale = ''1''
-    ';
+	--D_MATERIALE convertito in D_MATERIALE_IDR
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_materiale = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = COALESCE(' || v_table || '.id_materiale,''NULL'') AND d.dominio_gis = ''D_MATERIALE_IDR''
+	';
 
-    --D_STATO_CONS convertito in id_conserva
-    EXECUTE '
-        UPDATE ' || v_table || '
-        SET id_conservazione = d.valore_netsic
-        FROM ALL_DOMAINS d
-        WHERE d.valore_gis = COALESCE(' || v_table || '.id_conservazione,''SCO'') AND d.dominio_gis = ''D_STATO_CONS'';
-    ';
+	EXECUTE '
+		UPDATE ' || v_table || ' SET idx_materiale = ''X'' WHERE id_materiale = ''1''
+	';
 
-    -- valorizzazione rete con gestione delle pressioni
-    EXECUTE '
-        UPDATE ' || v_table || '
-        SET pressione = 1::BIT WHERE EXISTS(
-            SELECT * FROM (
-                SELECT a.idgis
-                FROM
-                    acq_distretto d,
-                    acq_condotta a
-                WHERE d_tipo = ''MIS''
-                AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
-                GROUP by a.idgis having count(*)>0
-            ) t WHERE t.idgis = ' || v_table || '.idgis
-        );
-    ';
+	--D_STATO_CONS convertito in id_conserva
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_conservazione = d.valore_netsic
+		FROM ALL_DOMAINS d
+		WHERE d.valore_gis = COALESCE(' || v_table || '.id_conservazione,''SCO'') AND d.dominio_gis = ''D_STATO_CONS'';
+	';
 
-    -- Aggiornamento tipo telecontrollo
-    EXECUTE '
-        UPDATE ' || v_table || '
-        SET id_tipo_telecon = 2 WHERE EXISTS(
-            SELECT * FROM (
-                SELECT a.idgis
-                FROM
-                    acq_distretto d,
-                    acq_condotta a
-                WHERE d_tipo = ''MIS''
-                AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
-                AND d.d_tipo = ''MIS''
-            ) t WHERE t.idgis = ' || v_table || '.idgis
-        );
-    ';
+	-- valorizzazione rete con gestione delle pressioni
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET pressione = 1::BIT WHERE EXISTS(
+			SELECT * FROM (
+				SELECT a.idgis
+				FROM
+					acq_distretto d,
+					acq_condotta a
+				WHERE d_tipo = ''MIS''
+				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
+				GROUP by a.idgis having count(*)>0
+			) t WHERE t.idgis = ' || v_table || '.idgis
+		);
+	';
 
-    -- ACQ_COND_ALTRO
-    DELETE FROM ACQ_COND_ALTRO WHERE tipo_infr = v_tipo_infr;
-    EXECUTE '
-        INSERT INTO ACQ_COND_ALTRO (idgis, id_rete, codice_ato, tipo_infr)
-        SELECT idgis, idgis_rete, codice_ato, $1
-        FROM ' || v_table || ';
-    ' using v_tipo_infr;
-    RETURN TRUE;
+	-- Aggiornamento tipo telecontrollo
+	EXECUTE '
+		UPDATE ' || v_table || '
+		SET id_tipo_telecon = 2 WHERE EXISTS(
+			SELECT * FROM (
+				SELECT a.idgis
+				FROM
+					acq_distretto d,
+					acq_condotta a
+				WHERE d_tipo = ''MIS''
+				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
+				AND d.d_tipo = ''MIS''
+			) t WHERE t.idgis = ' || v_table || '.idgis
+		);
+	';
+
+	-- ACQ_COND_ALTRO
+	DELETE FROM ACQ_COND_ALTRO WHERE tipo_infr = v_tipo_infr;
+	EXECUTE '
+		INSERT INTO ACQ_COND_ALTRO (idgis, id_rete, codice_ato, tipo_infr)
+		SELECT idgis, idgis_rete, codice_ato, $1
+		FROM ' || v_table || ';
+	' using v_tipo_infr;
+	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
     SECURITY DEFINER
