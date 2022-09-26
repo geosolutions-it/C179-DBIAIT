@@ -4,15 +4,20 @@
    "sources":[
       {
          "fields":[
-            {"name":"fognat_com_serv.codice_opera", "alias":"codice_opera"},
-            {"name":"fognat_com_serv.id_localita_istat", "alias":"id_localita_istat"},
-            {"name":"fognat_com_serv.perc_popsrv", "alias":"perc_popsrv"},
-            {"name":"fognat_com_serv.perc_popdep", "alias":"perc_popdep"}
+            {"name":"fognat_loc_serv.codice_opera", "alias":"codice_opera"},
+            {"name":"fognat_loc_serv.id_localita_istat", "alias":"id_localita_istat"},
+            {"name":"fognat_loc_serv.perc_popsrv", "alias":"perc_popsrv"},
+            {"name":"fognat_loc_serv.perc_popdep", "alias":"perc_popdep"}
          ],
          "table":{
             "name":"fognat_loc_serv"
          }
       }
    ],
-   "columns":[]
+   "columns":[
+       { "id": "103300", "transformation": { "func": "DIRECT", "params": { "field": "codice_opera" }}},
+	   { "id": "103500", "transformation": { "func": "DIRECT", "params": { "field": "id_localita_istat" }}},
+	   { "id": "103600", "transformation": { "func": "DIRECT", "params": { "field": "perc_popsrv" }}},
+	   { "id": "103700", "transformation": { "func": "DIRECT", "params": { "field": "perc_popdep" }}}
+   ]
 }

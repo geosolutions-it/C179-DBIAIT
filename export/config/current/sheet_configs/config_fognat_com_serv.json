@@ -15,6 +15,9 @@
       }
    ],
    "columns":[
-
+	   { "id": "62700", "transformation": { "func": "DIRECT", "params": { "field": "codice_opera" }}},
+	   { "id": "62900", "transformation": { "func": "DIRECT", "params": { "field": "id_comune_istat" }}},
+	   { "id": "63000", "transformation": { "func": "DIRECT", "params": { "field": "perc_popsrv" }}},
+	   { "id": "63100", "transformation": { "func": "DIRECT", "params": { "field": "perc_popdep" }}}
    ]
 }

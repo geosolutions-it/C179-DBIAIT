@@ -1,4 +1,4 @@
-dominio_netsic,dominio_gis,valore_gis,descrizione_gis,valore_netsic
+Dominio NetSic,Dominio GIS,Valore GIS,Descrizione GIS,Valore NETSIC
 id_indice_idx,D_AFFIDABILITA,CAR,Dedotto da cartografia,B
 id_indice_idx,D_AFFIDABILITA,DIR,Stima diretta,C
 id_indice_idx,D_AFFIDABILITA,IND,Stima indiretta,D
