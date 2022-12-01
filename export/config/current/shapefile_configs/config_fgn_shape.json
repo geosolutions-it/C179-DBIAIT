@@ -17,7 +17,7 @@
                 {"name": "fgn_shape.idx_diamet", "alias": "idx_diamet", "cast": "VARCHAR(2)"},
                 {"name": "fgn_shape.anno", "alias": "anno", "cast": "INTEGER"},
                 {"name": "fgn_shape.idx_anno", "alias": "idx_anno", "cast": "VARCHAR(2)"},
-                {"name": "fgn_shape.lunghez_1", "alias": "lunghezza", "cast": "DOUBLE PRECISION"},
+                {"name": "fgn_shape.lunghez_1", "alias": "lunghezza", "cast": "NUMERIC(18,6)"},
                 {"name": "fgn_shape.idx_lunghe", "alias": "idx_lung", "cast": "VARCHAR(2)"},
                 {"name": "fgn_shape.id_conserv", "alias": "id_conserv", "cast": "INTEGER"},
                 {"name": "fgn_shape.tipo_rete", "alias": "tipo_rete", "cast": "VARCHAR(16)"},
@@ -30,7 +30,7 @@
                 {"name": "fgn_shape.idx_profon", "alias": "idx_profon", "cast": "VARCHAR(2)"},
                 {"name": "fgn_shape.allacci", "alias": "allacci", "cast": "INTEGER"},
                 {"name": "fgn_shape.allacci_in", "alias": "allac_indu", "cast": "INTEGER"},
-                {"name": "fgn_shape.lunghezza_", "alias": "lung_allac", "cast": "DOUBLE PRECISION"},
+                {"name": "fgn_shape.lunghezza_", "alias": "lung_allac", "cast": "NUMERIC(18,6)"},
                 {"name": "fgn_shape.riparazion", "alias": "rip_allacc", "cast": "INTEGER"},
                 {"name": "fgn_shape.riparazi_1", "alias": "rip_rete", "cast": "INTEGER"},
                 {"name": "fgn_shape.id_opera_s", "alias": "id_op_stat", "cast": "INTEGER"}
