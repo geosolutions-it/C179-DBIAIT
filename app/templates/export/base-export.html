@@ -116,14 +116,14 @@
 </script>
 <script>
   $('#freeze-year').hide();
-  filter_datatables_results("Current")
+  filter_datatables_results("")
   $('#export-schema').change(function(){
       if($('#export-schema').val() == 'dbiait_freeze') {
           $('#freeze-year').show();
           filter_datatables_results("Freeze")
       } else {
           $('#freeze-year').hide();
-          filter_datatables_results("Current")
+          filter_datatables_results("")
       }
   });
   $('#freeze-year').change(function(){
