@@ -19,6 +19,7 @@ class TaskType:
     PROCESS = "PROCESS"
     EXPORT = "EXPORT"
     FREEZE = "FREEZE"
+    UPLOAD = "UPLOAD"
 
 
 class TaskStatus:

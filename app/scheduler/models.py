@@ -72,6 +72,15 @@ class Task(models.Model):
             return task_log.replace("\n", "<br/>").replace("(True,)", "SUCCESS").replace("(False,)", "FAILED")
 
 
+class CSVFileUploaded(models.Model):
+    name = models.CharField(max_length=150, blank=False, unique=True)
+    ingestion_time = models.DateTimeField()
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
 class ImportedLayer(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     import_start_timestamp = models.DateTimeField(default=datetime.datetime.now)

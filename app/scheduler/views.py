@@ -14,6 +14,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 
 from app.scheduler.exceptions import QueuingCriteriaViolated, SchedulingParametersError
+from app.scheduler.forms import UploadFileForm
 from app.scheduler.models import Task, TaskStatus, ImportedLayer, FreezeLayer, Freeze as FreezeModel
 from app.scheduler.serializers import ImportSerializer, ProcessSerializer, ImportedLayerSerializer, \
     ExportTaskSerializer, FreezeLayerSerializer, FreezeSerializer
@@ -21,6 +22,7 @@ from app.scheduler.tasks import FreezeTask
 from app.scheduler.tasks.export_task import ExportTask
 from app.scheduler.tasks.import_task import ImportTask
 from app.scheduler.tasks.process_tasks import process_mapper
+from app.scheduler.tasks.upload_task import UploadCSVTask
 
 
 class Dashboard(LoginRequiredMixin, View):
@@ -107,6 +109,36 @@ class Configuration(LoginRequiredMixin, View):
             u'geopackages': Import.get_geopackage_files()
         }
         return render(request, 'configuration/base-configuration.html', context)
+
+
+class UploadSupportTable(LoginRequiredMixin, View):
+    def get(self, request):
+        bread_crumbs = {
+            'Upload table': reverse('upload-table-view'),
+        }
+        environment = u'SVILUPPO' if settings.URL_PATH_PREFIX else u'PRODUZIONE'
+        context = {
+            'bread_crumbs': bread_crumbs,
+            'environment': environment,
+            "current_url": resolve(self.request.path_info).url_name,
+            "form": UploadFileForm
+        }
+        return render(request, 'upload_table/base-upload.html', context)
+
+
+class StartUploadTableProcess(LoginRequiredMixin, View):
+
+    def post(self, request):
+        csv_file = request.FILES.get("upload")
+        if not csv_file:
+            raise Exception("No file provided")
+        context = {}
+        try:
+            UploadCSVTask.send(UploadCSVTask.pre_send(requesting_user=request.user, csv_file_name=csv_file.name))
+            return redirect(reverse("upload-table-view"))
+        except QueuingCriteriaViolated as e:
+            context['error'] = str(e)
+            return render(request, "upload_table/base-upload.html", context)
 
 
 class QueueImportView(LoginRequiredMixin, View):

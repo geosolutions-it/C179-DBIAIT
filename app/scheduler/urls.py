@@ -3,7 +3,7 @@ from app.scheduler.views import (Configuration, Dashboard, ExportListView,
                                  GetProcessStatusListAPIView, HistoricalImport,
                                  Import, ProcessView, QueueImportView,
                                  QueueProcessView, GetImportedLayer, GetExportStatus, QueueFreezeView, GetFreezeStatus,
-                                 HistoricalFreeze, GetFreezeLayer)
+                                 HistoricalFreeze, GetFreezeLayer, UploadSupportTable, StartUploadTableProcess)
 from django.urls import include, path
 
 urlpatterns = [
@@ -48,4 +48,15 @@ urlpatterns = [
                  name=u'get-single-freeze-status-api-view')
         ])),
     ])),
+    path(u"upload_table/", include([
+        path(u"", UploadSupportTable.as_view(), name=u"upload-table-view"),
+        path(u"start/", StartUploadTableProcess.as_view(), name=u'start-upload-process'),
+        path(u"api/", include([
+            path("status", GetFreezeStatus.as_view(),
+                 name=u'get-freeze-status-api-view'),
+            path("status-single-task/", GetFreezeLayer.as_view(),
+                 name=u'get-single-freeze-status-api-view')
+        ])),
+    ])),
+
 ]
