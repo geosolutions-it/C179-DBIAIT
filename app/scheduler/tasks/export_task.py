@@ -66,11 +66,19 @@ class ExportTask(BaseTask):
         # 2. create Task ORM model instance for this task execution
         try:
             # get the latest imported package
-            latest_import_task = (
-                Task.objects.filter(type=TaskType.IMPORT)
-                .filter(status=TaskStatus.SUCCESS)
-                .latest("end_date")
-            )
+            if schema == Schema.FREEZE:
+                latest_import_task = (
+                    Task.objects.filter(type=TaskType.FREEZE)
+                    .filter(freeze__ref_year=ref_year)
+                    .latest("end_date")
+                )
+            else:
+                latest_import_task = (
+                    Task.objects.filter(type=TaskType.IMPORT)
+                    .filter(status=TaskStatus.SUCCESS)
+                    .latest("end_date")
+                )
+
             geopackage = latest_import_task.geopackage
         except ObjectDoesNotExist:
             raise exceptions.SchedulingParametersError("No imported packages found.")
