@@ -3054,7 +3054,11 @@ BEGIN
 		EXECUTE 'DROP TABLE IF EXISTS ' || v_schema_frz || '.' || v_rec.table_name;
 	END LOOP;
 
-	DELETE FROM dbiait_system.scheduler_freeze WHERE ref_year = v_year;
+    --- delete all the reference table for the selected year freezed
+    -- this includes the freezelayer, the scheduler_freeze and the export rows for the selected year
+    delete FROM dbiait_system.scheduler_freezelayer WHERE task_id in (select id FROM dbiait_system.scheduler_task where (params -> 'kwargs' ->> 'ref_year')::int = v_year);
+    delete FROM dbiait_system.scheduler_freeze WHERE task_id in (select id from dbiait_system.scheduler_task where (params -> 'kwargs' ->> 'ref_year')::int = v_year);
+    delete FROM dbiait_system.scheduler_task where (params -> 'kwargs' ->> 'ref_year')::int = v_year;
 
 	RETURN TRUE;
 END;
