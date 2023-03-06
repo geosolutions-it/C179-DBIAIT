@@ -951,10 +951,7 @@ BEGIN
 			a.geom,
 			r.codice_ato as codice_ato,
 			a.idgis as idgis,
-			CASE
-			    WHEN  '' || v_table || '' = ''DISTRIB_TRONCHI'' THEN a.id_sist_idr
-			    ELSE a.id_rete
-			END idgis_rete,
+			a.id_rete as idgis_rete,
 			1,
 			a.d_materiale as d_materiale_idr, -- da all_domains
 			a.d_stato_cons,
@@ -995,13 +992,23 @@ BEGIN
 
 	--UPDATE CODICE ATO WITH CODICE SISTEMA IDRICO
     -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
-	IF v_table = 'DISTRIB_TRONCHI' THEN
-        EXECUTE '
+	IF v_table = 'DISTRIB_TRONCHI' then
+		execute '
+			update ' || v_table || ' AS dt
+			set idgis_rete = a.id_sist_idr
+			from acq_condotta as a
+			where dt.idgis =a.idgis
+		';
+
+	end IF;
+	IF v_table = 'DISTRIB_TRONCHI' then
+ 		EXECUTE '
             update ' || v_table || ' set codice_ato =rsd.cod_sist_idr
-            from (select cod_sist_idr, idgis_rete_distrib from rel_sa_di group by 1,2) as rsd
-            where ' || v_table || '.idgis_rete = rsd.idgis_rete_distrib
+            from (select cod_sist_idr,idgis_sist_idr from rel_sa_di group by 1,2) as rsd
+            where ' || v_table || '.idgis_rete = rsd.idgis_sist_idr
         ';
 	end IF;
+
 
 	--D_MATERIALE convertito in D_MATERIALE_IDR
 	EXECUTE '
