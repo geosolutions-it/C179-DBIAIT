@@ -992,11 +992,10 @@ BEGIN
 		';
 
 	--UPDATE CODICE ATO WITH CODICE SISTEMA IDRICO
-    -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
 	IF v_table = 'DISTRIB_TRONCHI' then
 		execute '
 			update ' || v_table || ' AS dt
-			set idgis_rete = a.id_sist_idr
+			set id_sist_idr = a.id_sist_idr
 			from acq_condotta as a
 			where dt.idgis =a.idgis
 		';
@@ -1006,10 +1005,15 @@ BEGIN
  		EXECUTE '
             update ' || v_table || ' set codice_ato =rsd.cod_sist_idr
             from (select cod_sist_idr,idgis_sist_idr from rel_sa_di group by 1,2) as rsd
-            where ' || v_table || '.idgis_rete = rsd.idgis_sist_idr
+            where ' || v_table || '.id_sist_idr = rsd.idgis_sist_idr
         ';
 	end IF;
-
+	IF v_table = 'DISTRIB_TRONCHI' then
+ 		EXECUTE '
+            update ' || v_table || ' set codice_ato = null
+            where ' || v_table || '.id_sist_idr is null
+        ';
+	end IF;
 
 	--D_MATERIALE convertito in D_MATERIALE_IDR
 	EXECUTE '
@@ -1070,6 +1074,15 @@ BEGIN
 		SELECT idgis, idgis_rete, codice_ato, $1
 		FROM ' || v_table || ';
 	' using v_tipo_infr;
+	RETURN TRUE;
+
+
+	DELETE FROM LOG_STANDALONE WHERE alg_name = v_table;
+	EXECUTE '
+		INSERT INTO LOG_STANDALONE (id, alg_name, description)
+		SELECT idgis, ''' || v_table || ''', ''Campo idgis_rete vuoto''
+		FROM ' || v_table || ' WHERE idgis_rete is NULL';
+
 	RETURN TRUE;
 END;
 $$  LANGUAGE plpgsql
@@ -4627,6 +4640,17 @@ begin
     DELETE FROM support_accorpamento_raw_distribuzioni;
 
     INSERT INTO support_accorpamento_raw_distribuzioni
+    with lunghezza_rete as (
+	    select
+			idgis,
+			sum(lunghezza) as lunghezza,
+			sum(lunghezza_tlc) as lunghezza_tlc
+		from
+			acq_lunghezza_rete alr
+		where tipo_infr = 'DISTRIBUZIONE'
+		group by
+			1
+    )
     select
         "acq_rete_distrib"."idgis" "idgis",
         "acq_rete_distrib"."codice_ato" "codice_ato",
@@ -4651,7 +4675,7 @@ begin
         "acq_auth_rete_dist"."nr_rip_rete" "nr_rip_rete",
         cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_press") as INTEGER) "sn_strum_mis_press",
         cast(TO_BIT("acq_auth_rete_dist"."sn_strum_mis_port") as INTEGER) "sn_strum_mis_port",
-        cast("acq_lunghezza_rete"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
+       	cast("lunghezza_rete"."lunghezza_tlc" as numeric(18, 6)) "lunghezza_tlc",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dirette" "nr_utenze_dirette",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dir_dom_e_residente" "nr_utenze_dir_dom_e_residente",
         "utenze_distribuzioni_adduttrici"."nr_utenze_dir_residente" "nr_utenze_dir_residente",
@@ -4666,13 +4690,13 @@ begin
         "stats_cloratore"."counter" "count_cloratori",
         "sistema_idrico"."cod_sist_idr" "codice_sistema_idrico",
         "sistema_idrico"."denom_sist_idr" "denom_acq_sistema_idrico",
-        cast("acq_lunghezza_rete"."lunghezza" as numeric(18, 6)) "lunghezza"
+        cast("lunghezza_rete"."lunghezza" as numeric(18, 6)) "lunghezza"
        from
             "acq_rete_distrib" "acq_rete_distrib"
         left join "acq_auth_rete_dist" "acq_auth_rete_dist" on
             "acq_rete_distrib"."idgis" = "acq_auth_rete_dist"."id_rete_distrib"
-        left join "acq_lunghezza_rete" "acq_lunghezza_rete" on
-            "acq_lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis"
+        left join "lunghezza_rete" "lunghezza_rete" on
+            "lunghezza_rete"."idgis" = "acq_rete_distrib"."idgis"
         left join "acq_vol_utenze" "acq_vol_utenze" on
             "acq_vol_utenze"."ids_codice_orig_acq" = "acq_rete_distrib"."codice_ato"
         left join "utenze_distribuzioni_adduttrici" "utenze_distribuzioni_adduttrici" on

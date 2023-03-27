@@ -180,6 +180,7 @@ CREATE TABLE DBIAIT_ANALYSIS.DISTRIB_TRONCHI(
 	codice_ato			VARCHAR(32),
 	idgis				VARCHAR(32),
 	idgis_rete			VARCHAR(32),
+	id_sist_idr			VARCHAR(32),
 	id_tipo_telecon		INTEGER,
 	id_materiale		VARCHAR(5),
 	id_conservazione	VARCHAR(5),
