@@ -6,7 +6,7 @@
          "fields":[
             {"name":"distrib_loc_serv.cod_sist_idr", "alias":"cod_sist_idr"},
             {"name":"distrib_loc_serv.id_localita_istat", "alias":"id_localita_istat"},
-            {"name":"distrib_loc_serv.perc", "alias":"perc"}
+            {"name":"distrib_loc_serv.perc", "alias":"perc", "cast": "NUMERIC(18,2)"}
          ],
          "table":{
             "name": "distrib_loc_serv_sistidr"

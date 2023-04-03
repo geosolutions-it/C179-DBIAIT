@@ -13,7 +13,7 @@
                 {"name": "collett_tronchi.diametro", "alias": "diametro"},
                 {"name": "collett_tronchi.anno", "alias": "anno"},
                 {"name": "collett_tronchi.funziona_gravita", "alias": "funziona_gravita", "cast": "INTEGER"},
-                {"name": "collett_tronchi.lunghezza", "alias": "lunghezza"},
+                {"name": "collett_tronchi.lunghezza", "alias": "lunghezza", "cast": "NUMERIC(18,6)"},
                 {"name": "collett_tronchi.idx_materiale", "alias": "idx_materiale"},
                 {"name": "collett_tronchi.idx_diametro", "alias": "idx_diametro"},
                 {"name": "collett_tronchi.idx_anno", "alias": "idx_anno"},

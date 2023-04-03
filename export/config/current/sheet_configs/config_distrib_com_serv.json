@@ -6,7 +6,7 @@
          "fields":[
             {"name":"distrib_com_serv.cod_sist_idr", "alias":"cod_sist_idr"},
             {"name":"distrib_com_serv.pro_com", "alias":"pro_com"},
-            {"name":"distrib_com_serv.popolazione_servita", "alias":"popolazione_servita"}
+            {"name":"distrib_com_serv.popolazione_servita", "alias":"popolazione_servita", "cast": "NUMERIC(18,2)"}
          ],
          "table":{
             "name": "distrib_com_serv_sistidr"

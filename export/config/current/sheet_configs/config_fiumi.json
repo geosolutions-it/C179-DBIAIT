@@ -11,7 +11,7 @@
                 {"name": "acq_captazione.anno_costr","alias": "anno_costr"},
                 {"name": "acq_captazione.anno_ristr","alias": "anno_ristr"},
                 {"name": "acq_captazione.d_stato_cons","alias": "d_stato_cons"},
-                {"name": "acq_captazione.volume_medio_prel","alias": "volume_medio_prel"},
+                {"name": "acq_captazione.volume_medio_prel","alias": "volume_medio_prel" ,"cast": "NUMERIC(18,6)"},
                 {"name": "acq_captazione.d_stato","alias": "d_stato"},
                 {"name": "acq_captazione.a_anno_costr","alias": "a_anno_costr"},
                 {"name": "acq_captazione.a_anno_ristr","alias": "a_anno_ristr"},
@@ -21,7 +21,7 @@
                 {"name": "acq_auth_capt.d_classific","alias": "d_classific"},
                 {"name": "acq_auth_capt.d_utilizzo","alias": "d_utilizzo"},
                 {"name": "acq_auth_capt.utilizzo_annuo","alias": "utilizzo_annuo"},
-                {"name": "acq_auth_capt.area_bac_affer","alias": "area_bac_affer"},
+                {"name": "acq_auth_capt.area_bac_affer","alias": "area_bac_affer","cast": "NUMERIC(18,2)"},
                 {"name": "acq_auth_capt.sn_trav_fluv","alias": "sn_trav_fluv", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_cam_presa","alias": "sn_cam_presa", "function": "TO_BIT", "cast": "INTEGER"},
                 {"name": "acq_auth_capt.sn_presa_succ","alias": "sn_presa_succ", "function": "TO_BIT", "cast": "INTEGER"},
@@ -37,11 +37,11 @@
                 {"name": "acq_captazione.cod_comune", "alias":"cod_comune"},
                 {"name": "acq_captazione.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "acq_captazione.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-                {"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max"},
-                {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min"},
-                {"name": "acq_capt_conces.port_deriv","alias": "port_deriv"},
+				{"name": "acq_capt_conces.port_uti_max","alias": "port_uti_max","cast": "NUMERIC(18,2)"},
+                {"name": "acq_capt_conces.port_uti_min","alias": "port_uti_min","cast": "NUMERIC(18,2)"},
+                {"name": "acq_capt_conces.port_deriv","alias": "port_deriv","cast": "NUMERIC(18,2)"},
                 {"name": "acq_capt_conces.estremi_conces","alias": "estremi_conces"},
-                {"name": "acq_capt_conces.port_potab","alias": "port_potab"},
+                {"name": "acq_capt_conces.port_potab","alias": "port_potab","cast": "NUMERIC(18,2)"},
                 {"name": "acq_capt_conces.a_port_es","alias": "a_port_es"},
                 {"name": "acq_capt_conces.a_port_uti_max","alias": "a_port_uti_max"},
                 {"name": "acq_capt_conces.a_port_uti_min","alias": "a_port_uti_min"},
@@ -54,7 +54,7 @@
                 { "name": "support_sistema_idrico_rel_sa_localita_captazione.cod_sist_idr", "alias": "cod_sist_idr"},
                 { "name": "support_sistema_idrico_rel_sa_localita_captazione.denom_sist_idr", "alias": "denom_sist_idr"},
                 {"name": "acq_auth_capt.a_volume_imm","alias": "a_volume_imm"},
-                {"name": "acq_auth_capt.volume_imm","alias": "volume_imm"}
+                {"name": "acq_auth_capt.volume_imm","alias": "volume_imm","cast": "NUMERIC(18,6)"}
             ],
             "table": {
                 "name": "acq_captazione"

@@ -28,12 +28,12 @@
                 {"name": "acq_pompaggio.data_agg","alias": "data_agg"},
                 {"name": "acq_pompaggio.geom", "alias": "transformed_x_geom", "function": "GB_X"},
                 {"name": "acq_pompaggio.geom", "alias": "transformed_y_geom", "function": "GB_Y"},
-                {"name": "stats_pompe.sum_potenza", "alias": "sum_potenza"},
+                {"name": "stats_pompe.sum_potenza", "alias": "sum_potenza", "cast": "NUMERIC(18,2)"},
                 {"name": "stats_pompe.avg_idx_potenza", "alias": "avg_idx_potenza"},
                 { "name": "localita.denominazi", "alias": "denominazi" },
                 { "name": "support_sistema_idrico_rel_sa_localita_pompaggio.cod_sist_idr", "alias": "cod_sist_idr"},
                 { "name": "support_sistema_idrico_rel_sa_localita_pompaggio.denom_sist_idr", "alias": "denom_sist_idr"},
-                { "name": "acq_auth_pompag.consumo_ee", "alias": "consumo_ee"}
+                { "name": "acq_auth_pompag.consumo_ee", "alias": "consumo_ee", "cast": "NUMERIC(18,3)"}
             ],
             "table": {
                 "name": "acq_pompaggio"

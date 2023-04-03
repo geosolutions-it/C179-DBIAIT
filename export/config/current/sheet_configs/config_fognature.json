@@ -19,8 +19,8 @@
                 {"name": "fgn_lunghezza_allacci_id_rete.lunghezza_allaccio","alias": "lunghezza_allaccio", "cast": "NUMERIC(18,6)"},
                 {"name": "utenze_fognature_collettori.nr_utenze_totali","alias": "utenze_totali"},
                 {"name": "utenze_fognature_collettori.nr_utenze_industriali","alias": "nr_utenze_industriali"},
-                {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali"},
-                {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali"},
+                {"name": "utenze_fognature_collettori.volume_utenze_totali","alias": "volume_utenze_totali", "cast": "NUMERIC(18,2)"},
+                {"name": "utenze_fognature_collettori.volume_utenze_industriali","alias": "volume_utenze_industriali", "cast": "NUMERIC(18,2)"},
                 {"name": "fgn_lunghezza_rete.lung_rete_mista","alias": "lung_rete_mista", "cast": "NUMERIC(18,6)"},
                 {"name": "fgn_lunghezza_rete.lung_rete_nera","alias": "lung_rete_nera", "cast": "NUMERIC(18,6)"}
             ],

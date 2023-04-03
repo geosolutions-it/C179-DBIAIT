@@ -6,8 +6,8 @@
          "fields":[
             {"name":"fognat_loc_serv.codice_opera", "alias":"codice_opera"},
             {"name":"fognat_loc_serv.id_localita_istat", "alias":"id_localita_istat"},
-            {"name":"fognat_loc_serv.perc_popsrv", "alias":"perc_popsrv"},
-            {"name":"fognat_loc_serv.perc_popdep", "alias":"perc_popdep"}
+            {"name":"fognat_loc_serv.perc_popsrv", "alias":"perc_popsrv", "cast": "NUMERIC(18,2)"},
+            {"name":"fognat_loc_serv.perc_popdep", "alias":"perc_popdep", "cast": "NUMERIC(18,2)"}
          ],
          "table":{
             "name":"fognat_loc_serv"
