@@ -3973,7 +3973,7 @@ begin
             utenza_sap us
         where
             gruppo = 'A' AND
-            cattariffa IN ('APB_CONDOM','APB_CONMIS')
+            cattariffa IN ('APB_CONDOM','APB_CONMIS', 'APB_CON')
             AND esclusione_m2_m3a is false
     ),
     utenze_indirette as (
@@ -3986,7 +3986,7 @@ begin
             utenza_sap us
         where
             gruppo = 'A' AND
-            cattariffa in ('APB_CONDOM', 'APB_CONMIS')
+            cattariffa in ('APB_CONDOM', 'APB_CONMIS', 'APB_CON')
             AND esclusione_m2_m3a is false
     ),
     utenze_misuratore as (
