@@ -10,7 +10,7 @@
             {"name":"fognat_tronchi.recapito", "alias": "recapito"},
             {"name":"fognat_tronchi.id_materiale", "alias": "id_materiale", "function": "TO_NUM"},
             {"name":"fognat_tronchi.id_conservazione", "alias": "id_conservazione", "function": "TO_NUM"},
-            {"name":"fognat_tronchi.diametro", "alias": "diametro"},
+            {"name":"fognat_tronchi.diametro", "alias": "diametro","function": "TO_NUM"},
             {"name":"fognat_tronchi.anno", "alias": "anno"},
             {"name":"fognat_tronchi.funziona_gravita", "alias": "funziona_gravita", "cast": "INTEGER"},
             {"name":"fognat_tronchi.lunghezza", "alias": "lunghezza", "cast": "NUMERIC(18,6)"},

@@ -6,8 +6,8 @@
          "fields":[
             {"name":"fognat_com_serv.codice_opera", "alias":"codice_opera"},
             {"name":"fognat_com_serv.id_comune_istat", "alias":"id_comune_istat","function": "TO_NUM"},
-            {"name":"fognat_com_serv.perc_popsrv", "alias":"perc_popsrv"},
-            {"name":"fognat_com_serv.perc_popdep", "alias":"perc_popdep"}
+            {"name":"fognat_com_serv.perc_popsrv", "alias":"perc_popsrv", "cast": "NUMERIC(18,2)"},
+            {"name":"fognat_com_serv.perc_popdep", "alias":"perc_popdep", "cast": "NUMERIC(18,2)"}
          ],
          "table":{
             "name":"fognat_com_serv"
