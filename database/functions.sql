@@ -615,9 +615,9 @@ CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_utenza_servizio(
 DECLARE
 	v_result BOOLEAN := FALSE;
 BEGIN
-    SET work_mem = '512MB';
+    SET work_mem = '800MB';
 	-- reset dei dati
-    analyze;
+
 	DELETE FROM UTENZA_SERVIZIO;
 	DELETE FROM UTENZA_SERVIZIO_LOC;
 	DELETE FROM UTENZA_SERVIZIO_ACQ;
@@ -626,12 +626,25 @@ BEGIN
 
 	DELETE FROM LOG_STANDALONE WHERE alg_name = 'UTENZA_SERVIZIO';
 
+	analyze UTENZA_SERVIZIO;
+	analyze UTENZA_SERVIZIO_LOC;
+	analyze UTENZA_SERVIZIO_ACQ;
+	analyze UTENZA_SERVIZIO_FGN;
+	analyze UTENZA_SERVIZIO_BAC;
+	analyze LOG_STANDALONE;
+
+	analyze acq_ubic_contatore;
+	analyze UTENZA_SERVIZIO_LOC;
 	--LOCALITA (59s)
     INSERT INTO UTENZA_SERVIZIO_LOC(impianto, id_ubic_contatore, codice)
     SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.id_localita_istat
     FROM acq_ubic_contatore uc, localita g
     WHERE (g.geom && uc.geom) AND ST_INTERSECTS(g.geom, uc.geom)
     AND uc.id_impianto is not null;
+
+    analyze acq_ubic_contatore;
+    analyze UTENZA_SERVIZIO_ACQ;
+
 	-- ACQ_RETE_DISTRIB (9s)
     INSERT INTO UTENZA_SERVIZIO_ACQ(impianto, id_ubic_contatore, codice)
     SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
@@ -640,6 +653,10 @@ BEGIN
     AND g.D_GESTORE='PUBLIACQUA' AND g.D_STATO='ATT' AND g.D_AMBITO='AT3'
     AND uc.id_impianto is not null;
 	-- FGN_RETE_RACC (7s)
+
+    analyze acq_ubic_contatore;
+    analyze UTENZA_SERVIZIO_FGN;
+
     INSERT INTO UTENZA_SERVIZIO_FGN(impianto, id_ubic_contatore, codice)
     SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
     from acq_ubic_contatore uc, fgn_rete_racc g
@@ -648,6 +665,10 @@ BEGIN
     AND uc.id_impianto is not null;
 	-- FGN_BACINO + FGN_TRATTAMENTO/FGN_PNT_SCARICO
 	-- (12s)
+
+    analyze acq_ubic_contatore;
+    analyze UTENZA_SERVIZIO_BAC;
+
     INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
     SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
     from acq_ubic_contatore uc, (
@@ -658,6 +679,8 @@ BEGIN
     ) g WHERE g.geom && uc.geom AND ST_INTERSECTS(g.geom, uc.geom)
     AND uc.id_impianto is not null;
 
+    analyze acq_ubic_contatore;
+    analyze UTENZA_SERVIZIO_BAC;
     -- (0.5s)
     INSERT INTO UTENZA_SERVIZIO_BAC(impianto, id_ubic_contatore, codice)
     SELECT DISTINCT ON(uc.idgis) uc.id_impianto, uc.idgis as id_ubic_contatore, g.codice_ato as codice
@@ -681,11 +704,17 @@ BEGIN
 	--WHERE u.id_impianto is not NULL
 	--AND c.D_STATO=''ATT'' AND u.idgis=c.id_ubic_contatore';
 	-- (1s)
+
+    analyze ACQ_UBIC_CONTATORE;
+    analyze utenza_servizio;
+
 	INSERT INTO utenza_servizio(impianto, id_ubic_contatore)
 	SELECT DISTINCT u.id_impianto, u.idgis
 	FROM ACQ_UBIC_CONTATORE u
 	WHERE u.id_impianto is not NULL;
 
+    analyze UTENZA_SERVIZIO_ACQ;
+    analyze utenza_servizio;
 	-- update field ids_codice_orig_acq (1.5 s)
     UPDATE utenza_servizio
     SET ids_codice_orig_acq = t.codice
@@ -697,6 +726,9 @@ BEGIN
     ) t
     WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
 
+
+    analyze UTENZA_SERVIZIO_LOC;
+    analyze utenza_servizio;
 	-- update field id_localita_istat (1.5s)
     UPDATE utenza_servizio
     SET id_localita_istat = t.codice
@@ -709,6 +741,9 @@ BEGIN
     WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
 
 	-- update field ids_codice_orig_fgn (1.5s)
+
+    analyze UTENZA_SERVIZIO_FGN;
+    analyze utenza_servizio;
     UPDATE utenza_servizio
     SET ids_codice_orig_fgn = t.codice
     FROM (
@@ -730,6 +765,9 @@ BEGIN
     ) t
     WHERE id_ubic_contatore = t.id_cont AND (impianto IS NULL OR impianto = t.imp);
 
+
+    analyze acq_ubic_contatore;
+    analyze LOG_STANDALONE;
    -- Log duplicated items (55s)
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in localita'
@@ -751,6 +789,8 @@ BEGIN
 		AND uc.id_impianto is not null
 	)t group by t.id_ubic_contatore having count(0)>1;
 
+    analyze acq_ubic_contatore;
+    analyze LOG_STANDALONE;
 	-- (4s)
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in fognatura'
@@ -763,6 +803,9 @@ BEGIN
 	)t group by t.id_ubic_contatore having count(0)>1;
 
 	-- (12s)
+
+    analyze acq_ubic_contatore;
+    analyze LOG_STANDALONE;
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in bacino'
 	FROM(
@@ -777,6 +820,9 @@ BEGIN
 	)t group by t.id_ubic_contatore having count(0)>1;
 
 	--(0.5s)
+
+    analyze acq_ubic_contatore;
+    analyze LOG_STANDALONE;
 	INSERT INTO LOG_STANDALONE (id, alg_name, description)
 	SELECT id_ubic_contatore, 'UTENZA_SERVIZIO', 'Duplicati: ' || count(0) || ' in bacino'
 	FROM(
