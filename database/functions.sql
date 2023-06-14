@@ -2218,7 +2218,7 @@ BEGIN
     UPDATE ACQ_SHAPE
     SET
         profondita = c.prof_media,
-        idx_profon = case when c.prof_media >= 0 THEN 'A' ELSE NULL END
+        idx_profon = case when c.prof_media <= 0 THEN 'A' ELSE NULL END
     FROM acq_condotta c
     WHERE c.idgis = ACQ_SHAPE.ids_codi_1;
     --(press_med_eserc, riparazioni_allacci, riparazioni_rete, allacci, lunghezza_allacci)
