@@ -1107,7 +1107,7 @@ BEGIN
 					acq_distretto d,
 					acq_condotta a
 				WHERE d_tipo = ''MIS''
-				AND a.geom&&d.geom AND ST_Within(a.geom,d.geom)
+				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
 				AND d.d_tipo = ''MIS''
 			) t WHERE t.idgis = ' || v_table || '.idgis
 		);
