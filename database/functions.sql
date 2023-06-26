@@ -975,6 +975,8 @@ BEGIN
 
 	EXECUTE 'DELETE FROM ' || v_table || ';';
 
+	analyze DISTRIB_TRONCHI;
+	analyze ADDUT_TRONCHI;
     -- idgis_rete in realtà è id del sistema idrico, mantenuto come idgis_rete per retrocompatibilità
 	EXECUTE '
 		INSERT INTO ' || v_table || '(
@@ -1037,6 +1039,8 @@ BEGIN
 			AND a.id_rete=r.idgis;
 		';
 
+	analyze DISTRIB_TRONCHI;
+	analyze ADDUT_TRONCHI;
 	--UPDATE CODICE ATO WITH CODICE SISTEMA IDRICO
 	IF v_table = 'DISTRIB_TRONCHI' then
 		execute '
@@ -1081,6 +1085,8 @@ BEGIN
 		WHERE d.valore_gis = COALESCE(' || v_table || '.id_conservazione,''SCO'') AND d.dominio_gis = ''D_STATO_CONS'';
 	';
 
+	analyze DISTRIB_TRONCHI;
+	analyze ADDUT_TRONCHI;
 	-- valorizzazione rete con gestione delle pressioni
 	EXECUTE '
 		UPDATE ' || v_table || '
@@ -1103,12 +1109,12 @@ BEGIN
 		SET id_tipo_telecon = 2 WHERE EXISTS(
 			SELECT * FROM (
 				SELECT a.idgis
-				FROM
-					acq_distretto d,
-					acq_condotta a
-				WHERE d_tipo = ''MIS''
-				AND a.geom&&d.geom AND ST_INTERSECTS(a.geom,d.geom)
-				AND d.d_tipo = ''MIS''
+                FROM
+                    acq_distretto d,
+                    acq_condotta a
+                WHERE d_tipo = ''MIS''
+                AND a.geom&&d.geom AND (ST_Crosses(a.geom,d.geom) or ST_Within(a.geom,d.geom))
+                AND d.d_tipo = ''MIS''
 			) t WHERE t.idgis = ' || v_table || '.idgis
 		);
 	';
