@@ -187,6 +187,7 @@ id_materiale,D_MATERIALE,PBL,Prefabbricato a blocchi,40
 id_materiale,D_MATERIALE,PO,Polietilene,31
 id_materiale,D_MATERIALE,CAM,Cemento amianto,7
 id_materiale,D_MATERIALE,TRC,Terracotta,39
+id_materiale,D_MATERIALE,PP,Polipropilene,40
 id_materiale,D_MATERIALE_IDR,AC,Acciaio,2
 id_materiale,D_MATERIALE_IDR,AI,Acciaio inox,4
 id_materiale,D_MATERIALE_IDR,AR,Acciaio rivestito,2
@@ -197,6 +198,7 @@ id_materiale,D_MATERIALE_IDR,BLU,Blutop,40
 id_materiale,D_MATERIALE_IDR,BR,Bronzo,40
 id_materiale,D_MATERIALE_IDR,CAP,Cemento armato precompresso,40
 id_materiale,D_MATERIALE_IDR,CRP,Corrugato polipropilene,40
+id_materiale,D_MATERIALE_IDR,PP,Polipropilene,40
 id_materiale,D_MATERIALE_IDR,ETE,Eternit,12
 id_materiale,D_MATERIALE_IDR,FIB,Fibrocemento,16
 id_materiale,D_MATERIALE_IDR,GH,Ghisa,17
