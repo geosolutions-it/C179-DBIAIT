@@ -2282,8 +2282,12 @@ $$  LANGUAGE plpgsql
 -- OUT: BOOLEAN
 -- Example:
 -- 	select DBIAIT_ANALYSIS.populate_acq_shape_utenze_mis();
-CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_shape_utenze_mis(
-) RETURNS BOOLEAN AS $$
+CREATE OR REPLACE FUNCTION dbiait_analysis.populate_acq_shape_utenze_mis()
+ RETURNS boolean
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public', 'dbiait_analysis'
+AS $function$
 BEGIN
     SET work_mem = '256MB';
     --(utenze_misuratore)
@@ -2359,7 +2363,7 @@ BEGIN
                     'COPDCI0000',
                     'COPDIN0000'
                 )
-                AND esclusione_m2_m3a = False
+                and esclusione_m2_m3a = False
                 and nr_contat >= 1
         ) aa on
             as2.ids_codi_1 = aa.id_condotta
