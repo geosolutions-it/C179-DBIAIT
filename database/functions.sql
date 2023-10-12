@@ -2282,12 +2282,8 @@ $$  LANGUAGE plpgsql
 -- OUT: BOOLEAN
 -- Example:
 -- 	select DBIAIT_ANALYSIS.populate_acq_shape_utenze_mis();
-CREATE OR REPLACE FUNCTION dbiait_analysis.populate_acq_shape_utenze_mis()
- RETURNS boolean
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO 'public', 'dbiait_analysis'
-AS $function$
+CREATE OR REPLACE FUNCTION DBIAIT_ANALYSIS.populate_acq_shape_utenze_mis(
+) RETURNS BOOLEAN AS $$
 BEGIN
     SET work_mem = '256MB';
     --(utenze_misuratore)
