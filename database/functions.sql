@@ -2332,6 +2332,7 @@ BEGIN
                     'COPDCI0000',
                     'COPDIN0000'
                 )
+                AND esclusione_m2_m3a = False
                 AND nr_contat >= 1
                 AND NOT EXISTS (
                 	--select 0 from defalco_child dfc
@@ -2358,6 +2359,7 @@ BEGIN
                     'COPDCI0000',
                     'COPDIN0000'
                 )
+                and esclusione_m2_m3a = False
                 and nr_contat >= 1
         ) aa on
             as2.ids_codi_1 = aa.id_condotta
