@@ -102,7 +102,7 @@ Each configuration subdirectory needs to define the following:
 The scheduler requires a task queue to be configured. By default RabbitMQ is used, but Redis can also be used (note: Redis requires change in settings.py file).
 1. start RabbitMQ (may be dockerized version)
 ``` shell
-docker run -d -p 15672:15672 -p 5672:5672 -p 5671:5671 --hostname my-rabbitmq rabbitmq:3-management
+docker run -d -p 15672:15672 -p 5672:5672 -p 5671:5671 --hostname my-rabbitmq rabbitmq:3.6.10-management
 ```
 2. in a terminal with environment variables exported run (and don't kill!):
 ``` shell

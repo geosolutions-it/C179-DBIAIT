@@ -1222,3 +1222,9 @@ CREATE TABLE dbiait_analysis.support_sistema_idrico_rel_sa_localita_acq_accumulo
 	cod_sist_idr varchar(8) NULL,
 	denom_sist_idr varchar(32) NULL
 );
+
+CREATE TABLE dbiait_analysis.support_codice_ato_rete_distribuzione (
+	codice_sistema_idrico varchar(32) NULL,
+	denom_acq_sistema_idrico varchar(32) NULL,
+	idgis varchar(32) NULL
+);
