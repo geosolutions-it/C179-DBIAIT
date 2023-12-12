@@ -1011,21 +1011,21 @@ BEGIN
 			END anno_messa_opera,
 			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
 			CASE
-				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'') THEN ''A''
 				ELSE ''B''
 			END idx_materiale,
 			CASE
 				WHEN a.d_diametro IS NULL THEN NULL
-				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro,
 			CASE
 				WHEN a.data_esercizio IS NULL THEN ''X''
-				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_anno,
 			CASE
-				WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_lunghezza,
 			' || v_column || '
@@ -1281,21 +1281,21 @@ BEGIN
 			END anno_messa_opera,
 			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
 			CASE
-				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'') THEN ''A''
 				ELSE ''B''
 			END idx_materiale,
 			CASE
 				WHEN coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NULL THEN NULL
-				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro,
 			CASE
 				WHEN a.data_esercizio IS NULL THEN ''X''
-				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_anno,
 			CASE
-				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'') THEN ''A''
 				ELSE ''B''
 			END idx_lunghezza,
 			a.d_tipo_acqua as id_refluo_trasportato,
@@ -1830,11 +1830,11 @@ BEGIN
                 FROM (select * from fgn_immissione union all select * from a_fgn_immissione) d, fgn_condotta c,
                 (
                     select distinct on(fs.idgis) fs.id_immissione, id_fossa_settica
-                    from fgn_fossa_settica fs,
+                    from fgn_fossa_settica_auto fs,
                     (
-                        select uct.id_fossa_settica, uct.id_impianto, uct.idgis
-                        from acq_contatore ac, acq_ubic_contatore uct
-                        where ac.id_ubic_contatore = uct.idgis
+                        select fuf.id_fossa_settica, uct.id_impianto, uct.idgis
+                        from acq_contatore ac, acq_ubic_contatore uct, fgn_rel_ubic_fossa fuf
+                        where ac.id_ubic_contatore = uct.idgis AND fuf.id_ubic_contatore = uct.idgis
                         --AND coalesce(ac.tariffa, '?') NOT IN ('APB_REFIND','APBLREFIND','COPDIN0000')
                         AND (ac.tariffa NOT IN ('APB_REFIND','APBLREFIND','COPDIN0000') or ac.tariffa IS NULL)
                     ) uc
@@ -1886,9 +1886,9 @@ BEGIN
                         where c.idgis = pc.idgis_contatore
                     ) prod_cont,
                     (
-                        select uct.id_fossa_settica, uct.id_impianto, uct.idgis
-                        from acq_contatore ac, acq_ubic_contatore uct
-                        where ac.id_ubic_contatore = uct.idgis
+                        select fuf.id_fossa_settica, uct.id_impianto, uct.idgis
+                        from acq_contatore ac, acq_ubic_contatore uct, fgn_rel_ubic_fossa fuf
+                        where ac.id_ubic_contatore = uct.idgis  AND fuf.id_ubic_contatore = uct.idgis
                         AND ac.tariffa IN ('APB_REFIND','APBLREFIND','COPDIN0000')
                         AND uct.ID_IMPIANTO is not null
                     ) uc,
@@ -1928,11 +1928,11 @@ BEGIN
             FROM fgn_immiss_auto d, fgn_link_imm i,
             (
                     select distinct on(fs.idgis) fs.idgis, uc.id_fossa_settica, fs.id_immissione
-                    from fgn_fossa_settica fs,
+                    from fgn_fossa_settica_auto fs,
                     (
-                        select uct.id_fossa_settica, uct.id_impianto, uct.idgis
-                        from acq_contatore ac, acq_ubic_contatore uct
-                        where ac.id_ubic_contatore = uct.idgis
+                        select fuf.id_fossa_settica, uct.id_impianto, uct.idgis
+                        from acq_contatore ac, acq_ubic_contatore uct, fgn_rel_ubic_fossa fuf
+                        where ac.id_ubic_contatore = uct.idgis  AND fuf.id_ubic_contatore = uct.idgis
                         --AND COALESCE(ac.tariffa, '?') NOT IN ('APB_REFIND','APBLREFIND','COPDIN0000')
                         AND (ac.tariffa is null or ac.tariffa NOT IN ('APB_REFIND','APBLREFIND','COPDIN0000'))
                     ) uc
@@ -1972,11 +1972,11 @@ BEGIN
             FROM fgn_immiss_auto d, fgn_link_imm i,
             (
                     select distinct on(fs.idgis) fs.idgis, uc.id_fossa_settica id_fossa_settica, fs.id_immissione
-                    from fgn_fossa_settica fs,
+                    from fgn_fossa_settica_auto fs,
                     (
-                        select uct.id_fossa_settica, uct.id_impianto, uct.idgis
-                        from acq_contatore ac, acq_ubic_contatore uct
-                        where ac.id_ubic_contatore = uct.idgis
+                        select fuf.id_fossa_settica, uct.id_impianto, uct.idgis
+                        from acq_contatore ac, acq_ubic_contatore uct, fgn_rel_ubic_fossa fuf
+                        where ac.id_ubic_contatore = uct.idgis  AND fuf.id_ubic_contatore = uct.idgis
                         AND ac.tariffa IN ('APB_REFIND','APBLREFIND','COPDIN0000')
                     ) uc
                     where uc.ID_IMPIANTO is not null and NOT EXISTS (select distinct idgis_divisionale from utenza_defalco where dt_fine_val=to_date('31-12-9999', 'DD-MM-YYYY') and uc.idgis=idgis_divisionale)
@@ -2069,12 +2069,12 @@ BEGIN
     with is_industriale as (
         select
             distinct on
-            (cc.idgis) uc.id_fossa_settica,
+            (fruf.id_fossa_settica) fruf.id_fossa_settica,
             ac.d_tipo_utenza
         from
-            fgn_fossa_settica cc
+            fgn_rel_ubic_fossa fruf
         join acq_ubic_contatore uc on
-            cc.idgis = uc.id_fossa_settica
+            fruf.id_ubic_contatore = uc.idgis
         join acq_contatore ac on
             ac.id_ubic_contatore = uc.idgis
         where
@@ -4219,11 +4219,11 @@ begin
 	-- PER LE QUERY SUCCESSIVE, COSI' ACCELLERIAMO L'ESECUZIONE DEL PROCESSO
 	insert into ubic_contatori_fgn
 	select
-		distinct idgis, id_fossa
+		distinct idgis, id_fossa_settica as id_fossa
 	from
 		acq_ubic_contatore as auc
-	LEFT join fgn_allaccio fa on
-		auc.id_fossa_settica = fa.id_fossa
+	LEFT join fgn_rel_ubic_fossa fa on
+		auc.idgis = fa.id_ubic_contatore
 	where
 		auc.id_impianto is not null;
 
