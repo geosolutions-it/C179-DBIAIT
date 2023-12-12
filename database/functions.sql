@@ -1011,21 +1011,21 @@ BEGIN
 			END anno_messa_opera,
 			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
 			CASE
-				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'') THEN ''A''
 				ELSE ''B''
 			END idx_materiale,
 			CASE
 				WHEN a.d_diametro IS NULL THEN NULL
-				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro,
 			CASE
 				WHEN a.data_esercizio IS NULL THEN ''X''
-				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_anno,
 			CASE
-				WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.d_tipo_rilievo IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_lunghezza,
 			' || v_column || '
@@ -1281,21 +1281,21 @@ BEGIN
 			END anno_messa_opera,
 			ST_LENGTH(a.geom)/1000.0 LUNGHEZZA,
 			CASE
-				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'') THEN ''A''
 				ELSE ''B''
 			END idx_materiale,
 			CASE
 				WHEN coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NULL THEN NULL
-				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro,
 			CASE
 				WHEN a.data_esercizio IS NULL THEN ''X''
-				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'')) THEN ''A''
+				WHEN a.data_esercizio IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_anno,
 			CASE
-				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'') THEN ''A''
+				WHEN a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'') THEN ''A''
 				ELSE ''B''
 			END idx_lunghezza,
 			a.d_tipo_acqua as id_refluo_trasportato,
