@@ -1830,7 +1830,7 @@ BEGIN
                 FROM (select * from fgn_immissione union all select * from a_fgn_immissione) d, fgn_condotta c,
                 (
                     select distinct on(fs.idgis) fs.id_immissione, id_fossa_settica
-                    from fgn_fossa_settica fs,
+                    from fgn_fossa_settica_auto fs,
                     (
                         select fuf.id_fossa_settica, uct.id_impianto, uct.idgis
                         from acq_contatore ac, acq_ubic_contatore uct, fgn_rel_ubic_fossa fuf
@@ -1928,7 +1928,7 @@ BEGIN
             FROM fgn_immiss_auto d, fgn_link_imm i,
             (
                     select distinct on(fs.idgis) fs.idgis, uc.id_fossa_settica, fs.id_immissione
-                    from fgn_fossa_settica fs,
+                    from fgn_fossa_settica_auto fs,
                     (
                         select fuf.id_fossa_settica, uct.id_impianto, uct.idgis
                         from acq_contatore ac, acq_ubic_contatore uct, fgn_rel_ubic_fossa fuf
@@ -1972,7 +1972,7 @@ BEGIN
             FROM fgn_immiss_auto d, fgn_link_imm i,
             (
                     select distinct on(fs.idgis) fs.idgis, uc.id_fossa_settica id_fossa_settica, fs.id_immissione
-                    from fgn_fossa_settica fs,
+                    from fgn_fossa_settica_auto fs,
                     (
                         select fuf.id_fossa_settica, uct.id_impianto, uct.idgis
                         from acq_contatore ac, acq_ubic_contatore uct, fgn_rel_ubic_fossa fuf
@@ -4219,11 +4219,11 @@ begin
 	-- PER LE QUERY SUCCESSIVE, COSI' ACCELLERIAMO L'ESECUZIONE DEL PROCESSO
 	insert into ubic_contatori_fgn
 	select
-		distinct idgis, id_fossa
+		distinct idgis, id_fossa_settica as id_fossa
 	from
 		acq_ubic_contatore as auc
-	LEFT join fgn_allaccio fa on
-		auc.id_fossa_settica = fa.id_fossa
+	LEFT join fgn_rel_ubic_fossa fa on
+		auc.idgis = fa.id_ubic_contatore
 	where
 		auc.id_impianto is not null;
 
