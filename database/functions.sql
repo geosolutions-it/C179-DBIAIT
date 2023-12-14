@@ -1286,7 +1286,7 @@ BEGIN
 			END idx_materiale,
 			CASE
 				WHEN coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NULL THEN NULL
-				WHEN a.d_diametro IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
+				WHEN  coalesce( a.d_diametro, GREATEST(a.dim_l_min, a.dim_l_max, a.dim_h_min, a.dim_h_max) ) IS NOT NULL AND (a.d_tipo_rilievo in (''ASB'',''DIN'',''GPS'',''STT'')) THEN ''A''
 				ELSE ''B''
 			END idx_diametro,
 			CASE
