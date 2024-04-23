@@ -4035,7 +4035,8 @@ begin
             id_ubic_contatore,
             tipo_uso,
             u_ab,
-            u_ab_conmis
+            u_ab_conmis,
+            u_abdomnores
         FROM
             utenza_sap us
         where
@@ -4118,7 +4119,7 @@ begin
 		count(uc.id_ubic_contatore) as nr_utenze_condominiali,
 		sum(uind.u_ab) as nr_utenze_indir_indirette,
 		sum(case when uind.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then u_ab else 0 end) - sum(case when uind.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then u_ab_conmis else 0 end) nr_utenze_indir_domestici,
-		sum(case when uind.tipo_uso = 'DOMESTICO RESIDENTE' then u_ab else 0 end) nr_utenze_indir_residente,
+		sum(case when uind.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then u_ab else 0 end) - sum(case when uind.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then u_ab_conmis else 0 end)  - sum(case when uind.tipo_uso in ('DOMESTICO', 'DOMESTICO RESIDENTE') then  u_abdomnores   else 0 end)  nr_utenze_indir_residente,
 		count(um.nr_contat) as nr_utenze_misuratore,
 		sum(vu.vol_acq_ero) volume_erogato,
 		sum(vu.vol_acq_fatt) volume_fatturato,
