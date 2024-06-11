@@ -84,7 +84,7 @@
                      "cond": "ST_INTERSECTS"
                 }
             ],
-            "filter": "WHERE acq_pompaggio.d_gestore = 'PUBLIACQUA' AND acq_pompaggio.d_ambito IN ('AT3', NULL) AND acq_pompaggio.d_stato NOT IN ('IPR', 'IAC')"
+			"filter": "WHERE acq_pompaggio.d_gestore = 'PUBLIACQUA' AND (acq_pompaggio.d_ambito IN ('AT3') or acq_pompaggio.d_ambito is null) AND acq_pompaggio.d_stato NOT IN ('IPR','IAC')"
         },
         {
             "fields": [

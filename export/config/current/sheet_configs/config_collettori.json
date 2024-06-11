@@ -58,7 +58,7 @@
                     "cond": "="
                 }
             ],
-            "filter": "WHERE fgn_collettore.d_gestore = 'PUBLIACQUA' AND fgn_collettore.d_ambito IN ('AT3', NULL) AND fgn_collettore.d_stato NOT IN ('IPR','IAC')"
+			"filter": "WHERE fgn_collettore.d_gestore = 'PUBLIACQUA' AND (fgn_collettore.d_ambito IN ('AT3') or fgn_collettore.d_ambito is null) AND fgn_collettore.d_stato NOT IN ('IPR','IAC')"
         },
         {
             "fields": [
@@ -190,7 +190,8 @@
                             ]
                         },{
                             "and": [
-                              {"lookup": "{102000}","operator": "!=", "value": 1}
+                              {"lookup": "{102000}","operator": "=", "value": 0},
+							  {"operator": "=", "value": 1}
                             ]
                         }]
                     },
@@ -200,13 +201,21 @@
         { "id": "68700", "transformation": { "func": "DIRECT", "params": { "field": "n_scar_piena" } } },
         { "id": "68900", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" } } },
         { "id": "69300", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } } },
-
         { "id": "68800", "transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" } } },
         { "id": "69000", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } } },
-
         { "id": "69200", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_idra", "domain_name": "D_AFFIDABILITA" } } },
-
-        { "id": "69100", "transformation": { "func": "CONST", "params": { "value": "B" } } }
-
+      
+		{"id":"69100", "transformation":{
+         "func": "CASE",
+         "params": {
+             "field": "d_stato",
+             "cond":[
+                        {"case": "WHEN", "operator": "=", "value": "ATT", "result": "B"},
+                        {"case": "WHEN", "operator": "=", "value": "FIP", "result": "B"},
+                        {"case": "ELSE", "result": "A"}
+                    ]
+             }
+          }
+		}
     ]
 }

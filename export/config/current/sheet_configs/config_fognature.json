@@ -90,7 +90,7 @@
                     "cond": "="
                 }
             ],
-            "filter": "WHERE a_fgn_rete_racc.d_gestore = 'PUBLIACQUA' AND a_fgn_rete_racc.d_ambito IN ('AT3', NULL) AND a_fgn_rete_racc.d_stato NOT IN ('IPR', 'IAC')"
+			"filter": "WHERE a_fgn_rete_racc.d_gestore = 'PUBLIACQUA' AND (a_fgn_rete_racc.d_ambito IN ('AT3') or a_fgn_rete_racc.d_ambito is null) AND a_fgn_rete_racc.d_stato NOT IN ('IPR','IAC')"
         },
         {
             "fields": [
@@ -201,11 +201,9 @@
     ],
     "columns": [
         {"id": "101200","transformation": { "func": "CONST", "params": { "value": "B"}}},
-
         {"id": "119100","transformation": { "func": "CONST", "params": { "value": "A"}}},
         {"id": "119200","transformation": { "func": "CONST", "params": { "value": "A"}}},
         {"id": "60800","transformation": { "func": "CONST", "params": { "value": "B"}}},
-
         {"id":"117200", "transformation":{
          "func": "IF",
          "params": {
@@ -231,7 +229,20 @@
                      "else": "{ lung_rete_mista }"
                  }
              }
+          },
+		  "validations": [{
+              "func": "IF",
+              "params": {
+                  "field": "117000",
+                  "cond": [{
+                      "and": [
+                        {"operator": "<=", "value": "{59700}"}
+                      ]
+                  }]
+              },
+              "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Lunghezza mista è superiore a lunghezza rete totale"
           }
+      ]
          },
 
         {"id":"117100", "transformation":{
@@ -245,7 +256,20 @@
                      "else": "{ lung_rete_nera }"
                  }
              }
+          },
+		  "validations": [{
+              "func": "IF",
+              "params": {
+                  "field": "117100",
+                  "cond": [{
+                      "and": [
+                        {"operator": "<=", "value": "{59700}"}
+                      ]
+                  }]
+              },
+              "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Lunghezza nera è superiore a lunghezza rete totale"
           }
+          ]
          },
 
         {"id": "59500","transformation": { "func": "DIRECT", "params": { "field": "codice_ato"}}},
@@ -304,25 +328,7 @@
                      "else": "{ lunghezza_dep }"
                  }
              }
-            },
-            "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "60200",
-                        "cond": [{
-                            "and": [
-                              {"lookup": "{101300}","operator": "=", "value": 1},
-                              {"operator":  "=", "value": 0}
-                            ]
-                        },{
-                            "and": [
-                              {"lookup": "{101300}","operator": "!=", "value": 1}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: lunghezza_dep|se il campo ID 101300 = 1, allora il campo assume valore 0"
-                }
-            ]
+            }
         },
         {"id":"59700", "transformation":{
          "func": "IF",
@@ -364,6 +370,9 @@
              }
           }
          },
+		 
+		{"id": "60500","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO"}}},
+		
         {"id": "101300", "transformation": {
                 "func": "CASE",
                 "params": {
@@ -374,30 +383,7 @@
                          {"case": "ELSE", "result": 0}
                     ]
                 }
-            }, "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "101300",
-                        "cond": [{
-                            "and": [
-                              {"lookup": "{60200}","operator": ">", "value": 0},
-                              {"operator":  "=", "value": 0}
-                            ]
-                        },{
-                            "and": [
-                                {"lookup": "{60200}","operator": "=", "value": 0},
-                                {"operator":  "=", "value": 1}
-                            ]
-                        },{
-                            "or": [
-                                {"lookup": "{60200}","operator": "<", "value": 0},
-                                {"lookup": "{60200}","operator": "=", "value": null}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: Scarico superficiale|se il campo ID 60200 > 0, allora il campo assume valore 0"
-                }
-            ]
+            }
         },
         {"id": "60300","transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port"}}},
         {"id": "60900","transformation": { "func": "DIRECT", "params": { "field": "data_agg"}}},
@@ -443,9 +429,6 @@
          },
 
         {"id": "60400","transformation": { "func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT"}}},
-
-        {"id": "60500","transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO"}}},
-
         {"id": "60600","transformation": { "func": "CONST", "params": { "value": "B"}}},
         {"id": "60800","transformation": { "func": "CONST", "params": { "value": "B"}}}
     ]

@@ -105,7 +105,7 @@
                     "cond": "="
                 }
             ],
-            "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.d_stato NOT IN ('IPR', 'IAC') and SUB_FUNZIONE=0"
+			"filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND (acq_captazione.d_ambito IN ('AT3') or acq_captazione.d_ambito is null) AND acq_captazione.d_stato NOT IN ('IPR','IAC') and SUB_FUNZIONE=0"
         },
         {
             "fields": [
@@ -236,7 +236,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: portata_esercizio|Dovrebbe assumere <= al valore del campo ID 2200"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: portata_esercizio|Dovrebbe essere <= della portata concesso uso potabile"
                 }]
         },
 
@@ -269,9 +269,10 @@
                             "and": [
                               {"operator": "!=", "value": null }
                             ]
-                        }]
+                        }
+						]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Non puo' essere vuoto"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Il campo Estremi della concessione non puo' essere vuoto"
                 }
             ]},
         {"id": "2200","transformation": { "func": "DIRECT", "params": { "field": "port_potab"}},"validations": [{
@@ -280,12 +281,38 @@
                         "field": "2200",
                         "cond": [{
                             "and": [
-                              {"operator": ">=", "value": "{3500}"},
-                              {"operator": "!=", "value": null }
+                              {"operator": "!=", "value": 0 },
+							  {"lookup": "{5300}","operator": "=", "value": 1}
                             ]
-                        }]
+                        },{
+                            "and": [
+                              {"operator": "!=", "value": 0 },
+							  {"lookup": "{5300}","operator": "=", "value": 2}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "=", "value": 0 },
+							  {"lookup": "{5300}","operator": "=", "value": 3}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "=", "value": 0 },
+							  {"lookup": "{5300}","operator": "=", "value": 4}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "=", "value": 0 },
+							  {"lookup": "{5300}","operator": "=", "value": 5}
+                            ]
+                        },{
+                            "and": [
+                              {"operator": "=", "value": 0 },
+							  {"lookup": "{5300}","operator": "=", "value": 6}
+                            ]
+                        }
+						]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Dovrebbe essere >= al valore del campo ID 3500 (e non puo' essere vuoto)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Portata Concessa uso potabile non puo' essere vuoto per stato opera 1,2"
                 }
             ]},
 		
@@ -300,7 +327,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Non puo' essere successivo all'anno di competenza netsic (eccetto per 9999)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}| Anno costruzione non puo' essere successivo all'anno di competenza netsic (eccetto per 9999)"
                 }
             ]
         },
@@ -315,7 +342,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Non puo' essere successivo all'anno di competenza netsic (eccetto per 9800)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Anno ristrutturazione non puo' essere successivo all'anno di competenza netsic (eccetto per 9800)"
                 }
             ]
         },
@@ -329,41 +356,29 @@
                                {"operator":  "=", "value": 0}
                             ]},{
                             "and": [
-                               {"lookup": "{3300}","operator": "!=", "value": 0}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 3300 = 0 => il campo deve assumere valore 0"
-                },{
-                    "func": "IF",
-                    "params": {
-                        "field": "3100",
-                        "cond": [{
-                            "and": [
                                {"lookup": "{3300}","operator": ">", "value": 0},
-                               {"operator":  "<", "value": 100}
-                            ]},{
-                            "and": [
-                               {"lookup": "{3300}","operator": "<=", "value": 0}
+                               {"operator":  ">", "value": 0}
+							   
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 3300 > 0 => il campo deve assumere valore < 100 "
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se volume prelevato = 0, il campo % di utilizzo deve essere = 0"
                 },{
                     "func": "IF",
                     "params": {
                         "field": "3100",
                         "cond": [{
                             "and": [
-                               {"lookup": "{3000}","operator": "=", "value": "continuo"},
+                               {"lookup": "{3000}","operator": "=", "value": "Continuo"},
                                {"operator":  "=", "value": 100}
                             ]},{
                             "and": [
-                               {"lookup": "{3000}","operator": "!=", "value": "continuo"}
+                               {"lookup": "{3000}","operator": "!=", "value": "Continuo"},
+							   {"operator":  "<", "value": 100}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 3: se il campo ID 3000 = 'continuo', allora il campo assume valore 100"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 3: se utilizzo='Continuo',la % utilizzo deve essere 100;se utilizzo!=continuo,la % deve essere <100."
                 }
             ]
         },
@@ -378,11 +393,28 @@
                                {"operator":  ">", "value": 0}
                             ]},{
                             "and": [
-                               {"lookup": "{5300}","operator": "!=", "value": 1}
-                            ]
-                        }]
+                               {"lookup": "{5300}","operator": "!=", "value": 2},
+							   {"operator":  ">=", "value": 0}
+                            ]},{
+                            "and": [
+                               {"lookup": "{5300}","operator": "=", "value": 3},
+							   {"operator":  "=", "value": 0}
+                            ]},{
+                            "and": [
+                               {"lookup": "{5300}","operator": "=", "value": 4},
+							   {"operator":  "=", "value": 0}
+                            ]},{
+                            "and": [
+                               {"lookup": "{5300}","operator": "=", "value": 53},
+							   {"operator":  "=", "value": 0}
+                            ]},{
+                            "and": [
+                               {"lookup": "{5300}","operator": "=", "value": 6},
+							   {"operator":  "=", "value": 0}
+                            ]}
+                        ]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 5300 = 1, allora il campo deve essere > 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se l'opera e' in stato 1,2, allora il volume prelevato deve essere > 0 (sullo stato 2 anche =0)"
                 },{
                     "func": "IF",
                     "params": {
@@ -390,14 +422,14 @@
                         "cond": [{
                             "and": [
                                {"lookup": "{2200}","operator": "=", "value": 0},
-                               {"operator":  "<=", "value": 0}
+                               {"operator":  "=", "value": 0}
                             ]},{
                             "and": [
                                {"lookup": "{2200}","operator": "!=", "value": 0}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 2200 è = 0, il valore non puo' essere > 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se portata concesso uso potabile e' = 0, il volume prelevato non puo' essere > 0"
                 }
             ]
         },
@@ -415,7 +447,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 3500 = 0, allora il campo assume valore 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se portata di esercizio =0,la portata Max Derivata deve essere =0"
                 },{
                     "func": "IF",
                     "params": {
@@ -430,7 +462,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 3500 > 0, dovrebbe essere > del valore del campo ID 3500"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se portata di esercizio >0, la portata Max Derivata deve essere > della portata di esercizio."
                 }]
         },
         {"id": "3700","transformation": { "func": "DIRECT", "params": { "field": "port_uti_min"}}, "validations": [{
@@ -447,7 +479,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 3500 = 0, allora il campo assume valore 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se portata di esercizio =0,la portata MIN Derivata deve essere =0"
                 },{
                     "func": "IF",
                     "params": {
@@ -462,7 +494,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 3500 > 0, dovrebbe essere < del valore del campo ID 3500"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se portata di esercizio >0, la portata Min Derivata deve essere < della portata di esercizio."
                 }]
         },
         {"id": "3800","transformation": { "func": "DIRECT", "params": { "field": "port_deriv"}}},
@@ -487,7 +519,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 5000 = 1, allora deve assumere valore 9800"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se clorazione NESSUNA , allora Anno installazione Cloratore deve assumere valore 9800"
                 },{
                     "func": "IF",
                     "params": {
@@ -497,15 +529,20 @@
                                 {"operator":  "<=", "value": "{REF_YEAR}"},
                                 {"operator":  "=", "value": 9999}
                             ]
+                        },{
+                            "or": [
+                                {"operator":  "<=", "value": "{REF_YEAR}"},
+                                {"operator":  "=", "value": 9800}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: Anno installazione cloratore non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999 e 9800)"
                 }]
         },
         {"id": "5200","transformation": { "func": "DIRECT", "params": { "field": "anno_ristr_clor"}}, "validations": [{
                     "func": "IF",
                     "params": {
-                        "field": "5100",
+                        "field": "5200",
                         "cond": [{
                             "and": [
                                 {"lookup": "{5000}","operator": "=", "value": 1},
@@ -516,19 +553,25 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 5000 = 1, allora deve assumere valore 9800"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se clorazione NESSUNA , allora Anno Ristrutturazione Cloratore deve assumere valore 9800"
                 },{
                     "func": "IF",
                     "params": {
-                        "field": "5100",
+                        "field": "5200",
                         "cond": [{
                             "or": [
                                 {"operator":  "<=", "value": "{REF_YEAR}"},
                                 {"operator":  "=", "value": 9800}
                             ]
-                        }]
+                        },{
+                            "or": [
+                                {"operator":  "<=", "value": "{REF_YEAR}"},
+                                {"operator":  "=", "value": 9999}
+                            ]
+                        }
+						]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: Anno Ristrutturazione Cloratore non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800 e 9999)"
                 }]
         },
 
@@ -545,6 +588,7 @@
                         "cond": [{
                             "and": [
                               {"lookup": "{2800}","operator": ">=", "value": 2014},
+							  {"lookup": "{2800}","operator": "!=", "value": 9800},
                               {"operator": ">=", "value": 3}
                             ]},{
                             "and": [
@@ -552,7 +596,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 2800 >= 2014, allora il campo dovrebbe assumere valore >= 3 (sufficiente)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Ristrutturato dopo il 2014 con stato conservazione minore di 3"
                 }]
         },
         {"id": "3000","transformation": { "func": "DOMAIN", "params": { "field": "d_utilizzo", "domain_name":  "D_UTILIZZO_OPERA"}}, "validations": [{
@@ -569,7 +613,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 3100 = 100, allora deve essere = 'continuo'"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se %di utilizzo = 100, l'utilizzo deve essere = 'continuo'"
                 },{
                     "func": "IF",
                     "params": {
@@ -586,7 +630,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 3300 = 0 e il campo ID 5300 = 1, allora deve essere = 'occasionale'"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se volume prelevato = 0 e stato opera = 1, il tipo uso deve essere = 'occasionale'"
                 }]
         },
 
@@ -605,7 +649,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Valore non valido"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Se anno installazione cloratore=9800, tipo clorazione deve essere diverso da NESSUNA "
                 }]
         },
 
@@ -626,7 +670,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 2700 = 9999, allora il campo deve assumere valore X"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se Anno costruzione = 9999, indice affid anno costruzione deve essere = X"
                 },{
                     "func": "IF",
                     "params": {
@@ -643,7 +687,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 2700 è >= 2002 e <> 9999, allora il campo deve assumere valore A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 2700 e' >= 2002 e <> 9999, allora il campo deve assumere valore A"
                 }]
 
         },
