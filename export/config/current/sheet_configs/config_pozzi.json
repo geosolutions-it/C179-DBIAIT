@@ -135,7 +135,7 @@
                     "cond": "="
                 }
          ],
-         "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND acq_captazione.d_ambito IN ('AT3', NULL) AND acq_captazione.sub_funzione = 3  AND acq_captazione.d_stato NOT IN ('IPR','IAC')"
+		 "filter": "WHERE acq_captazione.d_gestore = 'PUBLIACQUA' AND (acq_captazione.d_ambito IN ('AT3') or acq_captazione.d_ambito is null) AND acq_captazione.d_stato NOT IN ('IPR','IAC') AND acq_captazione.sub_funzione = 3"
       },
       {
          "fields":[

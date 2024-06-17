@@ -70,7 +70,7 @@
                     "cond": "ST_INTERSECTS"
                 }
             ],
-            "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND acq_accumulo.d_ambito IN ('AT3', NULL) AND acq_accumulo.d_stato NOT IN ('IPR','IAC')"
+            "filter": "WHERE acq_accumulo.d_gestore = 'PUBLIACQUA' AND (acq_accumulo.d_ambito IN ('AT3') or acq_accumulo.d_ambito is null) AND acq_accumulo.d_stato NOT IN ('IPR','IAC')"
         },
         {
             "fields": [
@@ -203,21 +203,7 @@
                 }
             ]
         },
-        {"id": "45100","transformation": {"func": "DIRECT", "params": {"field": "quota_fondo"}},
-            "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "45100",
-                        "cond": [{
-                            "and": [
-                                {"operator": "!=", "value": 0}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|il valore 0 non e' ammissibile"
-                }
-            ]
-        },
+        {"id": "45100","transformation": {"func": "DIRECT", "params": {"field": "quota_fondo"}}},
         {"id": "45300","transformation": {"func": "DIRECT", "params": {"field": "sn_strum_mis_liv"}}},
         {"id": "45400","transformation": {"func": "DIRECT", "params": {"field": "sn_strum_mis_port"}}},
         {"id": "45600","transformation": {"func": "DIRECT", "params": {"field": "anno_instal_clor"}},
@@ -236,7 +222,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 45500 = 1, allora deve assumere valore 9800"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se clorazione NESSUNA (campo ID 45500 = 1), allora Anno installazione Cloratore deve assumere valore 9800"
                 },{
                     "func": "IF",
                     "params": {
@@ -246,9 +232,14 @@
                                 {"operator": "<=", "value": "{REF_YEAR}"},
                                 {"operator": "=", "value": 9999}
                             ]
+						},{
+                            "or": [
+                                {"operator": "<=", "value": "{REF_YEAR}"},
+                                {"operator": "=", "value": 9800}
+                            ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: Anno installazione cloratore non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9999 e 9800)"
                 }
             ]
         },
@@ -263,12 +254,11 @@
                                 {"operator": "=", "value": 9800}
                             ]},{
                             "and": [
-                                {"lookup": "{45500}" ,"operator": "!=", "value": 1},
                                 {"lookup": "{45500}" ,"operator": "!=", "value": 1}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 45500 = 1, allora deve assumere valore 9800"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se clorazione NESSUNA (campo ID 45500 = 1), allora Anno Ristrutturazione Cloratore deve assumere valore 9800"
                 },{
                     "func": "IF",
                     "params": {
@@ -277,10 +267,14 @@
                             "or": [
                                 {"operator": "<=", "value": "{REF_YEAR}"},
                                 {"operator": "=", "value": 9800}
+                            ]},{
+                            "or": [
+                                {"operator": "<=", "value": "{REF_YEAR}"},
+                                {"operator": "=", "value": 9999}
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: Anno Ristrutturazione Cloratore non puo' essere successivo all'anno di competenza netsic (eccetto per il valore 9800 e 9999)"
                 }
             ]
         },
@@ -304,7 +298,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|value lower than 3"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Ristrutturato dopo il 2014 con stato conservazione minore di 3"
                 }
             ]
         },
@@ -312,28 +306,7 @@
         {"id": "44800","transformation": {"func": "DOMAIN", "params": {"field": "d_ubicazione", "domain_name": "D_UBICAZ_OPERA"}}},
         {"id": "44900","transformation": {"func": "DOMAIN", "params": {"field": "d_materiale", "domain_name": "D_MATERIALE"}}},
         {"id": "45200","transformation": {"func": "DOMAIN", "params": {"field": "d_telecont", "domain_name": "D_TELECONT"}}},
-        {"id": "45500","transformation": {"func": "DOMAIN", "params": {"field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}},
-            "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "45500",
-                        "cond": [
-                            {
-                                "and": [
-                                    {"lookup": "{45600}", "operator": "!=", "value": 9800},
-                                    {"operator": "!=", "value": 1}
-                                ]
-                            }, {
-                                "or": [
-                                    {"lookup": "{45600}", "operator": "=", "value": 9800}
-                                ]
-                            }
-                        ]
-                    },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 45600 <> 9800, allora non e' ammesso il valore 1"
-                }
-            ]
-        },
+        {"id": "45500","transformation": {"func": "DOMAIN", "params": {"field": "d_tipo_cloraz", "domain_name": "D_T_CLORAZ"}}},
 
         {"id": "45800","transformation": {"func": "DOMAIN", "params": {"field": "d_stato", "domain_name": "D_STATO"}}},
         {"id": "45900","transformation": {"func": "DOMAIN", "params": {"field": "a_anno_costr", "domain_name": "D_AFFIDABILITA"}},
@@ -351,7 +324,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 44500 = 9999, allora il campo deve assumere valore X"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se Anno costruzione = 9999, allora il campo Indice affid anno costruzione deve assumere valore X"
                 },{
                     "func": "IF",
                     "params": {
@@ -368,7 +341,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 44500 e' >= 2002 e <> 9999, allora il campo deve assumere valore A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo Anno costruzione(44500) e' >= 2002 e <> 9999, allora Indice affid anno costruzione deve assumere valore A"
                 }
             ]
         },
@@ -387,7 +360,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 44600 >= 2002 allora il campo deve assumere valore A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo Anno ristrutturazione >= 2002 allora il campo Indice affid anno ristrutturazione deve assumere valore A"
                 }
             ]
         },

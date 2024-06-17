@@ -92,7 +92,7 @@
                     "cond": "="
                 }
             ],
-            "filter": "WHERE acq_adduttrice.d_gestore = 'PUBLIACQUA' AND acq_adduttrice.d_ambito IN ('AT3', NULL) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
+			"filter": "WHERE acq_adduttrice.d_gestore = 'PUBLIACQUA' AND (acq_adduttrice.d_ambito IN ('AT3') or acq_adduttrice.d_ambito is null) AND acq_adduttrice.d_stato NOT IN ('IPR','IAC')"
         },
         {
             "fields": [
@@ -190,10 +190,34 @@
     "columns": [
         { "id": "118600", "transformation": { "func": "CONST",  "params":{"value":"A"}} },
         { "id": "118500", "transformation": { "func": "CONST",  "params":{"value":"A"}} },
-        { "id": "40500", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
-        { "id": "98900", "transformation": { "func": "CONST",  "params":{"value":"B"}} },
-        { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom" } }},
 
+		 
+		{"id":"40500", "transformation":{
+         "func": "CASE",
+         "params": {
+             "field": "d_stato",
+             "cond":[
+                        {"case": "WHEN", "operator": "=", "value": "ATT", "result": "B"},
+                        {"case": "WHEN", "operator": "=", "value": "FIP", "result": "B"},
+                        {"case": "ELSE", "result": "A"}
+                    ]
+             }
+          }
+         },
+		 
+		 {"id":"98900", "transformation":{
+         "func": "CASE",
+         "params": {
+             "field": "d_stato",
+             "cond":[
+                        {"case": "WHEN", "operator": "=", "value": "ATT", "result": "B"},
+                        {"case": "WHEN", "operator": "=", "value": "FIP", "result": "B"},
+                        {"case": "ELSE", "result": "A"}
+                    ]
+             }
+          }
+         },
+		 
         {"id":"112700", "transformation":{
          "func": "IF",
          "params": {
@@ -351,16 +375,13 @@
         { "id": "39500", "transformation": { "func": "DIRECT",  "params": { "field": "denom" } }},
         { "id": "39600", "transformation": { "func": "DIRECT",  "params": { "field": "portata_media" } }},
         { "id": "39900", "transformation": { "func": "DIRECT",  "params": { "field": "sn_strum_mis_port" } }},
-
         { "id": "112500", "transformation": { "func": "DIRECT",  "params": { "field": "codice_sistema_idrico" } }},
         { "id": "112600", "transformation": { "func": "DIRECT",  "params": { "field": "denom_acq_sistema_idrico" } }},
-
         { "id": "117690", "transformation": { "func": "DIRECT",  "params": { "field": "vol_immesso" } }},
-
         {"id":"118490", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_immesso", "domain_name": "D_AFFIDABILITA"}}},
         {"id":"118700", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_acq_terzi", "domain_name": "D_AFFIDABILITA"}}},
         {"id":"118800", "transformation":{"func":"DOMAIN", "params":{"field":"a_vol_ced_terzi", "domain_name": "D_AFFIDABILITA"}}},
-
+		
         {"id":"39700", "transformation":{
          "func": "IF",
          "params": {

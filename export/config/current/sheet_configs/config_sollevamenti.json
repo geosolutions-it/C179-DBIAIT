@@ -67,7 +67,7 @@
                  "cond": "ST_INTERSECTS"
             }
          ],
-         "filter": "WHERE fgn_imp_sollev.d_gestore = 'PUBLIACQUA' AND fgn_imp_sollev.d_ambito IN ('AT3', NULL) AND fgn_imp_sollev.d_stato NOT IN ('IPR', 'IAC')"
+		 "filter": "WHERE fgn_imp_sollev.d_gestore = 'PUBLIACQUA' AND (fgn_imp_sollev.d_ambito IN ('AT3') or fgn_imp_sollev.d_ambito is null) AND fgn_imp_sollev.d_stato NOT IN ('IPR','IAC')"
       },
       {
          "fields":[

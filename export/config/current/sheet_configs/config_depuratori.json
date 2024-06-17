@@ -147,7 +147,7 @@
                     "cond": "="
                 }
             ],
-            "filter": "WHERE fgn_trattamento.d_gestore = 'PUBLIACQUA' AND fgn_trattamento.d_ambito IN ('AT3', NULL) AND fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
+			"filter": "WHERE fgn_trattamento.d_gestore = 'PUBLIACQUA' AND (fgn_trattamento.d_ambito IN ('AT3') or fgn_trattamento.d_ambito is null) AND fgn_trattamento.d_stato NOT IN ('IPR','IAC')"
         },
         {
             "fields": [
@@ -412,11 +412,33 @@
                             ]
                         },{
                             "and": [
-                              {"lookup": "{79000}" ,"operator": "!=", "value": 1}
+                              {"lookup": "{79000}" ,"operator": "=", "value": 2},
+							  {"operator":  ">=", "value": 0}
                             ]
-                        }]
+						},{
+                            "and":  [
+                              {"lookup": "{79000}" ,"operator": "=", "value": 3},
+							  {"operator":  "=", "value": 0}
+                            ]
+                        },{
+                            "and":  [
+                              {"lookup": "{79000}" ,"operator": "=", "value": 4},
+							  {"operator":  "=", "value": 0}
+                            ]
+                        },{
+                            "and":  [
+                              {"lookup": "{79000}" ,"operator": "=", "value": 5},
+							  {"operator":  "=", "value": 0}
+                            ]
+                        },{
+                            "and":  [
+                              {"lookup": "{79000}" ,"operator": "=", "value": 6},
+							  {"operator":  "=", "value": 0}
+                            ]
+                        }
+						]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 79000 = 1 allora il valore deve essere > 0"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se stato opera in (1,2) allora il consumo di energia deve essere > 0"
                 }
             ]},
         {"id": "73500", "transformation": {"func": "DIRECT", "params": { "field": "conc_co2_ing" }}},
@@ -426,19 +448,7 @@
         {"id": "74000", "transformation": {"func": "DIRECT", "params": { "field": "sn_319_76" }}},
         {"id": "74100", "transformation": {"func": "DIRECT", "params": { "field": "potenza_instal" }}},
         {"id": "74300", "transformation": {"func": "DIRECT", "params": { "field": "ene_auto_prod" }}},
-        {"id": "74400", "transformation": {"func": "DIRECT", "params": { "field": "sn_presid" }}, "validations": [{
-                    "func": "IF",
-                    "params": {
-                        "field": "74400",
-                        "cond": [{
-                            "and": [
-                              {"operator":  "=", "value": 0}
-                            ]
-                        }]
-                    },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Deve essere sempre uguale a 0"
-                }
-            ]},
+		{"id": "74400", "transformation": { "func": "CONST", "params": { "value": 0 }} },
         {"id": "74600", "transformation": {"func": "DIRECT", "params": { "field": "n_linee_acq" }}},
         {"id": "74700", "transformation": {"func": "DIRECT", "params": { "field": "sn_terziario" }}},
         {"id": "74800", "transformation": {"func": "DIRECT", "params": { "field": "sn_imhoff" }}},
@@ -532,7 +542,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 72800 >= 2014, allora il campo dovrebbe assumere valore >= 3 (sufficiente)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Ristrutturazione civile dopo il  2014 con stato conservazione minore di 3"
                 }
             ]},
         {"id": "73100", "transformation": {"func": "DOMAIN", "params": { "field": "d_stato_cons_elmec", "domain_name": "D_STATO_CONS" }}, "validations": [{
@@ -550,7 +560,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 73000 >= 2014, allora il campo dovrebbe assumere valore >= 3 (sufficiente)"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Ristrutturazione elettromeccanica dopo il  2014 con stato conservazione minore di 3"
                 }
             ]},
         {"id": "73900", "transformation": {"func": "DOMAIN", "params": { "field": "d_telecont", "domain_name": "D_TELECONT" }}},
@@ -575,7 +585,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se il campo ID 72700 = 9999, allora il campo deve assumere valore X"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 1: se Anno costruzione = 9999, allora il campo Indice affid anno costruzione deve assumere valore X"
                 },{
                     "func": "IF",
                     "params": {
@@ -593,7 +603,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo ID 72700 e' >= 2002 e <> 9999, allora il campo deve assumere valore A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|Condizione 2: se il campo Anno costruzione e' >= 2002 e <> 9999, allora Indice affid anno costruzione deve assumere valore A"
                 }
             ]},
         {"id": "79200", "transformation": {"func": "DOMAIN", "params": { "field": "a_anno_ristr_civ", "domain_name": "D_AFFIDABILITA" }}, "validations": [{
@@ -611,7 +621,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 72800 >= 2002 allora il campo deve assumere valore A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se Anno ristrutturazione civile è >= 2002 allora l'indice affid. ristrutturazione civile deve assumere valore A"
                 }
             ]},
         {"id": "79300", "transformation": {"func": "DOMAIN", "params": { "field": "a_anno_ristr_elmec", "domain_name": "D_AFFIDABILITA" }}, "validations": [{
@@ -629,7 +639,7 @@
                             ]
                         }]
                     },
-                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se il campo ID 73000 >= 2002 allora il campo deve assumere valore A"
+                    "warning": "Foglio: {SHEET}|Riga: {ROW}|Codice_ato: {CODICE_ATO}|Campo: {FIELD}|se Anno ristrutturazione elettromeccanica è >= 2002 allora l'indice affid. ristrutturazione elettromeccanica deve assumere valore A"
                 }
             ]},
         {"id": "79400", "transformation": {"func": "DOMAIN", "params": { "field": "a_pot_prog", "domain_name": "D_AFFIDABILITA" }}},
