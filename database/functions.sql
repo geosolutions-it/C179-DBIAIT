@@ -4181,8 +4181,8 @@ BEGIN
                         select ufa.id_ubic_contatore
                         from ubic_f_allaccio ufa
                         join utenza_sap us on ufa.id_ubic_contatore = us.id_ubic_contatore
-                        where fgn_idrete is null and esente_fog = 0
-                        and c.idgis = ufa.id_ubic_contatore
+                        where ((fgn_idrete is null and esente_fog = 0) OR (fgn_idrete is null and esente_fog = 1 and vol_fgn_fatt >0))
+                        and c.idgis = ufa.id_ubic_contatore  
                     )
                 and r.d_gestore ='PUBLIACQUA' and r.d_ambito in ('AT3', null) AND r.d_stato not in ('IPR', 'IAC', 'NAC')
                 and r.geom && ST_buffer(c.geom, v_buff)
@@ -4393,7 +4393,7 @@ begin
 		SUM(CASE WHEN ut.esente_fog = 0 AND ut.gruppo = 'A' AND (ut.esclusione_m2_m3a is false OR (ut.esclusione_m2_m3a is true and ut.cattariffa in ('APB_REFIND', 'APBLREFIND', 'APBNREFCIV'))) THEN 1 ELSE 0 END) nr_utenze_totali,
 		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') AND ut.gruppo = 'A' THEN 1 ELSE 0 END) utenze_industriali,
 		SUM(CASE WHEN ut.cattariffa IN ('APB_REFIND', 'APBLREFIND') THEN vol_fgn_fatt ELSE 0 END) volume_utenze_industriali,
-		SUM(CASE WHEN ut.esente_fog = 0 THEN vol_fgn_fatt ELSE 0 END) volume_utenze_totali
+		SUM(vol_fgn_fatt) volume_utenze_totali
 	FROM
 		utenze ut
 	GROUP BY
