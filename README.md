@@ -21,8 +21,82 @@ QT_PLUGIN_PATH=%OSGEO4W_ROOT%\apps\qgis\qtplugins\;%OSGEO4W_ROOT%\apps\qt5\plugi
 PYTHONPATH=%OSGEO4W_ROOT%\apps\qgis\python
 
 ## Linux
-export PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
+Install qgis
+```
+sudo apt-get update && sudo apt-get install qgis -y
+```
 
+Most probably the following library are required by the environment
+(for more information visit [QGIS Documentation](https://www.qgis.org/resources/installation-guide/#debian--ubuntu))
+
+```bash
+sudo apt-get install gcc python3-dev libxml2-dev libxslt1-dev zlib1g-dev libsasl2-dev libldap2-dev build-essential libssl-dev libffi-dev libmysqlclient-dev libjpeg-dev libpq-dev libjpeg8-dev liblcms2-dev libblas-dev libatlas-base-dev
+```
+
+QGIS use the default python3 interpreter, discover the interpreter to install the requirements:
+
+discover python
+```
+which python3
+```
+
+install the requirements:
+
+```
+/usr/bin/python3 -m pip install -r requirements.txt
+```
+
+set the global interpreter as VSCode python env
+
+- CRTL+SHIFT+P
+- search for "Python interpreter"
+- Select the global python interpreter, be sure that the path retrieved before match with the one listed by vscode
+
+Follow an example of launch.json
+
+```
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Django",
+            "type": "debugpy",
+            "request": "launch",
+            "args": [
+                "runserver"
+            ],
+            "django": true,
+            "autoStartBrowser": false,
+            "envFile": "${workspaceFolder}/.env",
+            "program": "${workspaceFolder}/manage.py"
+        }
+    ]
+}
+```
+
+
+Example of .env file:
+
+```
+PYTHONPATH=/usr/share/qgis/python/plugins
+DATABASE_PASSWORD="geonode"
+DATABASE_USER="geonode"
+DATABASE_NAME="dbiait"
+IMPORT_FOLDER="C:\Users\user\Documents\Projects\C179-DBIAIT\import"
+URL_PATH_PREFIX=
+LDAP_PASSWORD=password
+#GDAL_VERSION=3.1.4
+FREEZE_FEATURE_TOGGLE=True
+```
+
+
+# deprecated
+```
+export PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
+```
 # Prerequisites
 
 1. Install Postgres 10.6 with PostGis 3.0.1
@@ -237,4 +311,12 @@ python manage.py test --settings=app.test_settings
 Verbosity Mode:
 python manage.py test --settings=app.test_settings -v 2
 
+```
+
+
+[conda](https://docs.anaconda.com/miniconda/)
+```
+conda create -n publiacqua -c conda-forge python=3.8
+conda install -c conda-forge python-ldap==3.3.1
+pip install -r requirements.txt
 ```
