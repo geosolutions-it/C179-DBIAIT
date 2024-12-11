@@ -190,6 +190,19 @@ python manage.py runserver 0.0.0.0:8000
 Note: On every change of your Dramatiq tasks it is required to restart `dramatiq` process, otherwise your changes may not be included in the next background task execution
 
 
+In case `dramatiq` as command is not found, check in the `/home/mattia/.local/bin/` folder if dramatiq is there.
+
+Then add an alias to make the word `dramatiq` point there:
+```
+alias dramatiq='/home/mattia/.local/bin/dramatiq'
+```
+
+Or set the environment variable `DRAMATIQ_EXECUTABLE_PATH=` with the path to the local dramatiq
+
+```
+DRAMATIQ_EXECUTABLE_PATH=/home/mattia/.local/bin/dramatiq
+```
+
 ## Ordering Task execution
 Background Task execution should be ordered similarly to Dramatiq's `GenericActor`, with the only difference that Task.send() method takes a single argument - ORM Task ID, which is created by pre_send() class method.
 

@@ -9,4 +9,4 @@ class Command(OrigianlRundramatiqCmd):
     """
 
     def _resolve_executable(self, exec_name):
-        return exec_name
+        return os.getenv("DRAMATIQ_EXECUTABLE_PATH", "dramatiq")
