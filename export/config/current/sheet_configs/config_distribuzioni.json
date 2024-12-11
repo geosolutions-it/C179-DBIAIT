@@ -47,40 +47,93 @@
     "columns": [
         { "id": "113500", "transformation": { "func": "DIRECT", "params": { "field": "cod_sist_idr" }}},
         { "id": "113600", "transformation": { "func": "DIRECT", "params": { "field": "denom_sist_idr" } }},
-
         { "id": "53500", "transformation": { "func": "DIRECT", "params": { "field": "cod_sist_idr" } }},
         { "id": "53600", "transformation": { "func": "DIRECT", "params": { "field": "denom_sist_idr" } }},
-
 		{ "id": "55000", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_press" } }},
 		{ "id": "55100", "transformation": { "func": "DIRECT", "params": { "field": "sn_strum_mis_port" } }},
         { "id": "55300", "transformation": { "func": "DOMAIN", "params": { "field": "d_stato", "domain_name": "D_STATO" } }},
-        { "id": "55400", "transformation": { "func": "CONST", "params": { "value": "B" }} },
+		
+		{"id":"55400", "transformation":{
+         "func": "CASE",
+         "params": {
+             "field": "d_stato",
+             "cond":[
+                        {"case": "WHEN", "operator": "=", "value": "ATT", "result": "B"},
+                        {"case": "WHEN", "operator": "=", "value": "FIP", "result": "B"},
+                        {"case": "ELSE", "result": "A"}
+                    ]
+             }
+          }
+         },
+		
         { "id": "55500", "transformation": { "func": "DOMAIN", "params": { "field": "a_vol_immesso", "domain_name": "D_AFFIDABILITA" } }},
         { "id": "55600", "transformation": { "func": "CONST", "params": { "value": "C" }} },
         { "id": "55700", "transformation": { "func": "CONST", "params": { "value": "A" }} },
         { "id": "55800", "transformation": { "func": "CONST", "params": { "value": "A" }} },
         { "id": "55900", "transformation": { "func": "CONST", "params": { "value": "A" }} },
         { "id": "56000", "transformation": { "func": "DIRECT", "params": { "field": "data_agg" } }},
-
         { "id": "99200", "transformation": { "func": "DIRECT", "params": { "field": "sn_ili" } }},
         { "id": "99300", "transformation": { "func": "DOMAIN", "params": { "field": "a_ili", "domain_name": "D_AFFIDABILITA" } }},
         { "id": "99400", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
-        { "id": "99500", "transformation": { "func": "CONST", "params": { "value": "B" }} },
-        { "id": "99600", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_max" } }},
+		
+		{"id":"99500", "transformation":{
+         "func": "CASE",
+         "params": {
+             "field": "d_stato",
+             "cond":[
+                        {"case": "WHEN", "operator": "=", "value": "ATT", "result": "B"},
+                        {"case": "WHEN", "operator": "=", "value": "FIP", "result": "B"},
+                        {"case": "ELSE", "result": "A"}
+                    ]
+             }
+          }
+         },
         { "id": "99700", "transformation": { "func": "DIRECT", "params": { "field": "a_pres_es_max" } }},
-
-        { "id": "99800", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_med" } }},
-
         { "id": "99900", "transformation": { "func": "DIRECT", "params": { "field": "a_press_med" } }},
-
-        { "id": "100000", "transformation": { "func": "DIRECT", "params": { "field": "pres_es_min" } }},
-
         { "id": "100100", "transformation": { "func": "DIRECT", "params": { "field": "a_pres_es_min" } }},
-
 		{ "id": "100200", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_all" } }},
 		{ "id": "100300", "transformation": { "func": "DIRECT", "params": { "field": "nr_rip_rete" } }},
         { "id": "118900", "transformation": { "func": "DIRECT", "params": { "field": "lunghezza_tlc" } }},
 
+		{"id":"99600", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "pres_es_max",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ pres_es_max }"
+                 }
+             }
+          }
+         },
+		{"id":"99800", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "pres_es_med",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ pres_es_med }"
+                 }
+             }
+          }
+         },
+		{"id":"100000", "transformation":{
+         "func": "IF",
+         "params": {
+             "field": "pres_es_min",
+             "cond": {
+                     "operator": "=",
+                     "value": null,
+                     "result": 0,
+                     "else": "{ pres_es_min }"
+                 }
+             }
+          }
+         },		 
         {"id":"55500", "transformation":{
          "func": "IF",
          "params": {
@@ -232,7 +285,18 @@
 
         { "id": "114600", "transformation": { "func": "DIRECT", "params": { "field": "count_cloratori" } }},
 
-        {"id": "119000", "transformation": {"func": "CONST", "params": { "value": "B" }}},
+		{"id":"119000", "transformation":{
+         "func": "CASE",
+         "params": {
+             "field": "d_stato",
+             "cond":[
+                        {"case": "WHEN", "operator": "=", "value": "ATT", "result": "B"},
+                        {"case": "WHEN", "operator": "=", "value": "FIP", "result": "B"},
+                        {"case": "ELSE", "result": "A"}
+                    ]
+             }
+          }
+         },
 
         {"id":"113700", "transformation":{
          "func": "IF",
