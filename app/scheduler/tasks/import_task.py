@@ -144,7 +144,7 @@ class ImportTask(BaseTask):
             cursor.execute(
                 f"SELECT DBIAIT_ANALYSIS.create_spatial_indexes();")
             print(f"Starting vacuum: {datetime.now()}")
-            cursor.execute("VACUUM ANALYZE VERBOSE;")
+            cursor.execute("VACUUM ANALYZE;")
             print(f"Finish vacuum: {datetime.now()}")
 
         print(f"Finished IMPORT execution of package from: {gpkg_path}")

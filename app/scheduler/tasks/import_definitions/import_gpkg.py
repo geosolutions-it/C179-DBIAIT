@@ -124,7 +124,6 @@ class GpkgImportDefinition(BaseImportDefinition):
     def execute_command(self, commands, feedback):
         try:
             self.GdalUtils.runGdal(commands, feedback)
-            print(self.GdalUtils.consoleOutput)
         except Exception as e:
             print(e)
             traceback.print_exc()
