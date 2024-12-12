@@ -21,7 +21,7 @@ class Command(BaseCommand):
         for csv_file in file_available:
             db_cursor, db_conn = self.__create_db_connection()
             try:
-                with open(f'{options["folder_path"][0]}\\{csv_file}') as f:
+                with open(f'{options["folder_path"][0]}/{csv_file}') as f:
                     next(f)  # needed for skip the headers
                     table_name = f"dbiait_analysis.{csv_file.lower().replace('.csv', '')}"
                     db_cursor.execute(f"TRUNCATE table {table_name};")
@@ -41,9 +41,9 @@ class Command(BaseCommand):
     def __create_db_connection():
         t_host = "localhost"  # either "localhost", a domain name, or an IP address.
         t_port = "5432"  # default postgres port
-        t_dbname = "postgres"  # database name
-        t_user = "postgres"  # database access
-        t_pw = "password"
+        t_dbname = "dbiait_test"  # database name
+        t_user = "geonode"  # database access
+        t_pw = "geonode"
         db_conn = psycopg2.connect(
             host=t_host,
             port=t_port,
