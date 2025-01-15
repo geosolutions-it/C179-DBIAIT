@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # DBIAIT apps
     'app.authenticate',
     'app.scheduler',
+    'app.dbi_checks',
 
     # Installed apps
     'rest_framework',
@@ -321,3 +322,73 @@ DBIAIT_ANL_SELECT_ROLES = ['DBIAIT_ANL_ROLE_R']
 DBIAIT_FRZ_SELECT_ROLES = ['DBIAIT_FRZ_ROLE_R']
 DBIAIT_FRZ_UID_ROLES = ['DBIAIT_FRZ_ROLE_W']
 DBIAIT_FRZ_ADMIN_ROLES = ['DBIAIT_FRZ_ROLE_D']
+
+# DBI checks settings
+# XLSX uploaded files
+UPLOADED_XLSX_FILES = os.path.join(BASE_DIR, 'app', 'dbi_checks', 'uploaded_xlsx_files')
+# Final files for download
+FOR_DOWNLOAD = os.path.join(BASE_DIR, 'app', 'dbi_checks', 'download')
+# Directory which standard XLSX files exist
+XLSX_FILES = os.getenv("XLSX_FOLDER", os.path.join(BASE_DIR, "xlsx_files"))
+DBI_A_1 = os.path.join(XLSX_FILES, "DBI_A-1.xlsx")
+DBI_A = os.path.join(XLSX_FILES, "DBI_A.xlsx")
+# Get precending and current year from a specific sheet, column and row
+YEAR_VALUE = {
+    "sheet": "DATI",
+    "row": 8,
+    "column": 2
+}
+
+# Upload settings
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+
+# Define sheets and column ranges for each sheet
+# The SHEETS-CONFIG includes all the sheets with formulas included in DBI-A-1
+SHEETS_CONFIG = {
+    "Fiumi": {"target": "Fiumi", "min_col": "A", "min_row": 4},
+    "Laghi": {"target": "Laghi", "min_col": "A", "min_row": 4},
+    "Pozzi": {"target": "Pozzi", "min_col": "A", "min_row": 4},
+    "Pozzi_pompe": {"target": "Pozzi_pompe", "min_col": "A", "min_row": 4},
+    "Sorgenti": {"target": "Sorgenti", "min_col": "A", "min_row": 4},
+    "Potabilizzatori": {"target": "Potabilizzatori", "min_col": "A", "min_row": 4},
+    "Potab_pompe": {"target": "Potab_pompe", "min_col": "A", "min_row": 4},
+    "Adduttrici": {"target": "Adduttrici", "min_col": "A", "min_row": 4},
+    "Accumuli": {"target": "Accumuli", "min_col": "A", "min_row": 4},
+    "Pompaggi": {"target": "Pompaggi", "min_col": "A", "min_row": 4},
+    "Pompaggi_pompe": {"target": "Pompaggi_pompe", "min_col": "A", "min_row": 4},
+    "Distribuzioni": {"target": "Distribuzioni", "min_col": "A", "min_row": 4},
+    "Fognature": {"target": "Fognature", "min_col": "A", "min_row": 4},
+    "Sollevamenti": {"target": "Sollevamenti", "min_col": "A", "min_row": 4},
+    "Sollev_pompe": {"target": "Sollev_pompe", "min_col": "A", "min_row": 4},
+    "Collettori": {"target": "Collettori", "min_col": "A", "min_row": 4},
+    "Depuratori": {"target": "Depuratori", "min_col": "A", "min_row": 4},
+    "Depurat_pompe": {"target": "Depurat_pompe", "min_col": "A", "min_row": 4},
+    "Scaricatori": {"target": "Scaricatori", "min_col": "A", "min_row": 4},
+}
+# The EXTRA_SHEETS-CONFIG includes all the remaining sheets with formulas included in DBI-A
+EXTRA_SHEETS_CONFIG = {
+    "Fiumi_inpotab": {"target": "Fiumi_inpotab", "min_col": "A", "min_row": 4},
+    "Fiumi_inreti": {"target": "Fiumi_inreti", "min_col": "A", "min_row": 4},
+    "Laghi_inpotab": {"target": "Laghi_inpotab", "min_col": "A", "min_row": 4},
+    "Laghi_inreti": {"target": "Laghi_inreti", "min_col": "A", "min_row": 4},
+    "Pozzi_inpotab": {"target": "Pozzi_inpotab", "min_col": "A", "min_row": 4},
+    "Pozzi_inreti": {"target": "Pozzi_inreti", "min_col": "A", "min_row": 4},
+    "Sorgenti_inpotab": {"target": "Sorgenti_inpotab", "min_col": "A", "min_row": 4},
+    "Sorgenti_inreti": {"target": "Sorgenti_inreti", "min_col": "A", "min_row": 4},
+    "Potab_incaptaz": {"target": "Potab_incaptaz", "min_col": "A", "min_row": 4},
+    "Potab_inreti": {"target": "Potab_inreti", "min_col": "A", "min_row": 4},
+    "Addut_inreti": {"target": "Addut_inreti", "min_col": "A", "min_row": 4},
+    "Addut_com_serv": {"target": "Addut_com_serv", "min_col": "A", "min_row": 4},
+    "Accumuli_inadd": {"target": "Accumuli_inadd", "min_col": "A", "min_row": 4},
+    "Accumuli_inreti": {"target": "Accumuli_inreti", "min_col": "A", "min_row": 4},
+    "Pompaggi_inpotab": {"target": "Pompaggi_inpotab", "min_col": "A", "min_row": 4},
+    "Pompaggi_inserba": {"target": "Pompaggi_inserba", "min_col": "A", "min_row": 4},
+    "Distrib_com_serv": {"target": "Distrib_com_serv", "min_col": "A", "min_row": 4},
+    "Distrib_loc_serv": {"target": "Distrib_loc_serv", "min_col": "A", "min_row": 4},
+    "Fognat_com_serv": {"target": "Fognat_com_serv", "min_col": "A", "min_row": 4},
+    "Fognat_loc_serv": {"target": "Fognat_loc_serv", "min_col": "A", "min_row": 4},
+    "Collett_com_serv": {"target": "Collett_com_serv", "min_col": "A", "min_row": 4},
+    "Depurat_incoll": {"target": "Depurat_incoll", "min_col": "A", "min_row": 4},
+    "Scaricat_infog": {"target": "Scaricat_infog", "min_col": "A", "min_row": 4},
+}
