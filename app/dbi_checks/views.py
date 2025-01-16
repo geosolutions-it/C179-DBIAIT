@@ -1,4 +1,5 @@
 import os
+import json
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
@@ -9,14 +10,12 @@ from app.dbi_checks.forms import ExcelUploadForm
 from app.dbi_checks.tasks import copy_to_dbi_files
 from app.settings import (
     UPLOADED_XLSX_FILES, 
-    YEAR_VALUE,
     DBI_A_1, 
     DBI_A,
     SHEETS_CONFIG,
-    EXTRA_SHEETS_CONFIG
 )
-
-from openpyxl import load_workbook
+from app.dbi_checks.utils import get_year
+from dramatiq import broker
 
 # Check: consistenza delle opere
 class Consistency_check(LoginRequiredMixin, View):
@@ -34,6 +33,7 @@ class UploadExcelView(LoginRequiredMixin, FormView):
     form_class = ExcelUploadForm
     success_url = reverse_lazy("upload-excel-view")
 
+
     def form_valid(self, form):
         xlsx_file1 = form.cleaned_data["xlsx_file1"]
         xlsx_file2 = form.cleaned_data["xlsx_file2"]
@@ -41,25 +41,33 @@ class UploadExcelView(LoginRequiredMixin, FormView):
         xlsx_file1_path = os.path.join(UPLOADED_XLSX_FILES, xlsx_file1.name)
         xlsx_file2_path = os.path.join(UPLOADED_XLSX_FILES, xlsx_file2.name)
 
+        # Load the JSON data from the file
+        with open(SHEETS_CONFIG, "r") as file:
+            sheets_config = json.load(file)
+            dba_a_config = sheets_config.get("DBA_A", {})
+            dba_a_1_config = sheets_config.get("DBA_A_1", {})
 
-        with open(xlsx_file1_path, "wb+") as destination:
+
+        with open(xlsx_file1_path, "wb+") as destination1:
             for chunk in xlsx_file1.chunks():
-                destination.write(chunk)
-        with open(xlsx_file2_path, "wb+") as destination:
+                destination1.write(chunk)
+        with open(xlsx_file2_path, "wb+") as destination2:
             for chunk in xlsx_file2.chunks():
-                destination.write(chunk)
+                destination2.write(chunk)
 
         # Get the year from each file
-        precending_year = self.get_year(xlsx_file1_path)
-        current_year = self.get_year(xlsx_file2_path)
+        current_year = get_year(xlsx_file1_path)
   
         # A temp check, this could be changed
-        if precending_year and current_year:
-            messages.success(self.request, "Files uploaded and processed successfully!")
+        if current_year:
+            # messages.success(self.request, "Files uploaded and processed successfully!")
             
-            # Trigger copy as an async task
-            copy_to_dbi_files.send(xlsx_file1_path, DBI_A_1, SHEETS_CONFIG)
-            copy_to_dbi_files.send(xlsx_file2_path, DBI_A, {**SHEETS_CONFIG, **EXTRA_SHEETS_CONFIG})
+            copy_to_dbi_files.send(
+              xlsx_file1_path, 
+              DBI_A_1, 
+              dba_a_1_config, 
+              next_args=[xlsx_file2_path, DBI_A, dba_a_config]
+            )
 
         else:
             messages.error(self.request, "File processing failed. Please check the file content.")
@@ -69,21 +77,3 @@ class UploadExcelView(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         messages.error(self.request, "Something went wrong with the upload... Please try again")
         return super().form_invalid(form)
-    
-    def get_year(self, file_path):
-        """
-        This method get the year from the cell B8 from each
-        uploaded xlsx file
-        """
-         
-        try:
-            wb = load_workbook(file_path)
-            # Get the required sheet and year value
-            dati_sheet = wb[YEAR_VALUE["sheet"]]
-            year_value = dati_sheet.cell(row=YEAR_VALUE["row"], column=YEAR_VALUE["column"]).value
-    
-            return year_value
-
-        except Exception as e:
-            print(f"Error processing files: {e}")
-            return False

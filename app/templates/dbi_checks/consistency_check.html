@@ -2,11 +2,11 @@
     <form method="POST" enctype="multipart/form-data" action="{% url 'upload-excel-view' %}">
         {% csrf_token %}
         <div class="form-group">
-            <label for="id_xlsx_file1">Select the xlsx file for the precending year:</label>
+            <label for="id_xlsx_file1">Select the xlsx file for the analysis year:</label>
             <input type="file" name="xlsx_file1" id="id_xlsx_file1" class="form-control" required>
         </div>
         <div class="form-group">
-            <label for="id_xlsx_file2">Select the xlsx file for the analysis year:</label>
+            <label for="id_xlsx_file2">Select the xlsx file for the precending year:</label>
             <input type="file" name="xlsx_file2" id="id_xlsx_file2" class="form-control" required>
         </div>
         <button type="submit" class="btn btn-primary">AVVIA</button>
