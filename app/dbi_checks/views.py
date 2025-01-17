@@ -13,9 +13,8 @@ from app.settings import (
     DBI_A_1, 
     DBI_A,
     SHEETS_CONFIG,
+    DBI_FORMULAS
 )
-from app.dbi_checks.utils import get_year
-from dramatiq import broker
 
 # Check: consistenza delle opere
 class Consistency_check(LoginRequiredMixin, View):
@@ -41,12 +40,17 @@ class UploadExcelView(LoginRequiredMixin, FormView):
         xlsx_file1_path = os.path.join(UPLOADED_XLSX_FILES, xlsx_file1.name)
         xlsx_file2_path = os.path.join(UPLOADED_XLSX_FILES, xlsx_file2.name)
 
-        # Load the JSON data from the file
+        # Load the DBI file sheets config json
         with open(SHEETS_CONFIG, "r") as file:
             sheets_config = json.load(file)
-            dba_a_config = sheets_config.get("DBA_A", {})
-            dba_a_1_config = sheets_config.get("DBA_A_1", {})
+            dbi_a_config = sheets_config.get("DBI_A", {})
+            dbi_a_1_config = sheets_config.get("DBI_A_1", {})
 
+        # Load the DBI formulas json
+        with open(DBI_FORMULAS, "r") as file:
+            dbi_formulas = json.load(file)
+            dbi_a_formulas = dbi_formulas.get("DBI_A_formulas", {})
+            dbi_a_1_formulas = dbi_formulas.get("DBI_A_1_formulas", {})
 
         with open(xlsx_file1_path, "wb+") as destination1:
             for chunk in xlsx_file1.chunks():
@@ -55,18 +59,17 @@ class UploadExcelView(LoginRequiredMixin, FormView):
             for chunk in xlsx_file2.chunks():
                 destination2.write(chunk)
 
-        # Get the year from each file
-        current_year = get_year(xlsx_file1_path)
-  
-        # A temp check, this could be changed
-        if current_year:
+        if os.path.exists(xlsx_file1_path) and os.path.exists(xlsx_file2_path):
             # messages.success(self.request, "Files uploaded and processed successfully!")
             
+            # Run first the task using the DBA_A and then the DBA_A-1
             copy_to_dbi_files.send(
               xlsx_file1_path, 
-              DBI_A_1, 
-              dba_a_1_config, 
-              next_args=[xlsx_file2_path, DBI_A, dba_a_config]
+              DBI_A, 
+              dbi_a_config,
+              dbi_a_formulas,
+              file_dependency=True,
+              next_args=[xlsx_file2_path, DBI_A_1, dbi_a_1_config, dbi_a_1_formulas]
             )
 
         else:

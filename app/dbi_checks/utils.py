@@ -24,8 +24,6 @@ def get_year(file_path):
             # Set a value for the cell A1
             ws['A1'] = year_value  # You can modify this value as needed
             wb2.save(os.path.join(FOR_DOWNLOAD, "INPUT.xlsx"))
-    
-            return year_value
 
         except Exception as e:
             print(f"Error processing files: {e}")
