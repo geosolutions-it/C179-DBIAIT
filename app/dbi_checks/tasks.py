@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
 from openpyxl.formula.translate import Translator
 from app.settings import FOR_DOWNLOAD
-from app.dbi_checks.utils import get_year
+from app.dbi_checks.utils import get_year, get_last_data_row
 
 import logging
 
@@ -59,14 +59,16 @@ def copy_to_dbi_files(file_path, seed, config, formulas_config, file_dependency=
         # Iterate through each sheet to drag the formulas
         for sheet_name, f_location in formulas_config.items():
             
-            if sheet_name in seed_wb.sheetnames:  # Ensure the sheet exists
+            if sheet_name in seed_wb.sheetnames:
                 sheet = seed_wb[sheet_name]
 
                 # Get column indexes
                 start_col_index = column_index_from_string(f_location["start_col"])
                 end_col_index = column_index_from_string(f_location["end_col"])
                 start_row = f_location["start_row"]
-                last_row = sheet.max_row
+                # Re-definition of the last row because the copied file is processed
+                # without saving yet. We don't want to re-load it for time reasons
+                last_row = get_last_data_row(sheet)
 
                 # Copy formulas from row 4 to the rest of the rows
                 for col_idx in range(start_col_index, end_col_index + 1):

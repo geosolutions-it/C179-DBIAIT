@@ -28,3 +28,10 @@ def get_year(file_path):
         except Exception as e:
             print(f"Error processing files: {e}")
             return False
+        
+def get_last_data_row(sheet):
+    last_row = 0
+    for row in sheet.iter_rows(min_row=1, max_row=sheet.max_row, min_col=1, max_col=sheet.max_column):
+        if any(cell.value is not None for cell in row):
+            last_row = row[0].row
+    return last_row
