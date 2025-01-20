@@ -2,40 +2,12 @@
 
 {% block content %}
 {% if request.user.is_staff or request.user.is_superuser %}
-  <div class="container">
-       <!-- Display messages -->
-      {% if messages %}
-      <div class="messages">
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-       </div>
-      {% endif %}
- 
-      <div class="tabs">
-        <!-- Tab Links -->
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" id="tab1-link" href="#tab1" data-toggle="tab">Consistenza delle opere</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="tab2-link" href="#tab2" data-toggle="tab">Dati prioritati</a>
-            </li>
-        </ul>
-
-        <!-- Tab Content -->
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="tab1">
-                {% include "dbi_checks/consistency_check.html" %}
-            </div>
-            <div class="tab-pane fade" id="tab2">
-                {% include "dbi_checks/prioritized_data.html" %}
-            </div>
+    <div class="container">
+        <div class="tab">
+            <a href="{% url 'consistency-check-view' %}" class="tablinks{% if current_url == 'consistency-check-view'%} active{% endif %}">Consistenza delle opere</a>
+            <a href="{% url 'prioritized-data-check-view' %}" class="tablinks{% if current_url == 'prioritized-data-check-view'%} active{% endif %}">Dati prioritati</a>
         </div>
-      </div>
-  </div>
+    </div>
     {% block import_content %}
         {# content of the running/current import#}
     {% endblock %}

@@ -98,6 +98,21 @@ const table_function_mapper = {
             });
         }
     },
+    "#test-sheet-import-table": function (response) {
+        const table = $("#dt-import-table").DataTable();
+        if (response) {
+            table.clear().draw();
+            response.forEach(function (data) {
+                var row = table.row.add([
+                    data.sheet_name,
+                    get_local_date(data.import_start_timestamp) ,
+                    get_local_date(data.import_end_timestamp),
+                    data.status
+                    ]).draw( false ).node();
+                $(row).addClass(data.style_class);
+            });
+        }
+    },
 }
 
 function filter_datatables_results(word_to_filter) {

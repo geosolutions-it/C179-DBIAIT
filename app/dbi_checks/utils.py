@@ -1,7 +1,13 @@
 import os
 from app.settings import YEAR_VALUE
 from openpyxl import load_workbook, Workbook
+
+from django.utils import timezone
+
 from app.settings import FOR_DOWNLOAD
+from app.dbi_checks.models import ImportedSheet
+from app.scheduler.utils import TaskStatus
+
 
 def get_year(file_path):
         """
@@ -28,6 +34,20 @@ def get_year(file_path):
         except Exception as e:
             print(f"Error processing files: {e}")
             return False
+
+def import_sheet(task_instance, sheet):
+    
+    try:
+        ImportedSheet.objects.create(
+            task=task_instance,
+            sheet_name=sheet.lower(),
+            import_start_timestamp=timezone.now(),
+            import_end_timestamp=timezone.now(),
+            status=TaskStatus.SUCCESS
+        )
+    except Exception as e:
+        print(sheet + ": " + str(e))
+        task_status = TaskStatus.FAILED
         
 def get_last_data_row(sheet):
     last_row = 0
@@ -35,3 +55,7 @@ def get_last_data_row(sheet):
         if any(cell.value is not None for cell in row):
             last_row = row[0].row
     return last_row
+
+class TaskType_CheckDbi:
+    IMPORT_CheckDbi = "IMPORT_CheckDbi"
+    PROCESS_CheckDbi = "PROCESS_CheckDbi"
