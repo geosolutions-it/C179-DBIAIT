@@ -21,7 +21,7 @@
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm" id="dt-import-table">
+  <table class="table table-sm" id="dt-import-sheet-table">
     <thead>
       <tr>
           <th>Sheet</th>
@@ -30,7 +30,7 @@
           <th>Status</th>
         </tr>
     </thead>
-     <tbody id="test-import-table">
+     <tbody id="test-sheet-import-table">
       <tr>
         <td class="text-center">
           <small class="text-secondary">Attendere...</small>
@@ -53,7 +53,7 @@
     setInterval(function () {
       var url = "{% url 'get-dbi-check-single-import-status-api-view' %}" + "?task_id=";
       var taskId = $("#import-status-table #task_uuid").text();
-      ajax_call(url + taskId, "#test-import-table")
+      ajax_call(url + taskId, "#test-sheet-import-table")
       }, 5000
     );
   });

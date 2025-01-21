@@ -86,7 +86,7 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
                                      dbi_a_config,
                                      dbi_a_formulas,
                                      file_dependency=True,
-                                     next_args=[xlsx_file2_path, DBI_A_1, dbi_a_1_config, dbi_a_1_formulas]
+                                     next_args=[task_id, xlsx_file2_path, DBI_A_1, dbi_a_1_config, dbi_a_1_formulas]
                                      )
             return redirect(reverse(u"consistency-check-view"))
             

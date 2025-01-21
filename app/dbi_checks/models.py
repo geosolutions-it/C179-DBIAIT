@@ -1,12 +1,13 @@
 import os
 import uuid
 import datetime
+from pathlib import Path
 
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from app.scheduler.utils import TaskStatus, status_icon_mapper, style_class_mapper
+from app.scheduler.utils import TaskStatus, status_icon_mapper, style_class_mapper, default_storage
 
 class Xlsx(models.Model):
     name = models.CharField(max_length=50, blank=False, unique=True)
@@ -27,6 +28,10 @@ class Task_CheckDbi(models.Model):
     end_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
     logfile = models.CharField(max_length=300, blank=True, default=None)
+    params = models.JSONField(
+        help_text="Task arguments.", blank=True, default=default_storage
+    )
+    progress = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
         if not self.logfile:
@@ -50,6 +55,15 @@ class Task_CheckDbi(models.Model):
     @property
     def status_icon(self):
         return status_icon_mapper.get(self.status, "")
+    
+    @property
+    def task_log(self):
+        if os.path.exists(self.logfile):
+            task_log = Path(self.logfile).read_text()
+            if task_log == "(True,)\n":
+                return "Task completed successfully"
+            return task_log.replace("\n", "<br/>").replace("(True,)", "SUCCESS").replace("(False,)", "FAILED")
+        
 
 class ImportedSheet(models.Model):
     task = models.ForeignKey(Task_CheckDbi, on_delete=models.CASCADE)

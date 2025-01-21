@@ -99,7 +99,7 @@ const table_function_mapper = {
         }
     },
     "#test-sheet-import-table": function (response) {
-        const table = $("#dt-import-table").DataTable();
+        const table = $("#dt-import-sheet-table").DataTable();
         if (response) {
             table.clear().draw();
             response.forEach(function (data) {

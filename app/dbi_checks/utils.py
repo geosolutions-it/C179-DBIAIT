@@ -9,6 +9,10 @@ from app.dbi_checks.models import ImportedSheet
 from app.scheduler.utils import TaskStatus
 
 
+class TaskType_CheckDbi:
+    IMPORT_CheckDbi = "IMPORT_CheckDbi"
+    PROCESS_CheckDbi = "PROCESS_CheckDbi"
+
 def get_year(file_path):
         """
         This method get the year from the cell B8
@@ -55,7 +59,3 @@ def get_last_data_row(sheet):
         if any(cell.value is not None for cell in row):
             last_row = row[0].row
     return last_row
-
-class TaskType_CheckDbi:
-    IMPORT_CheckDbi = "IMPORT_CheckDbi"
-    PROCESS_CheckDbi = "PROCESS_CheckDbi"
