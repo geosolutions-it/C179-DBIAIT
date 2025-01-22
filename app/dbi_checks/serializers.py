@@ -11,4 +11,4 @@ class ConsistencyCheckSerializer(serializers.ModelSerializer):
 class ImportedSheetSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImportedSheet
-        fields = [u'import_start_timestamp', u'import_end_timestamp', u'sheet_name', u'status']
+        fields = [u'sheet_name', u'file_name', u'import_start_timestamp', u'import_end_timestamp', u'status']

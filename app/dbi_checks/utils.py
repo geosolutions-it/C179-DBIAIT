@@ -39,19 +39,19 @@ def get_year(file_path):
             print(f"Error processing files: {e}")
             return False
 
-def import_sheet(task_instance, sheet):
+def import_sheet(task_instance, sheet, file_name, start_date, end_date, status):
     
     try:
         ImportedSheet.objects.create(
             task=task_instance,
             sheet_name=sheet.lower(),
-            import_start_timestamp=timezone.now(),
-            import_end_timestamp=timezone.now(),
-            status=TaskStatus.SUCCESS
+            file_name=file_name,
+            import_start_timestamp=start_date,
+            import_end_timestamp=end_date,
+            status=status
         )
     except Exception as e:
         print(sheet + ": " + str(e))
-        task_status = TaskStatus.FAILED
         
 def get_last_data_row(sheet):
     last_row = 0

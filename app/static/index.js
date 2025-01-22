@@ -105,7 +105,8 @@ const table_function_mapper = {
             response.forEach(function (data) {
                 var row = table.row.add([
                     data.sheet_name,
-                    get_local_date(data.import_start_timestamp) ,
+                    data.file_name,
+                    get_local_date(data.import_start_timestamp),
                     get_local_date(data.import_end_timestamp),
                     data.status
                     ]).draw( false ).node();

@@ -6,14 +6,17 @@ from pathlib import Path
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from app.settings import UPLOADED_XLSX_FILES, FOR_DOWNLOAD
 
 from app.scheduler.utils import TaskStatus, status_icon_mapper, style_class_mapper, default_storage
-
+    
 class Xlsx(models.Model):
-    name = models.CharField(max_length=50, blank=False, unique=True)
+    name = models.CharField(max_length=300, blank=False, unique=True)
+    file_path1 = models.CharField(max_length=300, blank=False, default=f"{UPLOADED_XLSX_FILES}/file1.xlsx")
+    file_path2 = models.CharField(max_length=300, blank=False, default=f"{UPLOADED_XLSX_FILES}/file2.xlsx")
 
     def __str__(self):
-        return self.name
+        return f"{self.name}: {self.file1_path}, {self.file2_path}"
 
 class Task_CheckDbi(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -67,16 +70,18 @@ class Task_CheckDbi(models.Model):
 
 class ImportedSheet(models.Model):
     task = models.ForeignKey(Task_CheckDbi, on_delete=models.CASCADE)
+    sheet_name = models.CharField(max_length=250, null=False)
+    file_name = models.CharField(max_length=250, null=False, default="file.xlsx")
     import_start_timestamp = models.DateTimeField(default=datetime.datetime.now)
     import_end_timestamp = models.DateTimeField(null=True)
-    sheet_name = models.CharField(max_length=250, null=False)
     status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
 
     def to_dict(self):
         return {
             "task": str(self.task.uuid),
+            "sheet_name": self.sheet_name,
+            "file_name": self.file_name,
             "import_start_timestamp": str(self.import_start_timestamp),
             "import_end_timestamp": str(self.import_end_timestamp),
-            "sheet_name": self.sheet_name,
             "status": self.status
         }

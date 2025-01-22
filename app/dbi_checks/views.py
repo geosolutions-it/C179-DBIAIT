@@ -78,28 +78,21 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
 
         if os.path.exists(xlsx_file1_path) and os.path.exists(xlsx_file2_path):
             
-            task_id = Import_DbiCheckTask.pre_send(self.request.user, xlsx_file1_path)
+            task_id = Import_DbiCheckTask.pre_send(self.request.user, 
+                                                   xlsx_file1_path,
+                                                   xlsx_file2_path,
+                                                   DBI_A,
+                                                   DBI_A_1,
+                                                   dbi_a_config,
+                                                   dbi_a_1_config,
+                                                   dbi_a_formulas,
+                                                   dbi_a_1_formulas,
+                                                   file_dependency=True,
+                                                   )
             
-            Import_DbiCheckTask.send(task_id,
-                                     xlsx_file1_path,
-                                     DBI_A,
-                                     dbi_a_config,
-                                     dbi_a_formulas,
-                                     file_dependency=True,
-                                     next_args=[task_id, xlsx_file2_path, DBI_A_1, dbi_a_1_config, dbi_a_1_formulas]
-                                     )
+            Import_DbiCheckTask.send(task_id)
             return redirect(reverse(u"consistency-check-view"))
             
-            # Run first the task using the DBA_A and then the DBA_A-1
-            #copy_to_dbi_files.send(
-            #  xlsx_file1_path, 
-            #  DBI_A, 
-            #  dbi_a_config,
-            #  dbi_a_formulas,
-            #  file_dependency=True,
-            #  next_args=[xlsx_file2_path, DBI_A_1, dbi_a_1_config, dbi_a_1_formulas]
-            #)
-
         else:
             messages.error(self.request, "File processing failed. Please check the file content.")
 
