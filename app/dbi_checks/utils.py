@@ -1,12 +1,14 @@
 import os
-from app.settings import YEAR_VALUE
+
+from django.db.models import ObjectDoesNotExist
 from openpyxl import load_workbook, Workbook
 
-from django.utils import timezone
+from app.settings import FOR_DOWNLOAD, YEAR_VALUE
+from app.dbi_checks.models import ImportedSheet, Task_CheckDbi
 
-from app.settings import FOR_DOWNLOAD
-from app.dbi_checks.models import ImportedSheet
-from app.scheduler.utils import TaskStatus
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class TaskType_CheckDbi:
@@ -39,19 +41,29 @@ def get_year(file_path):
             print(f"Error processing files: {e}")
             return False
 
-def import_sheet(task_instance, sheet, file_name, start_date, end_date, status):
+def import_sheet(task_id, sheet, file_name, start_date, end_date, status):
     
     try:
+        task = Task_CheckDbi.objects.get(pk=task_id)
+
         ImportedSheet.objects.create(
-            task=task_instance,
+            task=task,
             sheet_name=sheet.lower(),
             file_name=file_name,
             import_start_timestamp=start_date,
             import_end_timestamp=end_date,
             status=status
         )
+
+        logger.info(f"Successfully imported sheet: {sheet} for task ID {task_id}")
+        return True
+
+    except ObjectDoesNotExist:
+        logger.error(f"Task with ID {task_id} was not found: {str(e)}")
+        raise
     except Exception as e:
-        print(sheet + ": " + str(e))
+        logger.error(f"An error occurred while importing sheet: {str(e)}")
+        raise
         
 def get_last_data_row(sheet):
     last_row = 0

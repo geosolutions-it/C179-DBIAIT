@@ -115,7 +115,7 @@ class Import_DbiCheckTask(BaseTask):
 
     @trace_it
     def execute(self, 
-                task_instance: Task_CheckDbi,
+                task_id: int,
                 *args,
                 **kwargs
                 ) -> None:
@@ -144,12 +144,12 @@ class Import_DbiCheckTask(BaseTask):
 
             # Copy the first file using DBI_A seed
             logger.info(f"Task started with file: {file_path1}")
-            result = self.copy_files(task_instance, file_path1, seed_a, dbi_a_config, dbi_a_formulas)
+            result = self.copy_files(task_id, file_path1, seed_a, dbi_a_config, dbi_a_formulas)
             
             # Copy the second file using the DBI_A_1 seed
             if result is True:
                 logger.info(f"Task started with file: {file_path2}")
-                self.copy_files(task_instance, file_path2, seed_a_1, dbi_a_1_config, dbi_a_1_formulas)
+                self.copy_files(task_id, file_path2, seed_a_1, dbi_a_1_config, dbi_a_1_formulas)
 
             return True
         
@@ -166,6 +166,9 @@ class Import_DbiCheckTask(BaseTask):
 
         # Iterate over the sheets to copy data
         for source_sheet, config in config.items():
+            
+            start_date = timezone.now()
+            
             target_sheet = config["target"]
             
             # Convert column letters to numbers
@@ -185,14 +188,18 @@ class Import_DbiCheckTask(BaseTask):
                             target.cell(row=cell.row, column=cell.column, value=cell.value)
 
                 logger.info(f"Copied data from sheet: {source_sheet} to {target_sheet}")
+                
+                # Call the import_sheet function with a SUCCESS status
+                end_date = timezone.now()
+                import_sheet(task, source_sheet, os.path.basename(file_path), start_date, end_date, TaskStatus.SUCCESS)
                     
             else:
+                end_date = timezone.now()
+                import_sheet(task, source_sheet, os.path.basename(file_path), start_date, end_date, TaskStatus.FAILED)
                 logger.warning(f"Sheet {source_sheet} or {target_sheet} not found!")
 
         # Iterate through each sheet to drag the formulas
         for sheet_name, f_location in formulas_config.items():
-
-            start_date = timezone.now()
             
             if sheet_name in seed_wb.sheetnames:
                 sheet = seed_wb[sheet_name]
@@ -221,16 +228,6 @@ class Import_DbiCheckTask(BaseTask):
                 logger.info(f"The formulas were populated from sheet: {sheet_name}")
             else:
                 logger.warning(f"Something went wrong when filling out the formulas !")
-            
-            # Call the import_sheet function with FAILED or SUCCESS status
-            if sheet_name not in up_file.sheetnames:
-                # Call the import_sheet function with a FAILED status
-                end_date = timezone.now()
-                import_sheet(task, sheet_name, os.path.basename(file_path), start_date, end_date, TaskStatus.FAILED)
-            else:
-                # Call the import_sheet function with a SUCCESS status
-                end_date = timezone.now()
-                import_sheet(task, sheet_name, os.path.basename(file_path), start_date, end_date, TaskStatus.SUCCESS)
         
         
         # Save the changes to the file
@@ -245,7 +242,6 @@ class Import_DbiCheckTask(BaseTask):
             os.remove(os.path.join(FOR_DOWNLOAD, "INPUT.xlsx"))
 
         return True
-    
     
     def perform(self, 
                 task_id: int,
@@ -276,7 +272,7 @@ class Import_DbiCheckTask(BaseTask):
 
             with Tee(logfile, "a"):
                 result = self.execute(
-                    task, # we send the task instance
+                    task.id, # we send the task instance
                     *task.params.get("args", []),
                     **task.params.get("kwargs", {}),
                     )
@@ -302,8 +298,8 @@ class Import_DbiCheckTask(BaseTask):
             task.save()
         finally:
             '''
-            Final check of the ImportedLayer/FreezeLayer.
-            If at least 1 import/freeze process is failed, the whole task is considered unsuccessful
+            Final check of the ImportedSheet.
+            If at least 1 sheet process is failed, the whole task is considered unsuccessful
             '''
             import_sheet = ImportedSheet.objects.filter(task_id__id=task.id)
 
