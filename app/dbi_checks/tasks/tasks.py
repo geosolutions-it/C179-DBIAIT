@@ -1,18 +1,15 @@
 import os
-import shutil
+import tempfile
 import pathlib
+import shutil
 import traceback
-
-from openpyxl import load_workbook
-from openpyxl.utils import column_index_from_string, get_column_letter
-from openpyxl.formula.translate import Translator
 
 from django.db.models import Q, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.conf import settings
 
-from app.settings import CHECKS_FTP_FOLDER
-from app.dbi_checks.utils import get_year, get_last_data_row, TaskType_CheckDbi, import_sheet
+from app.dbi_checks.utils import TaskType_CheckDbi
 from app.dbi_checks.models import Task_CheckDbi, Xlsx, ImportedSheet 
 from app.dbi_checks.tasks.checks_definitions.consistency_check import ConsistencyCheck
 
@@ -120,6 +117,20 @@ class Import_DbiCheckTask(BaseTask):
                 **kwargs
                 ) -> None:
         
+        """
+        Method for executing the DBI checks
+        """
+        
+        result = False
+
+        try:
+            orm_task = Task_CheckDbi.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
+            )
+            raise
         try:
             (
             file_path1,
@@ -134,26 +145,36 @@ class Import_DbiCheckTask(BaseTask):
             
             file_dependency = kwargs.get("file_dependency")
 
-            if file_dependency is True:
-                # Create the INPUT.xlsx file which it is needed by the DBI_A formulas
-                get_year(file_path1)
-                try:
-                    load_workbook(os.path.join(CHECKS_FTP_FOLDER, "INPUT.xlsx"))
-                except:
-                    logger.warning(f"Error: The file INPUT.xlsx did not created !")
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                logger.info(f"Task started with file: {file_path1}")
+                tmp_checks_export_dir = pathlib.Path(tmp_dir)
+                
+                result = ConsistencyCheck(orm_task, 
+                                          file_path1, 
+                                          seed_a, 
+                                          dbi_a_config, 
+                                          dbi_a_formulas,
+                                          file_dependency,
+                                          tmp_checks_export_dir).run()
+            
+                # Copy the second file using the DBI_A_1 seed
+                if result is True:
+                    logger.info(f"Task started with file: {file_path2}")
+                    # self.copy_files(task_id, file_path2, seed_a_1, dbi_a_1_config, dbi_a_1_formulas)
+                    ConsistencyCheck(orm_task, 
+                                     file_path2, 
+                                     seed_a_1, 
+                                     dbi_a_1_config, 
+                                     dbi_a_1_formulas,
+                                     file_dependency,
+                                     tmp_checks_export_dir).run()
+                    # zip final output in export directory
+                    export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"task_{orm_task.id}")
+                    shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
+                    print(f"Zip created")
+                    result = True
 
-            # Copy the first file using DBI_A seed
-            logger.info(f"Task started with file: {file_path1}")
-            # result = self.copy_files(task_id, file_path1, seed_a, dbi_a_config, dbi_a_formulas)
-            result = ConsistencyCheck(task_id, file_path1, seed_a, dbi_a_config, dbi_a_formulas).run()
-            logger.info(f'{result}')
-            # Copy the second file using the DBI_A_1 seed
-            if result is True:
-                logger.info(f"Task started with file: {file_path2}")
-                # self.copy_files(task_id, file_path2, seed_a_1, dbi_a_1_config, dbi_a_1_formulas)
-                ConsistencyCheck(task_id, file_path2, seed_a_1, dbi_a_1_config, dbi_a_1_formulas).run()
-
-            return True
+            return result
         
         except Exception as e:
             print(f"Error processing files in the background: {e}")

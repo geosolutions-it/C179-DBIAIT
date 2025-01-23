@@ -10,8 +10,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
 
 from app.dbi_checks.models import Task_CheckDbi, ImportedSheet, TaskStatus
-from app.dbi_checks.utils import get_last_data_row
-from app.settings import CHECKS_FTP_FOLDER
+from app.dbi_checks.utils import get_last_data_row, get_year
 
 import logging
 
@@ -27,7 +26,8 @@ class ConsistencyCheck:
         seed: str,
         config: str,
         formulas_config: str,
-        # export_dir: pathlib.Path
+        file_dependency: bool,
+        export_dir: pathlib.Path
     ):
         """
         Initialization function of data export
@@ -42,18 +42,29 @@ class ConsistencyCheck:
         self.config = config
         self.formulas_config = formulas_config
         self.orm_task = orm_task
+        self.export_dir = export_dir
+        self.file_dependency = file_dependency
+
         self.logger = None
 
         # make sure target location exists
-        #self.export_dir.parent.mkdir(parents=True, exist_ok=True)
+        self.export_dir.parent.mkdir(parents=True, exist_ok=True)
 
     def run(self):
 
         # It's crucial to use the read_only argument because it's quite faster
         up_file = load_workbook(self.imported_file, read_only=True)
         seed_basename = os.path.basename(self.seed)
-        seed_copy = shutil.copy(self.seed, f"{CHECKS_FTP_FOLDER}/{seed_basename}")
+        seed_copy = shutil.copy(self.seed, f"{self.export_dir}/{seed_basename}")
         seed_wb = load_workbook(seed_copy, data_only=False)
+
+        if self.file_dependency is True:
+            # Create the INPUT.xlsx file which it is needed by the DBI_A formulas
+            get_year(self.imported_file, self.export_dir)
+            try:
+                load_workbook(os.path.join(self.export_dir, "INPUT.xlsx"))
+            except:
+                logger.warning(f"Error: The file INPUT.xlsx did not created !")
 
         # Iterate over the sheets to copy data
         for source_sheet, config in self.config.items():
@@ -82,11 +93,11 @@ class ConsistencyCheck:
                 
                 # Call the import_sheet function with a SUCCESS status
                 end_date = timezone.now()
-                self.import_sheet(self.orm_task, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.SUCCESS)
+                self.import_sheet(self.orm_task.id, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.SUCCESS)
                     
             else:
                 end_date = timezone.now()
-                self.import_sheet(self.orm_task, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.FAILED)
+                self.import_sheet(self.orm_task.id, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.FAILED)
                 logger.warning(f"Sheet {source_sheet} or {target_sheet} not found!")
 
         # Iterate through each sheet to drag the formulas
@@ -126,11 +137,6 @@ class ConsistencyCheck:
 
         # Clean up by deleting the temporary files
         os.remove(self.imported_file)
-        
-        # delete the file INPUT.xlsx if exists
-        if os.path.exists(os.path.join(CHECKS_FTP_FOLDER, "INPUT.xlsx")):
-            # Delete the file
-            os.remove(os.path.join(CHECKS_FTP_FOLDER, "INPUT.xlsx"))
 
         return True
 
