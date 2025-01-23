@@ -8,7 +8,8 @@ from django.views.generic import ListView
 from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.urls import resolve, reverse
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.conf import settings
 
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
@@ -16,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from app.dbi_checks.forms import ExcelUploadForm
 from app.dbi_checks.tasks.tasks import Import_DbiCheckTask
 from app.settings import (
-    UPLOADED_XLSX_FILES, 
+    CHECKS_UPLOADED_FILES, 
     DBI_A_1, 
     DBI_A,
     SHEETS_CONFIG,
@@ -40,11 +41,6 @@ class Consistency_check(LoginRequiredMixin, ListView):
         context['current_url'] = current_url
         return context
 
-# Check: dati prioritati
-class PrioritizedData_check(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, 'dbi_checks/base-checks.html')
-
 class Consistency_check_start(LoginRequiredMixin, FormView):
     
     template_name = u'dbi_checks/active-dbi-checks.html'
@@ -54,8 +50,8 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
         xlsx_file1 = form.cleaned_data["xlsx_file1"]
         xlsx_file2 = form.cleaned_data["xlsx_file2"]
 
-        xlsx_file1_path = os.path.join(UPLOADED_XLSX_FILES, xlsx_file1.name)
-        xlsx_file2_path = os.path.join(UPLOADED_XLSX_FILES, xlsx_file2.name)
+        xlsx_file1_path = os.path.join(CHECKS_UPLOADED_FILES, xlsx_file1.name)
+        xlsx_file2_path = os.path.join(CHECKS_UPLOADED_FILES, xlsx_file2.name)
 
         # Load the DBI file sheets config json
         with open(SHEETS_CONFIG, "r") as file:
@@ -102,12 +98,10 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
         messages.error(self.request, "Something went wrong with the upload... Please try again")
         return super().form_invalid(form)
     
-
 class GetCheckDbiStatus(generics.ListAPIView):
     queryset = Task_CheckDbi.objects.filter(type='IMPORT_CheckDbi').order_by('-id')[:1]
     serializer_class = ConsistencyCheckSerializer
     permission_classes = [IsAuthenticated]
-
 
 class GetImportedSheet(generics.RetrieveAPIView):
     serializer_class = ImportedSheetSerializer
@@ -120,4 +114,56 @@ class GetImportedSheet(generics.RetrieveAPIView):
         task_id = request.query_params['task_id']
         response = [sheet.to_dict() for sheet in ImportedSheet.objects.filter(task__uuid=task_id).order_by('-id')]
         return JsonResponse(response, safe=False)
+    
+# Check: dati prioritati
+class PrioritizedData_check(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'dbi_checks/base-checks.html')
+
+class ChecksListView(LoginRequiredMixin, ListView):
+    template_name = u'dbi_checks/historical-checks.html'
+    queryset = Task_CheckDbi.objects.filter(type=U"EXPORT").order_by(u"-start_date")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Add breadcrumbs to the context
+        context['bread_crumbs'] = {
+            'Checks DBI': reverse('checks-list-view'),
+            'Storico': u"#"
+        }
+
+        return context
+
+    def post(self, request,  *args, **kwargs):
+        """
+        Queue export task and return results of export status
+        """
+        export_schema = request.POST.get(u"export-schema")
+        #ref_year = ast.literal_eval(request.POST.get(u"freeze-year"))
+        self.object_list = self.get_queryset()
+        context = self.get_context_data()
+        #if export_schema == 'dbiait_freeze' and ref_year is None:
+        #    context["error"] = str("Prima di avviare l'export della storicizzazione, selezionare un anno valido")
+        return render(request, ChecksListView.template_name, context)
+        #try:
+        #    ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema, ref_year=ref_year))
+        #except (QueuingCriteriaViolated, SchedulingParametersError) as e:
+        #    context[u"error"] = str(e)
+        #return render(request, ExportListView.template_name, context)
+
+class ChecksDownloadView(LoginRequiredMixin, View):
+    def get(self, request, task_id: int):
+        file_path = os.path.join(settings.EXPORT_FOLDER, f"task_{task_id}.zip")
+        if os.path.exists(file_path) and Task_CheckDbi.objects.filter(id=task_id).exists():
+            with open(file_path, u"rb") as file_obj:
+                response = HttpResponse(
+                    file_obj.read(), content_type=u"application/x-gzip")
+                response[u"Content-Length"] = os.fstat(file_obj.fileno()).st_size
+                response[u"Content-Type"] = u"application/zip"
+                response[u"Content-Disposition"] = f"attachment; filename={task_id}.zip"
+            return response
+        context = {u"error": f"Siamo spiacenti che l'archivio richiesto {task_id}.zip non sia presente",
+                   u"bread_crumbs": {u"Error": u"#"}}
+        return render(request, u"errors/error.html", context=context, status=status.HTTP_404_NOT_FOUND)
 

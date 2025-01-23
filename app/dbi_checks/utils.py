@@ -3,7 +3,7 @@ import os
 from django.db.models import ObjectDoesNotExist
 from openpyxl import load_workbook, Workbook
 
-from app.settings import FOR_DOWNLOAD, YEAR_VALUE
+from app.settings import CHECKS_FTP_FOLDER, YEAR_VALUE
 from app.dbi_checks.models import ImportedSheet, Task_CheckDbi
 
 import logging
@@ -35,7 +35,7 @@ def get_year(file_path):
 
             # Set a value for the cell A1
             ws['A1'] = year_value  # You can modify this value as needed
-            wb2.save(os.path.join(FOR_DOWNLOAD, "INPUT.xlsx"))
+            wb2.save(os.path.join(CHECKS_FTP_FOLDER, "INPUT.xlsx"))
 
         except Exception as e:
             print(f"Error processing files: {e}")

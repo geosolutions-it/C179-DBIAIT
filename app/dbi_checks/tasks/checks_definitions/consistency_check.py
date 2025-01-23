@@ -1,0 +1,160 @@
+import os
+import shutil
+import pathlib
+
+from django.utils import timezone
+from django.db.models import ObjectDoesNotExist
+
+from openpyxl.formula.translate import Translator
+from openpyxl import load_workbook
+from openpyxl.utils import column_index_from_string, get_column_letter
+
+from app.dbi_checks.models import Task_CheckDbi, ImportedSheet, TaskStatus
+from app.dbi_checks.utils import get_last_data_row
+from app.settings import CHECKS_FTP_FOLDER
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class ConsistencyCheck:
+
+    def __init__(
+        self, 
+        orm_task: Task_CheckDbi,
+        imported_file: str,
+        seed: str,
+        config: str,
+        formulas_config: str,
+        # export_dir: pathlib.Path
+    ):
+        """
+        Initialization function of data export
+
+        Parameters:
+            export_dir: directory where the resulted xlsx files and log files should be stored
+            orm_task: instance of the database Task reporting execution of this export task (default 100)
+        """
+        
+        self.imported_file = imported_file
+        self.seed = seed
+        self.config = config
+        self.formulas_config = formulas_config
+        self.orm_task = orm_task
+        self.logger = None
+
+        # make sure target location exists
+        #self.export_dir.parent.mkdir(parents=True, exist_ok=True)
+
+    def run(self):
+
+        # It's crucial to use the read_only argument because it's quite faster
+        up_file = load_workbook(self.imported_file, read_only=True)
+        seed_basename = os.path.basename(self.seed)
+        seed_copy = shutil.copy(self.seed, f"{CHECKS_FTP_FOLDER}/{seed_basename}")
+        seed_wb = load_workbook(seed_copy, data_only=False)
+
+        # Iterate over the sheets to copy data
+        for source_sheet, config in self.config.items():
+            
+            start_date = timezone.now()
+            
+            target_sheet = config["target"]
+            
+            # Convert column letters to numbers
+            min_col = column_index_from_string(config["start_col"])
+            min_row = config["start_row"]
+
+            if source_sheet in up_file.sheetnames and target_sheet in seed_wb.sheetnames:
+
+                source = up_file[source_sheet]
+                target = seed_wb[target_sheet]
+
+                # Copy data based on the specified column range
+                # Usage of chunks to optimize large row ranges
+                for row in source.iter_rows(min_row=min_row, max_row=source.max_row, min_col=min_col, max_col=source.max_column):
+                    for cell in row:
+                        if cell.value is not None:
+                            target.cell(row=cell.row, column=cell.column, value=cell.value)
+
+                logger.info(f"Copied data from sheet: {source_sheet} to {target_sheet}")
+                
+                # Call the import_sheet function with a SUCCESS status
+                end_date = timezone.now()
+                self.import_sheet(self.orm_task, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.SUCCESS)
+                    
+            else:
+                end_date = timezone.now()
+                self.import_sheet(self.orm_task, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.FAILED)
+                logger.warning(f"Sheet {source_sheet} or {target_sheet} not found!")
+
+        # Iterate through each sheet to drag the formulas
+        for sheet_name, f_location in self.formulas_config.items():
+            
+            if sheet_name in seed_wb.sheetnames:
+                sheet = seed_wb[sheet_name]
+
+                # Get column indexes
+                start_col_index = column_index_from_string(f_location["start_col"])
+                end_col_index = column_index_from_string(f_location["end_col"])
+                start_row = f_location["start_row"]
+                # Re-definition of the last row because the copied file is processed
+                # without saving yet. We don't want to re-load it for time reasons
+                last_row = get_last_data_row(sheet)
+
+                # Copy formulas from row 4 to the rest of the rows
+                for col_idx in range(start_col_index, end_col_index + 1):
+                    column_letter = get_column_letter(col_idx)
+                    # Get the formula in row 4
+                    formula = sheet[f"{column_letter}{start_row}"].value
+                    if isinstance(formula, str) and formula.startswith("="):
+                        # Use the Translator to adjust the formula for each subsequent row
+                        for row_idx in range(start_row + 1, last_row + 1):
+                            translator = Translator(formula, f"{column_letter}{start_row}")
+                            adjusted_formula = translator.translate_formula(f"{column_letter}{row_idx}")
+                            # Set the adjusted formula in the target row
+                            sheet[f"{column_letter}{row_idx}"].value = adjusted_formula
+
+                logger.info(f"The formulas were populated from sheet: {sheet_name}")
+            else:
+                logger.warning(f"Something went wrong when filling out the formulas !")
+        
+        
+        # Save the changes to the file
+        seed_wb.save(seed_copy)
+
+        # Clean up by deleting the temporary files
+        os.remove(self.imported_file)
+        
+        # delete the file INPUT.xlsx if exists
+        if os.path.exists(os.path.join(CHECKS_FTP_FOLDER, "INPUT.xlsx")):
+            # Delete the file
+            os.remove(os.path.join(CHECKS_FTP_FOLDER, "INPUT.xlsx"))
+
+        return True
+
+    def import_sheet(self, task_id, sheet, file_name, start_date, end_date, status):
+    
+        try:
+            task = Task_CheckDbi.objects.get(pk=task_id)
+
+            ImportedSheet.objects.create(
+                task=task,
+                sheet_name=sheet.lower(),
+                file_name=file_name,
+                import_start_timestamp=start_date,
+                import_end_timestamp=end_date,
+                status=status
+            )
+
+            logger.info(f"Successfully imported sheet: {sheet} for task ID {task_id}")
+            return True
+
+        except ObjectDoesNotExist:
+            logger.error(f"Task with ID {task_id} was not found: {str(e)}")
+            raise
+        except Exception as e:
+            logger.error(f"An error occurred while importing sheet: {str(e)}")
+            raise
+    

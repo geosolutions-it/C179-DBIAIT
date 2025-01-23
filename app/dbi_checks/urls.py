@@ -2,8 +2,12 @@ from app.dbi_checks.views import (Consistency_check,
                                   PrioritizedData_check, 
                                   Consistency_check_start,
                                   GetCheckDbiStatus,
-                                  GetImportedSheet)
+                                  GetImportedSheet,
+                                  ChecksListView)
 from django.urls import include, path
+
+#temp import
+from app.scheduler.views import GetExportStatus, ExportDownloadView, ExportListView
 
 urlpatterns = [
     path(u"checks/", include([
@@ -17,5 +21,11 @@ urlpatterns = [
         ])),
         path(u"prioritized_data", PrioritizedData_check.as_view(), name=u'prioritized-data-check-view'),
         # add more views for other tabs here
+        path(u"historical_checks/", include([
+            path(u"", ChecksListView.as_view(), name=u'checks-list-view'),
+            path("status", GetExportStatus.as_view(), name="get-export-status-api-view"),
+            path(u"download/<int:task_id>", ExportDownloadView.as_view(),
+             name=u'export-download-view'),
+            ])),
         ])),
 ]

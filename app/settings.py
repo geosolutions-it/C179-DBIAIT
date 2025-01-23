@@ -325,13 +325,14 @@ DBIAIT_FRZ_ADMIN_ROLES = ['DBIAIT_FRZ_ROLE_D']
 
 # DBI checks settings
 # XLSX uploaded files
-UPLOADED_XLSX_FILES = os.path.join(BASE_DIR, 'app', 'dbi_checks', 'uploaded_xlsx_files')
+CHECKS_UPLOADED_FILES = os.path.join(BASE_DIR, 'app', 'dbi_checks', 'checks_uploaded_files')
 # Final files for download
-FOR_DOWNLOAD = os.path.join(BASE_DIR, 'app', 'dbi_checks', 'download')
-# Directory which standard XLSX files exist
-XLSX_FILES = os.getenv("XLSX_FOLDER", os.path.join(BASE_DIR, "dbi_checks_data", "xlsx_files"))
-DBI_A_1 = os.path.join(XLSX_FILES, "DBI_A-1.xlsx")
-DBI_A = os.path.join(XLSX_FILES, "DBI_A.xlsx")
+CHECKS_FTP_FOLDER = os.getenv("CHECKS_FTP_FOLDER", os.path.join(BASE_DIR, 'app', 'dbi_checks', 'checks_download'))
+
+# Directory which standard seed files exist
+CHECKS_SEED_FILES = os.getenv("CHECKS_SEED_FILES", os.path.join(BASE_DIR, "checks", "checks_seed_files"))
+DBI_A_1 = os.path.join(CHECKS_SEED_FILES, "DBI_A-1.xlsx")
+DBI_A = os.path.join(CHECKS_SEED_FILES, "DBI_A.xlsx")
 # Get precending and current year from a specific sheet, column and row
 YEAR_VALUE = {
     "sheet": "DATI",
@@ -346,5 +347,5 @@ FILE_UPLOAD_HANDLERS = [
     "django.core.files.uploadhandler.TemporaryFileUploadHandler",
 ]
 DEFAULT_FILE_STORAGE_CHUNK_SIZE = 1 * 1024 * 1024  # 1 MB
-SHEETS_CONFIG = os.path.join(BASE_DIR, "dbi_checks_data", "sheets_mapping.json")
-DBI_FORMULAS = os.path.join(BASE_DIR, "dbi_checks_data", "dbi_formulas.json")
+SHEETS_CONFIG = os.path.join(BASE_DIR, "checks", "sheets_mapping.json")
+DBI_FORMULAS = os.path.join(BASE_DIR, "checks", "dbi_formulas.json")
