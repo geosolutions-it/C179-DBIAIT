@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class TaskType_CheckDbi:
     IMPORT_CheckDbi = "IMPORT_CheckDbi"
-    PROCESS_CheckDbi = "PROCESS_CheckDbi"
+    EXPORT_CheckDbi = "EXPORT_CheckDbi"
 
 def get_year(file_path, export_dir):
         """

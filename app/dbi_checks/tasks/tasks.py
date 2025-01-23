@@ -37,6 +37,7 @@ class Import_DbiCheckTask(BaseTask):
     """
 
     task_type = TaskType_CheckDbi.IMPORT_CheckDbi
+    #TODO change the name in order to refer the check name
     name = "import_check_dbi"
     schema = Schema.ANALYSIS
 
@@ -65,7 +66,7 @@ class Import_DbiCheckTask(BaseTask):
 
         colliding_tasks = Task_CheckDbi.objects.filter(
             Q(status=TaskStatus.QUEUED) | Q(status=TaskStatus.RUNNING)
-        ).exclude(Q(schema=Schema.ANALYSIS) & Q(type=TaskType_CheckDbi.PROCESS_CheckDbi))
+        ).exclude(Q(schema=Schema.ANALYSIS))
 
         if len(colliding_tasks) > 0:
             raise exceptions.QueuingCriteriaViolated(
@@ -171,7 +172,7 @@ class Import_DbiCheckTask(BaseTask):
                     # zip final output in export directory
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
-                    print(f"Zip created")
+                    logger.info(f"Zip created")
                     result = True
 
             return result
@@ -242,6 +243,9 @@ class Import_DbiCheckTask(BaseTask):
             if len(import_sheet) > 0:
                 imported_results = all(list(map(lambda x: x.status == 'SUCCESS', import_sheet)))
                 task.status = TaskStatus.SUCCESS if imported_results else TaskStatus.FAILED
+
+            # After the complete of the process, change the task type
+            task.type = TaskType_CheckDbi.EXPORT_CheckDbi
 
             task.progress = 100
             task.end_date = timezone.now()

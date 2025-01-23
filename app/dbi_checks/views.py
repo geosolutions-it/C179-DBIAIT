@@ -23,7 +23,11 @@ from app.settings import (
     SHEETS_CONFIG,
     DBI_FORMULAS
 )
-from app.dbi_checks.serializers import ConsistencyCheckSerializer, ImportedSheetSerializer
+from app.dbi_checks.serializers import (
+    ConsistencyCheckSerializer, 
+    ImportedSheetSerializer,
+    CheckExportTaskSerializer
+)
 
 from app.dbi_checks.models import Task_CheckDbi, TaskStatus, ImportedSheet
 
@@ -122,7 +126,7 @@ class PrioritizedData_check(LoginRequiredMixin, View):
 
 class ChecksListView(LoginRequiredMixin, ListView):
     template_name = u'dbi_checks/historical-checks.html'
-    queryset = Task_CheckDbi.objects.filter(type=U"EXPORT").order_by(u"-start_date")
+    queryset = Task_CheckDbi.objects.filter(type=U"EXPORT_CheckDbi").order_by(u"-start_date")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -135,26 +139,14 @@ class ChecksListView(LoginRequiredMixin, ListView):
 
         return context
 
-    def post(self, request,  *args, **kwargs):
-        """
-        Queue export task and return results of export status
-        """
-        export_schema = request.POST.get(u"export-schema")
-        #ref_year = ast.literal_eval(request.POST.get(u"freeze-year"))
-        self.object_list = self.get_queryset()
-        context = self.get_context_data()
-        #if export_schema == 'dbiait_freeze' and ref_year is None:
-        #    context["error"] = str("Prima di avviare l'export della storicizzazione, selezionare un anno valido")
-        return render(request, ChecksListView.template_name, context)
-        #try:
-        #    ExportTask.send(ExportTask.pre_send(requesting_user=request.user, schema=export_schema, ref_year=ref_year))
-        #except (QueuingCriteriaViolated, SchedulingParametersError) as e:
-        #    context[u"error"] = str(e)
-        #return render(request, ExportListView.template_name, context)
+class GetCheckExportStatus(generics.ListAPIView):
+    queryset = Task_CheckDbi.objects.filter(type='EXPORT_CheckDbi').order_by('-id')
+    serializer_class = CheckExportTaskSerializer
 
 class ChecksDownloadView(LoginRequiredMixin, View):
     def get(self, request, task_id: int):
-        file_path = os.path.join(settings.EXPORT_FOLDER, f"task_{task_id}.zip")
+        file_path = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"task_{task_id}.zip")
+
         if os.path.exists(file_path) and Task_CheckDbi.objects.filter(id=task_id).exists():
             with open(file_path, u"rb") as file_obj:
                 response = HttpResponse(

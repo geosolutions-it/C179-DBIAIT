@@ -114,6 +114,39 @@ const table_function_mapper = {
             });
         }
     },
+    "#check-export-status-table": function (response) {
+        const table = $("#check-export-table").DataTable();
+        if (response) {
+            table.clear().draw();
+            response.forEach(function (data) {
+            var escaped = escape(data.task_log)
+            if (escaped.length > 10000) {
+                var escaped = escape(data.task_log).substr(0, 10000) + "......<br>Controlla il log nello zip per maggiori informazioni";
+            }
+            var errorModal = '<a href="#" onclick="display_error_log(\'' + escaped + '\', \'' + data.status + '\')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="'+ data.status_icon + '"></i></a>'
+            if (data.status == 'RUNNING' || data.status == 'QUEUED') {
+                download = ""
+            } else {
+                var download = '<a href="download/' + data.id + '" target="_blank"><i class="fas fa-download"></i></a>';
+            }
+
+            var ref_year = "Current"
+            if ('ref_year' in data.params.kwargs) {
+                ref_year = "Freeze: " + data.params.kwargs.ref_year
+            }
+            table.row.add([
+                data.id,
+                data.user,
+                data.check_name,
+                get_local_date(data.start_date)  || "--/--/---" ,
+                get_local_date(data.end_date)  || "--/--/---" ,
+                ref_year,
+                errorModal,
+                download,
+                ]).draw( false );
+            });
+        }
+    },
 }
 
 function filter_datatables_results(word_to_filter) {

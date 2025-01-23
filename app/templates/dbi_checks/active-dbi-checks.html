@@ -1,5 +1,6 @@
 {% extends "dbi_checks/base-checks.html" %}
 {% load utils %}
+{% load static %}
 
 {% block import_content %}
 {% if object_list%}
@@ -64,7 +65,7 @@
   $(document).ready(function() {
     $('#dt-import-table').DataTable( {
         "language": {
-            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Italian.json"
+            "url": "{% static 'i18n/Italian.json' %}"
         },
         "order": [[ 1, "desc" ]]
     } );
