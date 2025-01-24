@@ -4,13 +4,14 @@ import pathlib
 
 from django.utils import timezone
 from django.db.models import ObjectDoesNotExist
+from django.conf import settings
 
 from openpyxl.formula.translate import Translator
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
 
 from app.dbi_checks.models import Task_CheckDbi, ImportedSheet, TaskStatus
-from app.dbi_checks.utils import get_last_data_row, get_year
+from app.dbi_checks.utils import get_last_data_row, YearHandler
 
 import logging
 
@@ -26,7 +27,7 @@ class ConsistencyCheck:
         seed: str,
         config: str,
         formulas_config: str,
-        file_dependency: bool,
+        year_required: bool,
         export_dir: pathlib.Path
     ):
         """
@@ -37,13 +38,14 @@ class ConsistencyCheck:
             orm_task: instance of the database Task reporting execution of this export task (default 100)
         """
         
+        self.orm_task = orm_task
         self.imported_file = imported_file
         self.seed = seed
         self.config = config
         self.formulas_config = formulas_config
         self.orm_task = orm_task
         self.export_dir = export_dir
-        self.file_dependency = file_dependency
+        self.year_required = year_required
 
         self.logger = None
 
@@ -58,13 +60,15 @@ class ConsistencyCheck:
         seed_copy = shutil.copy(self.seed, f"{self.export_dir}/{seed_basename}")
         seed_wb = load_workbook(seed_copy, data_only=False)
 
-        if self.file_dependency is True:
+        logger.info(f"{self.year_required}")
+
+        if self.year_required is True:
             # Create the INPUT.xlsx file which it is needed by the DBI_A formulas
-            get_year(self.imported_file, self.export_dir)
-            try:
-                load_workbook(os.path.join(self.export_dir, "INPUT.xlsx"))
-            except:
-                logger.warning(f"Error: The file INPUT.xlsx did not created !")
+            success = YearHandler(self.imported_file, self.export_dir).set_year_to_file()
+            if success:
+                logger.info("Year set successfully and INPUT.xlsx created.")
+            else:
+                logger.info("Failed to set the year or create INPUT.xlsx.")
 
         # Iterate over the sheets to copy data
         for source_sheet, config in self.config.items():

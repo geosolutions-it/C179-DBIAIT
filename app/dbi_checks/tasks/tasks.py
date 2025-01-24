@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.conf import settings
 
-from app.dbi_checks.utils import TaskType_CheckDbi
+from app.dbi_checks.utils import TaskType_CheckDbi, YearHandler
 from app.dbi_checks.models import Task_CheckDbi, Xlsx, ImportedSheet 
 from app.dbi_checks.tasks.checks_definitions.consistency_check import ConsistencyCheck
 
@@ -53,7 +53,7 @@ class Import_DbiCheckTask(BaseTask):
         dbi_a_1_config: str,
         dbi_a_formulas: str,
         dbi_a_1_formulas: str,
-        file_dependency=None,
+        year_required=False,
     ):
 
         # Check if the xlsx files exists
@@ -74,11 +74,15 @@ class Import_DbiCheckTask(BaseTask):
                 "Si prega di riprovare più tardi"
                 # f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
             )
+        
+        # Get analysis year
+        analysis_year = YearHandler(file1).get_year()
 
         # Get or create Xlsx ORM model instance for this task execution
         xlsx, created = Xlsx.objects.get_or_create(name=f"{file1.name.split('.')[0]}_{file2.name.split('.')[0]}",
                                                    file_path1=file_path1,
-                                                   file_path2=file_path2
+                                                   file_path2=file_path2,
+                                                   analysis_year = analysis_year,
                                                    )
         if created:
             xlsx.save()
@@ -100,10 +104,9 @@ class Import_DbiCheckTask(BaseTask):
                   dbi_a_1_config,
                   dbi_a_formulas,
                   dbi_a_1_formulas
-
                 ],
                 "kwargs": {
-                    "file_dependency": file_dependency,
+                    "year_required": year_required,
                 }
             }
         )
@@ -144,7 +147,7 @@ class Import_DbiCheckTask(BaseTask):
             dbi_a_1_formulas,
             ) = args
             
-            file_dependency = kwargs.get("file_dependency")
+            year_required = kwargs.get("year_required")
 
             with tempfile.TemporaryDirectory() as tmp_dir:
                 logger.info(f"Task started with file: {file_path1}")
@@ -155,20 +158,21 @@ class Import_DbiCheckTask(BaseTask):
                                           seed_a, 
                                           dbi_a_config, 
                                           dbi_a_formulas,
-                                          file_dependency,
+                                          year_required,
                                           tmp_checks_export_dir).run()
             
-                # Copy the second file using the DBI_A_1 seed
+                # Copy the second file using the DBI_A_1 seed only if the first copy is completed
                 if result is True:
                     logger.info(f"Task started with file: {file_path2}")
-                    # self.copy_files(task_id, file_path2, seed_a_1, dbi_a_1_config, dbi_a_1_formulas)
+                    year_required = False
                     ConsistencyCheck(orm_task, 
                                      file_path2, 
                                      seed_a_1, 
                                      dbi_a_1_config, 
                                      dbi_a_1_formulas,
-                                     file_dependency,
-                                     tmp_checks_export_dir).run()
+                                     year_required,
+                                     tmp_checks_export_dir,
+                                     ).run()
                     # zip final output in export directory
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)

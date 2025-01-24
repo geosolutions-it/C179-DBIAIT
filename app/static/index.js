@@ -130,17 +130,13 @@ const table_function_mapper = {
                 var download = '<a href="download/' + data.id + '" target="_blank"><i class="fas fa-download"></i></a>';
             }
 
-            var ref_year = "Current"
-            if ('ref_year' in data.params.kwargs) {
-                ref_year = "Freeze: " + data.params.kwargs.ref_year
-            }
             table.row.add([
                 data.id,
                 data.user,
-                data.check_name,
+                data.file_name, 
                 get_local_date(data.start_date)  || "--/--/---" ,
                 get_local_date(data.end_date)  || "--/--/---" ,
-                ref_year,
+                data.analysis_year,
                 errorModal,
                 download,
                 ]).draw( false );

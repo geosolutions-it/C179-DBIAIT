@@ -14,6 +14,8 @@ class Xlsx(models.Model):
     name = models.CharField(max_length=300, blank=False, unique=True)
     file_path1 = models.CharField(max_length=300, blank=False, default=f"{CHECKS_UPLOADED_FILES}/file1.xlsx")
     file_path2 = models.CharField(max_length=300, blank=False, default=f"{CHECKS_UPLOADED_FILES}/file2.xlsx")
+    analysis_year = models.CharField(max_length=10, blank=False, default=f"Current")
+
 
     def __str__(self):
         return f"{self.name}: {self.file1_path}, {self.file2_path}"

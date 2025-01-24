@@ -14,9 +14,11 @@ class ImportedSheetSerializer(serializers.ModelSerializer):
         fields = [u'sheet_name', u'file_name', u'import_start_timestamp', u'import_end_timestamp', u'status']
 
 class CheckExportTaskSerializer(serializers.ModelSerializer):
-    xlsx_name = serializers.CharField(source='xlsx.name', read_only=True)
+    file_name = serializers.CharField(source='xlsx.name', read_only=True)
+    analysis_year = serializers.CharField(source='xlsx.analysis_year', read_only=True)
 
     class Meta:
         model = Task_CheckDbi
-        fields = (u'id', u'user', u'xlsx_name', u'start_date', u'end_date',
-                  u'status', u'style_class', u'status_icon', u'task_log', u'params')
+        fields = (u'id', u'user', u'file_name', u'start_date', u'end_date',
+                  u'analysis_year', u'status', u'style_class', u'status_icon', 
+                  u'task_log')

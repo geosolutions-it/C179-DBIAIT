@@ -11,17 +11,16 @@
       <tr>
         <th>id</th>
         <th>Utente</th>
-        <th>Check</th>
+        <th>File</th>
         <th>Data Inizio</th>
         <th>Data Fine</th>
-        <th>Tipologia</th>
+        <th>Anno di Analisi</th>
         <th>Esito</th>
         <th>Download</th>
       </tr>
     </thead>
     <tbody id="check-export-status-table">
-      {% for export in object_list %}
-      {% endfor %}
+      {% if object_list %}
     </tbody>
   </table>
 </div>
@@ -48,6 +47,7 @@
     </div>
   </div>
 </div>
+{% endif %}
 {% if error %}
 <div class="modal fade in" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
@@ -75,7 +75,7 @@
 <script>
   $(document).ready(function() {
     $('#check-export-table').DataTable( {
-        //retrieve: true,
+         retrieve: true,
         "language": {
             "url": "{% static 'i18n/Italian.json' %}"
         },

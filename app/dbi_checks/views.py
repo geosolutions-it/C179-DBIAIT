@@ -87,7 +87,7 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
                                                    dbi_a_1_config,
                                                    dbi_a_formulas,
                                                    dbi_a_1_formulas,
-                                                   file_dependency=True,
+                                                   year_required=True,
                                                    )
             
             Import_DbiCheckTask.send(task_id)
