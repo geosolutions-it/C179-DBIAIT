@@ -34,7 +34,7 @@ from app.dbi_checks.models import Task_CheckDbi, TaskStatus, ImportedSheet
 # Check: consistenza delle opere
 class Consistency_check(LoginRequiredMixin, ListView):
     template_name = u'dbi_checks/active-dbi-checks.html'
-    queryset = Task_CheckDbi.objects.filter(type='IMPORT_CheckDbi', status__in=[
+    queryset = Task_CheckDbi.objects.filter(imported=True, status__in=[
                                    TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
 
     def get_context_data(self, **kwargs):
@@ -103,7 +103,7 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
         return super().form_invalid(form)
     
 class GetCheckDbiStatus(generics.ListAPIView):
-    queryset = Task_CheckDbi.objects.filter(type='IMPORT_CheckDbi').order_by('-id')[:1]
+    queryset = Task_CheckDbi.objects.filter(imported=True).order_by('-id')[:1]
     serializer_class = ConsistencyCheckSerializer
     permission_classes = [IsAuthenticated]
 
@@ -126,7 +126,7 @@ class PrioritizedData_check(LoginRequiredMixin, View):
 
 class ChecksListView(LoginRequiredMixin, ListView):
     template_name = u'dbi_checks/historical-checks.html'
-    queryset = Task_CheckDbi.objects.filter(type=U"EXPORT_CheckDbi").order_by(u"-start_date")
+    queryset = Task_CheckDbi.objects.filter(exported=True).order_by(u"-start_date")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -140,7 +140,7 @@ class ChecksListView(LoginRequiredMixin, ListView):
         return context
 
 class GetCheckExportStatus(generics.ListAPIView):
-    queryset = Task_CheckDbi.objects.filter(type='EXPORT_CheckDbi').order_by('-id')
+    queryset = Task_CheckDbi.objects.filter(exported=True).order_by('-id')
     serializer_class = CheckExportTaskSerializer
 
 class ChecksDownloadView(LoginRequiredMixin, View):

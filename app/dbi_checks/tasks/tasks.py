@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.conf import settings
 
-from app.dbi_checks.utils import TaskType_CheckDbi, YearHandler
+from app.dbi_checks.utils import YearHandler
 from app.dbi_checks.models import Task_CheckDbi, Xlsx, ImportedSheet 
 from app.dbi_checks.tasks.checks_definitions.consistency_check import ConsistencyCheck
 
@@ -36,7 +36,6 @@ class Import_DbiCheckTask(BaseTask):
             logger.error('Scheduling criteria violated for Import task')
     """
 
-    task_type = TaskType_CheckDbi.IMPORT_CheckDbi
     #TODO change the name in order to refer the check name
     name = "import_check_dbi"
     schema = Schema.ANALYSIS
@@ -92,7 +91,7 @@ class Import_DbiCheckTask(BaseTask):
             requesting_user=requesting_user,
             schema=cls.schema,
             xlsx=xlsx,
-            type=cls.task_type,
+            imported=True,
             name=cls.name,
             params={
                 "args": [
@@ -248,8 +247,8 @@ class Import_DbiCheckTask(BaseTask):
                 imported_results = all(list(map(lambda x: x.status == 'SUCCESS', import_sheet)))
                 task.status = TaskStatus.SUCCESS if imported_results else TaskStatus.FAILED
 
-            # After the complete of the process, change the task type
-            task.type = TaskType_CheckDbi.EXPORT_CheckDbi
+            # After the complete of the process, change the Task_CheckDbi exported field to True
+            task.exported = True
 
             task.progress = 100
             task.end_date = timezone.now()

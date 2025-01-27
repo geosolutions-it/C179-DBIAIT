@@ -27,7 +27,8 @@ class Task_CheckDbi(models.Model):
     xlsx = models.ForeignKey(
         Xlsx, on_delete=models.CASCADE, blank=True, null=True
     )
-    type = models.CharField(max_length=50)
+    imported = models.BooleanField(blank=True, null=False, default=False)
+    exported = models.BooleanField(blank=True, null=False, default=False)
     name = models.CharField(max_length=300)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
@@ -41,13 +42,13 @@ class Task_CheckDbi(models.Model):
     def save(self, *args, **kwargs):
         if not self.logfile:
             self.logfile = os.path.join(
-                settings.BASE_DIR, "task_check_dbi_logs", f"{self.type}_{self.uuid}.log"
+                settings.BASE_DIR, "task_check_dbi_logs", f"{self.name}_{self.uuid}.log"
             )
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.type}:{self.name}"
+        return f"{self.name}"
 
     @property
     def user(self):

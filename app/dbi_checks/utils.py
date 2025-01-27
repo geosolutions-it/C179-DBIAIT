@@ -6,11 +6,6 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-
-class TaskType_CheckDbi:
-    IMPORT_CheckDbi = "IMPORT_CheckDbi"
-    EXPORT_CheckDbi = "EXPORT_CheckDbi"
-
 class YearHandler:
     def __init__(self, imported_file, export_dir=None):
         
