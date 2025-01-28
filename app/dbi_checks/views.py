@@ -64,8 +64,6 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
             with open(xlsx_file1_path, 'wb') as f:
                 for chunk in xlsx_file1.chunks():
                    f.write(chunk)
-        
-        import pdb; pdb.set_trace()
 
         with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx', mode='wb') as temp_file2:
             # Real file name definition instead of a random temp name
