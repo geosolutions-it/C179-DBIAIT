@@ -1,4 +1,5 @@
 import os
+import tempfile
 import json
 
 from django.shortcuts import render, redirect
@@ -17,7 +18,6 @@ from rest_framework.permissions import IsAuthenticated
 from app.dbi_checks.forms import ExcelUploadForm
 from app.dbi_checks.tasks.tasks import Import_DbiCheckTask
 from app.settings import (
-    CHECKS_UPLOADED_FILES, 
     DBI_A_1, 
     DBI_A,
     SHEETS_CONFIG,
@@ -54,8 +54,25 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
         xlsx_file1 = form.cleaned_data["xlsx_file1"]
         xlsx_file2 = form.cleaned_data["xlsx_file2"]
 
-        xlsx_file1_path = os.path.join(CHECKS_UPLOADED_FILES, xlsx_file1.name)
-        xlsx_file2_path = os.path.join(CHECKS_UPLOADED_FILES, xlsx_file2.name)
+        # Get the original filenames
+        xlsx_file_name1 = xlsx_file1.name
+        xlsx_file_name2 = xlsx_file2.name
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx', mode='wb') as temp_file1:
+            # Real file name definition instead of a random temp name
+            xlsx_file1_path = os.path.join(tempfile.gettempdir(), xlsx_file_name1)
+            with open(xlsx_file1_path, 'wb') as f:
+                for chunk in xlsx_file1.chunks():
+                   f.write(chunk)
+        
+        import pdb; pdb.set_trace()
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx', mode='wb') as temp_file2:
+            # Real file name definition instead of a random temp name
+            xlsx_file2_path = os.path.join(tempfile.gettempdir(), xlsx_file_name2)
+            with open(xlsx_file2_path, 'wb') as f:
+                for chunk in xlsx_file2.chunks():
+                    f.write(chunk)
 
         # Load the DBI file sheets config json
         with open(SHEETS_CONFIG, "r") as file:
@@ -68,13 +85,6 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
             dbi_formulas = json.load(file)
             dbi_a_formulas = dbi_formulas.get("DBI_A_formulas", {})
             dbi_a_1_formulas = dbi_formulas.get("DBI_A_1_formulas", {})
-
-        with open(xlsx_file1_path, "wb+") as destination1:
-            for chunk in xlsx_file1.chunks():
-                destination1.write(chunk)
-        with open(xlsx_file2_path, "wb+") as destination2:
-            for chunk in xlsx_file2.chunks():
-                destination2.write(chunk)
 
         if os.path.exists(xlsx_file1_path) and os.path.exists(xlsx_file2_path):
             

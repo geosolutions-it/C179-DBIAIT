@@ -324,10 +324,9 @@ DBIAIT_FRZ_UID_ROLES = ['DBIAIT_FRZ_ROLE_W']
 DBIAIT_FRZ_ADMIN_ROLES = ['DBIAIT_FRZ_ROLE_D']
 
 # DBI checks settings
-# XLSX uploaded files
-CHECKS_UPLOADED_FILES = os.path.join(BASE_DIR, 'app', 'dbi_checks', 'checks_uploaded_files')
+
 # Final files for download
-CHECKS_EXPORT_FOLDER = os.getenv("CHECKS_EXPORT_FOLDER", os.path.join(BASE_DIR, 'app', 'dbi_checks', 'checks_download'))
+CHECKS_EXPORT_FOLDER = os.getenv("CHECKS_EXPORT_FOLDER", os.path.join(FTP_FOLDER, "checks_export"))
 
 # Directory which standard seed files exist
 CHECKS_SEED_FILES = os.getenv("CHECKS_SEED_FILES", os.path.join(BASE_DIR, "checks", "checks_seed_files"))
