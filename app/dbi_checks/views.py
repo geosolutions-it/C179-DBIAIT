@@ -8,7 +8,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.edit import FormView
-from django.contrib import messages
 from django.urls import resolve, reverse
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
@@ -32,28 +31,36 @@ from app.dbi_checks.serializers import (
 
 from app.dbi_checks.models import Task_CheckDbi, TaskStatus, ImportedSheet
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 # Check: consistenza delle opere
-class Consistency_check(LoginRequiredMixin, ListView):
-    template_name = u'dbi_checks/active-dbi-checks.html'
+class ConsistencyCheckView(LoginRequiredMixin, ListView):
+    template_name = u'dbi_checks/active-consistency-check.html'
     queryset = Task_CheckDbi.objects.filter(imported=True, status__in=[
                                    TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
 
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name
-        context = super(Consistency_check, self).get_context_data(**kwargs)
+        context = super(ConsistencyCheckView, self).get_context_data(**kwargs)
         context['bread_crumbs'] = {
             'Checks DBI': reverse('consistency-check-view'), 'Consistenza delle opere': u"#"}
         context['current_url'] = current_url
         return context
 
-class Consistency_check_start(LoginRequiredMixin, FormView):
+class ConsistencyCheckStart(LoginRequiredMixin, FormView):
     
-    template_name = u'dbi_checks/active-dbi-checks.html'
+    template_name = u'dbi_checks/active-consistency-check.html'
     form_class = ExcelUploadForm
 
     def form_valid(self, form):
         xlsx_file1 = form.cleaned_data["xlsx_file1"]
-        xlsx_file2 = form.cleaned_data["xlsx_file2"]
+        xlsx_file2 = form.cleaned_data.get("xlsx_file2")
+
+        if not xlsx_file2:
+            logger.error(f"Both Excel files are required for this check.")
+            return self.form_invalid(form)
 
         # Get the original filenames
         xlsx_file_name1 = xlsx_file1.name
@@ -106,12 +113,12 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
             return redirect(reverse(u"consistency-check-view"))
             
         else:
-            messages.error(self.request, "File processing failed. Please check the file content.")
+            logger.error("File processing failed. Please check the file content.")
 
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Something went wrong with the upload... Please try again")
+        logger.error(f"Something went wrong with the upload... Please try again")
         return super().form_invalid(form)
     
 class GetCheckDbiStatus(generics.ListAPIView):
@@ -132,10 +139,21 @@ class GetImportedSheet(generics.RetrieveAPIView):
         return JsonResponse(response, safe=False)
     
 # Check: dati prioritati
-class PrioritizedData_check(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, 'dbi_checks/base-checks.html')
+class PrioritizedDataView(LoginRequiredMixin, ListView):
+    template_name = u'dbi_checks/active-prioritized-data-check.html'
+    queryset = Task_CheckDbi.objects.filter(imported=True, status__in=[
+                                   TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
 
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = super(PrioritizedDataView, self).get_context_data(**kwargs)
+        context['bread_crumbs'] = {
+            'Checks DBI': reverse('prioritized-data-view'), 'Dati Prioritati': u"#"}
+        context['current_url'] = current_url
+        return context
+
+
+# Views for the history tab
 class ChecksListView(LoginRequiredMixin, ListView):
     template_name = u'dbi_checks/historical-checks.html'
     queryset = Task_CheckDbi.objects.filter(exported=True).order_by(u"-start_date")
