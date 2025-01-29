@@ -1,6 +1,7 @@
 from app.dbi_checks.views import (ConsistencyCheckView, 
                                   PrioritizedDataView, 
                                   ConsistencyCheckStart,
+                                  PrioritizedDataCheckStart,
                                   GetCheckDbiStatus,
                                   GetImportedSheet,
                                   ChecksListView,
@@ -20,6 +21,7 @@ urlpatterns = [
                  name=u'get-dbi-check-single-import-status-api-view')
         ])),
         path(u"prioritized_data", PrioritizedDataView.as_view(), name=u'prioritized-data-view'),
+        path(u"start_pd_check", PrioritizedDataCheckStart.as_view(), name=u'pd-check-start-view'),
         # add more views for other tabs here
         path(u"historical_checks/", include([
             path(u"", ChecksListView.as_view(), name=u'checks-list-view'),

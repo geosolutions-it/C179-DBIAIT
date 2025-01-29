@@ -22,7 +22,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class Import_DbiCheckTask(BaseTask):
+class ConsistencyCheckTask(BaseTask):
     """
     Dramatiq Import task definition class.
 
@@ -36,8 +36,7 @@ class Import_DbiCheckTask(BaseTask):
             logger.error('Scheduling criteria violated for Import task')
     """
 
-    #TODO change the name in order to refer the check name
-    name = "import_check_dbi"
+    name = "consistency_check"
     schema = Schema.ANALYSIS
 
     @classmethod

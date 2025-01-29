@@ -16,7 +16,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 
 from app.dbi_checks.forms import ExcelUploadForm
-from app.dbi_checks.tasks.tasks import Import_DbiCheckTask
+from app.dbi_checks.tasks.tasks import ConsistencyCheckTask
 from app.settings import (
     DBI_A_1, 
     DBI_A,
@@ -55,8 +55,8 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
     form_class = ExcelUploadForm
 
     def form_valid(self, form):
-        xlsx_file1 = form.cleaned_data["xlsx_file1"]
-        xlsx_file2 = form.cleaned_data.get("xlsx_file2")
+        xlsx_file1 = form.cleaned_data["xlsx_file"]
+        xlsx_file2 = form.cleaned_data.get("second_xlsx_file")
 
         if not xlsx_file2:
             logger.error(f"Both Excel files are required for this check.")
@@ -97,12 +97,12 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
 
         if os.path.exists(xlsx_file1_uploaded_path) and os.path.exists(xlsx_file2_uploaded_path):
             
-            task_id = Import_DbiCheckTask.pre_send(self.request.user,
+            task_id = ConsistencyCheckTask.pre_send(self.request.user,
                                                    xlsx_file1_uploaded_path,
                                                    xlsx_file2_uploaded_path,
                                                    year_required=True)
             
-            Import_DbiCheckTask.send(task_id,
+            ConsistencyCheckTask.send(task_id,
                                      DBI_A,
                                      DBI_A_1,
                                      dbi_a_config,
@@ -151,6 +151,64 @@ class PrioritizedDataView(LoginRequiredMixin, ListView):
             'Checks DBI': reverse('prioritized-data-view'), 'Dati Prioritati': u"#"}
         context['current_url'] = current_url
         return context
+    
+class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
+    
+    template_name = u'dbi_checks/active-prioritized-data-check.html'
+    form_class = ExcelUploadForm
+
+    def form_valid(self, form):
+        import pdb; pdb.set_trace()
+        xlsx_file = form.cleaned_data["xlsx_file"]
+
+        # Get the original filenames
+        xlsx_file_name = xlsx_file.name
+
+        # internal uploaded path, and target temp path definition
+        xlsx_file_temp_path = xlsx_file.temporary_file_path()
+        xlsx_file_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name)
+
+        # Copy file in chunks for efficiency
+        with open(xlsx_file_temp_path, 'rb') as src_file:
+            with open(xlsx_file_uploaded_path, 'wb') as dst_file:
+                shutil.copyfileobj(src_file, dst_file, length=1024*1024)
+
+        # Load the DBI file sheets config json
+        with open(SHEETS_CONFIG, "r") as file:
+            sheets_config = json.load(file)
+            dbi_a_config = sheets_config.get("DBI_A", {})
+            dbi_a_1_config = sheets_config.get("DBI_A_1", {})
+
+        # Load the DBI formulas json
+        with open(DBI_FORMULAS, "r") as file:
+            dbi_formulas = json.load(file)
+            dbi_a_formulas = dbi_formulas.get("DBI_A_formulas", {})
+            dbi_a_1_formulas = dbi_formulas.get("DBI_A_1_formulas", {})
+
+        if os.path.exists(xlsx_file_uploaded_path):
+            print(True)
+           # task_id = PrioritizedDataCheckTask.pre_send(self.request.user,
+           #                                        xlsx_file_uploaded_path,
+           #                                        )
+            
+            #PrioritizedDataCheckTask.send(task_id,
+            #                         DBI_A,
+            #                         DBI_A_1,
+            #                         dbi_a_config,
+            #                         dbi_a_1_config,
+            #                         dbi_a_formulas,
+            #                         dbi_a_1_formulas,
+            #                         )
+            return redirect(reverse(u"prioritized-data-view"))
+            
+        else:
+            logger.error("File processing failed. Please check the file content.")
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        logger.error(f"Something went wrong with the upload... Please try again")
+        return super().form_invalid(form)
 
 
 # Views for the history tab
