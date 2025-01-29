@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # DBIAIT apps
     'app.authenticate',
     'app.scheduler',
+    'app.dbi_checks',
 
     # Installed apps
     'rest_framework',
@@ -321,3 +322,31 @@ DBIAIT_ANL_SELECT_ROLES = ['DBIAIT_ANL_ROLE_R']
 DBIAIT_FRZ_SELECT_ROLES = ['DBIAIT_FRZ_ROLE_R']
 DBIAIT_FRZ_UID_ROLES = ['DBIAIT_FRZ_ROLE_W']
 DBIAIT_FRZ_ADMIN_ROLES = ['DBIAIT_FRZ_ROLE_D']
+
+# DBI checks settings
+
+# Final files for download
+CHECKS_EXPORT_FOLDER = os.getenv("CHECKS_EXPORT_FOLDER", os.path.join(FTP_FOLDER, "checks_export"))
+if not os.path.exists(CHECKS_EXPORT_FOLDER):
+    os.mkdir(CHECKS_EXPORT_FOLDER)
+
+# Directory which standard seed files exist
+CHECKS_SEED_FILES = os.getenv("CHECKS_SEED_FILES", os.path.join(BASE_DIR, "checks", "checks_seed_files"))
+DBI_A_1 = os.path.join(CHECKS_SEED_FILES, "DBI_A-1.xlsx")
+DBI_A = os.path.join(CHECKS_SEED_FILES, "DBI_A.xlsx")
+# Get precending and current year from a specific sheet, column and row
+YEAR_VALUE = {
+    "sheet": "DATI",
+    "row": 8,
+    "column": 2
+}
+
+# Upload settings
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+FILE_UPLOAD_HANDLERS = [
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]
+DEFAULT_FILE_STORAGE_CHUNK_SIZE = 1 * 1024 * 1024  # 1 MB
+SHEETS_CONFIG = os.path.join(BASE_DIR, "checks", "sheets_mapping.json")
+DBI_FORMULAS = os.path.join(BASE_DIR, "checks", "dbi_formulas.json")

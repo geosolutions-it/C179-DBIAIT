@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if request.user.is_staff or request.user.is_superuser %}
+    <div class="container">
+        <div class="tab">
+            <a href="{% url 'consistency-check-view' %}" class="tablinks{% if current_url == 'consistency-check-view'%} active{% endif %}">Consistenza delle opere</a>
+            <a href="{% url 'prioritized-data-check-view' %}" class="tablinks{% if current_url == 'prioritized-data-check-view'%} active{% endif %}">Dati prioritati</a>
+            <a href="{% url 'checks-list-view' %}" class="tablinks{% if current_url == 'checks-list-view'%} active{% endif %}">Storico</a>
+        </div>
+    </div>
+
+    <div>
+    {% block import_content %}
+        {# content of the running/current import #}
+    {% endblock %}
+    </div>
+    <div class="tab-content" style="margin-top: 20px;">
+    {% block history_content %}
+        {# content of the history content #}
+    {% endblock %}
+    </div>
+{% else %}
+{% include "errors/denied.html" %}
+{% endif %}
+{% endblock %}

@@ -29,12 +29,14 @@ dist
 
 # django_dramatiq task logs
 task_logs
+task_check_dbi_logs
 
 # temporary export directory
 /export/tmp
 
 # zipped exports
 /export/*.zip*
+/export/checks_export
 
 # Dockerfile
 Dockerfile

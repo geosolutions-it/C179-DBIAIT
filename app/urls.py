@@ -27,5 +27,6 @@ urlpatterns = [
     url(r'^{}admin/'.format(path_prefix), admin.site.urls),
     path(u'{}auth/'.format(path_prefix), include(u'app.authenticate.urls')),
     path(u'{}'.format(path_prefix), include(u'app.scheduler.urls')),
+    path(u'{}'.format(path_prefix), include(u'app.dbi_checks.urls')),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
