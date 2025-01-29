@@ -43,7 +43,6 @@ class ConsistencyCheck:
         self.seed = seed
         self.config = config
         self.formulas_config = formulas_config
-        self.orm_task = orm_task
         self.export_dir = export_dir
         self.year_required = year_required
 
@@ -98,11 +97,14 @@ class ConsistencyCheck:
                 # Call the import_sheet function with a SUCCESS status
                 end_date = timezone.now()
                 self.import_sheet(self.orm_task.id, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.SUCCESS)
-                    
+
             else:
                 end_date = timezone.now()
                 self.import_sheet(self.orm_task.id, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.FAILED)
                 logger.warning(f"Sheet {source_sheet} or {target_sheet} not found!")
+            
+        self.orm_task.progress += 25
+        self.orm_task.save()
 
         # Iterate through each sheet to drag the formulas
         for sheet_name, f_location in self.formulas_config.items():
@@ -135,7 +137,8 @@ class ConsistencyCheck:
             else:
                 logger.warning(f"Something went wrong when filling out the formulas !")
         
-        
+        self.orm_task.progress += 25
+        self.orm_task.save()
         # Save the changes to the file
         seed_wb.save(seed_copy)
 
