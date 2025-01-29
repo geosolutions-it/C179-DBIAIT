@@ -52,5 +52,25 @@
       "Collettori": {"start_row": 4, "start_col": "T", "end_col": "Z"},
       "Depuratori": {"start_row": 4, "start_col": "CU", "end_col": "DA"},
       "Scaricatori": {"start_row": 4, "start_col": "AC", "end_col": "AI"}
+    },
+    "DBI_prior_formulas": {
+      "Fiumi": {"start_row": 6, "start_col": "BF", "end_col": "DG"},
+      "Laghi": {"start_row": 6, "start_col": "BC", "end_col": "CZ"},
+      "Pozzi": {"start_row": 6, "start_col": "BB", "end_col": "CY"},
+      "Sorgenti": {"start_row": 6, "start_col": "AZ", "end_col": "CU"},
+      "Potabilizzatori": {"start_row": 6, "start_col": "BO", "end_col": "DY"},
+      "Adduttrici": {"start_row": 6, "start_col": "AM", "end_col": "BU"},
+      "Addut_tronchi": {"start_row": 6, "start_col": "P", "end_col": "AA"},
+      "Accumuli": {"start_row": 6, "start_col": "AG", "end_col": "BI"},
+      "Pompaggi": {"start_row": 6, "start_col": "AH", "end_col": "BK"},
+      "Distribuzioni": {"start_row": 6, "start_col": "AX", "end_col": "CQ"},
+      "Distrib_tronchi": {"start_row": 6, "start_col": "P", "end_col": "AA"},
+      "Fognature": {"start_row": 6, "start_col": "AD", "end_col": "BC"},
+      "Fognat_tronchi": {"start_row": 6, "start_col": "R", "end_col": "AE"},
+      "Sollevamenti": {"start_row": 6, "start_col": "AD", "end_col": "BC"},
+      "Collettori": {"start_row": 6, "start_col": "V", "end_col": "AM"},
+      "Collett_tronchi": {"start_row": 6, "start_col": "R", "end_col": "AE"},
+      "Depuratori": {"start_row": 6, "start_col": "CW", "end_col": "GO"},
+      "Scaricatori": {"start_row": 6, "start_col": "AE", "end_col": "BE"}
     }
   }

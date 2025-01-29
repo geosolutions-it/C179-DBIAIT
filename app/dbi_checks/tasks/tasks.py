@@ -80,6 +80,7 @@ class ConsistencyCheckTask(BaseTask):
             xlsx.save()
 
         # Create Task ORM model instance for this task execution
+        # TODO check if we really need the params as database field
         current_task = Task_CheckDbi(
             requesting_user=requesting_user,
             schema=cls.schema,

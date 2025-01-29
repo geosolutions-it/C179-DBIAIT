@@ -63,5 +63,25 @@
       "Depuratori": {"target": "Depuratori", "start_col": "A", "start_row": 4},
       "Depurat_pompe": {"target": "Depurat_pompe", "start_col": "A", "start_row": 4},
       "Scaricatori": {"target": "Scaricatori", "start_col": "A", "start_row": 4}
+    },
+    "DBI_PRIORITATI": {
+      "Fiumi": {"target": "Fiumi", "start_col": "A", "start_row": 6},
+      "Laghi": {"target": "Laghi", "start_col": "A", "start_row": 6},
+      "Pozzi": {"target": "Pozzi", "start_col": "A", "start_row": 6},
+      "Sorgenti": {"target": "Sorgenti", "start_col": "A", "start_row": 6},
+      "Potabilizzatori": {"target": "Potabilizzatori", "start_col": "A", "start_row": 6},
+      "Adduttrici": {"target": "Adduttrici", "start_col": "A", "start_row": 6},
+      "Addut_tronchi": {"target": "Addut_tronchi", "start_col": "A", "start_row": 6},
+      "Accumuli": {"target": "Accumuli", "start_col": "A", "start_row": 6},
+      "Pompaggi": {"target": "Pompaggi", "start_col": "A", "start_row": 6},
+      "Distribuzioni": {"target": "Distribuzioni", "start_col": "A", "start_row": 6},
+      "Distrib_tronchi": {"target": "Distrib_tronchi", "start_col": "A", "start_row": 6},
+      "Fognature": {"target": "Fognature", "start_col": "A", "start_row": 6},
+      "Fognat_tronchi": {"target": "Fognat_tronchi", "start_col": "A", "start_row": 6},
+      "Sollevamenti": {"target": "Sollevamenti", "start_col": "A", "start_row": 6},
+      "Collettori": {"target": "Collettori", "start_col": "A", "start_row": 6},
+      "Collett_tronchi": {"target": "Collett_tronchi", "start_col": "A", "start_row": 6},
+      "Depuratori": {"target": "Depuratori", "start_col": "A", "start_row": 6},
+      "Scaricatori": {"target": "Scaricatori", "start_col": "A", "start_row": 6}
     }
   }
