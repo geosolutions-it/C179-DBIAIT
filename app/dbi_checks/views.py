@@ -90,19 +90,19 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
 
         if os.path.exists(xlsx_file1_uploaded_path) and os.path.exists(xlsx_file2_uploaded_path):
             
-            task_id = Import_DbiCheckTask.pre_send(self.request.user, 
+            task_id = Import_DbiCheckTask.pre_send(self.request.user,
                                                    xlsx_file1_uploaded_path,
                                                    xlsx_file2_uploaded_path,
-                                                   DBI_A,
-                                                   DBI_A_1,
-                                                   dbi_a_config,
-                                                   dbi_a_1_config,
-                                                   dbi_a_formulas,
-                                                   dbi_a_1_formulas,
-                                                   year_required=True,
-                                                   )
+                                                   year_required=True)
             
-            Import_DbiCheckTask.send(task_id)
+            Import_DbiCheckTask.send(task_id,
+                                     DBI_A,
+                                     DBI_A_1,
+                                     dbi_a_config,
+                                     dbi_a_1_config,
+                                     dbi_a_formulas,
+                                     dbi_a_1_formulas,
+                                     )
             return redirect(reverse(u"consistency-check-view"))
             
         else:

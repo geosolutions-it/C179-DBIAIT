@@ -46,12 +46,6 @@ class Import_DbiCheckTask(BaseTask):
         requesting_user: get_user_model(),
         file_path1: str,
         file_path2: str,
-        seed_a: str,
-        seed_a_1: str, 
-        dbi_a_config: str,
-        dbi_a_1_config: str,
-        dbi_a_formulas: str,
-        dbi_a_1_formulas: str,
         year_required=False,
     ):
 
@@ -97,12 +91,6 @@ class Import_DbiCheckTask(BaseTask):
                 "args": [
                   str(file_path1),
                   str(file_path2),
-                  seed_a,
-                  seed_a_1,
-                  dbi_a_config,
-                  dbi_a_1_config,
-                  dbi_a_formulas,
-                  dbi_a_1_formulas
                 ],
                 "kwargs": {
                     "year_required": year_required,
@@ -116,8 +104,14 @@ class Import_DbiCheckTask(BaseTask):
     @trace_it
     def execute(self, 
                 task_id: int,
+                seed_a: str,
+                seed_a_1: str, 
+                dbi_a_config: str,
+                dbi_a_1_config: str,
+                dbi_a_formulas: str,
+                dbi_a_1_formulas: str,
                 *args,
-                **kwargs
+                **kwargs,
                 ) -> None:
         
         """
@@ -135,17 +129,9 @@ class Import_DbiCheckTask(BaseTask):
             )
             raise
         try:
-            (
-            file_path1,
-            file_path2,
-            seed_a,
-            seed_a_1,
-            dbi_a_config,
-            dbi_a_1_config,
-            dbi_a_formulas,
-            dbi_a_1_formulas,
-            ) = args
             
+            # unpack the arguments from params
+            file_path1, file_path2 = args
             year_required = kwargs.get("year_required")
 
             with tempfile.TemporaryDirectory() as tmp_dir:
@@ -186,7 +172,7 @@ class Import_DbiCheckTask(BaseTask):
     def perform(self, 
                 task_id: int,
                 *args,
-                **kwargs
+                **kwargs,
                 ) -> None:
         """
         This function executes the logic of the Import Task.
@@ -199,7 +185,7 @@ class Import_DbiCheckTask(BaseTask):
                 f"Task with ID {task_id} was not found!"
             )
             raise
-        
+
         task.start_date = timezone.now()
         task.status = TaskStatus.RUNNING
         task.save()
@@ -207,12 +193,27 @@ class Import_DbiCheckTask(BaseTask):
         logfile = pathlib.Path(task.logfile)
         result = False
         try:
+            (
+            seed_a,
+            seed_a_1,
+            dbi_a_config,
+            dbi_a_1_config,
+            dbi_a_formulas,
+            dbi_a_1_formulas,
+            ) = args
+            
             # create task's log directory
             logfile.parent.mkdir(parents=True, exist_ok=True)
 
             with Tee(logfile, "a"):
                 result = self.execute(
                     task.id, # we send the task instance
+                    seed_a,
+                    seed_a_1, 
+                    dbi_a_config,
+                    dbi_a_1_config,
+                    dbi_a_formulas,
+                    dbi_a_1_formulas,
                     *task.params.get("args", []),
                     **task.params.get("kwargs", {}),
                     )
