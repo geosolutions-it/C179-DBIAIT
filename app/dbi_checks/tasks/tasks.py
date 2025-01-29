@@ -173,7 +173,7 @@ class Import_DbiCheckTask(BaseTask):
                                      tmp_checks_export_dir,
                                      ).run()
                     # zip final output in export directory
-                    export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"task_{orm_task.id}")
+                    export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
                     logger.info(f"Zip created")
                     result = True
@@ -241,10 +241,14 @@ class Import_DbiCheckTask(BaseTask):
             Final check of the ImportedSheet.
             If at least 1 sheet process is failed, the whole task is considered unsuccessful
             '''
-            import_sheet = ImportedSheet.objects.filter(task_id__id=task.id)
+            import_sheet_exists = ImportedSheet.objects.filter(task_id__id=task.id).exists()
 
-            if len(import_sheet) > 0:
-                imported_results = all(list(map(lambda x: x.status == 'SUCCESS', import_sheet)))
+            if import_sheet_exists:
+                # If at least one instance exists, check if all have status 'SUCCESS'
+                import_sheet = ImportedSheet.objects.filter(task_id__id=task.id)
+                imported_results = all(sheet.status == 'SUCCESS' for sheet in import_sheet)
+    
+                # Set task status based on the results
                 task.status = TaskStatus.SUCCESS if imported_results else TaskStatus.FAILED
 
             # After the complete of the process, change the Task_CheckDbi exported field to True

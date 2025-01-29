@@ -1,6 +1,7 @@
 import os
 import tempfile
 import json
+import shutil
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -58,19 +59,22 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
         xlsx_file_name1 = xlsx_file1.name
         xlsx_file_name2 = xlsx_file2.name
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx', mode='wb') as temp_file1:
-            # Real file name definition instead of a random temp name
-            xlsx_file1_path = os.path.join(tempfile.gettempdir(), xlsx_file_name1)
-            with open(xlsx_file1_path, 'wb') as f:
-                for chunk in xlsx_file1.chunks():
-                   f.write(chunk)
+        # internal uploaded path, and target temp path definition
+        xlsx_file1_temp_path = xlsx_file1.temporary_file_path()
+        xlsx_file1_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name1)
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx', mode='wb') as temp_file2:
-            # Real file name definition instead of a random temp name
-            xlsx_file2_path = os.path.join(tempfile.gettempdir(), xlsx_file_name2)
-            with open(xlsx_file2_path, 'wb') as f:
-                for chunk in xlsx_file2.chunks():
-                    f.write(chunk)
+        # Copy file in chunks for efficiency
+        with open(xlsx_file1_temp_path, 'rb') as src_file:
+            with open(xlsx_file1_uploaded_path, 'wb') as dst_file:
+                shutil.copyfileobj(src_file, dst_file, length=1024*1024)
+
+        xlsx_file2_temp_path = xlsx_file1.temporary_file_path()
+        xlsx_file2_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name2)
+
+        # Copy file in chunks for efficiency
+        with open(xlsx_file2_temp_path, 'rb') as src_file:
+            with open(xlsx_file2_uploaded_path, 'wb') as dst_file:
+                shutil.copyfileobj(src_file, dst_file, length=1024*1024)
 
         # Load the DBI file sheets config json
         with open(SHEETS_CONFIG, "r") as file:
@@ -84,11 +88,11 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
             dbi_a_formulas = dbi_formulas.get("DBI_A_formulas", {})
             dbi_a_1_formulas = dbi_formulas.get("DBI_A_1_formulas", {})
 
-        if os.path.exists(xlsx_file1_path) and os.path.exists(xlsx_file2_path):
+        if os.path.exists(xlsx_file1_uploaded_path) and os.path.exists(xlsx_file2_uploaded_path):
             
             task_id = Import_DbiCheckTask.pre_send(self.request.user, 
-                                                   xlsx_file1_path,
-                                                   xlsx_file2_path,
+                                                   xlsx_file1_uploaded_path,
+                                                   xlsx_file2_uploaded_path,
                                                    DBI_A,
                                                    DBI_A_1,
                                                    dbi_a_config,
@@ -153,7 +157,7 @@ class GetCheckExportStatus(generics.ListAPIView):
 
 class ChecksDownloadView(LoginRequiredMixin, View):
     def get(self, request, task_id: int):
-        file_path = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"task_{task_id}.zip")
+        file_path = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{task_id}.zip")
 
         if os.path.exists(file_path) and Task_CheckDbi.objects.filter(id=task_id).exists():
             with open(file_path, u"rb") as file_obj:
@@ -161,7 +165,7 @@ class ChecksDownloadView(LoginRequiredMixin, View):
                     file_obj.read(), content_type=u"application/x-gzip")
                 response[u"Content-Length"] = os.fstat(file_obj.fileno()).st_size
                 response[u"Content-Type"] = u"application/zip"
-                response[u"Content-Disposition"] = f"attachment; filename={task_id}.zip"
+                response[u"Content-Disposition"] = f"attachment; filename=checks_task_{task_id}.zip"
             return response
         context = {u"error": f"Siamo spiacenti che l'archivio richiesto {task_id}.zip non sia presente",
                    u"bread_crumbs": {u"Error": u"#"}}
