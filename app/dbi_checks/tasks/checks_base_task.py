@@ -1,14 +1,17 @@
 import pathlib
 import traceback
 
-from django.db.models import ObjectDoesNotExist
+from django.db.models import Q, ObjectDoesNotExist
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from app.dbi_checks.models import Task_CheckDbi, ImportedSheet 
+from app.dbi_checks.models import Task_CheckDbi, ImportedSheet, Xlsx
+from app.dbi_checks.utils import YearHandler
 
 from app.scheduler.tasks.base_task import BaseTask
-from app.scheduler.utils import TaskStatus
+from app.scheduler.utils import TaskStatus, Schema
 from app.scheduler.logging import Tee
+from app.scheduler import exceptions
 
 class ChecksContext:
     def __init__(self, *args, **kwargs):
@@ -25,6 +28,57 @@ class ChecksBaseTask(BaseTask):
         max_retries = 0
         abstract = True
 
+    schema = Schema.ANALYSIS
+
+    @classmethod
+    def pre_send(
+        cls,
+        requesting_user: get_user_model(),
+        file_path: str,
+        name: str
+    ):
+
+        # Check if the xlsx files exists
+        file = pathlib.Path(file_path)
+        if not file.exists():
+            raise exceptions.SchedulingParametersError(
+                f"Provided *.xlsx file does not exist: {file.name}"
+            )
+
+        colliding_tasks = Task_CheckDbi.objects.filter(
+            Q(status=TaskStatus.QUEUED) | Q(status=TaskStatus.RUNNING)
+        ).exclude(Q(schema=Schema.ANALYSIS))
+
+        if len(colliding_tasks) > 0:
+            raise exceptions.QueuingCriteriaViolated(
+                "Qualcosa è andato storto durante il caricamento o l'elaborazione"
+                "Si prega di riprovare più tardi"
+                # f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
+            )
+        
+        # Get analysis year
+        analysis_year = YearHandler(file).get_year()
+
+        # Get or create Xlsx ORM model instance for this task execution
+        xlsx, created = Xlsx.objects.get_or_create(name=f"{file.name.split('.')[0]}",
+                                                   file_path=file_path,
+                                                   analysis_year = analysis_year,
+                                                   )
+        if created:
+            xlsx.save()
+
+        # Create Task ORM model instance for this task execution
+        current_task = Task_CheckDbi(
+            requesting_user=requesting_user,
+            schema=cls.schema,
+            xlsx=xlsx,
+            imported=True,
+            name=name,
+        )
+        current_task.save()
+
+        return current_task.id
+    
     def perform(self, 
                 task_id: int,
                 context_data: dict
@@ -55,8 +109,8 @@ class ChecksBaseTask(BaseTask):
             with Tee(logfile, "a"):
                 result = self.execute(
                     task.id,
-                    *context_data["args"],
-                    **context_data["kwargs"]
+                    *context_data.get("args", []),
+                    **context_data.get("kwargs", {})
                     )
 
         except Exception as exception:

@@ -16,7 +16,10 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 
 from app.dbi_checks.forms import ExcelUploadForm
-from app.dbi_checks.tasks.tasks import ConsistencyCheckTask
+from app.dbi_checks.tasks.tasks import (
+    ConsistencyCheckTask,
+    PrioritizedDataCheckTask,
+)
 from app.dbi_checks.tasks.checks_base_task import ChecksContext
 from app.settings import (
     DBI_A_1, 
@@ -26,7 +29,7 @@ from app.settings import (
     DBI_FORMULAS
 )
 from app.dbi_checks.serializers import (
-    ConsistencyCheckSerializer, 
+    CheckSerializer, 
     ImportedSheetSerializer,
     CheckExportTaskSerializer
 )
@@ -119,7 +122,8 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
             task_id = ConsistencyCheckTask.pre_send(self.request.user,
                                                     xlsx_file1_uploaded_path,
                                                     xlsx_file2_uploaded_path,
-                                                    year_required=True)
+                                                    name="consistency_check"
+                                                    )
             
             ConsistencyCheckTask.send(task_id, context_data)
 
@@ -136,7 +140,7 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
     
 class GetCheckDbiStatus(generics.ListAPIView):
     queryset = Task_CheckDbi.objects.filter(imported=True).order_by('-id')[:1]
-    serializer_class = ConsistencyCheckSerializer
+    serializer_class = CheckSerializer
     permission_classes = [IsAuthenticated]
 
 class GetImportedSheet(generics.RetrieveAPIView):
@@ -171,7 +175,6 @@ class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
     form_class = ExcelUploadForm
 
     def form_valid(self, form):
-        import pdb; pdb.set_trace()
         xlsx_file = form.cleaned_data["xlsx_file"]
 
         # Get the original filenames
@@ -197,16 +200,25 @@ class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
             dbi_prior_formulas = dbi_formulas.get("DBI_prior_formulas", {})
 
         if os.path.exists(xlsx_file_uploaded_path):
-            print(True)
-           # task_id = PrioritizedDataCheckTask.pre_send(self.request.user,
-           #                                             xlsx_file_uploaded_path,
-           #                                             )
+
+            # set the checks context
+            context = ChecksContext(
+                xlsx_file_uploaded_path,
+                DBI_PRIORITATI,
+                dbi_prior_config,
+                dbi_prior_formulas,
+                )
+            context_data = {
+                "args": context.args,
+            }
+
+            task_id = PrioritizedDataCheckTask.pre_send(self.request.user,
+                                                        xlsx_file_uploaded_path,
+                                                        name="prioritized_data_check"
+                                                        )
             
-            #PrioritizedDataCheckTask.send(task_id,
-            #                         DBI_PRIORITATI,
-            #                         dbi_prior_config,
-            #                         dbi_prior_formulas
-            #                         )
+            PrioritizedDataCheckTask.send(task_id, context_data)
+
             return redirect(reverse(u"prioritized-data-view"))
             
         else:

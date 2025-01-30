@@ -11,14 +11,14 @@ from openpyxl import load_workbook, Workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
 
 from app.dbi_checks.models import Task_CheckDbi, ImportedSheet, TaskStatus
-from app.dbi_checks.utils import get_last_data_row, YearHandler
+from app.dbi_checks.utils import YearHandler
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class ConsistencyCheck:
+class BaseCalc:
 
     def __init__(
         self, 
@@ -27,8 +27,8 @@ class ConsistencyCheck:
         seed: str,
         config: str,
         formulas_config: str,
-        year_required: bool,
-        export_dir: pathlib.Path
+        export_dir: pathlib.Path,
+        year_required: bool = False
     ):
         """
         Initialization function of data export
@@ -53,6 +53,9 @@ class ConsistencyCheck:
 
     def run(self):
 
+        logger.info(f"exported dir path: {self.export_dir}")
+        logger.info(f"exported dir path: {self.year_required}")
+
         # It's crucial to use the read_only argument because it's quite faster
         up_file = load_workbook(self.imported_file, read_only=True)
         seed_basename = os.path.basename(self.seed)
@@ -61,7 +64,7 @@ class ConsistencyCheck:
 
         logger.info(f"{self.year_required}")
 
-        if self.year_required is True:
+        if self.year_required:
             # Create the INPUT.xlsx file which it is needed by the DBI_A formulas
             success = YearHandler(self.imported_file, self.export_dir).set_year_to_file()
             if success:
@@ -88,6 +91,7 @@ class ConsistencyCheck:
                 # Copy data based on the specified column range
                 # Usage of chunks to optimize large row ranges
                 for row in source.iter_rows(min_row=min_row, max_row=source.max_row, min_col=min_col, max_col=source.max_column):
+                    logger.info(f"source_sheet: {source_sheet} target_sheet: {target_sheet} min_row: {min_row} max_row: {source.max_row} min_col: {min_col} max_col: {source.max_column}")
                     for cell in row:
                         if cell.value is not None:
                             target.cell(row=cell.row, column=cell.column, value=cell.value)
@@ -118,7 +122,7 @@ class ConsistencyCheck:
                 start_row = f_location["start_row"]
                 # Re-definition of the last row because the copied file is processed
                 # without saving yet. We don't want to re-load it for time reasons
-                last_row = get_last_data_row(sheet)
+                last_row = self.get_last_data_row(sheet)
 
                 # Copy formulas from row 4 to the rest of the rows
                 for col_idx in range(start_col_index, end_col_index + 1):
@@ -170,4 +174,10 @@ class ConsistencyCheck:
         except Exception as e:
             logger.error(f"An error occurred while importing sheet: {str(e)}")
             raise
+    def get_last_data_row(self, sheet):
+        last_row = 0
+        for row in sheet.iter_rows(min_row=1, max_row=sheet.max_row, min_col=1, max_col=sheet.max_column):
+           if any(cell.value is not None for cell in row):
+                last_row = row[0].row
+        return last_row
     

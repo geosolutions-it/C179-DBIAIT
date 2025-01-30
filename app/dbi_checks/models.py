@@ -11,8 +11,8 @@ from app.scheduler.utils import TaskStatus, status_icon_mapper, style_class_mapp
     
 class Xlsx(models.Model):
     name = models.CharField(max_length=300, blank=False, unique=True)
-    file_path1 = models.CharField(max_length=300, blank=False, null=True)
-    file_path2 = models.CharField(max_length=300, blank=False, null=True)
+    file_path = models.CharField(max_length=300, blank=False, null=True)
+    second_file_path = models.CharField(max_length=300, blank=False, null=True)
     analysis_year = models.CharField(max_length=10, blank=False, default=f"Current")
 
 
@@ -33,9 +33,6 @@ class Task_CheckDbi(models.Model):
     end_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
     logfile = models.CharField(max_length=300, blank=True, default=None)
-    params = models.JSONField(
-        help_text="Task arguments.", blank=True, default=default_storage
-    )
     progress = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):

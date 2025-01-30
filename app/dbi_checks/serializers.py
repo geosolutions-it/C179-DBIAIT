@@ -3,7 +3,7 @@ from rest_framework import serializers
 from app.dbi_checks.models import Task_CheckDbi, ImportedSheet
 
 
-class ConsistencyCheckSerializer(serializers.ModelSerializer):
+class CheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task_CheckDbi
         fields = [u'id', u'uuid', u'status', u'style_class', u'status_icon', u'progress']

@@ -9,8 +9,8 @@ from django.conf import settings
 
 from app.dbi_checks.utils import YearHandler
 from app.dbi_checks.models import Task_CheckDbi, Xlsx
-from app.dbi_checks.tasks.checks_definitions.consistency_check import ConsistencyCheck
-from app.dbi_checks.tasks.checks_base_task import ChecksBaseTask, ChecksContext
+from app.dbi_checks.tasks.checks_definitions.base_calc import BaseCalc
+from app.dbi_checks.tasks.checks_base_task import ChecksBaseTask
 
 from app.scheduler.tasks.base_task import trace_it
 from app.scheduler.utils import TaskStatus, Schema
@@ -22,20 +22,8 @@ logger = logging.getLogger(__name__)
 
 class ConsistencyCheckTask(ChecksBaseTask):
     """
-    Dramatiq Import task definition class.
-
-    Example usage:
-        user = User.objects.get(...)
-        gpkg_path = pathlib.Path(...)
-
-        try:
-            ImportTask.send(ImportTask.pre_send(requesting_user=user, gpkg_path=gpkg_path))
-        except scheduler.exceptions.QueuingCriteriaViolated as e:
-            logger.error('Scheduling criteria violated for Import task')
+    Dramatiq Consistency check task definition class.
     """
-
-    name = "consistency_check"
-    schema = Schema.ANALYSIS
 
     @classmethod
     def pre_send(
@@ -43,7 +31,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
         requesting_user: get_user_model(),
         file_path1: str,
         file_path2: str,
-        year_required=False,
+        name: str
     ):
 
         # Check if the xlsx files exists
@@ -70,30 +58,20 @@ class ConsistencyCheckTask(ChecksBaseTask):
 
         # Get or create Xlsx ORM model instance for this task execution
         xlsx, created = Xlsx.objects.get_or_create(name=f"{file1.name.split('.')[0]}_{file2.name.split('.')[0]}",
-                                                   file_path1=file_path1,
-                                                   file_path2=file_path2,
+                                                   file_path=file_path1,
+                                                   second_file_path=file_path2,
                                                    analysis_year = analysis_year,
                                                    )
         if created:
             xlsx.save()
 
         # Create Task ORM model instance for this task execution
-        # TODO check if we really need the params as database field
         current_task = Task_CheckDbi(
             requesting_user=requesting_user,
             schema=cls.schema,
             xlsx=xlsx,
             imported=True,
-            name=cls.name,
-            params={
-                "args": [
-                  str(file_path1),
-                  str(file_path2),
-                ],
-                "kwargs": {
-                    "year_required": year_required,
-                }
-            }
+            name=name,
         )
         current_task.save()
 
@@ -138,26 +116,87 @@ class ConsistencyCheckTask(ChecksBaseTask):
                 logger.info(f"Task started with file: {xlsx_file1_uploaded_path}")
                 tmp_checks_export_dir = pathlib.Path(tmp_dir)
                 
-                result = ConsistencyCheck(orm_task, 
-                                          xlsx_file1_uploaded_path, 
-                                          DBI_A, 
-                                          dbi_a_config, 
-                                          dbi_a_formulas,
-                                          year_required,
-                                          tmp_checks_export_dir).run()
+                result = BaseCalc(orm_task, 
+                                  xlsx_file1_uploaded_path, 
+                                  DBI_A, 
+                                  dbi_a_config, 
+                                  dbi_a_formulas,
+                                  tmp_checks_export_dir,
+                                  year_required,
+                                  ).run()
             
                 # Copy the second file using the DBI_A_1 seed only if the first copy is completed
                 if result:
                     logger.info(f"Task started with file: {xlsx_file2_uploaded_path}")
                     year_required = False
-                    ConsistencyCheck(orm_task, 
-                                     xlsx_file2_uploaded_path, 
-                                     DBI_A_1, 
-                                     dbi_a_1_config, 
-                                     dbi_a_1_formulas,
-                                     year_required,
-                                     tmp_checks_export_dir,
-                                     ).run()
+                    BaseCalc(orm_task, 
+                             xlsx_file2_uploaded_path, 
+                             DBI_A_1, 
+                             dbi_a_1_config, 
+                             dbi_a_1_formulas,
+                             tmp_checks_export_dir,
+                             year_required,
+                             ).run()
+                    # zip final output in export directory
+                    export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
+                    shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
+                    logger.info(f"Zip created")
+                    result = True
+
+            return result
+        
+        except Exception as e:
+            print(f"Error processing files in the background: {e}")
+
+class PrioritizedDataCheckTask(ChecksBaseTask):
+    """
+    Dramatiq PrioritizedData check task definition class.
+
+    """
+
+    @trace_it
+    def execute(self, 
+                task_id: int,
+                *args, 
+                **kwargs
+                ) -> None:
+        
+        """
+        Method for executing the DBI checks
+        """
+        
+        result = False
+
+        try:
+            orm_task = Task_CheckDbi.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
+            )
+            raise
+        try:         
+            # Unpack context_dict into individual variables
+            (xlsx_file_uploaded_path,
+             DATI_PRIORITATI,
+             dbi_prior_config,
+             dbi_prior_formulas
+            ) = args
+
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                logger.info(f"Task started with file: {xlsx_file_uploaded_path}")
+                tmp_checks_export_dir = pathlib.Path(tmp_dir)
+                
+                result = BaseCalc(orm_task, 
+                                  xlsx_file_uploaded_path, 
+                                  DATI_PRIORITATI, 
+                                  dbi_prior_config, 
+                                  dbi_prior_formulas,
+                                  tmp_checks_export_dir
+                                  ).run()
+            
+                # Copy the second file using the DBI_A_1 seed only if the first copy is completed
+                if result:
                     # zip final output in export directory
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
