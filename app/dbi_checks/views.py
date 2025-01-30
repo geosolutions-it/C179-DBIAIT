@@ -98,30 +98,31 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
             dbi_a_1_formulas = dbi_formulas.get("DBI_A_1_formulas", {})
 
         if os.path.exists(xlsx_file1_uploaded_path) and os.path.exists(xlsx_file2_uploaded_path):
-
+    
             # set the checks context
             context = ChecksContext(
+                xlsx_file1_uploaded_path,
+                xlsx_file2_uploaded_path,
                 DBI_A,
                 DBI_A_1,
                 dbi_a_config,
                 dbi_a_1_config,
                 dbi_a_formulas,
                 dbi_a_1_formulas,
+                year_required=True
             )
-            
+            context_data = {
+                "args": context.args,
+                "kwargs": context.kwargs
+            }
+
             task_id = ConsistencyCheckTask.pre_send(self.request.user,
-                                                   xlsx_file1_uploaded_path,
-                                                   xlsx_file2_uploaded_path,
-                                                   year_required=True)
+                                                    xlsx_file1_uploaded_path,
+                                                    xlsx_file2_uploaded_path,
+                                                    year_required=True)
             
-            ConsistencyCheckTask.send(task_id,
-                                     DBI_A,
-                                     DBI_A_1,
-                                     dbi_a_config,
-                                     dbi_a_1_config,
-                                     dbi_a_formulas,
-                                     dbi_a_1_formulas,
-                                     )
+            ConsistencyCheckTask.send(task_id, context_data)
+
             return redirect(reverse(u"consistency-check-view"))
             
         else:

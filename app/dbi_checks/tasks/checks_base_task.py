@@ -1,6 +1,5 @@
 import pathlib
 import traceback
-from dramatiq import GenericActor
 
 from django.db.models import ObjectDoesNotExist
 from django.utils import timezone
@@ -16,16 +15,23 @@ class ChecksContext:
         self.args = args
         self.kwargs = kwargs
 
+    @property
+    def year_required(self):
+        return self.kwards.get("year_required", False)
+
 class ChecksBaseTask(BaseTask):
     """
     This class inherits from the scheduler.base_task.BaseTask
     which is inherits from GenericActor
     """
 
+    class Meta:
+        max_retries = 0
+        abstract = True
+
     def perform(self, 
                 task_id: int,
-                *args,
-                **kwargs,
+                context_data: dict
                 ) -> None:
         """
         This function executes the logic of the Import Task.
@@ -46,29 +52,14 @@ class ChecksBaseTask(BaseTask):
         logfile = pathlib.Path(task.logfile)
         result = False
         try:
-            (
-            seed_a,
-            seed_a_1,
-            dbi_a_config,
-            dbi_a_1_config,
-            dbi_a_formulas,
-            dbi_a_1_formulas,
-            ) = args
             
             # create task's log directory
             logfile.parent.mkdir(parents=True, exist_ok=True)
 
             with Tee(logfile, "a"):
                 result = self.execute(
-                    task.id, # we send the task instance
-                    seed_a,
-                    seed_a_1, 
-                    dbi_a_config,
-                    dbi_a_1_config,
-                    dbi_a_formulas,
-                    dbi_a_1_formulas,
-                    *task.params.get("args", []),
-                    **task.params.get("kwargs", {}),
+                    task.id,
+                    context_data
                     )
 
         except Exception as exception:

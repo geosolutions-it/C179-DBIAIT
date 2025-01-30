@@ -2,27 +2,25 @@ import os
 import tempfile
 import pathlib
 import shutil
-import traceback
 
 from django.db.models import Q, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
-from django.utils import timezone
 from django.conf import settings
 
 from app.dbi_checks.utils import YearHandler
-from app.dbi_checks.models import Task_CheckDbi, Xlsx, ImportedSheet 
+from app.dbi_checks.models import Task_CheckDbi, Xlsx
 from app.dbi_checks.tasks.checks_definitions.consistency_check import ConsistencyCheck
+from app.dbi_checks.tasks.checks_base_task import ChecksBaseTask, ChecksContext
 
-from app.scheduler.tasks.base_task import BaseTask, trace_it
+from app.scheduler.tasks.base_task import trace_it
 from app.scheduler.utils import TaskStatus, Schema
 from app.scheduler import exceptions
-from app.scheduler.logging import Tee
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-class ConsistencyCheckTask(BaseTask):
+class ConsistencyCheckTask(ChecksBaseTask):
     """
     Dramatiq Import task definition class.
 
@@ -104,14 +102,7 @@ class ConsistencyCheckTask(BaseTask):
     @trace_it
     def execute(self, 
                 task_id: int,
-                seed_a: str,
-                seed_a_1: str, 
-                dbi_a_config: str,
-                dbi_a_1_config: str,
-                dbi_a_formulas: str,
-                dbi_a_1_formulas: str,
-                *args,
-                **kwargs,
+                context_data: dict
                 ) -> None:
         
         """
@@ -128,31 +119,40 @@ class ConsistencyCheckTask(BaseTask):
                 f"between task scheduling and execution."
             )
             raise
-        try:
-            
-            # unpack the arguments from params
-            file_path1, file_path2 = args
-            year_required = kwargs.get("year_required")
+        try:         
+            # Unpack context_dict into individual variables
+            (xlsx_file1_uploaded_path,
+             xlsx_file2_uploaded_path,
+             DBI_A,
+             DBI_A_1,
+             dbi_a_config,
+             dbi_a_1_config,
+             dbi_a_formulas,
+             dbi_a_1_formulas
+            ) = context_data.get("args", [])
+
+            kwargs = context_data.get("kwargs", {})
+            year_required = kwargs.get("year_required", False)
 
             with tempfile.TemporaryDirectory() as tmp_dir:
-                logger.info(f"Task started with file: {file_path1}")
+                logger.info(f"Task started with file: {xlsx_file1_uploaded_path}")
                 tmp_checks_export_dir = pathlib.Path(tmp_dir)
                 
                 result = ConsistencyCheck(orm_task, 
-                                          file_path1, 
-                                          seed_a, 
+                                          xlsx_file1_uploaded_path, 
+                                          DBI_A, 
                                           dbi_a_config, 
                                           dbi_a_formulas,
                                           year_required,
                                           tmp_checks_export_dir).run()
             
                 # Copy the second file using the DBI_A_1 seed only if the first copy is completed
-                if result is True:
-                    logger.info(f"Task started with file: {file_path2}")
+                if result:
+                    logger.info(f"Task started with file: {xlsx_file2_uploaded_path}")
                     year_required = False
                     ConsistencyCheck(orm_task, 
-                                     file_path2, 
-                                     seed_a_1, 
+                                     xlsx_file2_uploaded_path, 
+                                     DBI_A_1, 
                                      dbi_a_1_config, 
                                      dbi_a_1_formulas,
                                      year_required,
@@ -168,95 +168,6 @@ class ConsistencyCheckTask(BaseTask):
         
         except Exception as e:
             print(f"Error processing files in the background: {e}")
-        
-    def perform(self, 
-                task_id: int,
-                *args,
-                **kwargs,
-                ) -> None:
-        """
-        This function executes the logic of the Import Task.
-        """
-
-        try:
-            task = Task_CheckDbi.objects.get(pk=task_id)
-        except ObjectDoesNotExist:
-            print(
-                f"Task with ID {task_id} was not found!"
-            )
-            raise
-
-        task.start_date = timezone.now()
-        task.status = TaskStatus.RUNNING
-        task.save()
-
-        logfile = pathlib.Path(task.logfile)
-        result = False
-        try:
-            (
-            seed_a,
-            seed_a_1,
-            dbi_a_config,
-            dbi_a_1_config,
-            dbi_a_formulas,
-            dbi_a_1_formulas,
-            ) = args
             
-            # create task's log directory
-            logfile.parent.mkdir(parents=True, exist_ok=True)
-
-            with Tee(logfile, "a"):
-                result = self.execute(
-                    task.id, # we send the task instance
-                    seed_a,
-                    seed_a_1, 
-                    dbi_a_config,
-                    dbi_a_1_config,
-                    dbi_a_formulas,
-                    dbi_a_1_formulas,
-                    *task.params.get("args", []),
-                    **task.params.get("kwargs", {}),
-                    )
-
-        except Exception as exception:
-            task.status = TaskStatus.FAILED
-            task.save()
-
-            traceback_info = "".join(
-                traceback.TracebackException.from_exception(exception).format()
-            )
-            print(traceback_info)
-
-            # try logging the exception
-            try:
-                with open(task.logfile, "a") as log:
-                    log.write(traceback_info)
-            except:
-                pass
-        else:
-            task.status = TaskStatus.SUCCESS if result else TaskStatus.FAILED
-            task.progress = 100
-            task.save()
-        finally:
-            '''
-            Final check of the ImportedSheet.
-            If at least 1 sheet process is failed, the whole task is considered unsuccessful
-            '''
-            import_sheet_exists = ImportedSheet.objects.filter(task_id__id=task.id).exists()
-
-            if import_sheet_exists:
-                # If at least one instance exists, check if all have status 'SUCCESS'
-                import_sheet = ImportedSheet.objects.filter(task_id__id=task.id)
-                imported_results = all(sheet.status == 'SUCCESS' for sheet in import_sheet)
-    
-                # Set task status based on the results
-                task.status = TaskStatus.SUCCESS if imported_results else TaskStatus.FAILED
-
-            # After the complete of the process, change the Task_CheckDbi exported field to True
-            task.exported = True
-
-            task.progress = 100
-            task.end_date = timezone.now()
-            task.save()
 
     
