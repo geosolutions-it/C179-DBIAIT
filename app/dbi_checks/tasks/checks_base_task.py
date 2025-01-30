@@ -15,10 +15,6 @@ class ChecksContext:
         self.args = args
         self.kwargs = kwargs
 
-    @property
-    def year_required(self):
-        return self.kwards.get("year_required", False)
-
 class ChecksBaseTask(BaseTask):
     """
     This class inherits from the scheduler.base_task.BaseTask
@@ -59,7 +55,8 @@ class ChecksBaseTask(BaseTask):
             with Tee(logfile, "a"):
                 result = self.execute(
                     task.id,
-                    context_data
+                    *context_data["args"],
+                    **context_data["kwargs"]
                     )
 
         except Exception as exception:

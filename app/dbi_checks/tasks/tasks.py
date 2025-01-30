@@ -102,7 +102,8 @@ class ConsistencyCheckTask(ChecksBaseTask):
     @trace_it
     def execute(self, 
                 task_id: int,
-                context_data: dict
+                *args, 
+                **kwargs
                 ) -> None:
         
         """
@@ -129,9 +130,8 @@ class ConsistencyCheckTask(ChecksBaseTask):
              dbi_a_1_config,
              dbi_a_formulas,
              dbi_a_1_formulas
-            ) = context_data.get("args", [])
+            ) = args
 
-            kwargs = context_data.get("kwargs", {})
             year_required = kwargs.get("year_required", False)
 
             with tempfile.TemporaryDirectory() as tmp_dir:
