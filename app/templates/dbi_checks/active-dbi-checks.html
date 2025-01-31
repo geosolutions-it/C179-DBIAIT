@@ -85,7 +85,7 @@
         <input type="file" name="xlsx_file2" id="id_xlsx_file2" class="form-control" required>
     </div>
     </div>
-    <button type="submit" class="btn btn-info mb-2 btn-block">AVVIA</button>
+    <button type="submit" class="btn btn-info mb-2 btn-block" onclick="loadIcon();">AVVIA</button>
   </form>
 </div>
 {% endif %}
@@ -113,4 +113,24 @@
     });
 </script>
 {% endif %}
+<style>
+  #custom-loading-modal .modal-dialog{
+    display: table;
+    position: relative;
+    margin: 0 auto;
+    top: calc(50% - 24px);
+  }
+
+  #custom-loading-modal .modal-dialog .modal-content{
+    background-color: transparent;
+    border: none;
+  }
+</style>
+<script>
+  function loadIcon() {
+    if(document.getElementById("id_xlsx_file1").files.length != 0 && document.getElementById("id_xlsx_file2").files.length != 0 ){
+      $('.custom-loading-modal').modal('show');
+    }
+  }
+</script>
 {% endblock %}
