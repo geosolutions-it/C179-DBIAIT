@@ -207,6 +207,7 @@ class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
                 DBI_PRIORITATI,
                 dbi_prior_config,
                 dbi_prior_formulas,
+                # year_required=False
                 )
             context_data = {
                 "args": context.args,

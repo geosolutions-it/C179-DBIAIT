@@ -4,7 +4,6 @@ import pathlib
 
 from django.utils import timezone
 from django.db.models import ObjectDoesNotExist
-from django.conf import settings
 
 from openpyxl.formula.translate import Translator
 from openpyxl import load_workbook, Workbook
@@ -54,7 +53,6 @@ class BaseCalc:
     def run(self):
 
         logger.info(f"exported dir path: {self.export_dir}")
-        logger.info(f"exported dir path: {self.year_required}")
 
         # It's crucial to use the read_only argument because it's quite faster
         up_file = load_workbook(self.imported_file, read_only=True)
@@ -91,11 +89,10 @@ class BaseCalc:
                 # Copy data based on the specified column range
                 # Usage of chunks to optimize large row ranges
                 for row in source.iter_rows(min_row=min_row, max_row=source.max_row, min_col=min_col, max_col=source.max_column):
-                    logger.info(f"source_sheet: {source_sheet} target_sheet: {target_sheet} min_row: {min_row} max_row: {source.max_row} min_col: {min_col} max_col: {source.max_column}")
                     for cell in row:
                         if cell.value is not None:
                             target.cell(row=cell.row, column=cell.column, value=cell.value)
-
+  
                 logger.info(f"Copied data from sheet: {source_sheet} to {target_sheet}")
                 
                 # Call the import_sheet function with a SUCCESS status
@@ -107,7 +104,7 @@ class BaseCalc:
                 self.import_sheet(self.orm_task.id, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.FAILED)
                 logger.warning(f"Sheet {source_sheet} or {target_sheet} not found!")
             
-        self.orm_task.progress += 25
+        self.orm_task.progress += 50
         self.orm_task.save()
 
         # Iterate through each sheet to drag the formulas
@@ -138,19 +135,42 @@ class BaseCalc:
                             sheet[f"{column_letter}{row_idx}"].value = adjusted_formula
 
                 logger.info(f"The formulas were populated from sheet: {sheet_name}")
+
             else:
                 logger.warning(f"Something went wrong when filling out the formulas !")
         
-        self.orm_task.progress += 25
+        self.orm_task.progress += 50
         self.orm_task.save()
-        # Save the changes to the file
-        seed_wb.save(seed_copy)
+
+        logger.info(f"The file is ready to be saved")
+
+        export_path = f"{self.export_dir}/Final_Output.xlsx"
+        # seed_wb.save(seed_copy)
+        self.save_large_workbook(seed_wb, export_path)
 
         # Clean up by deleting the temporary files
         os.remove(self.imported_file)
+        logger.info(f"Final workbook save completed.")
 
         return True
 
+    def save_large_workbook(self, wb, export_path: str):
+        # Create a temporary write-only workbook
+        temp_wb = Workbook(write_only=True)
+   
+        for ws in wb.worksheets:
+            # Create new write-only sheet
+            temp_ws = temp_wb.create_sheet(title=ws.title)
+
+            # Copy rows from the original worksheet
+            for row in ws.iter_rows(values_only=False):
+                temp_ws.append([cell.value for cell in row])
+
+        # Save to disk in an optimized manner
+        temp_wb.save(export_path)
+        temp_wb.close()
+        print(f"Workbook saved successfully at {export_path}")
+    
     def import_sheet(self, task_id, sheet, file_name, start_date, end_date, status):
     
         try:

@@ -62,15 +62,6 @@
       "Adduttrici": {"start_row": 6, "start_col": "AM", "end_col": "BU"},
       "Addut_tronchi": {"start_row": 6, "start_col": "P", "end_col": "AA"},
       "Accumuli": {"start_row": 6, "start_col": "AG", "end_col": "BI"},
-      "Pompaggi": {"start_row": 6, "start_col": "AH", "end_col": "BK"},
-      "Distribuzioni": {"start_row": 6, "start_col": "AX", "end_col": "CQ"},
-      "Distrib_tronchi": {"start_row": 6, "start_col": "P", "end_col": "AA"},
-      "Fognature": {"start_row": 6, "start_col": "AD", "end_col": "BC"},
-      "Fognat_tronchi": {"start_row": 6, "start_col": "R", "end_col": "AE"},
-      "Sollevamenti": {"start_row": 6, "start_col": "AD", "end_col": "BC"},
-      "Collettori": {"start_row": 6, "start_col": "V", "end_col": "AM"},
-      "Collett_tronchi": {"start_row": 6, "start_col": "R", "end_col": "AE"},
-      "Depuratori": {"start_row": 6, "start_col": "CW", "end_col": "GO"},
-      "Scaricatori": {"start_row": 6, "start_col": "AE", "end_col": "BE"}
+      "Pompaggi": {"start_row": 6, "start_col": "AH", "end_col": "BK"}
     }
   }
