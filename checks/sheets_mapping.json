@@ -70,9 +70,6 @@
       "Pozzi": {"target": "Pozzi", "start_col": "A", "start_row": 6},
       "Sorgenti": {"target": "Sorgenti", "start_col": "A", "start_row": 6},
       "Potabilizzatori": {"target": "Potabilizzatori", "start_col": "A", "start_row": 6},
-      "Adduttrici": {"target": "Adduttrici", "start_col": "A", "start_row": 6},
-      "Addut_tronchi": {"target": "Addut_tronchi", "start_col": "A", "start_row": 6},
-      "Accumuli": {"target": "Accumuli", "start_col": "A", "start_row": 6},
-      "Pompaggi": {"target": "Pompaggi", "start_col": "A", "start_row": 6}
+      "Adduttrici": {"target": "Adduttrici", "start_col": "A", "start_row": 6}
     }
   }

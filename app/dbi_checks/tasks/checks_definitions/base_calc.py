@@ -146,7 +146,7 @@ class BaseCalc:
 
         export_path = f"{self.export_dir}/Final_Output.xlsx"
         # seed_wb.save(seed_copy)
-        self.save_large_workbook(seed_wb, export_path)
+        self.save_large_workbook_in_chunks(seed_wb, export_path)
 
         # Clean up by deleting the temporary files
         os.remove(self.imported_file)
@@ -154,21 +154,43 @@ class BaseCalc:
 
         return True
 
-    def save_large_workbook(self, wb, export_path: str):
-        # Create a temporary write-only workbook
-        temp_wb = Workbook(write_only=True)
-   
-        for ws in wb.worksheets:
-            # Create new write-only sheet
-            temp_ws = temp_wb.create_sheet(title=ws.title)
+    def save_large_workbook_in_chunks(self, source_wb, export_path: str, chunk_size=500):
+        # Open the source workbook in memory
+        for source_ws in source_wb.worksheets:
+            # Open a new file to save data incrementally
+            with open(export_path, 'wb') as export_file:
+                max_row = source_ws.max_row
+                max_col = source_ws.max_column
+            
+                # Loop through the rows in chunks
+                for start_row in range(1, max_row + 1, chunk_size):
+                    end_row = min(start_row + chunk_size - 1, max_row)
+                
+                    # Create a temporary workbook to hold chunked rows
+                    temp_wb = Workbook()
+                    temp_ws = temp_wb.active
+                    temp_ws.title = source_ws.title
+                
+                    # Write chunk of rows to the temporary sheet
+                    for row in source_ws.iter_rows(min_row=start_row, max_row=end_row, min_col=1, max_col=max_col):
+                        for cell in row:
+                            target_cell = temp_ws.cell(row=cell.row - start_row + 1, column=cell.column, value=cell.value)
+                       
+                            # Copy style
+                            if cell.has_style:
+                                target_cell._style = cell._style
+                        
+                            # Copy formula
+                            if cell.data_type == 'f':
+                                target_cell.value = f"={cell.value}"
+                
+                    # Merge cells from source to temporary sheet
+                    for merged_range in source_ws.merged_cells.ranges:
+                        temp_ws.merge_cells(str(merged_range))
 
-            # Copy rows from the original worksheet
-            for row in ws.iter_rows(values_only=False):
-                temp_ws.append([cell.value for cell in row])
+                    # Save the temporary workbook (chunk) to the file
+                    temp_wb.save(export_file)
 
-        # Save to disk in an optimized manner
-        temp_wb.save(export_path)
-        temp_wb.close()
         print(f"Workbook saved successfully at {export_path}")
     
     def import_sheet(self, task_id, sheet, file_name, start_date, end_date, status):
