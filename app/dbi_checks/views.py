@@ -68,7 +68,7 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
             with open(xlsx_file1_uploaded_path, 'wb') as dst_file:
                 shutil.copyfileobj(src_file, dst_file, length=1024*1024)
 
-        xlsx_file2_temp_path = xlsx_file1.temporary_file_path()
+        xlsx_file2_temp_path = xlsx_file2.temporary_file_path()
         xlsx_file2_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name2)
 
         # Copy file in chunks for efficiency
