@@ -73,9 +73,6 @@
 </script>
 {% else %}
 <div class="container mt-5">
-  <div id="slow_warning" style="display:none">
-    
-  </div>
   <form method="POST" enctype="multipart/form-data" action="{% url 'cons-check-start-view' %}" class="mt-5">
     {% csrf_token %}
     <div class="form-group mt-5">
@@ -88,7 +85,7 @@
         <input type="file" name="xlsx_file2" id="id_xlsx_file2" class="form-control" required>
     </div>
     </div>
-    <button type="submit" class="btn btn-info mb-2 btn-block" onclick="myFunction();">AVVIA</button>
+    <button type="submit" class="btn btn-info mb-2 btn-block" onclick="loadIcon();">AVVIA</button>
   </form>
 </div>
 {% endif %}
@@ -130,7 +127,7 @@
   }
 </style>
 <script>
-  function myFunction() {
+  function loadIcon() {
     if(document.getElementById("id_xlsx_file1").files.length != 0 && document.getElementById("id_xlsx_file2").files.length != 0 ){
       $('.custom-loading-modal').modal('show');
     }
