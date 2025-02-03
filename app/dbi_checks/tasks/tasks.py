@@ -156,7 +156,6 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
     """
     
     @trace_it
-    @dramatiq.actor(time_limit=3600000)  # Set max_age for 1 hour in milliseconds
     def execute(self, 
                 task_id: int,
                 *args, 

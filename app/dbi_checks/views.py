@@ -207,7 +207,6 @@ class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
                 DBI_PRIORITATI,
                 dbi_prior_config,
                 dbi_prior_formulas,
-                # year_required=False
                 )
             context_data = {
                 "args": context.args,
@@ -215,10 +214,10 @@ class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
 
             task_id = PrioritizedDataCheckTask.pre_send(self.request.user,
                                                         xlsx_file_uploaded_path,
-                                                        name="prioritized_data_check"
+                                                        name="prioritized_data_check",
                                                         )
             
-            PrioritizedDataCheckTask.send(task_id, context_data)
+            PrioritizedDataCheckTask.send(task_id=task_id, context_data=context_data)
 
             return redirect(reverse(u"prioritized-data-view"))
             

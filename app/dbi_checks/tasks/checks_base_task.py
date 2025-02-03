@@ -14,9 +14,9 @@ from app.scheduler.logging import Tee
 from app.scheduler import exceptions
 
 class ChecksContext:
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         self.args = args
-        #self.kwargs = kwargs
+        self.kwargs = kwargs
 
 class ChecksBaseTask(BaseTask):
     """
