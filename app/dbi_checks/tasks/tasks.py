@@ -2,6 +2,7 @@ import os
 import tempfile
 import pathlib
 import shutil
+import dramatiq
 
 from django.db.models import Q, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
@@ -153,8 +154,9 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
     Dramatiq PrioritizedData check task definition class.
 
     """
-
+    
     @trace_it
+    @dramatiq.actor(time_limit=3600000)  # Set max_age for 1 hour in milliseconds
     def execute(self, 
                 task_id: int,
                 *args, 
@@ -207,6 +209,7 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
         
         except Exception as e:
             print(f"Error processing files in the background: {e}")
+
             
 
     
