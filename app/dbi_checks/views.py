@@ -20,6 +20,7 @@ from app.dbi_checks.tasks.tasks import (
     ConsistencyCheckTask,
     PrioritizedDataCheckTask,
 )
+from app.dbi_checks.utils import CheckType
 from app.dbi_checks.tasks.checks_base_task import ChecksContext
 from app.settings import (
     DBI_A_1, 
@@ -122,7 +123,8 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
             task_id = ConsistencyCheckTask.pre_send(self.request.user,
                                                     xlsx_file1_uploaded_path,
                                                     xlsx_file2_uploaded_path,
-                                                    name="consistency_check"
+                                                    name="consistency_check",
+                                                    check_type=CheckType.CDO
                                                     )
             
             ConsistencyCheckTask.send(task_id, context_data)
@@ -137,12 +139,23 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         logger.error(f"Something went wrong with the upload... Please try again")
         return super().form_invalid(form)
-    
-class GetCheckDbiStatus(generics.ListAPIView):
-    queryset = Task_CheckDbi.objects.filter(imported=True).order_by('-id')[:1]
+
+
+class GetConsistencyCheckStatus(generics.ListAPIView):
+    queryset = Task_CheckDbi.objects.filter(imported=True,
+                                            check_type=CheckType.CDO
+                                            ).order_by('-id')[:1]
     serializer_class = CheckSerializer
     permission_classes = [IsAuthenticated]
 
+class GetPrioritizedDataCheckStatus(generics.ListAPIView):
+    queryset = Task_CheckDbi.objects.filter(imported=True,
+                                            check_type=CheckType.DP
+                                            ).order_by('-id')[:1]
+    serializer_class = CheckSerializer
+    permission_classes = [IsAuthenticated]
+
+#TODO we need a separate view for each check
 class GetImportedSheet(generics.RetrieveAPIView):
     serializer_class = ImportedSheetSerializer
     permission_classes = [IsAuthenticated]
@@ -207,6 +220,7 @@ class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
                 DBI_PRIORITATI,
                 dbi_prior_config,
                 dbi_prior_formulas,
+                # year_required=False
                 )
             context_data = {
                 "args": context.args,
@@ -215,6 +229,7 @@ class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
             task_id = PrioritizedDataCheckTask.pre_send(self.request.user,
                                                         xlsx_file_uploaded_path,
                                                         name="prioritized_data_check",
+                                                        check_type=CheckType.DP
                                                         )
             
             PrioritizedDataCheckTask.send(task_id=task_id, context_data=context_data)

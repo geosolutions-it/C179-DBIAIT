@@ -135,7 +135,7 @@ class BaseCalc:
                             # Set the adjusted formula in the target row
                             sheet[f"{column_letter}{row_idx}"].value = adjusted_formula
 
-                seed_wb.save(seed_copy)
+                #seed_wb.save(seed_copy)
                 logger.info(f"The formulas were populated from sheet: {sheet_name}")
 
             else:
@@ -147,7 +147,7 @@ class BaseCalc:
         logger.info(f"The file is ready to be saved")
 
         # save logic
-        # seed_wb.save(seed_copy)
+        seed_wb.save(seed_copy)
         del seed_wb
 
         # Clean up by deleting the import file

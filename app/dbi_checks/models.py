@@ -26,9 +26,9 @@ class Task_CheckDbi(models.Model):
     xlsx = models.ForeignKey(
         Xlsx, on_delete=models.CASCADE, blank=True, null=True
     )
-    #TODO add a field e.g check_name in order to not all tabs display the table results
     imported = models.BooleanField(blank=True, null=False, default=False)
     exported = models.BooleanField(blank=True, null=False, default=False)
+    check_type = models.CharField(max_length=20, null=False, default=False)
     name = models.CharField(max_length=300)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)

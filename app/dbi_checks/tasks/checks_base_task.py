@@ -35,7 +35,8 @@ class ChecksBaseTask(BaseTask):
         cls,
         requesting_user: get_user_model(),
         file_path: str,
-        name: str
+        name: str,
+        check_type: str,
     ):
 
         # Check if the xlsx files exists
@@ -73,6 +74,7 @@ class ChecksBaseTask(BaseTask):
             schema=cls.schema,
             xlsx=xlsx,
             imported=True,
+            check_type=check_type,
             name=name,
         )
         current_task.save()

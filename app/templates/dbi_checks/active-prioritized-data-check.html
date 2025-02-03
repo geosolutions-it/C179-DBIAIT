@@ -47,8 +47,8 @@
 </div>
 <script>
   window.addEventListener("load", function () {
-    ajax_call("{% url 'get-check-dbi-status-api-view' %}", "#import-status-table");
-    setInterval(function () { ajax_call("{% url 'get-check-dbi-status-api-view' %}", "#import-status-table") }, 5000);
+    ajax_call("{% url 'get-pd-check-status-api-view' %}", "#import-status-table");
+    setInterval(function () { ajax_call("{% url 'get-pd-check-status-api-view' %}", "#import-status-table") }, 5000);
   });
 </script>
 <script>

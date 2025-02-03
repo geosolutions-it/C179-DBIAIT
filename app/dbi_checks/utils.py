@@ -6,6 +6,10 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
+class CheckType:
+    CDO = "CDO"
+    DP = "DP"
+
 class YearHandler:
     def __init__(self, imported_file, export_dir=None):
         

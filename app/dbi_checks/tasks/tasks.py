@@ -32,7 +32,8 @@ class ConsistencyCheckTask(ChecksBaseTask):
         requesting_user: get_user_model(),
         file_path1: str,
         file_path2: str,
-        name: str
+        name: str,
+        check_type: str,
     ):
 
         # Check if the xlsx files exists
@@ -72,6 +73,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
             schema=cls.schema,
             xlsx=xlsx,
             imported=True,
+            check_type=check_type,
             name=name,
         )
         current_task.save()
