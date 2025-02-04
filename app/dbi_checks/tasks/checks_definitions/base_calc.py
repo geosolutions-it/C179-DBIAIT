@@ -81,8 +81,11 @@ class BaseCalc:
             target_sheet = config["target"]
             
             # Convert column letters to numbers
-            min_col = column_index_from_string(config["start_col"])
-            min_row = config["start_row"]
+            start_col = column_index_from_string(config["start_col"])
+            # Start row of the seed file
+            target_start_row = config["start_row"]
+            # Start row of the uploaded file
+            source_start_row = config["source_start_row"]
 
             if source_sheet in up_file.sheetnames and target_sheet in seed_wb.sheetnames:
 
@@ -90,11 +93,16 @@ class BaseCalc:
                 target = seed_wb[target_sheet]
 
                 # Copy data based on the specified column range
-                # Usage of chunks to optimize large row ranges
-                for row in source.iter_rows(min_row=min_row, max_row=source.max_row, min_col=min_col, max_col=source.max_column):
+                for row_idx, row in enumerate(source.iter_rows(
+                        min_row=source_start_row, 
+                        max_row=source.max_row, 
+                        min_col=start_col, 
+                        max_col=source.max_column), 
+                    start=target_start_row):
                     for cell in row:
                         if cell.value is not None:
-                            target.cell(row=cell.row, column=cell.column, value=cell.value)
+                            # Calculate the target row position based on the row index
+                            target.cell(row=row_idx, column=cell.column, value=cell.value)
   
                 logger.info(f"Copied data from sheet: {source_sheet} to {target_sheet}")
                 
