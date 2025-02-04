@@ -44,8 +44,13 @@ logger = logging.getLogger(__name__)
 # Check: consistenza delle opere
 class ConsistencyCheckView(LoginRequiredMixin, ListView):
     template_name = u'dbi_checks/active-consistency-check.html'
-    queryset = Task_CheckDbi.objects.filter(imported=True, status__in=[
-                                   TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
+    queryset = Task_CheckDbi.objects.filter(imported=True, 
+                                            status__in=[
+                                                TaskStatus.RUNNING, 
+                                                TaskStatus.QUEUED
+                                                ],
+                                            check_type=CheckType.CDO
+                                   ).order_by('-id')
 
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name
@@ -141,21 +146,11 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
         return super().form_invalid(form)
 
 
-class GetConsistencyCheckStatus(generics.ListAPIView):
-    queryset = Task_CheckDbi.objects.filter(imported=True,
-                                            check_type=CheckType.CDO
-                                            ).order_by('-id')[:1]
+class GetCheckStatus(generics.ListAPIView):
+    queryset = Task_CheckDbi.objects.filter(imported=True).order_by('-id')[:1]
     serializer_class = CheckSerializer
     permission_classes = [IsAuthenticated]
 
-class GetPrioritizedDataCheckStatus(generics.ListAPIView):
-    queryset = Task_CheckDbi.objects.filter(imported=True,
-                                            check_type=CheckType.DP
-                                            ).order_by('-id')[:1]
-    serializer_class = CheckSerializer
-    permission_classes = [IsAuthenticated]
-
-#TODO we need a separate view for each check
 class GetImportedSheet(generics.RetrieveAPIView):
     serializer_class = ImportedSheetSerializer
     permission_classes = [IsAuthenticated]
@@ -171,8 +166,12 @@ class GetImportedSheet(generics.RetrieveAPIView):
 # Check: dati prioritati
 class PrioritizedDataView(LoginRequiredMixin, ListView):
     template_name = u'dbi_checks/active-prioritized-data-check.html'
-    queryset = Task_CheckDbi.objects.filter(imported=True, status__in=[
-                                   TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
+    queryset = Task_CheckDbi.objects.filter(imported=True, 
+                                            status__in=[
+                                                TaskStatus.RUNNING, 
+                                                TaskStatus.QUEUED
+                                                ],
+                                            check_type=CheckType.DP).order_by('-id')
 
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name

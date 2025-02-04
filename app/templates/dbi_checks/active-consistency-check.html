@@ -47,14 +47,14 @@
 </div>
 <script>
   window.addEventListener("load", function () {
-    ajax_call("{% url 'get-cons-check-status-api-view' %}", "#import-status-table");
-    setInterval(function () { ajax_call("{% url 'get-cons-check-status-api-view' %}", "#import-status-table") }, 5000);
+    ajax_call("{% url 'get-check-status-api-view' %}", "#import-status-table");
+    setInterval(function () { ajax_call("{% url 'get-check-status-api-view' %}", "#import-status-table") }, 5000);
   });
 </script>
 <script>
   window.addEventListener("load", function () {
     setInterval(function () {
-      var url = "{% url 'get-dbi-check-single-import-status-api-view' %}" + "?task_id=";
+      var url = "{% url 'import-sheet-check-status-api-view' %}" + "?task_id=";
       var taskId = $("#import-status-table #task_uuid").text();
       ajax_call(url + taskId, "#test-sheet-import-table")
       }, 5000
