@@ -28,7 +28,8 @@ class BaseCalc:
         config: str,
         formulas_config: str,
         export_dir: pathlib.Path,
-        year_required: bool = False
+        year_required: bool = False,
+        task_progress: int = 0
     ):
         """
         Initialization function of data export
@@ -45,6 +46,7 @@ class BaseCalc:
         self.formulas_config = formulas_config
         self.export_dir = export_dir
         self.year_required = year_required
+        self.task_progress = task_progress
 
         self.logger = None
 
@@ -105,7 +107,7 @@ class BaseCalc:
                 self.import_sheet(self.orm_task.id, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.FAILED)
                 logger.warning(f"Sheet {source_sheet} or {target_sheet} not found!")
             
-        self.orm_task.progress += 50
+        self.orm_task.progress += self.task_progress
         self.orm_task.save()
 
         # Iterate through each sheet to drag the formulas
@@ -141,7 +143,7 @@ class BaseCalc:
             else:
                 logger.warning(f"Something went wrong when filling out the formulas !")
         
-        self.orm_task.progress += 50
+        self.orm_task.progress += self.task_progress
         self.orm_task.save()
 
         logger.info(f"The file is ready to be saved")

@@ -253,12 +253,15 @@ class ChecksListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        current_url = resolve(self.request.path_info).url_name
 
         # Add breadcrumbs to the context
         context['bread_crumbs'] = {
             'Checks DBI': reverse('checks-list-view'),
-            'Storico': u"#"
+            'Download': u"#"
         }
+        # Get the current URL name
+        context['current_url'] = current_url
 
         return context
 

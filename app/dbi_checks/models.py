@@ -7,6 +7,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
+from app.dbi_checks.utils import CheckType
 from app.scheduler.utils import TaskStatus, status_icon_mapper, style_class_mapper, default_storage
     
 class Xlsx(models.Model):
@@ -17,7 +18,7 @@ class Xlsx(models.Model):
 
 
     def __str__(self):
-        return f"{self.name}: {self.file1_path}, {self.file2_path}"
+        return f"{self.name}: {self.file_path}, {self.second_file_path}"
 
 class Task_CheckDbi(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -28,8 +29,11 @@ class Task_CheckDbi(models.Model):
     )
     imported = models.BooleanField(blank=True, null=False, default=False)
     exported = models.BooleanField(blank=True, null=False, default=False)
-    check_type = models.CharField(max_length=20, null=False, default=False)
-    name = models.CharField(max_length=300)
+    check_type = models.CharField(
+        max_length=5,
+        default=CheckType.CDO,
+    )
+    name = models.CharField(max_length=100)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
@@ -70,8 +74,8 @@ class Task_CheckDbi(models.Model):
 
 class ImportedSheet(models.Model):
     task = models.ForeignKey(Task_CheckDbi, on_delete=models.CASCADE)
-    sheet_name = models.CharField(max_length=250, null=False)
-    file_name = models.CharField(max_length=250, null=False, default="file.xlsx")
+    sheet_name = models.CharField(max_length=100, null=False)
+    file_name = models.CharField(max_length=100, null=False, default="file.xlsx")
     import_start_timestamp = models.DateTimeField(default=datetime.datetime.now)
     import_end_timestamp = models.DateTimeField(null=True)
     status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)

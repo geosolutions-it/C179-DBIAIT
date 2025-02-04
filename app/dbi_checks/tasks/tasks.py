@@ -126,6 +126,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
                                   dbi_a_formulas,
                                   tmp_checks_export_dir,
                                   year_required,
+                                  task_progress = 25,
                                   ).run()
             
                 # Copy the second file using the DBI_A_1 seed only if the first copy is completed
@@ -139,6 +140,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
                              dbi_a_1_formulas,
                              tmp_checks_export_dir,
                              year_required,
+                             task_progress = 25,
                              ).run()
                     # zip final output in export directory
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
@@ -195,7 +197,8 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
                                   DATI_PRIORITATI, 
                                   dbi_prior_config, 
                                   dbi_prior_formulas,
-                                  tmp_checks_export_dir
+                                  tmp_checks_export_dir,
+                                  task_progress = 50,
                                   ).run()
             
                 # Copy the second file using the DBI_A_1 seed only if the first copy is completed
