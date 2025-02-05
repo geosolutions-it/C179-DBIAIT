@@ -73,11 +73,11 @@
 </script>
 {% else %}
 <div class="container mt-5">
-  <form method="POST" enctype="multipart/form-data" action="{% url 'pd-check-start-view' %}" class="mt-5">
+  <form method="POST" enctype="multipart/form-data" action="{% url 'dq-check-start-view' %}" class="mt-5">
     {% csrf_token %}
     <div class="form-group mt-5">
       <div class="form-group">
-        <label for="id_xlsx_file">DATI PRIORITATI</label>
+        <label for="id_xlsx_file">BONTA DEI DATI</label>
         <input type="file" name="xlsx_file" id="id_xlsx_file" class="form-control" required>
       </div>
     </div>

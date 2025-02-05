@@ -19,6 +19,7 @@ from app.dbi_checks.forms import ExcelUploadForm
 from app.dbi_checks.tasks.tasks import (
     ConsistencyCheckTask,
     PrioritizedDataCheckTask,
+    DataQualityCheckTask,
 )
 from app.dbi_checks.utils import CheckType
 from app.dbi_checks.tasks.checks_base_task import ChecksContext
@@ -26,6 +27,7 @@ from app.settings import (
     DBI_A_1, 
     DBI_A,
     DBI_PRIORITATI,
+    DBI_BONTA_DEI_DATI,
     SHEETS_CONFIG,
     DBI_FORMULAS
 )
@@ -144,24 +146,6 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         logger.error(f"Something went wrong with the upload... Please try again")
         return super().form_invalid(form)
-
-
-class GetCheckStatus(generics.ListAPIView):
-    queryset = Task_CheckDbi.objects.filter(imported=True).order_by('-id')[:1]
-    serializer_class = CheckSerializer
-    permission_classes = [IsAuthenticated]
-
-class GetImportedSheet(generics.RetrieveAPIView):
-    serializer_class = ImportedSheetSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, **kwargs):
-        """
-        Return only the ImportedSheet related to a specific uuid
-        """
-        task_id = request.query_params['task_id']
-        response = [sheet.to_dict() for sheet in ImportedSheet.objects.filter(task__uuid=task_id).order_by('-id')]
-        return JsonResponse(response, safe=False)
     
 # Check: dati prioritati
 class PrioritizedDataView(LoginRequiredMixin, ListView):
@@ -219,7 +203,6 @@ class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
                 DBI_PRIORITATI,
                 dbi_prior_config,
                 dbi_prior_formulas,
-                # year_required=False
                 )
             context_data = {
                 "args": context.args,
@@ -243,7 +226,103 @@ class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         logger.error(f"Something went wrong with the upload... Please try again")
         return super().form_invalid(form)
+    
+# Check: Bonta dei dati
+class DataQualityView(LoginRequiredMixin, ListView):
+    template_name = u'dbi_checks/active-data-quality-check.html'
+    queryset = Task_CheckDbi.objects.filter(imported=True, 
+                                            status__in=[
+                                                TaskStatus.RUNNING, 
+                                                TaskStatus.QUEUED
+                                                ],
+                                            check_type=CheckType.BDD).order_by('-id')
 
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = super(DataQualityView, self).get_context_data(**kwargs)
+        context['bread_crumbs'] = {
+            'Checks DBI': reverse('data-quality-view'), 'Bontà dei dati': u"#"}
+        context['current_url'] = current_url
+        return context
+
+class DataQualityCheckStart(LoginRequiredMixin, FormView):
+    
+    template_name = u'dbi_checks/active-data-quality-check.html'
+    form_class = ExcelUploadForm
+
+    def form_valid(self, form):
+        xlsx_file = form.cleaned_data["xlsx_file"]
+
+        # Get the original filenames
+        xlsx_file_name = xlsx_file.name
+
+        # internal uploaded path, and target temp path definition
+        xlsx_file_temp_path = xlsx_file.temporary_file_path()
+        xlsx_file_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name)
+
+        # Copy file in chunks for efficiency
+        with open(xlsx_file_temp_path, 'rb') as src_file:
+            with open(xlsx_file_uploaded_path, 'wb') as dst_file:
+                shutil.copyfileobj(src_file, dst_file, length=1024*1024)
+
+        # Load the Bonta dei dati file sheets
+        with open(SHEETS_CONFIG, "r") as file:
+            sheets_config = json.load(file)
+            dbi_bonta_config = sheets_config.get("DBI_BONTA_DEI_DATI", {})
+
+        # Load the DBI PRIORITATI formulas
+        with open(DBI_FORMULAS, "r") as file:
+            dbi_formulas = json.load(file)
+            dbi_bonta_formulas = dbi_formulas.get("DBI_bonta_formulas", {})
+
+        if os.path.exists(xlsx_file_uploaded_path):
+
+            # set the checks context
+            context = ChecksContext(
+                xlsx_file_uploaded_path,
+                DBI_BONTA_DEI_DATI,
+                dbi_bonta_config,
+                dbi_bonta_formulas,
+                )
+            context_data = {
+                "args": context.args,
+            }
+
+            task_id = DataQualityCheckTask.pre_send(self.request.user,
+                                                        xlsx_file_uploaded_path,
+                                                        name="data_quality_check",
+                                                        check_type=CheckType.BDD
+                                                        )
+            
+            DataQualityCheckTask.send(task_id=task_id, context_data=context_data)
+
+            return redirect(reverse(u"data-quality-view"))
+            
+        else:
+            logger.error("File processing failed. Please check the file content.")
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        logger.error(f"Something went wrong with the upload... Please try again")
+        return super().form_invalid(form)
+
+class GetCheckStatus(generics.ListAPIView):
+    queryset = Task_CheckDbi.objects.filter(imported=True).order_by('-id')[:1]
+    serializer_class = CheckSerializer
+    permission_classes = [IsAuthenticated]
+
+class GetImportedSheet(generics.RetrieveAPIView):
+    serializer_class = ImportedSheetSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        """
+        Return only the ImportedSheet related to a specific uuid
+        """
+        task_id = request.query_params['task_id']
+        response = [sheet.to_dict() for sheet in ImportedSheet.objects.filter(task__uuid=task_id).order_by('-id')]
+        return JsonResponse(response, safe=False)
 
 # Views for the history tab
 class ChecksListView(LoginRequiredMixin, ListView):

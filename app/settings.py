@@ -335,6 +335,7 @@ CHECKS_SEED_FILES = os.getenv("CHECKS_SEED_FILES", os.path.join(BASE_DIR, "check
 DBI_A_1 = os.path.join(CHECKS_SEED_FILES, "DBI_A-1.xlsx")
 DBI_A = os.path.join(CHECKS_SEED_FILES, "DBI_A.xlsx")
 DBI_PRIORITATI = os.path.join(CHECKS_SEED_FILES, "DBI_prioritari.xlsx")
+DBI_BONTA_DEI_DATI = os.path.join(CHECKS_SEED_FILES, "DBI_bonta_dei_dati.xlsx")
 # Get precending and current year from a specific sheet, column and row
 YEAR_VALUE = {
     "sheet": "DATI",

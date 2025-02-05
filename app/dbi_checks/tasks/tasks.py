@@ -201,7 +201,66 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
                                   task_progress = 50,
                                   ).run()
             
-                # Copy the second file using the DBI_A_1 seed only if the first copy is completed
+                if result:
+                    # zip final output in export directory
+                    export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
+                    shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
+                    logger.info(f"Zip created")
+                    result = True
+
+            return result
+        
+        except Exception as e:
+            print(f"Error processing files in the background: {e}")
+
+class DataQualityCheckTask(ChecksBaseTask):
+    """
+    Dramatiq Data Quality check (Bonta dei dati) task definition class.
+
+    """
+    
+    @trace_it
+    def execute(self, 
+                task_id: int,
+                *args, 
+                **kwargs
+                ) -> None:
+        
+        """
+        Method for executing the DBI checks
+        """
+        
+        result = False
+
+        try:
+            orm_task = Task_CheckDbi.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
+            )
+            raise
+        try:         
+            # Unpack context_dict into individual variables
+            (xlsx_file_uploaded_path,
+             DBI_BONTA_DEI_DATI,
+             dbi_bonta_config,
+             dbi_bonta_formulas,
+            ) = args
+
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                logger.info(f"Task started with file: {xlsx_file_uploaded_path}")
+                tmp_checks_export_dir = pathlib.Path(tmp_dir)
+                
+                result = BaseCalc(orm_task, 
+                                  xlsx_file_uploaded_path, 
+                                  DBI_BONTA_DEI_DATI, 
+                                  dbi_bonta_config, 
+                                  dbi_bonta_formulas,
+                                  tmp_checks_export_dir,
+                                  task_progress = 50,
+                                  ).run()
+            
                 if result:
                     # zip final output in export directory
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
