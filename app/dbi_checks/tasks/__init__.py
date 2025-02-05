@@ -1,8 +1,8 @@
-from .tasks import Import_DbiCheckTask
+from .tasks import ConsistencyCheckTask
 
 
 __all__ = [
     # import tasks
-    "Import_DbiCheckTask",
+    "ConsistencyCheckTask",
     # ...
 ]

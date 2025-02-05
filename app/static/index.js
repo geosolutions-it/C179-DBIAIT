@@ -133,7 +133,9 @@ const table_function_mapper = {
             table.row.add([
                 data.id,
                 data.user,
-                data.file_name, 
+                data.file_name,
+                data.second_file_name,
+                data.check_name,
                 get_local_date(data.start_date)  || "--/--/---" ,
                 get_local_date(data.end_date)  || "--/--/---" ,
                 data.analysis_year,

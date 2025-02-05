@@ -8,7 +8,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.edit import FormView
-from django.contrib import messages
 from django.urls import resolve, reverse
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
@@ -17,43 +16,62 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 
 from app.dbi_checks.forms import ExcelUploadForm
-from app.dbi_checks.tasks.tasks import Import_DbiCheckTask
+from app.dbi_checks.tasks.tasks import (
+    ConsistencyCheckTask,
+    PrioritizedDataCheckTask,
+)
+from app.dbi_checks.utils import CheckType
+from app.dbi_checks.tasks.checks_base_task import ChecksContext
 from app.settings import (
     DBI_A_1, 
     DBI_A,
+    DBI_PRIORITATI,
     SHEETS_CONFIG,
     DBI_FORMULAS
 )
 from app.dbi_checks.serializers import (
-    ConsistencyCheckSerializer, 
+    CheckSerializer, 
     ImportedSheetSerializer,
     CheckExportTaskSerializer
 )
 
 from app.dbi_checks.models import Task_CheckDbi, TaskStatus, ImportedSheet
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 # Check: consistenza delle opere
-class Consistency_check(LoginRequiredMixin, ListView):
-    template_name = u'dbi_checks/active-dbi-checks.html'
-    queryset = Task_CheckDbi.objects.filter(imported=True, status__in=[
-                                   TaskStatus.RUNNING, TaskStatus.QUEUED]).order_by('-id')
+class ConsistencyCheckView(LoginRequiredMixin, ListView):
+    template_name = u'dbi_checks/active-consistency-check.html'
+    queryset = Task_CheckDbi.objects.filter(imported=True, 
+                                            status__in=[
+                                                TaskStatus.RUNNING, 
+                                                TaskStatus.QUEUED
+                                                ],
+                                            check_type=CheckType.CDO
+                                   ).order_by('-id')
 
     def get_context_data(self, **kwargs):
         current_url = resolve(self.request.path_info).url_name
-        context = super(Consistency_check, self).get_context_data(**kwargs)
+        context = super(ConsistencyCheckView, self).get_context_data(**kwargs)
         context['bread_crumbs'] = {
             'Checks DBI': reverse('consistency-check-view'), 'Consistenza delle opere': u"#"}
         context['current_url'] = current_url
         return context
 
-class Consistency_check_start(LoginRequiredMixin, FormView):
+class ConsistencyCheckStart(LoginRequiredMixin, FormView):
     
-    template_name = u'dbi_checks/active-dbi-checks.html'
+    template_name = u'dbi_checks/active-consistency-check.html'
     form_class = ExcelUploadForm
 
     def form_valid(self, form):
-        xlsx_file1 = form.cleaned_data["xlsx_file1"]
-        xlsx_file2 = form.cleaned_data["xlsx_file2"]
+        xlsx_file1 = form.cleaned_data["xlsx_file"]
+        xlsx_file2 = form.cleaned_data.get("second_xlsx_file")
+
+        if not xlsx_file2:
+            logger.error(f"Both Excel files are required for this check.")
+            return self.form_invalid(form)
 
         # Get the original filenames
         xlsx_file_name1 = xlsx_file1.name
@@ -89,34 +107,48 @@ class Consistency_check_start(LoginRequiredMixin, FormView):
             dbi_a_1_formulas = dbi_formulas.get("DBI_A_1_formulas", {})
 
         if os.path.exists(xlsx_file1_uploaded_path) and os.path.exists(xlsx_file2_uploaded_path):
+    
+            # set the checks context
+            context = ChecksContext(
+                xlsx_file1_uploaded_path,
+                xlsx_file2_uploaded_path,
+                DBI_A,
+                DBI_A_1,
+                dbi_a_config,
+                dbi_a_1_config,
+                dbi_a_formulas,
+                dbi_a_1_formulas,
+                year_required=True
+            )
+            context_data = {
+                "args": context.args,
+                "kwargs": context.kwargs
+            }
+
+            task_id = ConsistencyCheckTask.pre_send(self.request.user,
+                                                    xlsx_file1_uploaded_path,
+                                                    xlsx_file2_uploaded_path,
+                                                    name="consistency_check",
+                                                    check_type=CheckType.CDO
+                                                    )
             
-            task_id = Import_DbiCheckTask.pre_send(self.request.user,
-                                                   xlsx_file1_uploaded_path,
-                                                   xlsx_file2_uploaded_path,
-                                                   year_required=True)
-            
-            Import_DbiCheckTask.send(task_id,
-                                     DBI_A,
-                                     DBI_A_1,
-                                     dbi_a_config,
-                                     dbi_a_1_config,
-                                     dbi_a_formulas,
-                                     dbi_a_1_formulas,
-                                     )
+            ConsistencyCheckTask.send(task_id, context_data)
+
             return redirect(reverse(u"consistency-check-view"))
             
         else:
-            messages.error(self.request, "File processing failed. Please check the file content.")
+            logger.error("File processing failed. Please check the file content.")
 
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Something went wrong with the upload... Please try again")
+        logger.error(f"Something went wrong with the upload... Please try again")
         return super().form_invalid(form)
-    
-class GetCheckDbiStatus(generics.ListAPIView):
+
+
+class GetCheckStatus(generics.ListAPIView):
     queryset = Task_CheckDbi.objects.filter(imported=True).order_by('-id')[:1]
-    serializer_class = ConsistencyCheckSerializer
+    serializer_class = CheckSerializer
     permission_classes = [IsAuthenticated]
 
 class GetImportedSheet(generics.RetrieveAPIView):
@@ -132,22 +164,103 @@ class GetImportedSheet(generics.RetrieveAPIView):
         return JsonResponse(response, safe=False)
     
 # Check: dati prioritati
-class PrioritizedData_check(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, 'dbi_checks/base-checks.html')
+class PrioritizedDataView(LoginRequiredMixin, ListView):
+    template_name = u'dbi_checks/active-prioritized-data-check.html'
+    queryset = Task_CheckDbi.objects.filter(imported=True, 
+                                            status__in=[
+                                                TaskStatus.RUNNING, 
+                                                TaskStatus.QUEUED
+                                                ],
+                                            check_type=CheckType.DP).order_by('-id')
 
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = super(PrioritizedDataView, self).get_context_data(**kwargs)
+        context['bread_crumbs'] = {
+            'Checks DBI': reverse('prioritized-data-view'), 'Dati Prioritati': u"#"}
+        context['current_url'] = current_url
+        return context
+    
+class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
+    
+    template_name = u'dbi_checks/active-prioritized-data-check.html'
+    form_class = ExcelUploadForm
+
+    def form_valid(self, form):
+        xlsx_file = form.cleaned_data["xlsx_file"]
+
+        # Get the original filenames
+        xlsx_file_name = xlsx_file.name
+
+        # internal uploaded path, and target temp path definition
+        xlsx_file_temp_path = xlsx_file.temporary_file_path()
+        xlsx_file_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name)
+
+        # Copy file in chunks for efficiency
+        with open(xlsx_file_temp_path, 'rb') as src_file:
+            with open(xlsx_file_uploaded_path, 'wb') as dst_file:
+                shutil.copyfileobj(src_file, dst_file, length=1024*1024)
+
+        # Load the DBI_PRIORITATI file sheets
+        with open(SHEETS_CONFIG, "r") as file:
+            sheets_config = json.load(file)
+            dbi_prior_config = sheets_config.get("DBI_PRIORITATI", {})
+
+        # Load the DBI PRIORITATI formulas
+        with open(DBI_FORMULAS, "r") as file:
+            dbi_formulas = json.load(file)
+            dbi_prior_formulas = dbi_formulas.get("DBI_prior_formulas", {})
+
+        if os.path.exists(xlsx_file_uploaded_path):
+
+            # set the checks context
+            context = ChecksContext(
+                xlsx_file_uploaded_path,
+                DBI_PRIORITATI,
+                dbi_prior_config,
+                dbi_prior_formulas,
+                # year_required=False
+                )
+            context_data = {
+                "args": context.args,
+            }
+
+            task_id = PrioritizedDataCheckTask.pre_send(self.request.user,
+                                                        xlsx_file_uploaded_path,
+                                                        name="prioritized_data_check",
+                                                        check_type=CheckType.DP
+                                                        )
+            
+            PrioritizedDataCheckTask.send(task_id=task_id, context_data=context_data)
+
+            return redirect(reverse(u"prioritized-data-view"))
+            
+        else:
+            logger.error("File processing failed. Please check the file content.")
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        logger.error(f"Something went wrong with the upload... Please try again")
+        return super().form_invalid(form)
+
+
+# Views for the history tab
 class ChecksListView(LoginRequiredMixin, ListView):
     template_name = u'dbi_checks/historical-checks.html'
     queryset = Task_CheckDbi.objects.filter(exported=True).order_by(u"-start_date")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        current_url = resolve(self.request.path_info).url_name
 
         # Add breadcrumbs to the context
         context['bread_crumbs'] = {
             'Checks DBI': reverse('checks-list-view'),
-            'Storico': u"#"
+            'Download': u"#"
         }
+        # Get the current URL name
+        context['current_url'] = current_url
 
         return context
 
