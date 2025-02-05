@@ -44,5 +44,6 @@ class CheckExportTaskSerializer(serializers.ModelSerializer):
         check_type_mapping = {
             "CDO": "Consistenza delle opere",
             "DP": "Dati prioritati",
+            "BDD": "Bontà dei dati"
         }
         return check_type_mapping.get(instance.check_type, instance.check_type)
