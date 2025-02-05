@@ -7,8 +7,9 @@ from django.utils import timezone
 from django.db.models import ObjectDoesNotExist
 
 from openpyxl.formula.translate import Translator
-from openpyxl import load_workbook, Workbook
+from openpyxl import load_workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
+from openpyxl.styles import numbers
 
 from app.dbi_checks.models import Task_CheckDbi, ImportedSheet, TaskStatus
 from app.dbi_checks.utils import YearHandler
@@ -28,7 +29,7 @@ class BaseCalc:
         config: str,
         formulas_config: str,
         export_dir: pathlib.Path,
-        year_required: bool = False,
+        file_year_required: bool = False,
         task_progress: int = 0
     ):
         """
@@ -45,7 +46,7 @@ class BaseCalc:
         self.config = config
         self.formulas_config = formulas_config
         self.export_dir = export_dir
-        self.year_required = year_required
+        self.file_year_required = file_year_required
         self.task_progress = task_progress
 
         self.logger = None
@@ -63,9 +64,9 @@ class BaseCalc:
         seed_copy = shutil.copy(self.seed, f"{self.export_dir}/{seed_basename}")
         seed_wb = load_workbook(seed_copy, data_only=False)
 
-        logger.info(f"{self.year_required}")
+        logger.info(f"{self.file_year_required}")
 
-        if self.year_required:
+        if self.file_year_required:
             # Create the INPUT.xlsx file which it is needed by the DBI_A formulas
             success = YearHandler(self.imported_file, self.export_dir).set_year_to_file()
             if success:
@@ -143,7 +144,10 @@ class BaseCalc:
                             translator = Translator(formula, f"{column_letter}{start_row}")
                             adjusted_formula = translator.translate_formula(f"{column_letter}{row_idx}")
                             # Set the adjusted formula in the target row
-                            sheet[f"{column_letter}{row_idx}"].value = adjusted_formula
+                            target_cell = sheet[f"{column_letter}{row_idx}"]
+                            target_cell.value = adjusted_formula
+                            # Explicit formatting
+                            target_cell.number_format = numbers.FORMAT_GENERAL
 
                 #seed_wb.save(seed_copy)
                 logger.info(f"The formulas were populated from sheet: {sheet_name}")

@@ -113,7 +113,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
              dbi_a_1_formulas
             ) = args
 
-            year_required = kwargs.get("year_required", False)
+            file_year_required = kwargs.get("file_year_required", False)
 
             with tempfile.TemporaryDirectory() as tmp_dir:
                 logger.info(f"Task started with file: {xlsx_file1_uploaded_path}")
@@ -125,21 +125,21 @@ class ConsistencyCheckTask(ChecksBaseTask):
                                   dbi_a_config, 
                                   dbi_a_formulas,
                                   tmp_checks_export_dir,
-                                  year_required,
+                                  file_year_required,
                                   task_progress = 25,
                                   ).run()
             
                 # Copy the second file using the DBI_A_1 seed only if the first copy is completed
                 if result:
                     logger.info(f"Task started with file: {xlsx_file2_uploaded_path}")
-                    year_required = False
+                    file_year_required = False
                     BaseCalc(orm_task, 
                              xlsx_file2_uploaded_path, 
                              DBI_A_1, 
                              dbi_a_1_config, 
                              dbi_a_1_formulas,
                              tmp_checks_export_dir,
-                             year_required,
+                             file_year_required,
                              task_progress = 25,
                              ).run()
                     # zip final output in export directory
@@ -248,6 +248,8 @@ class DataQualityCheckTask(ChecksBaseTask):
              dbi_bonta_formulas,
             ) = args
 
+            file_year_required = kwargs.get("file_year_required", False)
+
             with tempfile.TemporaryDirectory() as tmp_dir:
                 logger.info(f"Task started with file: {xlsx_file_uploaded_path}")
                 tmp_checks_export_dir = pathlib.Path(tmp_dir)
@@ -258,6 +260,7 @@ class DataQualityCheckTask(ChecksBaseTask):
                                   dbi_bonta_config, 
                                   dbi_bonta_formulas,
                                   tmp_checks_export_dir,
+                                  file_year_required,
                                   task_progress = 50,
                                   ).run()
             

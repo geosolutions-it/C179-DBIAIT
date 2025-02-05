@@ -120,7 +120,7 @@ class ConsistencyCheckStart(LoginRequiredMixin, FormView):
                 dbi_a_1_config,
                 dbi_a_formulas,
                 dbi_a_1_formulas,
-                year_required=True
+                file_year_required=True
             )
             context_data = {
                 "args": context.args,
@@ -283,9 +283,11 @@ class DataQualityCheckStart(LoginRequiredMixin, FormView):
                 DBI_BONTA_DEI_DATI,
                 dbi_bonta_config,
                 dbi_bonta_formulas,
+                file_year_required=True
                 )
             context_data = {
                 "args": context.args,
+                "kwargs": context.kwargs
             }
 
             task_id = DataQualityCheckTask.pre_send(self.request.user,
