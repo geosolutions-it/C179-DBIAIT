@@ -25,11 +25,12 @@
   <table class="table table-sm" id="dt-import-sheet-table">
     <thead>
       <tr>
-          <th>Foglio</th>
-          <th>File</th>
-          <th>Inizio</th>
-          <th>Fine</th>
-          <th>Status</th>
+        <th style="width: 150px;">Processo</th>
+        <th style="width: 200px;">File</th>
+        <th style="width: 150px;">Foglio</th>
+        <th style="width: 120px;">Inizio</th>
+        <th style="width: 120px;">Fine</th>
+        <th style="width: 100px;">Status</th>
         </tr>
     </thead>
      <tbody id="test-sheet-import-table">
@@ -37,6 +38,7 @@
         <td class="text-center">
           <small class="text-secondary">Attendere...</small>
         </td>
+        <td></td>
         <td></td>
         <td></td>
         <td></td>
@@ -54,7 +56,7 @@
 <script>
   window.addEventListener("load", function () {
     setInterval(function () {
-      var url = "{% url 'import-sheet-check-status-api-view' %}" + "?task_id=";
+      var url = "{% url 'process-state-status-api-view' %}" + "?task_id=";
       var taskId = $("#import-status-table #task_uuid").text();
       ajax_call(url + taskId, "#test-sheet-import-table")
       }, 5000
@@ -63,11 +65,11 @@
 </script>
 <script>
   $(document).ready(function() {
-    $('#dt-import-table').DataTable( {
+    $('#dt-import-sheet-table').DataTable( {
         "language": {
             "url": "{% static 'i18n/Italian.json' %}"
         },
-        "order": [[ 1, "desc" ]]
+        "order": [[ 4, "desc" ]]
     } );
 } );
 </script>

@@ -26,11 +26,11 @@ from app.dbi_checks.tasks.checks_base_task import ChecksContext
 
 from app.dbi_checks.serializers import (
     CheckSerializer, 
-    ImportedSheetSerializer,
+    ProcessStateSerializer,
     CheckExportTaskSerializer
 )
 
-from app.dbi_checks.models import Task_CheckDbi, TaskStatus, ImportedSheet
+from app.dbi_checks.models import Task_CheckDbi, TaskStatus, ProcessState
 
 import logging
 
@@ -235,16 +235,16 @@ class GetCheckStatus(generics.ListAPIView):
 
 
 # API based views
-class GetImportedSheet(generics.RetrieveAPIView):
-    serializer_class = ImportedSheetSerializer
+class GetProcessState(generics.RetrieveAPIView):
+    serializer_class = ProcessStateSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request, **kwargs):
         """
-        Return only the ImportedSheet related to a specific uuid
+        Return only the ProcessState related to a specific task uuid
         """
         task_id = request.query_params['task_id']
-        response = [sheet.to_dict() for sheet in ImportedSheet.objects.filter(task__uuid=task_id).order_by('-id')]
+        response = [process_type.to_dict() for process_type in ProcessState.objects.filter(task__uuid=task_id).order_by('-id')]
         return JsonResponse(response, safe=False)
 
 # Views for the history tab

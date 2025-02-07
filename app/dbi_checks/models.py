@@ -2,6 +2,7 @@ import os
 import uuid
 import datetime
 from pathlib import Path
+from enum import IntEnum
 
 from django.db import models
 from django.conf import settings
@@ -72,10 +73,31 @@ class Task_CheckDbi(models.Model):
             return task_log.replace("\n", "<br/>").replace("(True,)", "SUCCESS").replace("(False,)", "FAILED")
         
 
-class ImportedSheet(models.Model):
+class ProcessType(IntEnum):
+    COPY = 1
+    CALCULATION = 2
+    SAVE = 3
+    LOG = 4
+
+    @classmethod
+    def get_label(cls, value):
+        labels = {
+            cls.COPY: "Dati copiati",
+            cls.CALCULATION: "Formule calcolate",
+            cls.SAVE: "File salvato",
+            cls.LOG: "Log creati"
+        }
+        return labels.get(value, "Unknown Process")
+
+    @classmethod
+    def choices(cls):
+        return [(member.value, cls.get_label(member.value)) for member in cls]
+
+class ProcessState(models.Model):
     task = models.ForeignKey(Task_CheckDbi, on_delete=models.CASCADE)
+    process_type = models.PositiveSmallIntegerField(choices=ProcessType.choices())
     sheet_name = models.CharField(max_length=100, null=False)
-    file_name = models.CharField(max_length=100, null=False, default="file.xlsx")
+    file_name = models.CharField(max_length=100, null=False, default="")
     import_start_timestamp = models.DateTimeField(default=datetime.datetime.now)
     import_end_timestamp = models.DateTimeField(null=True)
     status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
@@ -83,6 +105,7 @@ class ImportedSheet(models.Model):
     def to_dict(self):
         return {
             "task": str(self.task.uuid),
+            "process_type": ProcessType.get_label(self.process_type),
             "sheet_name": self.sheet_name,
             "file_name": self.file_name,
             "import_start_timestamp": str(self.import_start_timestamp),

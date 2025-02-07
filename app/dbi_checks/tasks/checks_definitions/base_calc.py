@@ -1,7 +1,6 @@
 import os
 import shutil
 import pathlib
-import tempfile
 
 from django.utils import timezone
 from django.db.models import ObjectDoesNotExist
@@ -11,7 +10,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
 from openpyxl.styles import numbers
 
-from app.dbi_checks.models import Task_CheckDbi, ImportedSheet, TaskStatus
+from app.dbi_checks.models import Task_CheckDbi, ProcessState, TaskStatus, ProcessType
 from app.dbi_checks.utils import YearHandler
 
 import logging
@@ -107,13 +106,27 @@ class BaseCalc:
   
                 logger.info(f"Copied data from sheet: {source_sheet} to {target_sheet}")
                 
-                # Call the import_sheet function with a SUCCESS status
+                # Call the import_process_state function with the process type COPY and SUCCESS status
                 end_date = timezone.now()
-                self.import_sheet(self.orm_task.id, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.SUCCESS)
+                self.import_process_state(self.orm_task.id, 
+                                          ProcessType.COPY.value,
+                                          os.path.basename(self.imported_file), 
+                                          start_date, 
+                                          end_date, 
+                                          TaskStatus.SUCCESS,
+                                          sheet=source_sheet
+                                          )
 
             else:
                 end_date = timezone.now()
-                self.import_sheet(self.orm_task.id, source_sheet, os.path.basename(self.imported_file), start_date, end_date, TaskStatus.FAILED)
+                self.import_process_state(self.orm_task.id, 
+                                          ProcessType.COPY.value, 
+                                          os.path.basename(self.imported_file), 
+                                          start_date, 
+                                          end_date, 
+                                          TaskStatus.FAILED,
+                                          sheet=source_sheet
+                                          )
                 logger.warning(f"Sheet {source_sheet} or {target_sheet} not found!")
             
         self.orm_task.progress += self.task_progress
@@ -121,6 +134,8 @@ class BaseCalc:
 
         # Iterate through each sheet to drag the formulas
         for sheet_name, f_location in self.formulas_config.items():
+
+            start_date = timezone.now()
             
             if sheet_name in seed_wb.sheetnames:
                 sheet = seed_wb[sheet_name]
@@ -149,17 +164,36 @@ class BaseCalc:
                             # Explicit formatting
                             target_cell.number_format = numbers.FORMAT_GENERAL
 
-                #seed_wb.save(seed_copy)
+                
                 logger.info(f"The formulas were populated from sheet: {sheet_name}")
+                # Call the import_process_state function with the process type CALCULATION and SUCCESS status
+                end_date = timezone.now()
+                self.import_process_state(self.orm_task.id, 
+                                          ProcessType.CALCULATION.value,  
+                                          os.path.basename(self.imported_file), 
+                                          start_date, 
+                                          end_date, 
+                                          TaskStatus.SUCCESS,
+                                          sheet=sheet_name
+                                          )
 
             else:
+                end_date = timezone.now()
+                self.import_process_state(self.orm_task.id, 
+                                          ProcessType.CALCULATION.value,
+                                          os.path.basename(self.imported_file), 
+                                          start_date, 
+                                          end_date, 
+                                          TaskStatus.FAILED,
+                                          sheet=sheet_name
+                                          )
                 logger.warning(f"Something went wrong when filling out the formulas !")
         
         self.orm_task.progress += self.task_progress
         self.orm_task.save()
 
+        start_date = timezone.now()
         logger.info(f"The file is ready to be saved")
-
         # save logic
         seed_wb.save(seed_copy)
         del seed_wb
@@ -167,17 +201,28 @@ class BaseCalc:
         # Clean up by deleting the import file
         os.remove(self.imported_file)
         logger.info(f"Final workbook save completed.")
+        end_date = timezone.now()
+
+        # save the save process in the ProcessState model
+        self.import_process_state(self.orm_task.id, 
+                                  ProcessType.SAVE.value, 
+                                  os.path.basename(self.imported_file), 
+                                  start_date, 
+                                  end_date, 
+                                  TaskStatus.SUCCESS
+                                  )
         
         return True
     
-    def import_sheet(self, task_id, sheet, file_name, start_date, end_date, status):
+    def import_process_state(self, task_id, process_type, file_name, start_date, end_date, status, sheet=""):
     
         try:
             task = Task_CheckDbi.objects.get(pk=task_id)
 
-            ImportedSheet.objects.create(
+            ProcessState.objects.create(
                 task=task,
-                sheet_name=sheet.lower(),
+                process_type = process_type,
+                sheet_name=(sheet.lower() if sheet else ""),
                 file_name=file_name,
                 import_start_timestamp=start_date,
                 import_end_timestamp=end_date,
@@ -193,7 +238,7 @@ class BaseCalc:
         except Exception as e:
             logger.error(f"An error occurred while importing sheet: {str(e)}")
             raise
-        
+
     def get_last_data_row(self, sheet):
         last_row = 0
         for row in sheet.iter_rows(min_row=1, max_row=sheet.max_row, min_col=1, max_col=sheet.max_column):
