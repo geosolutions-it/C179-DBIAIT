@@ -107,7 +107,6 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
     check_name = None
     check_type = None
     task_class = None
-    file_year_required = False
 
     def get_context_files(self, form):
         """
@@ -234,6 +233,8 @@ class GetCheckStatus(generics.ListAPIView):
     serializer_class = CheckSerializer
     permission_classes = [IsAuthenticated]
 
+
+# API based views
 class GetImportedSheet(generics.RetrieveAPIView):
     serializer_class = ImportedSheetSerializer
     permission_classes = [IsAuthenticated]
