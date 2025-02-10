@@ -5,7 +5,7 @@ from django.db.models import Q, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from app.dbi_checks.models import Task_CheckDbi, ImportedSheet, Xlsx
+from app.dbi_checks.models import Task_CheckDbi, ProcessState, Xlsx
 from app.dbi_checks.utils import YearHandler
 
 from app.scheduler.tasks.base_task import BaseTask
@@ -136,18 +136,18 @@ class ChecksBaseTask(BaseTask):
             task.save()
         finally:
             '''
-            Final check of the ImportedSheet.
-            If at least 1 sheet process is failed, the whole task is considered unsuccessful
+            Final check of the ProcessState.
+            If at least 1 process type is failed, the whole task is considered unsuccessful
             '''
-            import_sheet_exists = ImportedSheet.objects.filter(task_id__id=task.id).exists()
+            process_state_exists = ProcessState.objects.filter(task_id__id=task.id).exists()
 
-            if import_sheet_exists:
+            if process_state_exists:
                 # If at least one instance exists, check if all have status 'SUCCESS'
-                import_sheet = ImportedSheet.objects.filter(task_id__id=task.id)
-                imported_results = all(sheet.status == 'SUCCESS' for sheet in import_sheet)
+                process_state = ProcessState.objects.filter(task_id__id=task.id)
+                state_results = all(process.status == 'SUCCESS' for process in process_state)
     
                 # Set task status based on the results
-                task.status = TaskStatus.SUCCESS if imported_results else TaskStatus.FAILED
+                task.status = TaskStatus.SUCCESS if state_results else TaskStatus.FAILED
 
             # After the complete of the process, change the Task_CheckDbi exported field to True
             task.exported = True

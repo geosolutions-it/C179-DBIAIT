@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.edit import FormView
-from django.urls import resolve, reverse
+from django.urls import resolve, reverse, reverse_lazy
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 
@@ -23,27 +23,20 @@ from app.dbi_checks.tasks.tasks import (
 )
 from app.dbi_checks.utils import CheckType
 from app.dbi_checks.tasks.checks_base_task import ChecksContext
-from app.settings import (
-    DBI_A_1, 
-    DBI_A,
-    DBI_PRIORITATI,
-    DBI_BONTA_DEI_DATI,
-    SHEETS_CONFIG,
-    DBI_FORMULAS
-)
+
 from app.dbi_checks.serializers import (
     CheckSerializer, 
-    ImportedSheetSerializer,
+    ProcessStateSerializer,
     CheckExportTaskSerializer
 )
 
-from app.dbi_checks.models import Task_CheckDbi, TaskStatus, ImportedSheet
+from app.dbi_checks.models import Task_CheckDbi, TaskStatus, ProcessState
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Check: consistenza delle opere
+# Check: consistenza delle opere main view
 class ConsistencyCheckView(LoginRequiredMixin, ListView):
     template_name = u'dbi_checks/active-consistency-check.html'
     queryset = Task_CheckDbi.objects.filter(imported=True, 
@@ -61,91 +54,6 @@ class ConsistencyCheckView(LoginRequiredMixin, ListView):
             'Checks DBI': reverse('consistency-check-view'), 'Consistenza delle opere': u"#"}
         context['current_url'] = current_url
         return context
-
-class ConsistencyCheckStart(LoginRequiredMixin, FormView):
-    
-    template_name = u'dbi_checks/active-consistency-check.html'
-    form_class = ExcelUploadForm
-
-    def form_valid(self, form):
-        xlsx_file1 = form.cleaned_data["xlsx_file"]
-        xlsx_file2 = form.cleaned_data.get("second_xlsx_file")
-
-        if not xlsx_file2:
-            logger.error(f"Both Excel files are required for this check.")
-            return self.form_invalid(form)
-
-        # Get the original filenames
-        xlsx_file_name1 = xlsx_file1.name
-        xlsx_file_name2 = xlsx_file2.name
-
-        # internal uploaded path, and target temp path definition
-        xlsx_file1_temp_path = xlsx_file1.temporary_file_path()
-        xlsx_file1_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name1)
-
-        # Copy file in chunks for efficiency
-        with open(xlsx_file1_temp_path, 'rb') as src_file:
-            with open(xlsx_file1_uploaded_path, 'wb') as dst_file:
-                shutil.copyfileobj(src_file, dst_file, length=1024*1024)
-
-        xlsx_file2_temp_path = xlsx_file2.temporary_file_path()
-        xlsx_file2_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name2)
-
-        # Copy file in chunks for efficiency
-        with open(xlsx_file2_temp_path, 'rb') as src_file:
-            with open(xlsx_file2_uploaded_path, 'wb') as dst_file:
-                shutil.copyfileobj(src_file, dst_file, length=1024*1024)
-
-        # Load the DBI file sheets config json
-        with open(SHEETS_CONFIG, "r") as file:
-            sheets_config = json.load(file)
-            dbi_a_config = sheets_config.get("DBI_A", {})
-            dbi_a_1_config = sheets_config.get("DBI_A_1", {})
-
-        # Load the DBI formulas json
-        with open(DBI_FORMULAS, "r") as file:
-            dbi_formulas = json.load(file)
-            dbi_a_formulas = dbi_formulas.get("DBI_A_formulas", {})
-            dbi_a_1_formulas = dbi_formulas.get("DBI_A_1_formulas", {})
-
-        if os.path.exists(xlsx_file1_uploaded_path) and os.path.exists(xlsx_file2_uploaded_path):
-    
-            # set the checks context
-            context = ChecksContext(
-                xlsx_file1_uploaded_path,
-                xlsx_file2_uploaded_path,
-                DBI_A,
-                DBI_A_1,
-                dbi_a_config,
-                dbi_a_1_config,
-                dbi_a_formulas,
-                dbi_a_1_formulas,
-                file_year_required=True
-            )
-            context_data = {
-                "args": context.args,
-                "kwargs": context.kwargs
-            }
-
-            task_id = ConsistencyCheckTask.pre_send(self.request.user,
-                                                    xlsx_file1_uploaded_path,
-                                                    xlsx_file2_uploaded_path,
-                                                    name="consistency_check",
-                                                    check_type=CheckType.CDO
-                                                    )
-            
-            ConsistencyCheckTask.send(task_id, context_data)
-
-            return redirect(reverse(u"consistency-check-view"))
-            
-        else:
-            logger.error("File processing failed. Please check the file content.")
-
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        logger.error(f"Something went wrong with the upload... Please try again")
-        return super().form_invalid(form)
     
 # Check: dati prioritati
 class PrioritizedDataView(LoginRequiredMixin, ListView):
@@ -164,68 +72,7 @@ class PrioritizedDataView(LoginRequiredMixin, ListView):
             'Checks DBI': reverse('prioritized-data-view'), 'Dati Prioritati': u"#"}
         context['current_url'] = current_url
         return context
-    
-class PrioritizedDataCheckStart(LoginRequiredMixin, FormView):
-    
-    template_name = u'dbi_checks/active-prioritized-data-check.html'
-    form_class = ExcelUploadForm
 
-    def form_valid(self, form):
-        xlsx_file = form.cleaned_data["xlsx_file"]
-
-        # Get the original filenames
-        xlsx_file_name = xlsx_file.name
-
-        # internal uploaded path, and target temp path definition
-        xlsx_file_temp_path = xlsx_file.temporary_file_path()
-        xlsx_file_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name)
-
-        # Copy file in chunks for efficiency
-        with open(xlsx_file_temp_path, 'rb') as src_file:
-            with open(xlsx_file_uploaded_path, 'wb') as dst_file:
-                shutil.copyfileobj(src_file, dst_file, length=1024*1024)
-
-        # Load the DBI_PRIORITATI file sheets
-        with open(SHEETS_CONFIG, "r") as file:
-            sheets_config = json.load(file)
-            dbi_prior_config = sheets_config.get("DBI_PRIORITATI", {})
-
-        # Load the DBI PRIORITATI formulas
-        with open(DBI_FORMULAS, "r") as file:
-            dbi_formulas = json.load(file)
-            dbi_prior_formulas = dbi_formulas.get("DBI_prior_formulas", {})
-
-        if os.path.exists(xlsx_file_uploaded_path):
-
-            # set the checks context
-            context = ChecksContext(
-                xlsx_file_uploaded_path,
-                DBI_PRIORITATI,
-                dbi_prior_config,
-                dbi_prior_formulas,
-                )
-            context_data = {
-                "args": context.args,
-            }
-
-            task_id = PrioritizedDataCheckTask.pre_send(self.request.user,
-                                                        xlsx_file_uploaded_path,
-                                                        name="prioritized_data_check",
-                                                        check_type=CheckType.DP
-                                                        )
-            
-            PrioritizedDataCheckTask.send(task_id=task_id, context_data=context_data)
-
-            return redirect(reverse(u"prioritized-data-view"))
-            
-        else:
-            logger.error("File processing failed. Please check the file content.")
-
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        logger.error(f"Something went wrong with the upload... Please try again")
-        return super().form_invalid(form)
     
 # Check: Bonta dei dati
 class DataQualityView(LoginRequiredMixin, ListView):
@@ -244,86 +91,160 @@ class DataQualityView(LoginRequiredMixin, ListView):
             'Checks DBI': reverse('data-quality-view'), 'Bontà dei dati': u"#"}
         context['current_url'] = current_url
         return context
-
-class DataQualityCheckStart(LoginRequiredMixin, FormView):
     
-    template_name = u'dbi_checks/active-data-quality-check.html'
+class BaseCheckStart(LoginRequiredMixin, FormView):
+    
     form_class = ExcelUploadForm
+    # Variables defined in the subclasses
+    template_name = None
+    redirected_view = None
+    seed_file = None
+    second_seed_file = None
+    sheet_mapping_obj = None
+    second_sheet_mapping_obj = None
+    dbi_formulas_obj = None
+    second_dbi_formulas_obj = None
+    check_name = None
+    check_type = None
+    task_class = None
+
+    def get_context_files(self, form):
+        """
+        Extract and return file data. Override for specific views if needed.
+        """
+        xlsx_file = form.cleaned_data.get("xlsx_file")
+        second_xlsx_file = form.cleaned_data.get("second_xlsx_file")
+        # Check if the check type is the Consistenza delle opera
+        if self.check_type == CheckType.CDO and not second_xlsx_file:
+            logger.error("Both Excel files are required for this check.")
+            self.form_invalid(form)
+        return xlsx_file, second_xlsx_file
+
+    def save_context_file(self, file_obj, file_name):
+        """
+        Save the uploaded file to a temporary path.
+        """
+        temp_path = file_obj.temporary_file_path()
+        uploaded_path = os.path.join(tempfile.gettempdir(), file_name)
+        with open(temp_path, "rb") as src_file, open(uploaded_path, "wb") as dst_file:
+            shutil.copyfileobj(src_file, dst_file, length=1024 * 1024)
+        return uploaded_path
+
+    def load_config(self):
+        """
+        Load seed files and configuration for sheets and formulas based on check type.
+        """
+        with open(settings.SHEETS_CONFIG, "r") as file:
+            sheets_config = json.load(file)
+        with open(settings.DBI_FORMULAS, "r") as file:
+            dbi_formulas = json.load(file)
+
+        if self.check_type == CheckType.CDO:
+            return {
+            "seed_file": self.seed_file,
+            "second_seed_file": self.second_seed_file,
+            "sheet_mapping_obj": sheets_config.get(self.sheet_mapping_obj, {}),
+            "second_sheet_mapping_obj": sheets_config.get(self.second_sheet_mapping_obj, {}),
+            "dbi_formulas_obj": dbi_formulas.get(self.dbi_formulas_obj, {}),
+            "second_dbi_formulas_obj": dbi_formulas.get(self.second_dbi_formulas_obj, {}),
+            }
+        return {
+            "seed_file": self.seed_file,
+            "sheet_mapping_obj": sheets_config.get(self.sheet_mapping_obj, {}),
+            "dbi_formulas_obj": dbi_formulas.get(self.dbi_formulas_obj, {}),
+            }
 
     def form_valid(self, form):
-        xlsx_file = form.cleaned_data["xlsx_file"]
+        xlsx_file1, xlsx_file2 = self.get_context_files(form)
+        uploaded_file_paths = [self.save_context_file(xlsx_file1, xlsx_file1.name)]
 
-        # Get the original filenames
-        xlsx_file_name = xlsx_file.name
+        if xlsx_file2:
+            uploaded_file_paths.append(self.save_context_file(xlsx_file2, xlsx_file2.name))
 
-        # internal uploaded path, and target temp path definition
-        xlsx_file_temp_path = xlsx_file.temporary_file_path()
-        xlsx_file_uploaded_path = os.path.join(tempfile.gettempdir(), xlsx_file_name)
+        # Get the seed files and config
+        config_data = self.load_config()
 
-        # Copy file in chunks for efficiency
-        with open(xlsx_file_temp_path, 'rb') as src_file:
-            with open(xlsx_file_uploaded_path, 'wb') as dst_file:
-                shutil.copyfileobj(src_file, dst_file, length=1024*1024)
-
-        # Load the Bonta dei dati file sheets
-        with open(SHEETS_CONFIG, "r") as file:
-            sheets_config = json.load(file)
-            dbi_bonta_config = sheets_config.get("DBI_BONTA_DEI_DATI", {})
-
-        # Load the DBI PRIORITATI formulas
-        with open(DBI_FORMULAS, "r") as file:
-            dbi_formulas = json.load(file)
-            dbi_bonta_formulas = dbi_formulas.get("DBI_bonta_formulas", {})
-
-        if os.path.exists(xlsx_file_uploaded_path):
-
-            # set the checks context
+        if all(os.path.exists(path) for path in uploaded_file_paths):
+            
+            # set the context data
             context = ChecksContext(
-                xlsx_file_uploaded_path,
-                DBI_BONTA_DEI_DATI,
-                dbi_bonta_config,
-                dbi_bonta_formulas,
-                file_year_required=True
-                )
+                *uploaded_file_paths,
+                **config_data
+            )
             context_data = {
-                "args": context.args,
+                "args": context.args, 
                 "kwargs": context.kwargs
             }
 
-            task_id = DataQualityCheckTask.pre_send(self.request.user,
-                                                        xlsx_file_uploaded_path,
-                                                        name="data_quality_check",
-                                                        check_type=CheckType.BDD
-                                                        )
-            
-            DataQualityCheckTask.send(task_id=task_id, context_data=context_data)
-
-            return redirect(reverse(u"data-quality-view"))
-            
+            task_id = self.task_class.pre_send(
+                self.request.user,
+                *uploaded_file_paths,
+                name=self.check_name,
+                check_type=self.check_type
+            )
+            self.task_class.send(task_id=task_id, context_data=context_data)
+            return redirect(self.get_success_url())
         else:
-            logger.error("File processing failed. Please check the file content.")
-
-        return super().form_valid(form)
+            logger.error("File processing failed.")
+            return super().form_valid(form)
 
     def form_invalid(self, form):
-        logger.error(f"Something went wrong with the upload... Please try again")
+        logger.error("Something went wrong with the upload... Please try again.")
         return super().form_invalid(form)
+
+    def get_success_url(self):
+        return reverse_lazy(self.redirected_view)
+
+class ConsistencyCheckStart(BaseCheckStart):
+    template_name = u'dbi_checks/active-consistency-check.html'
+    redirected_view = u"consistency-check-view"
+    seed_file = settings.DBI_A
+    second_seed_file = settings.DBI_A_1
+    sheet_mapping_obj = "DBI_A"
+    second_sheet_mapping_obj = "DBI_A_1"
+    dbi_formulas_obj = "DBI_A_formulas"
+    second_dbi_formulas_obj = "DBI_A_1_formulas"
+    check_name = "consistency_check"
+    check_type = CheckType.CDO
+    task_class = ConsistencyCheckTask
+
+class PrioritizedDataCheckStart(BaseCheckStart):
+    template_name = u'dbi_checks/active-prioritized-data-check.html'
+    redirected_view = u'prioritized-data-view'
+    seed_file = settings.DBI_PRIORITATI
+    sheet_mapping_obj = "DBI_PRIORITATI"
+    dbi_formulas_obj = "DBI_prior_formulas"
+    check_name = "prioritized_data_check"
+    check_type = CheckType.DP
+    task_class = PrioritizedDataCheckTask
+
+class DataQualityCheckStart(BaseCheckStart):
+    template_name = u'dbi_checks/active-data-quality-check.html'
+    redirected_view = u'data-quality-view'
+    seed_file = settings.DBI_BONTA_DEI_DATI
+    sheet_mapping_obj = "DBI_BONTA_DEI_DATI"
+    dbi_formulas_obj = "DBI_bonta_formulas"
+    check_name = "data_quality_check"
+    check_type = CheckType.BDD
+    task_class = DataQualityCheckTask
 
 class GetCheckStatus(generics.ListAPIView):
     queryset = Task_CheckDbi.objects.filter(imported=True).order_by('-id')[:1]
     serializer_class = CheckSerializer
     permission_classes = [IsAuthenticated]
 
-class GetImportedSheet(generics.RetrieveAPIView):
-    serializer_class = ImportedSheetSerializer
+
+# API based views
+class GetProcessState(generics.RetrieveAPIView):
+    serializer_class = ProcessStateSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request, **kwargs):
         """
-        Return only the ImportedSheet related to a specific uuid
+        Return only the ProcessState related to a specific task uuid
         """
         task_id = request.query_params['task_id']
-        response = [sheet.to_dict() for sheet in ImportedSheet.objects.filter(task__uuid=task_id).order_by('-id')]
+        response = [process_type.to_dict() for process_type in ProcessState.objects.filter(task__uuid=task_id).order_by('-id')]
         return JsonResponse(response, safe=False)
 
 # Views for the history tab

@@ -2,8 +2,7 @@ from pathlib import Path
 
 from rest_framework import serializers
 
-from app.dbi_checks.models import Task_CheckDbi, ImportedSheet
-from app.dbi_checks.utils import CheckType
+from app.dbi_checks.models import Task_CheckDbi, ProcessState
 
 
 class CheckSerializer(serializers.ModelSerializer):
@@ -11,10 +10,10 @@ class CheckSerializer(serializers.ModelSerializer):
         model = Task_CheckDbi
         fields = [u'id', u'uuid', u'status', u'style_class', u'status_icon', u'progress']
 
-class ImportedSheetSerializer(serializers.ModelSerializer):
+class ProcessStateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ImportedSheet
-        fields = [u'sheet_name', u'file_name', u'import_start_timestamp', u'import_end_timestamp', u'status']
+        model = ProcessState
+        fields = [u'process_type', u'sheet_name', u'file_name', u'import_start_timestamp', u'import_end_timestamp', u'status']
 
 class CheckExportTaskSerializer(serializers.ModelSerializer):
     file_name = serializers.SerializerMethodField()

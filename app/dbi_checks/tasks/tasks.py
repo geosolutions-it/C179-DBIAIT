@@ -91,6 +91,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
         Method for executing the DBI checks
         """
         
+        file_year_required = True
         result = False
 
         try:
@@ -105,15 +106,14 @@ class ConsistencyCheckTask(ChecksBaseTask):
             # Unpack context_dict into individual variables
             (xlsx_file1_uploaded_path,
              xlsx_file2_uploaded_path,
-             DBI_A,
-             DBI_A_1,
-             dbi_a_config,
-             dbi_a_1_config,
-             dbi_a_formulas,
-             dbi_a_1_formulas
             ) = args
 
-            file_year_required = kwargs.get("file_year_required", False)
+            DBI_A = kwargs.get("seed_file", {})
+            DBI_A_1 = kwargs.get("second_seed_file", {})
+            dbi_a_config = kwargs.get("sheet_mapping_obj", {})
+            dbi_a_1_config = kwargs.get("second_sheet_mapping_obj", {})
+            dbi_a_formulas = kwargs.get("dbi_formulas_obj", {})
+            dbi_a_1_formulas = kwargs.get("second_dbi_formulas_obj", {})
 
             with tempfile.TemporaryDirectory() as tmp_dir:
                 logger.info(f"Task started with file: {xlsx_file1_uploaded_path}")
@@ -170,6 +170,7 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
         Method for executing the DBI checks
         """
         
+        file_year_required = False
         result = False
 
         try:
@@ -182,11 +183,14 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
             raise
         try:         
             # Unpack context_dict into individual variables
-            (xlsx_file_uploaded_path,
-             DATI_PRIORITATI,
-             dbi_prior_config,
-             dbi_prior_formulas
+            (
+            xlsx_file_uploaded_path,
             ) = args
+
+            DATI_PRIORITATI = kwargs.get("seed_file", {})
+            dbi_prior_config = kwargs.get("sheet_mapping_obj", {})
+            dbi_prior_formulas = kwargs.get("dbi_formulas_obj", {})
+
 
             with tempfile.TemporaryDirectory() as tmp_dir:
                 logger.info(f"Task started with file: {xlsx_file_uploaded_path}")
@@ -198,6 +202,7 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
                                   dbi_prior_config, 
                                   dbi_prior_formulas,
                                   tmp_checks_export_dir,
+                                  file_year_required,
                                   task_progress = 50,
                                   ).run()
             
@@ -230,6 +235,7 @@ class DataQualityCheckTask(ChecksBaseTask):
         Method for executing the DBI checks
         """
         
+        file_year_required = True
         result = False
 
         try:
@@ -243,12 +249,12 @@ class DataQualityCheckTask(ChecksBaseTask):
         try:         
             # Unpack context_dict into individual variables
             (xlsx_file_uploaded_path,
-             DBI_BONTA_DEI_DATI,
-             dbi_bonta_config,
-             dbi_bonta_formulas,
             ) = args
 
-            file_year_required = kwargs.get("file_year_required", False)
+            DBI_BONTA_DEI_DATI = kwargs.get("seed_file", {})
+            dbi_bonta_config = kwargs.get("sheet_mapping_obj", {})
+            dbi_bonta_formulas = kwargs.get("dbi_formulas_obj", {})
+
 
             with tempfile.TemporaryDirectory() as tmp_dir:
                 logger.info(f"Task started with file: {xlsx_file_uploaded_path}")

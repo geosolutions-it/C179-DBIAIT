@@ -104,8 +104,9 @@ const table_function_mapper = {
             table.clear().draw();
             response.forEach(function (data) {
                 var row = table.row.add([
-                    data.sheet_name,
+                    data.process_type,
                     data.file_name,
+                    data.sheet_name,
                     get_local_date(data.import_start_timestamp),
                     get_local_date(data.import_end_timestamp),
                     data.status
