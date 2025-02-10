@@ -1,7 +1,9 @@
 from app.dbi_checks.views import (ConsistencyCheckView, 
                                   PrioritizedDataView, 
+                                  DataQualityView,
                                   ConsistencyCheckStart,
                                   PrioritizedDataCheckStart,
+                                  DataQualityCheckStart,
                                   GetCheckStatus,
                                   GetImportedSheet,
                                   ChecksListView,
@@ -16,6 +18,8 @@ urlpatterns = [
         path(u"start_cons_check", ConsistencyCheckStart.as_view(), name=u'cons-check-start-view'),
         path(u"prioritized_data", PrioritizedDataView.as_view(), name=u'prioritized-data-view'),
         path(u"start_pd_check", PrioritizedDataCheckStart.as_view(), name=u'pd-check-start-view'),
+        path(u"data_quality", DataQualityView.as_view(), name=u'data-quality-view'),
+        path(u"start_dq_check", DataQualityCheckStart.as_view(), name=u'dq-check-start-view'),
         path(u"api/", include([
             path("status_check", GetCheckStatus.as_view(),
                  name=u'get-check-status-api-view'),
