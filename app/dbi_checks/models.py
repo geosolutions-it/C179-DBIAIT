@@ -82,10 +82,10 @@ class ProcessType(IntEnum):
     @classmethod
     def get_label(cls, value):
         labels = {
-            cls.COPY: "Dati copiati",
-            cls.CALCULATION: "Formule calcolate",
-            cls.SAVE: "File salvato",
-            cls.LOG: "Log creati"
+            cls.COPY: "copia",
+            cls.CALCULATION: "calcolo",
+            cls.SAVE: "salvataggio",
+            cls.LOG: "log"
         }
         return labels.get(value, "Unknown Process")
 
