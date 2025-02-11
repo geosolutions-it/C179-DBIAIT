@@ -55,7 +55,7 @@ class ConsistencyCheckView(LoginRequiredMixin, ListView):
         context['current_url'] = current_url
         return context
     
-# Check: dati prioritati
+# Check: dati prioritari
 class PrioritizedDataView(LoginRequiredMixin, ListView):
     template_name = u'dbi_checks/active-prioritized-data-check.html'
     queryset = Task_CheckDbi.objects.filter(imported=True, 
@@ -69,7 +69,7 @@ class PrioritizedDataView(LoginRequiredMixin, ListView):
         current_url = resolve(self.request.path_info).url_name
         context = super(PrioritizedDataView, self).get_context_data(**kwargs)
         context['bread_crumbs'] = {
-            'Checks DBI': reverse('prioritized-data-view'), 'Dati Prioritati': u"#"}
+            'Checks DBI': reverse('prioritized-data-view'), 'Dati Prioritari': u"#"}
         context['current_url'] = current_url
         return context
 
