@@ -133,7 +133,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
                 if result:
                     logger.info(f"Task started with file: {xlsx_file2_uploaded_path}")
                     file_year_required = False
-                    BaseCalc(orm_task, 
+                    result = BaseCalc(orm_task, 
                              xlsx_file2_uploaded_path, 
                              DBI_A_1, 
                              dbi_a_1_config, 
@@ -146,7 +146,6 @@ class ConsistencyCheckTask(ChecksBaseTask):
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
                     logger.info(f"Zip created")
-                    result = True
 
             return result
         
@@ -211,7 +210,6 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
                     logger.info(f"Zip created")
-                    result = True
 
             return result
         
@@ -275,7 +273,6 @@ class DataQualityCheckTask(ChecksBaseTask):
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
                     logger.info(f"Zip created")
-                    result = True
 
             return result
         
