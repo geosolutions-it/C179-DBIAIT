@@ -139,15 +139,17 @@ class ChecksBaseTask(BaseTask):
             Final check of the ProcessState.
             If at least 1 process type is failed, the whole task is considered unsuccessful
             '''
-            process_state_exists = ProcessState.objects.filter(task_id__id=task.id).exists()
+            
+            if task.status != TaskStatus.FAILED:
+                process_state_exists = ProcessState.objects.filter(task_id__id=task.id).exists()
 
-            if process_state_exists:
-                # If at least one instance exists, check if all have status 'SUCCESS'
-                process_state = ProcessState.objects.filter(task_id__id=task.id)
-                state_results = all(process.status == 'SUCCESS' for process in process_state)
-    
-                # Set task status based on the results
-                task.status = TaskStatus.SUCCESS if state_results else TaskStatus.FAILED
+                if process_state_exists:
+                    # If at least one instance exists, check if all have status 'SUCCESS'
+                    process_state = ProcessState.objects.filter(task_id__id=task.id)
+                    state_results = all(process.status == 'SUCCESS' for process in process_state)
+        
+                    # Set task status based on the results
+                    task.status = TaskStatus.SUCCESS if state_results else TaskStatus.FAILED
 
             # After the complete of the process, change the Task_CheckDbi exported field to True
             task.exported = True
