@@ -31,6 +31,7 @@ from app.dbi_checks.serializers import (
 )
 
 from app.dbi_checks.models import Task_CheckDbi, TaskStatus, ProcessState
+from app.scheduler import exceptions
 
 import logging
 
@@ -176,14 +177,20 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
                 "kwargs": context.kwargs
             }
 
-            task_id = self.task_class.pre_send(
-                self.request.user,
-                *uploaded_file_paths,
-                name=self.check_name,
-                check_type=self.check_type
-            )
-            self.task_class.send(task_id=task_id, context_data=context_data)
-            return redirect(self.get_success_url())
+            try:
+                task_id = self.task_class.pre_send(
+                    self.request.user,
+                    *uploaded_file_paths,
+                    name=self.check_name,
+                    check_type=self.check_type
+                )
+                self.task_class.send(task_id=task_id, context_data=context_data)
+                return redirect(self.get_success_url())
+            except exceptions.SchedulingParametersError or Exception as e:
+                logger.error(f"Unexpected error: {str(e)}")
+                # Add error to the context
+                return self.render_to_response(self.get_context_data(error=str(e)))
+
         else:
             logger.error("File processing failed.")
             return super().form_valid(form)

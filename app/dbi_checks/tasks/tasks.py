@@ -57,6 +57,12 @@ class ConsistencyCheckTask(ChecksBaseTask):
         
         # Get analysis year
         analysis_year = YearHandler(file1).get_year()
+        previous_year = YearHandler(file2).get_year()
+
+        if not analysis_year or not previous_year:
+            raise exceptions.SchedulingParametersError(
+                f"Analysis year in one of the files is invalid or missing. Please check the uploaded file"
+            )
 
         # Get or create Xlsx ORM model instance for this task execution
         xlsx, created = Xlsx.objects.get_or_create(name=f"{file1.name.split('.')[0]}_{file2.name.split('.')[0]}",

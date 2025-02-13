@@ -59,6 +59,11 @@ class ChecksBaseTask(BaseTask):
         
         # Get analysis year
         analysis_year = YearHandler(file).get_year()
+        
+        if not analysis_year:
+            raise exceptions.SchedulingParametersError(
+                f"Analysis year is invalid or missing. Please check the uploaded file"
+            )
 
         # Get or create Xlsx ORM model instance for this task execution
         xlsx, created = Xlsx.objects.get_or_create(name=f"{file.name.split('.')[0]}",

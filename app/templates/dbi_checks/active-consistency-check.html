@@ -113,6 +113,10 @@
     $(document).ready(function(){
         $("#error-modal").modal('show');
     });
+    // Redirect after modal is closed
+    $('#error-modal').on('hidden.bs.modal', function () {
+            window.location.href = "{% url 'consistency-check-view' %}";
+        });
 </script>
 {% endif %}
 <style>

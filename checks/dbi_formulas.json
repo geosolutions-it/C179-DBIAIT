@@ -93,11 +93,11 @@
       "Distribuzioni": {"start_row": 4, "start_col": "AV", "end_col": "BR"},
       "Distrib_tronchi": {"start_row": 4, "start_col": "N", "end_col": "U"},
       "Fognature": {"start_row": 4, "start_col": "AB", "end_col": "AN"},
-      "Fognat_tronchi": {"start_row": 4, "start_col": "R", "end_col": "Y"},
+      "Fognat_tronchi": {"start_row": 4, "start_col": "P", "end_col": "Y"},
       "Sollevamenti": {"start_row": 4, "start_col": "AB", "end_col": "AT"},
       "Sollev_pompe": {"start_row": 4, "start_col": "O", "end_col": "X"},
       "Collettori": {"start_row": 4, "start_col": "T", "end_col": "AB"},
-      "Collett_tronchi": {"start_row": 4, "start_col": "R", "end_col": "Y"},
+      "Collett_tronchi": {"start_row": 4, "start_col": "P", "end_col": "Y"},
       "Depuratori": {"start_row": 4, "start_col": "CU", "end_col": "EB"},
       "Depurat_pompe": {"start_row": 4, "start_col": "O", "end_col": "X"},
       "Scaricatori": {"start_row": 4, "start_col": "AC", "end_col": "AW"}
