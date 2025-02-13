@@ -59,6 +59,11 @@ class ChecksBaseTask(BaseTask):
         
         # Get analysis year
         analysis_year = YearHandler(file).get_year()
+        
+        if not analysis_year:
+            raise exceptions.SchedulingParametersError(
+                f"L'anno di analisi non è presente nel file caricato. L'anno deve essere presente nella cella B8 del foglio DATI per il file DBI_A"
+            )
 
         # Get or create Xlsx ORM model instance for this task execution
         xlsx, created = Xlsx.objects.get_or_create(name=f"{file.name.split('.')[0]}",

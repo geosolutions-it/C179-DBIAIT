@@ -188,6 +188,12 @@ class BaseCalc:
                                           sheet=sheet_name
                                           )
                 logger.warning(f"Something went wrong when filling out the formulas !")
+
+        # Write the year to the resulted file
+        defined_year = YearHandler(self.imported_file).get_year()
+        dati_sheet = seed_wb["DATI"]
+        dati_sheet['B8'] = defined_year
+        logger.info(f"The year {defined_year} was copied to th DATI sheet")
         
         self.orm_task.progress += self.task_progress
         self.orm_task.save()

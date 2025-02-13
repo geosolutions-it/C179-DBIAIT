@@ -12,11 +12,16 @@ from app.dbi_checks.utils import CheckType
 from app.scheduler.utils import TaskStatus, status_icon_mapper, style_class_mapper, default_storage
     
 class Xlsx(models.Model):
-    name = models.CharField(max_length=300, blank=False, unique=True)
+    name = models.CharField(max_length=300, blank=False)
     file_path = models.CharField(max_length=300, blank=False, null=True)
     second_file_path = models.CharField(max_length=300, blank=False, null=True)
     analysis_year = models.CharField(max_length=10, blank=False, default=f"Current")
-
+ 
+    # adding a constraint to avoid duplicated records
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'analysis_year'], name='unique_name_year')
+        ]
 
     def __str__(self):
         return f"{self.name}: {self.file_path}, {self.second_file_path}"
