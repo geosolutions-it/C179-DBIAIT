@@ -186,7 +186,7 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
                 )
                 self.task_class.send(task_id=task_id, context_data=context_data)
                 return redirect(self.get_success_url())
-            except exceptions.SchedulingParametersError or Exception as e:
+            except (exceptions.SchedulingParametersError, Exception) as e:
                 logger.error(f"Unexpected error: {str(e)}")
                 # Add error to the context
                 return self.render_to_response(self.get_context_data(error=str(e)))
