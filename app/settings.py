@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'app.authenticate',
     'app.scheduler',
     'app.dbi_checks',
+    'app.shape_checks',
 
     # Installed apps
     'rest_framework',
