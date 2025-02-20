@@ -188,13 +188,10 @@ class BaseCalc:
                                           sheet=sheet_name
                                           )
                 logger.warning(f"Something went wrong when filling out the formulas !")
-
+                
         # Write the year to the resulted file
-        defined_year = YearHandler(self.imported_file).get_year()
-        dati_sheet = seed_wb["DATI"]
-        dati_sheet['B8'] = defined_year
-        logger.info(f"The year {defined_year} was copied to th DATI sheet")
-        
+        self.year_to_file(seed_wb)
+
         self.orm_task.progress += self.task_progress
         self.orm_task.save()
 
@@ -244,6 +241,13 @@ class BaseCalc:
         except Exception as e:
             logger.error(f"An error occurred while importing sheet: {str(e)}")
             raise
+    
+    def year_to_file(self, seed_wb):
+        # Write the year to the resulted file
+        defined_year = YearHandler(self.imported_file).get_year()
+        dati_sheet = seed_wb["DATI"]
+        dati_sheet['B8'] = defined_year
+        logger.info(f"The year {defined_year} was copied to th DATI sheet")
 
     def get_last_data_row(self, sheet):
         last_row = 0

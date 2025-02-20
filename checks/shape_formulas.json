@@ -1,0 +1,5 @@
+{   
+    "SHP_ACQ_formulas": {
+      "SHP_Acquedotto": {"start_row": 4, "start_col": "AE", "end_col": "BW"}
+    }
+  }

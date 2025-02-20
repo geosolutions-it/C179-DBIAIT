@@ -75,16 +75,16 @@
 </script>
 {% else %}
 <div class="container mt-5">
-  <form method="POST" enctype="multipart/form-data" action="{% url 'cons-check-start-view' %}" class="mt-5">
+  <form method="POST" enctype="multipart/form-data" action="{% url 'shp-acq-check-start-view' %}" class="mt-5">
     {% csrf_token %}
     <div class="form-group mt-5">
       <div class="form-group">
-        <label for="id_xlsx_file1">ANNO A</label>
-        <input type="file" name="xlsx_file" id="id_xlsx_file1" class="form-control" required>
+        <label for="id_xlsx_file">ANNO A</label>
+        <input type="file" name="xlsx_file" id="id_xlsx_file" class="form-control" required>
       </div>
     <div class="form-group">
-        <label for="id_xlsx_file2">Acquedotto dati (DBF file)</label>
-        <input type="file" name="second_xlsx_file" id="id_xlsx_file2" class="form-control" required>
+        <label for="id_dbf_file">Acquedotto dati (DBF file)</label>
+        <input type="file" name="dbf_file" id="id_dbf_file" class="form-control" required>
     </div>
     </div>
     <button type="submit" class="btn btn-info mb-2 btn-block" onclick="loadIcon();">AVVIA</button>
@@ -115,7 +115,7 @@
     });
     // Redirect after modal is closed
     $('#error-modal').on('hidden.bs.modal', function () {
-            window.location.href = "{% url 'consistency-check-view' %}";
+            window.location.href = "{% url 'shp-acq-check-view' %}";
         });
 </script>
 {% endif %}
