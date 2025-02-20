@@ -60,7 +60,8 @@ class ShpAcqCheckTask(ShapeChecksBaseTask):
                 tmp_checks_export_dir = pathlib.Path(tmp_dir)
                 
                 result = ShapeCalc(orm_task, 
-                                  xlsx_file_uploaded_path, 
+                                  xlsx_file_uploaded_path,
+                                  dbf_file_uploaded_path,
                                   SHP_seed, 
                                   shp_config, 
                                   shp_formulas,
@@ -69,11 +70,10 @@ class ShpAcqCheckTask(ShapeChecksBaseTask):
                                   task_progress = 25,
                                   ).run()
             
-                # Copy the second file using the DBI_A_1 seed only if the first copy is completed
+                # zip the final file
                 if result:
                     logger.info(f"Task started with DBF file: {dbf_file_uploaded_path}")
                     file_year_required = False
-                    # result = ShapeCalc( ...
                     # zip final output in export directory
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)

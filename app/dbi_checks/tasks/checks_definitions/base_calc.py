@@ -131,7 +131,39 @@ class BaseCalc:
             
         self.orm_task.progress += self.task_progress
         self.orm_task.save()
+    
+        # Drag the formulas
+        self.drag_formulas(seed_wb)
 
+        # Write the year to the resulted file
+        self.year_to_file(seed_wb)
+
+        self.orm_task.progress += self.task_progress
+        self.orm_task.save()
+
+        start_date = timezone.now()
+        logger.info(f"The file is ready to be saved")
+        # save logic
+        seed_wb.save(seed_copy)
+        del seed_wb
+
+        # Clean up by deleting the import file
+        os.remove(self.imported_file)
+        logger.info(f"Final workbook save completed.")
+        end_date = timezone.now()
+
+        # save the save process in the ProcessState model
+        self.import_process_state(self.orm_task.id, 
+                                  ProcessType.SAVE.value, 
+                                  os.path.basename(self.imported_file), 
+                                  start_date, 
+                                  end_date, 
+                                  TaskStatus.SUCCESS
+                                  )
+        
+        return True
+    
+    def drag_formulas(self, seed_wb):
         # Iterate through each sheet to drag the formulas
         for sheet_name, f_location in self.formulas_config.items():
 
@@ -188,34 +220,6 @@ class BaseCalc:
                                           sheet=sheet_name
                                           )
                 logger.warning(f"Something went wrong when filling out the formulas !")
-                
-        # Write the year to the resulted file
-        self.year_to_file(seed_wb)
-
-        self.orm_task.progress += self.task_progress
-        self.orm_task.save()
-
-        start_date = timezone.now()
-        logger.info(f"The file is ready to be saved")
-        # save logic
-        seed_wb.save(seed_copy)
-        del seed_wb
-
-        # Clean up by deleting the import file
-        os.remove(self.imported_file)
-        logger.info(f"Final workbook save completed.")
-        end_date = timezone.now()
-
-        # save the save process in the ProcessState model
-        self.import_process_state(self.orm_task.id, 
-                                  ProcessType.SAVE.value, 
-                                  os.path.basename(self.imported_file), 
-                                  start_date, 
-                                  end_date, 
-                                  TaskStatus.SUCCESS
-                                  )
-        
-        return True
     
     def import_process_state(self, task_id, process_type, file_name, start_date, end_date, status, sheet=""):
     
