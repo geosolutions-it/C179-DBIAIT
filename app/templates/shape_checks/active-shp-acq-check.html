@@ -1,4 +1,4 @@
-{% extends "dbi_checks/base-dbi-checks.html" %}
+{% extends "shape_checks/base-shape-checks.html" %}
 {% load utils %}
 {% load static %}
 
@@ -31,7 +31,7 @@
         <th style="width: 120px;">Inizio</th>
         <th style="width: 120px;">Fine</th>
         <th style="width: 100px;">Status</th>
-      </tr>
+        </tr>
     </thead>
      <tbody id="test-sheet-import-table">
       <tr>
@@ -75,13 +75,17 @@
 </script>
 {% else %}
 <div class="container mt-5">
-  <form method="POST" enctype="multipart/form-data" action="{% url 'dq-check-start-view' %}" class="mt-5">
+  <form method="POST" enctype="multipart/form-data" action="{% url 'cons-check-start-view' %}" class="mt-5">
     {% csrf_token %}
     <div class="form-group mt-5">
       <div class="form-group">
-        <label for="id_xlsx_file">ANNO A</label>
-        <input type="file" name="xlsx_file" id="id_xlsx_file" class="form-control" required>
+        <label for="id_xlsx_file1">ANNO A</label>
+        <input type="file" name="xlsx_file" id="id_xlsx_file1" class="form-control" required>
       </div>
+    <div class="form-group">
+        <label for="id_xlsx_file2">Acquedotto dati (DBF file)</label>
+        <input type="file" name="second_xlsx_file" id="id_xlsx_file2" class="form-control" required>
+    </div>
     </div>
     <button type="submit" class="btn btn-info mb-2 btn-block" onclick="loadIcon();">AVVIA</button>
   </form>
@@ -111,7 +115,7 @@
     });
     // Redirect after modal is closed
     $('#error-modal').on('hidden.bs.modal', function () {
-            window.location.href = "{% url 'data-quality-view' %}";
+            window.location.href = "{% url 'consistency-check-view' %}";
         });
 </script>
 {% endif %}
@@ -122,6 +126,7 @@
     margin: 0 auto;
     top: calc(50% - 24px);
   }
+
   #custom-loading-modal .modal-dialog .modal-content{
     background-color: transparent;
     border: none;
@@ -129,7 +134,7 @@
 </style>
 <script>
   function loadIcon() {
-    if(document.getElementById("id_xlsx_file").files.length != 0){
+    if(document.getElementById("id_xlsx_file1").files.length != 0 && document.getElementById("id_xlsx_file2").files.length != 0 ){
       $('.custom-loading-modal').modal('show');
     }
   }

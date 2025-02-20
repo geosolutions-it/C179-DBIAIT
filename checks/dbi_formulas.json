@@ -101,5 +101,8 @@
       "Depuratori": {"start_row": 4, "start_col": "CU", "end_col": "EB"},
       "Depurat_pompe": {"start_row": 4, "start_col": "O", "end_col": "X"},
       "Scaricatori": {"start_row": 4, "start_col": "AC", "end_col": "AW"}
+    },
+    "SHP_ACQ_formulas": {
+      "SHP_Acquedotto": {"start_row": 4, "start_col": "AE", "end_col": "BW"}
     }
   }

@@ -13,7 +13,7 @@ from django.urls import include, path
 
 
 urlpatterns = [
-    path(u"checks/", include([
+    path(u"dbi_checks/", include([
         path(u"", ConsistencyCheckView.as_view(), name=u'consistency-check-view'),
         path(u"start_cons_check", ConsistencyCheckStart.as_view(), name=u'cons-check-start-view'),
         path(u"prioritized_data", PrioritizedDataView.as_view(), name=u'prioritized-data-view'),
