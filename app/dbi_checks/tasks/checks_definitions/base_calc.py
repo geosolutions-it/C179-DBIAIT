@@ -1,6 +1,7 @@
 import os
 import shutil
 import pathlib
+import datetime
 
 from django.utils import timezone
 from django.db.models import ObjectDoesNotExist
@@ -102,7 +103,20 @@ class BaseCalc:
                     for cell in row:
                         if cell.value is not None:
                             # Calculate the target row position based on the row index
-                            target.cell(row=row_idx, column=cell.column, value=cell.value)
+                            target_cell = target.cell(row=row_idx, column=cell.column, value=cell.value)
+
+                            # If the value is a date, set date format
+                            if isinstance(cell.value, datetime.date):
+                                target_cell.number_format = 'MM/DD/YYYY'
+                                target_cell.value = cell.value
+                            # If the value is a number, set General format to avoid date misinterpretation
+                            elif isinstance(cell.value, (int, float)):
+                                target_cell.number_format = 'General'
+                                target_cell.value = cell.value
+                            else:
+                                # For any other type (e.g strings), set the appropriate format
+                                target_cell.number_format = '@'
+                                target_cell.value = cell.value
   
                 logger.info(f"Copied data from sheet: {source_sheet} to {target_sheet}")
                 
