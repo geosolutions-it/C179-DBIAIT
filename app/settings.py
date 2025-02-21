@@ -338,6 +338,7 @@ DBI_A = os.path.join(CHECKS_SEED_FILES, "DBI_A.xlsx")
 DBI_PRIORITATI = os.path.join(CHECKS_SEED_FILES, "DBI_prioritari.xlsx")
 DBI_BONTA_DEI_DATI = os.path.join(CHECKS_SEED_FILES, "DBI_bonta_dei_dati.xlsx")
 SHP_ACQ = os.path.join(CHECKS_SEED_FILES, "Check_shp_ACQ.xlsx")
+SHP_FGN = os.path.join(CHECKS_SEED_FILES, "Check_shp_FGN.xlsx")
 # Get precending and current year from a specific sheet, column and row
 YEAR_VALUE = {
     "sheet": "DATI",

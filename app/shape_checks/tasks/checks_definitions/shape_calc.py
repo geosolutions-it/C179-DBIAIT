@@ -54,6 +54,8 @@ class ShapeCalc(BaseCalc):
     
     def drag_formulas(self, seed_wb):
         
+        # Before dragging the formulas we have to copy
+        # the DBF content to the specialized sheet
         dbf_copy_result = self.copy_from_dbf(seed_wb)
 
         if dbf_copy_result:
@@ -159,5 +161,5 @@ class ShapeCalc(BaseCalc):
         defined_year = YearHandler(self.imported_file).get_year()
         anno_sheet = seed_wb["ANNO INPUT"]
         anno_sheet['A1'] = defined_year
-        logger.info(f"The year {defined_year} was copied to th DATI sheet")
+        logger.info(f"The year {defined_year} was copied to the ANNO INPUT sheet")
     

@@ -1,5 +1,7 @@
 from app.shape_checks.views import (ShpAcqCheckView,
+                                    ShpFgnCheckView,
                                     ShpAcqCheckStart,
+                                    ShpFgnCheckStart,
                                     GetShapeCheckStatus,
                                     GetShapeCheckProcessState,
                                     ShapeChecksListView,
@@ -11,7 +13,9 @@ from django.urls import include, path
 urlpatterns = [
     path(u"shape_checks/", include([
         path(u"", ShpAcqCheckView.as_view(), name=u'shp-acq-check-view'),
+        path(u"shp_fgn", ShpFgnCheckView.as_view(), name=u'shp-fgn-check-view'),
         path(u"start_acq_check", ShpAcqCheckStart.as_view(), name=u'shp-acq-check-start-view'),
+        path(u"start_fgn_check", ShpFgnCheckStart.as_view(), name=u'shp-fgn-check-start-view'),
         path(u"api/", include([
             path("status_shape_check", GetShapeCheckStatus.as_view(),
                  name=u'get-shape-check-status-api-view'),

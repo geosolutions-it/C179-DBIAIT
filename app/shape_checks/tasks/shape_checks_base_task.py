@@ -1,11 +1,16 @@
+import os
 import pathlib
 import traceback
+import shutil
+import tempfile
 
 from django.db.models import Q, ObjectDoesNotExist
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from app.shape_checks.models import Task_CheckShape, ShapeCheckProcessState, XlsxDbf
+from app.shape_checks.tasks.checks_definitions.shape_calc import ShapeCalc
 
 from app.dbi_checks.utils import YearHandler
 
@@ -13,7 +18,11 @@ from app.scheduler.tasks.base_task import BaseTask
 from app.scheduler.utils import TaskStatus, Schema
 from app.scheduler.logging import Tee
 from app.scheduler import exceptions
+from app.scheduler.tasks.base_task import trace_it
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ShapeChecksBaseTask(BaseTask):
     """
@@ -26,6 +35,7 @@ class ShapeChecksBaseTask(BaseTask):
         abstract = True
 
     schema = Schema.ANALYSIS
+    sheet_for_dbf = None
 
     @classmethod
     def pre_send(
@@ -84,6 +94,66 @@ class ShapeChecksBaseTask(BaseTask):
         current_task.save()
 
         return current_task.id
+    
+    @trace_it
+    def execute(self, 
+                task_id: int,
+                *args, 
+                **kwargs
+                ) -> None:
+        
+        """
+        Method for executing the SHAPE checks
+        """
+        
+        file_year_required = False
+        result = False
+
+        try:
+            orm_task = Task_CheckShape.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
+            )
+            raise
+        try:         
+            # Unpack context_dict into individual variables
+            (xlsx_file_uploaded_path,
+             dbf_file_uploaded_path,
+            ) = args
+
+            SHP_seed = kwargs.get("seed_file", {})
+            shp_config = kwargs.get("sheet_mapping_obj", {})
+            shp_formulas = kwargs.get("shape_formulas_obj", {})
+
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                logger.info(f"Task started with file: {xlsx_file_uploaded_path}")
+                tmp_checks_export_dir = pathlib.Path(tmp_dir)
+                
+                result = ShapeCalc(orm_task, 
+                                  xlsx_file_uploaded_path,
+                                  dbf_file_uploaded_path,
+                                  self.sheet_for_dbf,
+                                  SHP_seed, 
+                                  shp_config, 
+                                  shp_formulas,
+                                  tmp_checks_export_dir,
+                                  file_year_required,
+                                  task_progress = 25,
+                                  ).run()
+            
+                # zip the final file
+                if result:
+                    # zip final output in export directory
+                    export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
+                    shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
+                    logger.info(f"Zip created")
+
+            return result
+        
+        except Exception as e:
+            print(f"Error processing files in the background: {e}")
     
     def perform(self, 
                 task_id: int,
