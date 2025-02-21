@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if request.user.is_staff or request.user.is_superuser %}
+    <div class="container">
+        <div class="tab">
+            <a href="{% url 'shp-acq-check-view' %}" class="tablinks{% if current_url == 'shp-acq-check-view'%} active{% endif %}">SHP Acquedotto</a>
+            <a href="{% url 'shape-checks-list-view' %}" class="tablinks{% if current_url == 'shape-checks-list-view'%} active{% endif %}">Download</a>
+        </div>
+    </div>
+
+    <div>
+    {% block import_content %}
+        {# content of the running/current import #}
+    {% endblock %}
+    </div>
+    <div class="tab-content" style="margin-top: 20px;">
+    {% block history_content %}
+        {# content of the history content #}
+    {% endblock %}
+    </div>
+{% else %}
+{% include "errors/denied.html" %}
+{% endif %}
+{% endblock %}

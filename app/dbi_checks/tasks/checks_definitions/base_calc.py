@@ -22,7 +22,7 @@ class BaseCalc:
 
     def __init__(
         self, 
-        orm_task: Task_CheckDbi,
+        orm_task,
         imported_file: str,
         seed: str,
         config: str,
@@ -131,7 +131,39 @@ class BaseCalc:
             
         self.orm_task.progress += self.task_progress
         self.orm_task.save()
+    
+        # Drag the formulas
+        self.drag_formulas(seed_wb)
 
+        # Write the year to the resulted file
+        self.year_to_file(seed_wb)
+
+        self.orm_task.progress += self.task_progress
+        self.orm_task.save()
+
+        start_date = timezone.now()
+        logger.info(f"The file is ready to be saved")
+        # save logic
+        seed_wb.save(seed_copy)
+        del seed_wb
+
+        # Clean up by deleting the import file
+        os.remove(self.imported_file)
+        logger.info(f"Final workbook save completed.")
+        end_date = timezone.now()
+
+        # save the save process in the ProcessState model
+        self.import_process_state(self.orm_task.id, 
+                                  ProcessType.SAVE.value, 
+                                  os.path.basename(self.imported_file), 
+                                  start_date, 
+                                  end_date, 
+                                  TaskStatus.SUCCESS
+                                  )
+        
+        return True
+    
+    def drag_formulas(self, seed_wb):
         # Iterate through each sheet to drag the formulas
         for sheet_name, f_location in self.formulas_config.items():
 
@@ -188,37 +220,6 @@ class BaseCalc:
                                           sheet=sheet_name
                                           )
                 logger.warning(f"Something went wrong when filling out the formulas !")
-
-        # Write the year to the resulted file
-        defined_year = YearHandler(self.imported_file).get_year()
-        dati_sheet = seed_wb["DATI"]
-        dati_sheet['B8'] = defined_year
-        logger.info(f"The year {defined_year} was copied to th DATI sheet")
-        
-        self.orm_task.progress += self.task_progress
-        self.orm_task.save()
-
-        start_date = timezone.now()
-        logger.info(f"The file is ready to be saved")
-        # save logic
-        seed_wb.save(seed_copy)
-        del seed_wb
-
-        # Clean up by deleting the import file
-        os.remove(self.imported_file)
-        logger.info(f"Final workbook save completed.")
-        end_date = timezone.now()
-
-        # save the save process in the ProcessState model
-        self.import_process_state(self.orm_task.id, 
-                                  ProcessType.SAVE.value, 
-                                  os.path.basename(self.imported_file), 
-                                  start_date, 
-                                  end_date, 
-                                  TaskStatus.SUCCESS
-                                  )
-        
-        return True
     
     def import_process_state(self, task_id, process_type, file_name, start_date, end_date, status, sheet=""):
     
@@ -244,6 +245,13 @@ class BaseCalc:
         except Exception as e:
             logger.error(f"An error occurred while importing sheet: {str(e)}")
             raise
+    
+    def year_to_file(self, seed_wb):
+        # Write the year to the resulted file
+        defined_year = YearHandler(self.imported_file).get_year()
+        dati_sheet = seed_wb["DATI"]
+        dati_sheet['B8'] = defined_year
+        logger.info(f"The year {defined_year} was copied to th DATI sheet")
 
     def get_last_data_row(self, sheet):
         last_row = 0
@@ -251,4 +259,3 @@ class BaseCalc:
            if any(cell.value is not None for cell in row):
                 last_row = row[0].row
         return last_row
-    
