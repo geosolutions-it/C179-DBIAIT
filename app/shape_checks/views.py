@@ -18,7 +18,7 @@ from rest_framework.permissions import IsAuthenticated
 from app.shape_checks.forms import ExcelDbfUploadForm
 from app.shape_checks.utils import ShapeCheckType
 from app.shape_checks.models import Task_CheckShape, ShapeCheckProcessState
-from app.shape_checks.tasks.tasks import ShpAcqCheckTask
+from app.shape_checks.tasks.tasks import ShpAcqCheckTask, ShpFgnCheckTask
 from app.shape_checks.serializers import (
     ShapeCheckSerializer,
     ShapeCheckProcessStateSerializer,
@@ -34,7 +34,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Check: consistenza delle opere main view
+# Check: SHP Acquedotto
 class ShpAcqCheckView(LoginRequiredMixin, ListView):
     template_name = u'shape_checks/active-shp-acq-check.html'
     queryset = Task_CheckShape.objects.filter(imported=True, 
@@ -50,6 +50,25 @@ class ShpAcqCheckView(LoginRequiredMixin, ListView):
         context = super(ShpAcqCheckView, self).get_context_data(**kwargs)
         context['bread_crumbs'] = {
             'Check Shape': reverse('shp-acq-check-view'), 'SHP Acquedotto': u"#"}
+        context['current_url'] = current_url
+        return context
+    
+# Check: consistenza delle opere main view
+class ShpFgnCheckView(LoginRequiredMixin, ListView):
+    template_name = u'shape_checks/active-shp-fgn-check.html'
+    queryset = Task_CheckShape.objects.filter(imported=True, 
+                                            status__in=[
+                                                TaskStatus.RUNNING, 
+                                                TaskStatus.QUEUED
+                                                ],
+                                            check_type=ShapeCheckType.FGN
+                                   ).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        current_url = resolve(self.request.path_info).url_name
+        context = super(ShpFgnCheckView, self).get_context_data(**kwargs)
+        context['bread_crumbs'] = {
+            'Check Shape': reverse('shp-fgn-check-view'), 'SHP Fognatura': u"#"}
         context['current_url'] = current_url
         return context
     
@@ -155,6 +174,17 @@ class ShpAcqCheckStart(BaseShapeCheckStart):
     check_name = "shp_acq_check"
     check_type = ShapeCheckType.ACQ
     task_class = ShpAcqCheckTask
+
+
+class ShpFgnCheckStart(BaseShapeCheckStart):
+    template_name = u'shape_checks/active-shp-fgn-check.html'
+    redirected_view = u"shp-fgn-check-view"
+    seed_file = settings.SHP_FGN
+    sheet_mapping_obj = "CHECK_SHP_FGN"
+    shape_formulas_obj = "SHP_FGN_formulas"
+    check_name = "shp_fgn_check"
+    check_type = ShapeCheckType.FGN
+    task_class = ShpFgnCheckTask
 
 # API views
 class GetShapeCheckStatus(generics.ListAPIView):
