@@ -29,7 +29,7 @@ class ShapeCalc(BaseCalc):
     
     def __init__(
         self, 
-        orm_task: Task_CheckShape,
+        orm_task, # Task_CheckShape
         imported_file: str,
         imported_dbf_file: str,
         sheet_for_dbf: str,
@@ -57,76 +57,19 @@ class ShapeCalc(BaseCalc):
         dbf_copy_result = self.copy_from_dbf(seed_wb)
 
         if dbf_copy_result:
-            return True
-
-    """
-    def drag_formulas(self, seed_wb):
-        # Iterate through each sheet to drag the formulas
-        for sheet_name, f_location in self.formulas_config.items():
-
-            start_date = timezone.now()
-            
-            if sheet_name in seed_wb.sheetnames:
-                sheet = seed_wb[sheet_name]
-
-                # Get column indexes
-                start_col_index = column_index_from_string(f_location["start_col"])
-                end_col_index = column_index_from_string(f_location["end_col"])
-                start_row = f_location["start_row"]
-                # Re-definition of the last row because the copied file is processed
-                # without saving yet. We don't want to re-load it for time reasons
-                last_row = self.get_last_data_row(sheet)
-
-                # Copy formulas from row 4 to the rest of the rows
-                for col_idx in range(start_col_index, end_col_index + 1):
-                    column_letter = get_column_letter(col_idx)
-                    # Get the formula in row 4
-                    formula = sheet[f"{column_letter}{start_row}"].value
-                    if isinstance(formula, str) and formula.startswith("="):
-                        # Use the Translator to adjust the formula for each subsequent row
-                        for row_idx in range(start_row + 1, last_row + 1):
-                            translator = Translator(formula, f"{column_letter}{start_row}")
-                            adjusted_formula = translator.translate_formula(f"{column_letter}{row_idx}")
-                            # Set the adjusted formula in the target row
-                            target_cell = sheet[f"{column_letter}{row_idx}"]
-                            target_cell.value = adjusted_formula
-                            # Explicit formatting
-                            target_cell.number_format = numbers.FORMAT_GENERAL
-
-                
-                logger.info(f"The formulas were populated from sheet: {sheet_name}")
-                # Call the import_process_state function with the process type CALCULATION and SUCCESS status
-                end_date = timezone.now()
-                self.import_process_state(self.orm_task.id, 
-                                          ProcessType.CALCULATION.value,  
-                                          os.path.basename(self.imported_file), 
-                                          start_date, 
-                                          end_date, 
-                                          TaskStatus.SUCCESS,
-                                          sheet=sheet_name
-                                          )
-
-            else:
-                end_date = timezone.now()
-                self.import_process_state(self.orm_task.id, 
-                                          ProcessType.CALCULATION.value,
-                                          os.path.basename(self.imported_file), 
-                                          start_date, 
-                                          end_date, 
-                                          TaskStatus.FAILED,
-                                          sheet=sheet_name
-                                          )
-                logger.warning(f"Something went wrong when filling out the formulas !")
-    """
+            super().drag_formulas(seed_wb)
     
     def copy_from_dbf(self, seed_wb):
         try:
+            start_date = timezone.now()
             # Read DBF file into a DataFrame
             dbf_table = DBF(self.imported_dbf_file, load=True)
             df = pd.DataFrame(iter(dbf_table))
 
             with open(settings.DBF_TO_SHEET, "r") as file:
                 dbf_to_sheet_config = json.load(file)
+
+            self.orm_task.progress += self.task_progress
         except (FileNotFoundError, json.JSONDecodeError) as e:
             logger.error(f"Error reading DBF file: {e}")
             return False
@@ -155,12 +98,34 @@ class ShapeCalc(BaseCalc):
             ):
                 for cell, value in zip(row, df_row):
                     cell.value = value  # Assign value to each cell
+
+            end_date = timezone.now()
             
+            self.import_process_state(self.orm_task.id, 
+                                          ProcessType.COPY.value,
+                                          os.path.basename(self.imported_dbf_file), 
+                                          start_date, 
+                                          end_date, 
+                                          TaskStatus.SUCCESS,
+                                          sheet=self.sheet_for_dbf
+                                          )
+
             logger.info(f"Copied {total_rows} rows from DBF to Excel")
+
+            self.orm_task.progress += self.task_progress
 
             return True
         
         except (KeyError, Exception) as e:
+            end_date = timezone.now()
+            self.import_process_state(self.orm_task.id, 
+                                          ProcessType.COPY.value,
+                                          os.path.basename(self.imported_dbf_file), 
+                                          start_date, 
+                                          end_date, 
+                                          TaskStatus.FAILED,
+                                          sheet=self.sheet_for_dbf
+                                          )
             logger.error(f"Error copying data to Excel: {e}")
             return False
 

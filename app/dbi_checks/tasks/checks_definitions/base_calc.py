@@ -22,7 +22,7 @@ class BaseCalc:
 
     def __init__(
         self, 
-        orm_task: Task_CheckDbi,
+        orm_task,
         imported_file: str,
         seed: str,
         config: str,

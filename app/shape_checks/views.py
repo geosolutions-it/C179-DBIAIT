@@ -12,10 +12,18 @@ from django.urls import resolve, reverse, reverse_lazy
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
+
 from app.shape_checks.forms import ExcelDbfUploadForm
 from app.shape_checks.utils import ShapeCheckType
 from app.shape_checks.models import Task_CheckShape, ShapeCheckProcessState
 from app.shape_checks.tasks.tasks import ShpAcqCheckTask
+from app.shape_checks.serializers import (
+    ShapeCheckSerializer,
+    ShapeCheckProcessStateSerializer,
+    ShapeCheckExportTaskSerializer
+)
 
 from app.dbi_checks.tasks.checks_base_task import ChecksContext
 from app.dbi_checks.models import TaskStatus
@@ -147,3 +155,60 @@ class ShpAcqCheckStart(BaseShapeCheckStart):
     check_name = "shp_acq_check"
     check_type = ShapeCheckType.ACQ
     task_class = ShpAcqCheckTask
+
+# API views
+class GetShapeCheckStatus(generics.ListAPIView):
+    queryset = Task_CheckShape.objects.filter(imported=True).order_by('-id')[:1]
+    serializer_class = ShapeCheckSerializer
+    permission_classes = [IsAuthenticated]
+
+class GetShapeCheckProcessState(generics.RetrieveAPIView):
+    serializer_class = ShapeCheckProcessStateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        """
+        Return only the ProcessState related to a specific task uuid
+        """
+        task_id = request.query_params['task_id']
+        response = [process_type.to_dict() for process_type in ShapeCheckProcessState.objects.filter(task__uuid=task_id).order_by('-id')]
+        return JsonResponse(response, safe=False)
+    
+# Views for the history tab
+class ShapeChecksListView(LoginRequiredMixin, ListView):
+    template_name = u'shape_checks/historical-shape-checks.html'
+    queryset = Task_CheckShape.objects.filter(exported=True).order_by(u"-start_date")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_url = resolve(self.request.path_info).url_name
+
+        # Add breadcrumbs to the context
+        context['bread_crumbs'] = {
+            'Checks Shape': reverse('shape-checks-list-view'),
+            'Download': u"#"
+        }
+        # Get the current URL name
+        context['current_url'] = current_url
+
+        return context
+
+class GetShapeCheckExportStatus(generics.ListAPIView):
+    queryset = Task_CheckShape.objects.filter(exported=True).order_by('-id')
+    serializer_class = ShapeCheckExportTaskSerializer
+
+class ShapeChecksDownloadView(LoginRequiredMixin, View):
+    def get(self, request, task_id: int):
+        file_path = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{task_id}.zip")
+
+        if os.path.exists(file_path) and Task_CheckShape.objects.filter(id=task_id).exists():
+            with open(file_path, u"rb") as file_obj:
+                response = HttpResponse(
+                    file_obj.read(), content_type=u"application/x-gzip")
+                response[u"Content-Length"] = os.fstat(file_obj.fileno()).st_size
+                response[u"Content-Type"] = u"application/zip"
+                response[u"Content-Disposition"] = f"attachment; filename=checks_task_{task_id}.zip"
+            return response
+        context = {u"error": f"Siamo spiacenti che l'archivio richiesto {task_id}.zip non sia presente",
+                   u"bread_crumbs": {u"Error": u"#"}}
+        return render(request, u"errors/error.html", context=context, status=status.HTTP_404_NOT_FOUND)

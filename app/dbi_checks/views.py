@@ -235,13 +235,12 @@ class DataQualityCheckStart(BaseCheckStart):
     check_type = CheckType.BDD
     task_class = DataQualityCheckTask
 
+# API based views
 class GetCheckStatus(generics.ListAPIView):
     queryset = Task_CheckDbi.objects.filter(imported=True).order_by('-id')[:1]
     serializer_class = CheckSerializer
     permission_classes = [IsAuthenticated]
 
-
-# API based views
 class GetProcessState(generics.RetrieveAPIView):
     serializer_class = ProcessStateSerializer
     permission_classes = [IsAuthenticated]

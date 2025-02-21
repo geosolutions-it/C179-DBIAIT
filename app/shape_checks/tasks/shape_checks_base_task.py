@@ -65,8 +65,10 @@ class ShapeChecksBaseTask(BaseTask):
 
         # Get or create Xlsx ORM model instance for this task execution
         xlsx_dbf, created = XlsxDbf.objects.get_or_create(name=f"{file1.name.split('.')[0]}_{file2.name.split('.')[0]}",
-                                                   analysis_year = analysis_year,
-                                                   )
+                                                          file_path=file_path1,
+                                                          second_file_path=file_path2,
+                                                          analysis_year = analysis_year,
+                                                          )
         if created:
             xlsx_dbf.save()
 

@@ -49,14 +49,14 @@
 </div>
 <script>
   window.addEventListener("load", function () {
-    ajax_call("{% url 'get-check-status-api-view' %}", "#import-status-table");
-    setInterval(function () { ajax_call("{% url 'get-check-status-api-view' %}", "#import-status-table") }, 5000);
+    ajax_call("{% url 'get-shape-check-status-api-view' %}", "#import-status-table");
+    setInterval(function () { ajax_call("{% url 'get-shape-check-status-api-view' %}", "#import-status-table") }, 5000);
   });
 </script>
 <script>
   window.addEventListener("load", function () {
     setInterval(function () {
-      var url = "{% url 'process-state-status-api-view' %}" + "?task_id=";
+      var url = "{% url 'shape-process-state-status-api-view' %}" + "?task_id=";
       var taskId = $("#import-status-table #task_uuid").text();
       ajax_call(url + taskId, "#test-sheet-import-table")
       }, 5000
@@ -134,7 +134,7 @@
 </style>
 <script>
   function loadIcon() {
-    if(document.getElementById("id_xlsx_file1").files.length != 0 && document.getElementById("id_xlsx_file2").files.length != 0 ){
+    if(document.getElementById("id_xlsx_file").files.length != 0 && document.getElementById("id_dbf_file").files.length != 0 ){
       $('.custom-loading-modal').modal('show');
     }
   }

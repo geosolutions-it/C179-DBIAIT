@@ -16,6 +16,8 @@ from app.shape_checks.utils import ShapeCheckType
     
 class XlsxDbf(models.Model):
     name = models.CharField(max_length=300, blank=False)
+    file_path = models.CharField(max_length=300, blank=False, null=True)
+    second_file_path = models.CharField(max_length=300, blank=False, null=True)
     analysis_year = models.CharField(max_length=10, blank=False, default=f"Current")
  
     # adding a constraint to avoid duplicated records
