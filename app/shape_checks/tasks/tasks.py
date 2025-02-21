@@ -34,7 +34,8 @@ class ShpAcqCheckTask(ShapeChecksBaseTask):
         Method for executing the SHAPE checks
         """
         
-        file_year_required = True
+        sheet_for_dbf = "SHP_Acquedotto"
+        file_year_required = False
         result = False
 
         try:
@@ -62,6 +63,7 @@ class ShpAcqCheckTask(ShapeChecksBaseTask):
                 result = ShapeCalc(orm_task, 
                                   xlsx_file_uploaded_path,
                                   dbf_file_uploaded_path,
+                                  sheet_for_dbf,
                                   SHP_seed, 
                                   shp_config, 
                                   shp_formulas,
@@ -72,8 +74,6 @@ class ShpAcqCheckTask(ShapeChecksBaseTask):
             
                 # zip the final file
                 if result:
-                    logger.info(f"Task started with DBF file: {dbf_file_uploaded_path}")
-                    file_year_required = False
                     # zip final output in export directory
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)

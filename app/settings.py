@@ -355,3 +355,4 @@ DEFAULT_FILE_STORAGE_CHUNK_SIZE = 1 * 1024 * 1024  # 1 MB
 SHEETS_CONFIG = os.path.join(BASE_DIR, "checks", "sheets_mapping.json")
 DBI_FORMULAS = os.path.join(BASE_DIR, "checks", "dbi_formulas.json")
 SHAPE_FORMULAS = os.path.join(BASE_DIR, "checks", "shape_formulas.json")
+DBF_TO_SHEET = os.path.join(BASE_DIR, "checks", "dbf_to_sheet.json")

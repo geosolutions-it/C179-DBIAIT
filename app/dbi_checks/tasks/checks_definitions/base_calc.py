@@ -259,4 +259,3 @@ class BaseCalc:
            if any(cell.value is not None for cell in row):
                 last_row = row[0].row
         return last_row
-    
