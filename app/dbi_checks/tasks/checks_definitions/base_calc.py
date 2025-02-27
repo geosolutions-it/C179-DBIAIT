@@ -403,7 +403,9 @@ class BaseCalc:
 
                         # Get rows where column_check is NOT 0
                         start_idx = start_row - 1
-                        filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:][column_check_idx] != criterion]
+
+                        #filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:][column_check_idx] != criterion]
+                        filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
                         # Iterate through the filtered rows and retrieve the necessary information
                         for index, row in filtered_rows.iterrows():
                             incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`

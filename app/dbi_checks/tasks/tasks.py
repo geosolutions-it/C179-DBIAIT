@@ -54,7 +54,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
                 "Si prega di riprovare più tardi"
                 # f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
             )
-        
+
         # Get analysis year
         analysis_year = YearHandler(file1).get_year()
 
