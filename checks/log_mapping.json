@@ -1928,6 +1928,7 @@
     "DBI_bonta_dei_dati": {
         "Fiumi": [
             {
+                "verif_check": {"col": "CB", "row": 4},
                 "colonna_check": "BD",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
@@ -1937,6 +1938,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 5},
                 "colonna_check": "BE",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -1946,6 +1948,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 6},
                 "colonna_check": "BF",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -1955,6 +1958,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 7},
                 "colonna_check": "BG",
                 "check": "Classe corso acqua",
                 "colonna_rel": [
@@ -1964,6 +1968,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 8},
                 "colonna_check": "BH",
                 "check": "Controllo su portata concessa uso potabile",
                 "colonna_rel": [
@@ -1973,6 +1978,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 9},
                 "colonna_check": "BI",
                 "check": "uso plurimo",
                 "colonna_rel": [
@@ -1982,6 +1988,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 10},
                 "colonna_check": "BJ",
                 "check": "anno costruzione [anno]",
                 "colonna_rel": [
@@ -1991,6 +1998,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 11},
                 "colonna_check": "BK",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -2000,6 +2008,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 12},
                 "colonna_check": "BL",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -2009,6 +2018,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 13},
                 "colonna_check": "BM",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -2019,6 +2029,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 14},
                 "colonna_check": "BN",
                 "check": "Controllo su \ntipo utilizzo e \n% utilizzo",
                 "colonna_rel": [
@@ -2029,6 +2040,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 15},
                 "colonna_check": "BO",
                 "check": "Controllo utilizzo/volumi",
                 "colonna_rel": [
@@ -2038,6 +2050,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 16},
                 "colonna_check": "BP",
                 "check": "Controllo su volume prelevato",
                 "colonna_rel": [
@@ -2049,6 +2062,7 @@
                 "NOTE": "SE(AR4>2;SE(X4=0;0;1);SE(X4>0;SE(Y4>0;0;1);SE(Y4=0;0;1))) - formula non coerente con quella degli altri fogli- nei fiumi controllo incrociato con il volume immesso, negli altri fogli controllo incrociato con %di utilizzo della risorsa"
             },
             {
+                "verif_check": {"col": "CB", "row": 17},
                 "colonna_check": "BQ",
                 "check": "Verifica prelevato/immesso",
                 "colonna_rel": [
@@ -2059,6 +2073,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 18},
                 "colonna_check": "BR",
                 "check": "anno installaz cloratore <anno ristrutturazione cloratore",
                 "colonna_rel": [
@@ -2069,6 +2084,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 19},
                 "colonna_check": "BS",
                 "check": "anno installaz cloratore ",
                 "colonna_rel": [
@@ -2078,6 +2094,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 20},
                 "colonna_check": "BT",
                 "check": "anno ristrutturaz cloratore ",
                 "colonna_rel": [
@@ -2087,6 +2104,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 21},
                 "colonna_check": "BU",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -2097,6 +2115,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 22},
                 "colonna_check": "BV",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -2107,6 +2126,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 23},
                 "colonna_check": "BW",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -2117,6 +2137,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 24},
                 "colonna_check": "BX",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -2128,6 +2149,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CB", "row": 25},
                 "colonna_check": "BY",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -2139,6 +2161,7 @@
         ],
         "Fiumi_inpotab": [
             {
+                "verif_check": {"col": "I", "row": 3},
                 "colonna_check": "E",
                 "check": "Verifica volume prelevato opere in potab",
                 "colonna_rel": null,
@@ -2146,6 +2169,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "I", "row": 4},
                 "colonna_check": "F",
                 "check": "Verifica su potabilizzatore",
                 "colonna_rel": [
@@ -2157,6 +2181,7 @@
         ],
         "Laghi": [
             {
+                "verif_check": {"col": "BY", "row": 5},
                 "colonna_check": "BA",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
