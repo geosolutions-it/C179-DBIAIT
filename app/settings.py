@@ -352,3 +352,5 @@ FILE_UPLOAD_HANDLERS = [
 DEFAULT_FILE_STORAGE_CHUNK_SIZE = 1 * 1024 * 1024  # 1 MB
 SHEETS_CONFIG = os.path.join(BASE_DIR, "checks", "sheets_mapping.json")
 DBI_FORMULAS = os.path.join(BASE_DIR, "checks", "dbi_formulas.json")
+LOG_MAPPING = os.path.join(BASE_DIR, "checks", "log_mapping.json")
+VERIF_CHECKS = os.path.join(BASE_DIR, "checks", "verif_checks_mapping.json")
