@@ -90,8 +90,9 @@ class CalcFormulas:
                 
             # Check if the formula includes ranges e.g A:A or sheet with ranges. It catch patterns like: Fiumi_inreti!A:A
             # which is the way that Openpyxl interprets internally the actual patterns e.g $Fiumi_inreti.A:A 
-            ranges_in_formula = re.findall(r'(?:(?P<sheet>[A-Za-z_][\w]*)!)?(?P<range>\$?[A-Z]{1,3}:\$?[A-Z]{1,3})', formula)
-                
+            # ranges_in_formula = re.findall(r'(?:(?P<sheet>[A-Za-z_][\w]*)!)?(?P<range>\$?[A-Z]{1,3}:\$?[A-Z]{1,3})', formula)
+            # this new pattern catches ranges with and without rows like B1:B2232
+            ranges_in_formula = re.findall(r'(?:(?P<sheet>[A-Za-z_][\w]*)!)?(?P<range>\$?[A-Z]{1,3}:\$?[A-Z]{1,3}|\$?[A-Z]{1,3}\$?\d+:\$?[A-Z]{1,3}\$?\d+)', formula)   
             if ranges_in_formula:
                 for match in ranges_in_formula:
                     sheet_name, col_ranges = match
@@ -103,6 +104,8 @@ class CalcFormulas:
                         if second_file_check:
                             linked_number = second_file_check.group(1)
                             external_wb = self.external_link_parser(linked_number)
+                           
+                            col_ranges = re.sub(r'(\d+)(?=\$?\d*$)', '', col_ranges)  # Remove row number after the first column
                             formatted_variable = f"[{linked_number}]{sheet_name.upper()}!{col_ranges}"
                             variables[formatted_variable] = self.calculate_range(formula, col_ranges, sheet_name, external_wb)
                         else:
@@ -157,6 +160,9 @@ class CalcFormulas:
         
         # Remove dollar signs for absolute references
         col_range = col_range.replace('$', '')
+
+        # TODO See if we indeed need this function
+        col_range = self.clean_range(col_range)
         
         # Split start and end of the range
         start_col, end_col = col_range.split(':')
@@ -186,6 +192,29 @@ class CalcFormulas:
             values = [list(tup) for tup in zip(*values)]
         
         return values
+    
+    def clean_range(self, col_range: str) -> str:
+        """
+        Remove row numbers from a given range and return only the column part.
+        Example: "$B$1:$B$10" -> "$B:$B"
+        """
+
+        if ':' in col_range:
+            start_cell, end_cell = col_range.split(':')
+            
+            # Use regex to remove row numbers, keeping only column letters
+            start_col = re.sub(r'\d+', '', start_cell)
+            end_col = re.sub(r'\d+', '', end_cell)
+            
+            # If the start and end columns are the same, return just one column reference
+            if start_col == end_col:
+                return f"{start_col}:{start_col}"
+            else:
+                return f"{start_col}:{end_col}"
+        
+        # If it's a single cell or range without row numbers, just return it as-is
+        return re.sub(r'\d+', '', col_range)
+
   
     def replace_with_year(self, formula):
         return re.sub(
