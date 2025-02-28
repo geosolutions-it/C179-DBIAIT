@@ -1925,7 +1925,7 @@
             }
         ]
     },
-    "DBI_bonta_dei_dati": {
+    "DBI_BONTA_DEI_DATI": {
         "Fiumi": [
             {
                 "verif_check": {"col": "CB", "row": 4},
@@ -2805,7 +2805,7 @@
                 "NOTE": null
             }
         ],
-        "pozzi_inpotab": [
+        "Pozzi_inpotab": [
             {
                 "verif_check": {"col": "I", "row": 3},
                 "colonna_check": "E",
@@ -4574,7 +4574,7 @@
             },
             {
                 "verif_check": {"col": "BU", "row": 25},
-                "colonna_check": "BQ",
+                "colonna_check": "BR",
                 "check": "Differenza fra lunghezza tronchi",
                 "colonna_rel": [
                     "F",
@@ -4785,7 +4785,7 @@
             },
             {
                 "verif_check": {"col": "AQ", "row": 15},
-                "colonna_check": "AM",
+                "colonna_check": "AN",
                 "check": "Differenza fra lunghezza tronchi",
                 "colonna_rel": [
                     "D",

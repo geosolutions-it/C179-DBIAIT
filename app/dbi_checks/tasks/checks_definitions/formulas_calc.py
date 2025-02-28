@@ -93,11 +93,18 @@ class CalcFormulas:
             # ranges_in_formula = re.findall(r'(?:(?P<sheet>[A-Za-z_][\w]*)!)?(?P<range>\$?[A-Z]{1,3}:\$?[A-Z]{1,3})', formula)
             # this new pattern catches ranges with and without rows like B1:B2232
             ranges_in_formula = re.findall(r'(?:(?P<sheet>[A-Za-z_][\w]*)!)?(?P<range>\$?[A-Z]{1,3}:\$?[A-Z]{1,3}|\$?[A-Z]{1,3}\$?\d+:\$?[A-Z]{1,3}\$?\d+)', formula)   
+            # Regex to capture the ranges in one row e.g B4:BB4
+            row_based_ranges = re.findall(r'(?P<col1>\$?[A-Z]{1,3})(?P<row>\d+):(?P<col2>\$?[A-Z]{1,3})(?P=row)', formula)
+            
             if ranges_in_formula:
                 for match in ranges_in_formula:
                     sheet_name, col_ranges = match
                     # remove the $ from the col_ranges if exist
                     col_ranges = col_ranges.replace('$', '')
+                    # Skip row-based ranges (B4:BB4, A10:C10)**
+                    if re.match(r'(?P<col1>[A-Z]{1,3})(?P<row>\d+):(?P<col2>[A-Z]{1,3})(?P=row)', col_ranges):
+                        continue  # Skip this range, go to next match
+                    
                     if sheet_name:
                         # check if the sheet is from another file, In this case the interpreted formula will be like: [2]FIUMI!B:B
                         second_file_check = re.search(r'\[(\d+)\]', formula)
@@ -114,6 +121,12 @@ class CalcFormulas:
                     else:
                         variables[col_ranges] = self.calculate_range(formula, col_ranges)
                 
+            if row_based_ranges:
+                columns_in_formula = self.exclude_cols_from_row_ranges(row_based_ranges, columns_in_formula)
+                for i in row_based_ranges:
+                    # the structure of row_based_ranges is: [(col1, row, col2)]
+                    variables[f"{i[0]}{i[1]}:{i[2]}{i[1]}"] = self.calculate_row_based_range(i) # e.g variables[B4:BB4]
+            
             # Iterate through each row for this column
             for row in self.sheet.iter_rows(min_row=self.start_row, max_row=self.end_row,
                                             min_col=col_idx, max_col=col_idx):
@@ -215,7 +228,44 @@ class CalcFormulas:
         # If it's a single cell or range without row numbers, just return it as-is
         return re.sub(r'\d+', '', col_range)
 
-  
+    def calculate_row_based_range(self, row_range):
+        """
+        Given a row-based range like ('B', '4', 'BB'),
+        this function returns a list of all (column, row) tuples.
+        """
+        start_col, row, end_col = row_range  # Unpack the values
+        row = int(row)  # Ensure row is an integer
+
+		# Convert column letters to numerical indices
+        start_index = column_index_from_string(start_col)
+        end_index = column_index_from_string(end_col)
+
+		# Generate all column names between start and end
+        result = [
+		    (get_column_letter(col), row)
+		    for col in range(start_index, end_index + 1)
+		]
+
+        return result
+    
+    def exclude_cols_from_row_ranges(self, row_based_ranges, columns_in_formula):
+        excluded_columns = set()
+
+        # Process the row-based ranges
+        for start_col, row, end_col in row_based_ranges:
+            # Add only the start and end columns to excluded_columns
+            excluded_columns.add(start_col)
+            excluded_columns.add(end_col)
+
+        # Extract just the column names from columns_in_formula (which are the second element of the tuples)
+        # Iterate over columns_in_formula and check if the column (second element) is in excluded_columns
+        valid_columns = [
+            (sheet_name, col) for sheet_name, col in columns_in_formula  # Keep the tuple structure intact
+            if col not in excluded_columns  # Exclude columns in the row-based range
+        ]
+
+        return valid_columns
+
     def replace_with_year(self, formula):
         return re.sub(
                    r"'?\[\d+\]Input anno'!\$[A-Z]+\$[0-9]+",

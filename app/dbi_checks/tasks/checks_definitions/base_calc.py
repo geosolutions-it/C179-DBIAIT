@@ -313,8 +313,6 @@ class BaseCalc:
             log_mapping = json.load(file)
                 
         verif_checks_config = log_mapping.get(seed_key, {})
-                
-        logger.info(f"The verification checks config cells were retrieved: {verif_checks_config}")
         
         ## Calculate the formulas of the checks for each sheet
         for sheet_name, f_location in self.formulas_config.items():

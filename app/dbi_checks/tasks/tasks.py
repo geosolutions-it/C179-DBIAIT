@@ -271,6 +271,9 @@ class DataQualityCheckTask(ChecksBaseTask):
                 logger.info(f"Task started with file: {xlsx_file_uploaded_path}")
                 tmp_checks_export_dir = pathlib.Path(tmp_dir)
                 
+                # Create a single log workbook
+                log_workbook = Workbook()
+                
                 result = BaseCalc(orm_task, 
                                   xlsx_file_uploaded_path, 
                                   DBI_BONTA_DEI_DATI, 
@@ -279,9 +282,14 @@ class DataQualityCheckTask(ChecksBaseTask):
                                   tmp_checks_export_dir,
                                   file_year_required,
                                   task_progress = 50,
+                                  log_workbook = log_workbook
                                   ).run()
             
                 if result:
+                    
+                    # Save logs only once after both runs
+                    log_workbook.save(tmp_checks_export_dir / "logs.xlsx")
+                    
                     # zip final output in export directory
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
