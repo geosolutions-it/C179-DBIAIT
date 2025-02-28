@@ -13,7 +13,7 @@ from django.conf import settings
 from openpyxl.formula.translate import Translator
 from openpyxl import load_workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
-from openpyxl.styles import numbers
+from openpyxl.styles import numbers, PatternFill
 
 from app.dbi_checks.models import Task_CheckDbi, ProcessState, TaskStatus, ProcessType
 from app.dbi_checks.utils import YearHandler
@@ -297,10 +297,23 @@ class BaseCalc:
         sheet_name = "Logs"
         if sheet_name not in self.log_workbook.sheetnames:
             log_sheet = self.log_workbook.create_sheet(sheet_name)
-            log_sheet.append(["File", "Foglio", "colonna check", "Tipo check", "Valore check errato col", "Valore errato col1", "Valore errato col2"])
+            log_sheet.append(["File", 
+                              "Foglio", 
+                              "colonna check", 
+                              "Tipo check", 
+                              "Valore check errato col", 
+                              "Valore errato col1", 
+                              "Valore errato col2",
+                              "Valore errato col3",
+                              "Valore errato col4"
+
+                              ])
         else:
             log_sheet = self.log_workbook[sheet_name]
         
+        # Set the style in the log file
+        self.set_logfile_style(log_sheet)
+                
         # set the configs
         analysis_year = YearHandler(self.imported_file).get_year()
 
@@ -445,6 +458,8 @@ class BaseCalc:
             # Remove DataFrame from memory and trigger garbage collection
             del pd_sheet
             gc.collect()
+        
+        self.task_progress = self.task_progress + 20
 
     def parse_col_for_pd(self, col):
         
@@ -454,4 +469,25 @@ class BaseCalc:
         # Convert to 0-based index for pandas use
         col_index -= 1  # Convert to 0-based index
         return col_index
+    
+    def set_logfile_style(self, log_sheet):
+        # Define a background color fill
+        header_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")  # Yellow color
+
+        # Apply style to the first row
+        for row in log_sheet.iter_rows(min_row=1, max_row=1):
+            for cell in row:
+                cell.fill = header_fill
+
+        # Set a default column width
+        for col_cells in log_sheet.columns:
+            col_letter = col_cells[0].column_letter
+            log_sheet.column_dimensions[col_letter].width = 20
+
+        # Set a much larger width for specific columns
+        for col_letter in ["A", "E", "F", "G", "H", "I"]:
+            log_sheet.column_dimensions[col_letter].width = 25
+
+        # Set an even larger width for column D
+        log_sheet.column_dimensions["D"].width = 45
     

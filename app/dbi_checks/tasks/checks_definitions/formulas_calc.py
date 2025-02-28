@@ -102,7 +102,9 @@ class CalcFormulas:
                     # remove the $ from the col_ranges if exist
                     col_ranges = col_ranges.replace('$', '')
                     # Skip row-based ranges (B4:BB4, A10:C10)**
-                    if re.match(r'(?P<col1>[A-Z]{1,3})(?P<row>\d+):(?P<col2>[A-Z]{1,3})(?P=row)', col_ranges):
+
+                    # The check below removes the row-based ranges if there are in the ranges_in_formula
+                    if re.match(r'^(?P<col1>[A-Z]{1,3})(?P<row>\d+):(?P<col2>[A-Z]{1,3})(?P=row)$', col_ranges):
                         continue  # Skip this range, go to next match
                     
                     if sheet_name:

@@ -134,7 +134,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
                                   dbi_a_formulas,
                                   tmp_checks_export_dir,
                                   file_year_required,
-                                  task_progress = 25,
+                                  task_progress = 20,
                                   log_workbook = log_workbook
                                   ).run()
             
@@ -149,7 +149,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
                              dbi_a_1_formulas,
                              tmp_checks_export_dir,
                              file_year_required,
-                             task_progress = 25,
+                             task_progress = 20,
                              log_workbook = log_workbook
                              ).run()
                     
@@ -215,7 +215,7 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
                                   dbi_prior_formulas,
                                   tmp_checks_export_dir,
                                   file_year_required,
-                                  task_progress = 50,
+                                  task_progress = 40,
                                   ).run()
             
                 if result:
@@ -281,7 +281,7 @@ class DataQualityCheckTask(ChecksBaseTask):
                                   dbi_bonta_formulas,
                                   tmp_checks_export_dir,
                                   file_year_required,
-                                  task_progress = 50,
+                                  task_progress = 40,
                                   log_workbook = log_workbook
                                   ).run()
             
