@@ -150,10 +150,15 @@ class CalcFormulas:
                     calculated_result = compiled(**variables)
                 except Exception as e:
                     calculated_result = f"Error: {e}"
-                    
-                print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {calculated_result}")
+
+                result = calculated_result.item() if hasattr(calculated_result, "item") else calculated_result
+                # convert the float to int if the result is float
+                if isinstance(result, float):
+                    result = int(round(result))
+
+                print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
                 # Store the result in the target cell
-                cell.value = calculated_result.item() if hasattr(calculated_result, "item") else calculated_result
+                cell.value = result
 
         # return the caclulated_result as single value and not as a numpy array e.g Array("OK", dtype=object)
         return self.sheet
