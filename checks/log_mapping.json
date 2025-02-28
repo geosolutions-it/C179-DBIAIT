@@ -2191,6 +2191,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 6},
                 "colonna_check": "BB",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -2200,6 +2201,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 7},
                 "colonna_check": "BC",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -2209,6 +2211,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 8},
                 "colonna_check": "BD",
                 "check": "Classe corso acqua",
                 "colonna_rel": [
@@ -2218,6 +2221,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 9},
                 "colonna_check": "BE",
                 "check": "Controllo su portata concessa uso potabile",
                 "colonna_rel": [
@@ -2227,6 +2231,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 10},
                 "colonna_check": "BF",
                 "check": "uso plurimo",
                 "colonna_rel": [
@@ -2236,6 +2241,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 11},
                 "colonna_check": "BG",
                 "check": "anno costruzione [anno]",
                 "colonna_rel": [
@@ -2245,6 +2251,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 12},
                 "colonna_check": "BH",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -2254,6 +2261,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 13},
                 "colonna_check": "BI",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -2263,6 +2271,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 14},
                 "colonna_check": "BJ",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -2273,6 +2282,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 15},
                 "colonna_check": "BK",
                 "check": "Controllo su \ntipo utilizzo e \n% utilizzo",
                 "colonna_rel": [
@@ -2283,6 +2293,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 16},
                 "colonna_check": "BL",
                 "check": "Controllo utilizzo/volumi",
                 "colonna_rel": [
@@ -2292,6 +2303,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 17},
                 "colonna_check": "BM",
                 "check": "Controllo su volume prelevato",
                 "colonna_rel": [
@@ -2303,6 +2315,7 @@
                 "NOTE": "SE(AO4>2;SE(X4=0;0;1);SE(X4>0;SE(V4>0;0;1);SE(V4=0;0;1)))"
             },
             {
+                "verif_check": {"col": "BY", "row": 18},
                 "colonna_check": "BN",
                 "check": "Verifica prelevato/immesso",
                 "colonna_rel": [
@@ -2313,6 +2326,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 19},
                 "colonna_check": "BO",
                 "check": "anno installaz cloratore <anno ristrutturazione cloratore",
                 "colonna_rel": [
@@ -2323,6 +2337,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 20},
                 "colonna_check": "BP",
                 "check": "anno installaz cloratore ",
                 "colonna_rel": [
@@ -2332,6 +2347,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 21},
                 "colonna_check": "BQ",
                 "check": "anno ristrutturaz cloratore ",
                 "colonna_rel": [
@@ -2341,6 +2357,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 22},
                 "colonna_check": "BR",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -2351,6 +2368,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 23},
                 "colonna_check": "BS",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -2361,6 +2379,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 24},
                 "colonna_check": "BT",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -2371,6 +2390,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 25},
                 "colonna_check": "BU",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -2382,6 +2402,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BY", "row": 26},
                 "colonna_check": "BV",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -2393,6 +2414,7 @@
         ],
         "Laghi_inpotab": [
             {
+                "verif_check": {"col": "I", "row": 3},
                 "colonna_check": "E",
                 "check": "Verifica volume prelevato opere in potab",
                 "colonna_rel": null,
@@ -2400,6 +2422,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "I", "row": 4},
                 "colonna_check": "F",
                 "check": "Verifica su potabilizzatore",
                 "colonna_rel": [
@@ -2411,6 +2434,7 @@
         ],
         "Pozzi": [
             {
+                "verif_check": {"col": "CA", "row": 4},
                 "colonna_check": "AZ",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
@@ -2420,6 +2444,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 5},
                 "colonna_check": "BA",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -2429,6 +2454,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 6},
                 "colonna_check": "BB",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -2438,6 +2464,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 7},
                 "colonna_check": "BC",
                 "check": "Controllo su portata concessa uso potabile",
                 "colonna_rel": [
@@ -2447,6 +2474,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 8},
                 "colonna_check": "BD",
                 "check": "Profondità di perforazione",
                 "colonna_rel": [
@@ -2456,6 +2484,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 9},
                 "colonna_check": "BE",
                 "check": "diametro perforazione [mm]",
                 "colonna_rel": [
@@ -2465,6 +2494,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 10},
                 "colonna_check": "BF",
                 "check": "potenza installata [Kw]",
                 "colonna_rel": [
@@ -2474,6 +2504,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 11},
                 "colonna_check": "BG",
                 "check": "consumo energia",
                 "colonna_rel": [
@@ -2484,6 +2515,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 12},
                 "colonna_check": "BH",
                 "check": "uso plurimo",
                 "colonna_rel": [
@@ -2492,7 +2524,7 @@
                 "descrizione": "Uso plurimo non corretto: {P}",
                 "NOTE": null
             },
-            {
+            {"verif_check": {"col": "CA", "row": 13},
                 "colonna_check": "BI",
                 "check": "anno perforazione [anno]",
                 "colonna_rel": [
@@ -2502,6 +2534,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 14},
                 "colonna_check": "BJ",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -2511,6 +2544,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 15},
                 "colonna_check": "BK",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -2520,6 +2554,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 16},
                 "colonna_check": "BL",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -2530,6 +2565,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 17},
                 "colonna_check": "BM",
                 "check": "Controllo su \ntipo utilizzo e \n% utilizzo",
                 "colonna_rel": [
@@ -2540,6 +2576,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 18},
                 "colonna_check": "BN",
                 "check": "Controllo utilizzo/volumi",
                 "colonna_rel": [
@@ -2549,6 +2586,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 19},
                 "colonna_check": "BO",
                 "check": "Controllo su volume prelevato",
                 "colonna_rel": [
@@ -2560,6 +2598,7 @@
                 "NOTE": "SE(AO4>2;SE(Z4=0;0;1);SE(Z4>0;SE(U4>0;0;1);SE(U4=0;0;1)))"
             },
             {
+                "verif_check": {"col": "CA", "row": 20},
                 "colonna_check": "BP",
                 "check": "Verifica prelevato/immesso",
                 "colonna_rel": [
@@ -2570,6 +2609,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 21},
                 "colonna_check": "BQ",
                 "check": "anno installaz cloratore <anno ristrutturazione cloratore",
                 "colonna_rel": [
@@ -2580,6 +2620,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 22},
                 "colonna_check": "BR",
                 "check": "anno installaz cloratore ",
                 "colonna_rel": [
@@ -2589,6 +2630,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 23},
                 "colonna_check": "BS",
                 "check": "anno ristrutturaz cloratore ",
                 "colonna_rel": [
@@ -2598,6 +2640,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 24},
                 "colonna_check": "BT",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -2608,6 +2651,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 25},
                 "colonna_check": "BU",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -2618,6 +2662,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 26},
                 "colonna_check": "BV",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -2628,6 +2673,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 27},
                 "colonna_check": "BW",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -2639,6 +2685,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CA", "row": 28},
                 "colonna_check": "BX",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -2650,6 +2697,7 @@
         ],
         "Pozzi_pompe": [
             {
+                "verif_check": {"col": "AB", "row": 4},
                 "colonna_check": "O",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -2659,6 +2707,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 5},
                 "colonna_check": "P",
                 "check": "anno installazione[anno]",
                 "colonna_rel": [
@@ -2668,6 +2717,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 6},
                 "colonna_check": "Q",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -2677,6 +2727,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 7},
                 "colonna_check": "R",
                 "check": "anno installazione <anno ristrutturazione",
                 "colonna_rel": [
@@ -2687,6 +2738,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 8},
                 "colonna_check": "S",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -2697,6 +2749,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 9},
                 "colonna_check": "T",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -2707,6 +2760,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 10},
                 "colonna_check": "U",
                 "check": "anno ristruttu/indice confidenza",
                 "colonna_rel": [
@@ -2717,6 +2771,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 11},
                 "colonna_check": "V",
                 "check": "potenza [kw]",
                 "colonna_rel": null,
@@ -2724,6 +2779,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 12},
                 "colonna_check": "W",
                 "check": "portata[l/s]",
                 "colonna_rel": null,
@@ -2731,6 +2787,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 13},
                 "colonna_check": "X",
                 "check": "prevalenza [M.C.A.]",
                 "colonna_rel": null,
@@ -2738,6 +2795,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 14},
                 "colonna_check": "Y",
                 "check": "funzione riserva",
                 "colonna_rel": [
@@ -2749,6 +2807,7 @@
         ],
         "pozzi_inpotab": [
             {
+                "verif_check": {"col": "I", "row": 3},
                 "colonna_check": "E",
                 "check": "Verifica volume prelevato opere in potab",
                 "colonna_rel": null,
@@ -2756,6 +2815,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "I", "row": 4},
                 "colonna_check": "F",
                 "check": "Verifica su potabilizzatore",
                 "colonna_rel": [
@@ -2767,6 +2827,7 @@
         ],
         "Sorgenti": [
             {
+                "verif_check": {"col": "BV", "row": 4},
                 "colonna_check": "AX",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
@@ -2776,6 +2837,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 5},
                 "colonna_check": "AY",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -2785,6 +2847,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 6},
                 "colonna_check": "AZ",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -2794,6 +2857,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 7},
                 "colonna_check": "BA",
                 "check": "Controllo su portata concessa uso potabile",
                 "colonna_rel": [
@@ -2803,6 +2867,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 8},
                 "colonna_check": "BB",
                 "check": "uso plurimo",
                 "colonna_rel": [
@@ -2812,6 +2877,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 9},
                 "colonna_check": "BC",
                 "check": "anno costruzione [anno]",
                 "colonna_rel": [
@@ -2821,6 +2887,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 10},
                 "colonna_check": "BD",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -2830,6 +2897,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 11},
                 "colonna_check": "BE",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -2839,6 +2907,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 12},
                 "colonna_check": "BF",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -2849,6 +2918,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 13},
                 "colonna_check": "BG",
                 "check": "Controllo su \ntipo utilizzo e \n% utilizzo",
                 "colonna_rel": [
@@ -2859,6 +2929,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 14},
                 "colonna_check": "BH",
                 "check": "Controllo utilizzo/volumi",
                 "colonna_rel": [
@@ -2868,6 +2939,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 15},
                 "colonna_check": "BI",
                 "check": "Controllo su volume prelevato",
                 "colonna_rel": [
@@ -2879,6 +2951,7 @@
                 "NOTE": "SE(AN4>2;SE(Z4=0;0;1);SE(Z4>0;SE(U4>0;0;1);SE(U4=0;0;1)))"
             },
             {
+                "verif_check": {"col": "BV", "row": 16},
                 "colonna_check": "BJ",
                 "check": "Verifica prelevato/immesso",
                 "colonna_rel": [
@@ -2889,6 +2962,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 17},
                 "colonna_check": "BK",
                 "check": "anno installaz cloratore <anno ristrutturazione cloratore",
                 "colonna_rel": [
@@ -2899,6 +2973,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 18},
                 "colonna_check": "BL",
                 "check": "tipo clorazione vs(anno install,anno ristrutt)",
                 "colonna_rel": [
@@ -2910,6 +2985,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 19},
                 "colonna_check": "BM",
                 "check": "anno installaz cloratore ",
                 "colonna_rel": [
@@ -2919,6 +2995,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 20},
                 "colonna_check": "BN",
                 "check": "anno ristrutturaz cloratore ",
                 "colonna_rel": [
@@ -2928,6 +3005,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 21},
                 "colonna_check": "BO",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -2938,6 +3016,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 22},
                 "colonna_check": "BP",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -2948,6 +3027,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 23},
                 "colonna_check": "BQ",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -2958,6 +3038,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 24},
                 "colonna_check": "BR",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -2969,6 +3050,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BV", "row": 25},
                 "colonna_check": "BS",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -2980,6 +3062,7 @@
         ],
         "Sorgenti_inpotab": [
             {
+                "verif_check": {"col": "I", "row": 3},
                 "colonna_check": "E",
                 "check": "Verifica volume prelevato opere in potab",
                 "colonna_rel": null,
@@ -2987,6 +3070,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "I", "row": 4},
                 "colonna_check": "F",
                 "check": "Verifica su potabilizzatore",
                 "colonna_rel": [
@@ -2998,6 +3082,7 @@
         ],
         "Potabilizzatori": [
             {
+                "verif_check": {"col": "CK", "row": 4},
                 "colonna_check": "BM",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
@@ -3007,6 +3092,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 5},
                 "colonna_check": "BN",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -3016,6 +3102,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 6},
                 "colonna_check": "BO",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -3025,6 +3112,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 7},
                 "colonna_check": "BP",
                 "check": "anno costruzione [anno]",
                 "colonna_rel": [
@@ -3034,6 +3122,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 8},
                 "colonna_check": "BQ",
                 "check": "anno ristrutturazione opere civili[anno]",
                 "colonna_rel": [
@@ -3043,6 +3132,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 9},
                 "colonna_check": "BR",
                 "check": "anno ristrutturazione opere elettrom[anno]",
                 "colonna_rel": [
@@ -3052,6 +3142,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 10},
                 "colonna_check": "BS",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -3061,6 +3152,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 11},
                 "colonna_check": "BT",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -3072,6 +3164,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 12},
                 "colonna_check": "BU",
                 "check": "stato di conservazione opere civili",
                 "colonna_rel": [
@@ -3081,6 +3174,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 13},
                 "colonna_check": "BV",
                 "check": "stato di conservazione opere elettrom. ",
                 "colonna_rel": [
@@ -3090,6 +3184,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 14},
                 "colonna_check": "BW",
                 "check": "potenza installata",
                 "colonna_rel": [
@@ -3099,6 +3194,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 15},
                 "colonna_check": "BX",
                 "check": "consumo energia",
                 "colonna_rel": [
@@ -3108,6 +3204,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 16},
                 "colonna_check": "BY",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
@@ -3117,6 +3214,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 17},
                 "colonna_check": "BZ",
                 "check": "tipo trattamento",
                 "colonna_rel": [
@@ -3126,6 +3224,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 18},
                 "colonna_check": "CA",
                 "check": "volume trattato [mc/anno]",
                 "colonna_rel": [
@@ -3135,6 +3234,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 19},
                 "colonna_check": "CB",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -3145,6 +3245,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 20},
                 "colonna_check": "CC",
                 "check": "anno ristrutt op civ/indice confidenza",
                 "colonna_rel": [
@@ -3155,6 +3256,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 21},
                 "colonna_check": "CD",
                 "check": "anno ristrutt op elettrom/indice confidenza",
                 "colonna_rel": [
@@ -3165,6 +3267,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 22},
                 "colonna_check": "CE",
                 "check": "anno ristrutt. Op. civili/conservazione",
                 "colonna_rel": [
@@ -3175,6 +3278,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 23},
                 "colonna_check": "CF",
                 "check": "anno ristrutt. Op. elettrom/conservazione",
                 "colonna_rel": [
@@ -3185,6 +3289,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 24},
                 "colonna_check": "CG",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -3198,6 +3303,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "CK", "row": 25},
                 "colonna_check": "CH",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -3209,6 +3315,7 @@
         ],
         "Potab_pompe": [
             {
+                "verif_check": {"col": "AB", "row": 4},
                 "colonna_check": "O",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -3218,6 +3325,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 5},
                 "colonna_check": "P",
                 "check": "anno installazione[anno]",
                 "colonna_rel": [
@@ -3227,6 +3335,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 6},
                 "colonna_check": "Q",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -3236,6 +3345,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 7},
                 "colonna_check": "R",
                 "check": "anno installazione <anno ristrutturazione",
                 "colonna_rel": [
@@ -3246,6 +3356,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 8},
                 "colonna_check": "S",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -3256,6 +3367,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 9},
                 "colonna_check": "T",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -3266,6 +3378,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 10},
                 "colonna_check": "U",
                 "check": "anno ristruttu/indice confidenza",
                 "colonna_rel": [
@@ -3276,6 +3389,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 11},
                 "colonna_check": "V",
                 "check": "potenza [kw]",
                 "colonna_rel": null,
@@ -3283,6 +3397,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 12},
                 "colonna_check": "W",
                 "check": "portata[l/s]",
                 "colonna_rel": null,
@@ -3290,6 +3405,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 13},
                 "colonna_check": "X",
                 "check": "prevalenza [M.C.A.]",
                 "colonna_rel": null,
@@ -3297,6 +3413,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 14},
                 "colonna_check": "Y",
                 "check": "funzione riserva",
                 "colonna_rel": [
@@ -3308,6 +3425,7 @@
         ],
         "Adduttrici": [
             {
+                "verif_check": {"col": "BA", "row": 4},
                 "colonna_check": "AK",
                 "check": "portata media addotta [l/s]",
                 "colonna_rel": [
@@ -3317,6 +3435,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 5},
                 "colonna_check": "AL",
                 "check": "lunghezza totale [km]",
                 "colonna_rel": [
@@ -3326,6 +3445,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 6},
                 "colonna_check": "AM",
                 "check": "lunghezza rete telecontrollata",
                 "colonna_rel": [
@@ -3335,6 +3455,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 7},
                 "colonna_check": "AN",
                 "check": "controllo volumi",
                 "colonna_rel": [
@@ -3346,6 +3467,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 8},
                 "colonna_check": "AO",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
@@ -3355,6 +3477,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 9},
                 "colonna_check": "AP",
                 "check": "utenze dotate di misuratore",
                 "colonna_rel": [
@@ -3364,6 +3487,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 10},
                 "colonna_check": "AQ",
                 "check": "utenti diretti ",
                 "colonna_rel": [
@@ -3373,6 +3497,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 11},
                 "colonna_check": "AR",
                 "check": "Verifiche sui di cui degli utenti diretti",
                 "colonna_rel": [
@@ -3384,6 +3509,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 12},
                 "colonna_check": "AS",
                 "check": "utenze condominiali",
                 "colonna_rel": [
@@ -3394,6 +3520,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 13},
                 "colonna_check": "AT",
                 "check": "utenze condominiali/utenze indirette",
                 "colonna_rel": [
@@ -3404,6 +3531,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 14},
                 "colonna_check": "AU",
                 "check": "Verifiche sui di cui degli utenti indiretti",
                 "colonna_rel": [
@@ -3415,6 +3543,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 15},
                 "colonna_check": "AV",
                 "check": "punti di clorazione",
                 "colonna_rel": [
@@ -3424,6 +3553,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BA", "row": 16},
                 "colonna_check": "AX",
                 "check": "Differenza fra lunghezza tronchi",
                 "colonna_rel": [
@@ -3436,6 +3566,7 @@
         ],
         "Addut_tronchi": [
             {
+                "verif_check": {"col": "X", "row": 4},
                 "colonna_check": "N",
                 "check": "materiale ",
                 "colonna_rel": [
@@ -3445,6 +3576,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 5},
                 "colonna_check": "O",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -3454,6 +3586,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 6},
                 "colonna_check": "P",
                 "check": "stato di conservazione nuove opere",
                 "colonna_rel": [
@@ -3464,6 +3597,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 7},
                 "colonna_check": "Q",
                 "check": "diametro [mm]",
                 "colonna_rel": [
@@ -3473,6 +3607,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 8},
                 "colonna_check": "R",
                 "check": "protezione catodica",
                 "colonna_rel": [
@@ -3482,6 +3617,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 9},
                 "colonna_check": "S",
                 "check": "lunghezza [km]",
                 "colonna_rel": [
@@ -3491,6 +3627,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 10},
                 "colonna_check": "T",
                 "check": "Indici di confidenza",
                 "colonna_rel": [
@@ -3500,6 +3637,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 11},
                 "colonna_check": "U",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -3511,6 +3649,7 @@
         ],
         "Accumuli": [
             {
+                "verif_check": {"col": "BC", "row": 4},
                 "colonna_check": "AE",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
@@ -3520,6 +3659,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 5},
                 "colonna_check": "AF",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -3529,6 +3669,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 6},
                 "colonna_check": "AG",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -3538,6 +3679,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 7},
                 "colonna_check": "AH",
                 "check": "anno costruzione [anno]",
                 "colonna_rel": [
@@ -3547,6 +3689,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 8},
                 "colonna_check": "AI",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -3556,6 +3699,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 9},
                 "colonna_check": "AJ",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -3565,6 +3709,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 10},
                 "colonna_check": "AK",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -3575,6 +3720,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 11},
                 "colonna_check": "AL",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -3584,6 +3730,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 12},
                 "colonna_check": "AM",
                 "check": "tipo serbatoio",
                 "colonna_rel": [
@@ -3593,6 +3740,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 13},
                 "colonna_check": "AN",
                 "check": "tipo materiale",
                 "colonna_rel": [
@@ -3602,6 +3750,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 14},
                 "colonna_check": "AO",
                 "check": "quota serbatoio da terra",
                 "colonna_rel": [
@@ -3612,6 +3761,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 15},
                 "colonna_check": "AP",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
@@ -3621,6 +3771,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 16},
                 "colonna_check": "AQ",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -3631,6 +3782,7 @@
                 "NOTE": "ERRATA LA DESCRIZIONE SUI CHECK rispetto alla formula. Si tratta di controllo sull'anno di costruzione non ristrutturazione come indicato nei check"
             },
             {
+                "verif_check": {"col": "BC", "row": 17},
                 "colonna_check": "AR",
                 "check": "tipo clorazione",
                 "colonna_rel": [
@@ -3640,6 +3792,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 18},
                 "colonna_check": "AS",
                 "check": "anno installaz cloratore <anno ristrutturazione cloratore",
                 "colonna_rel": [
@@ -3650,6 +3803,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 19},
                 "colonna_check": "AT",
                 "check": "anno installaz cloratore ",
                 "colonna_rel": [
@@ -3659,6 +3813,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 20},
                 "colonna_check": "AU",
                 "check": "anno ristrutturaz cloratore ",
                 "colonna_rel": [
@@ -3668,6 +3823,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 21},
                 "colonna_check": "AV",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -3678,6 +3834,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 22},
                 "colonna_check": "AW",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -3688,6 +3845,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 23},
                 "colonna_check": "AX",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -3698,6 +3856,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 24},
                 "colonna_check": "AY",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -3709,6 +3868,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BC", "row": 25},
                 "colonna_check": "AZ",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -3720,6 +3880,7 @@
         ],
         "Pompaggi": [
             {
+                "verif_check": {"col": "BF", "row": 4},
                 "colonna_check": "AF",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
@@ -3729,6 +3890,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 5},
                 "colonna_check": "AG",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -3738,6 +3900,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 6},
                 "colonna_check": "AH",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -3747,6 +3910,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 7},
                 "colonna_check": "AI",
                 "check": "anno costruzione [anno]",
                 "colonna_rel": [
@@ -3756,6 +3920,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 8},
                 "colonna_check": "AJ",
                 "check": "anno ristrutturazione CIVILI [anno]",
                 "colonna_rel": [
@@ -3765,6 +3930,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 9},
                 "colonna_check": "AK",
                 "check": "anno ristrutturazione ELETTROM [anno]",
                 "colonna_rel": [
@@ -3774,6 +3940,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 10},
                 "colonna_check": "AL",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -3783,6 +3950,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 11},
                 "colonna_check": "AM",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -3793,6 +3961,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 12},
                 "colonna_check": "AN",
                 "check": "stato di conservazione CIVILI",
                 "colonna_rel": [
@@ -3802,6 +3971,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 13},
                 "colonna_check": "AO",
                 "check": "stato di conservazione ELETTROM",
                 "colonna_rel": [
@@ -3811,6 +3981,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 14},
                 "colonna_check": "AP",
                 "check": "potenza installata",
                 "colonna_rel": [
@@ -3820,6 +3991,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 15},
                 "colonna_check": "AQ",
                 "check": "consumo energia",
                 "colonna_rel": [
@@ -3829,6 +4001,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 16},
                 "colonna_check": "AR",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
@@ -3838,6 +4011,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 17},
                 "colonna_check": "AS",
                 "check": "tipo clorazione",
                 "colonna_rel": [
@@ -3847,6 +4021,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 18},
                 "colonna_check": "AT",
                 "check": "anno installaz cloratore <anno ristrutturazione cloratore",
                 "colonna_rel": [
@@ -3857,6 +4032,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 19},
                 "colonna_check": "AU",
                 "check": "anno installaz cloratore ",
                 "colonna_rel": [
@@ -3866,6 +4042,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 20},
                 "colonna_check": "AV",
                 "check": "anno ristrutturaz cloratore ",
                 "colonna_rel": [
@@ -3875,6 +4052,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 21},
                 "colonna_check": "AW",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -3885,6 +4063,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 22},
                 "colonna_check": "AX",
                 "check": "anno ristrutt op civ/indice confidenza",
                 "colonna_rel": [
@@ -3895,6 +4074,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 23},
                 "colonna_check": "AY",
                 "check": "anno ristrutt op elettrom/indice confidenza",
                 "colonna_rel": [
@@ -3905,6 +4085,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 24},
                 "colonna_check": "AZ",
                 "check": "anno ristrutt. Op. civili/conservazione",
                 "colonna_rel": [
@@ -3915,6 +4096,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 25},
                 "colonna_check": "BA",
                 "check": "anno ristrutt. Op. elettrom/conservazione",
                 "colonna_rel": [
@@ -3925,6 +4107,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 26},
                 "colonna_check": "BB",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -3936,6 +4119,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BF", "row": 27},
                 "colonna_check": "BC",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -3947,6 +4131,7 @@
         ],
         "Pompaggi_pompe": [
             {
+                "verif_check": {"col": "AA", "row": 4},
                 "colonna_check": "O",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -3956,6 +4141,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 5},
                 "colonna_check": "P",
                 "check": "anno installazione[anno]",
                 "colonna_rel": [
@@ -3965,6 +4151,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 6},
                 "colonna_check": "Q",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -3974,6 +4161,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 7},
                 "colonna_check": "R",
                 "check": "anno installazione <anno ristrutturazione",
                 "colonna_rel": [
@@ -3984,6 +4172,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 8},
                 "colonna_check": "S",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -3994,6 +4183,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 9},
                 "colonna_check": "T",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -4004,6 +4194,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 10},
                 "colonna_check": "U",
                 "check": "anno ristruttu/indice confidenza",
                 "colonna_rel": [
@@ -4014,6 +4205,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 11},
                 "colonna_check": "V",
                 "check": "potenza [kw]",
                 "colonna_rel": null,
@@ -4021,6 +4213,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 12},
                 "colonna_check": "W",
                 "check": "portata[l/s]",
                 "colonna_rel": null,
@@ -4028,6 +4221,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 13},
                 "colonna_check": "X",
                 "check": "prevalenza [M.C.A.]",
                 "colonna_rel": null,
@@ -4035,6 +4229,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 13},
                 "colonna_check": "Y",
                 "check": "funzione riserva",
                 "colonna_rel": [
@@ -4046,6 +4241,7 @@
         ],
         "Sollev_pompe": [
             {
+                "verif_check": {"col": "AA", "row": 4},
                 "colonna_check": "O",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -4055,6 +4251,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 5},
                 "colonna_check": "P",
                 "check": "anno installazione[anno]",
                 "colonna_rel": [
@@ -4064,6 +4261,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 6},
                 "colonna_check": "Q",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -4073,6 +4271,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 7},
                 "colonna_check": "R",
                 "check": "anno installazione <anno ristrutturazione",
                 "colonna_rel": [
@@ -4083,6 +4282,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 8},
                 "colonna_check": "S",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -4093,6 +4293,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 9},
                 "colonna_check": "T",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -4103,6 +4304,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 10},
                 "colonna_check": "U",
                 "check": "anno ristruttu/indice confidenza",
                 "colonna_rel": [
@@ -4113,6 +4315,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 11},
                 "colonna_check": "V",
                 "check": "potenza [kw]",
                 "colonna_rel": null,
@@ -4120,6 +4323,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 12},
                 "colonna_check": "W",
                 "check": "portata[l/s]",
                 "colonna_rel": null,
@@ -4127,6 +4331,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 13},
                 "colonna_check": "X",
                 "check": "prevalenza [M.C.A.]",
                 "colonna_rel": null,
@@ -4134,6 +4339,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 13},
                 "colonna_check": "Y",
                 "check": "funzione riserva",
                 "colonna_rel": [
@@ -4145,6 +4351,7 @@
         ],
         "Distribuzioni": [
             {
+                "verif_check": {"col": "BU", "row": 4},
                 "colonna_check": "AV",
                 "check": "lunghezza totale [km]",
                 "colonna_rel": [
@@ -4154,6 +4361,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BU", "row": 5},
                 "colonna_check": "AW",
                 "check": "volume immesso in rete [mc/anno]",
                 "colonna_rel": [
@@ -4163,6 +4371,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BU", "row": 6},
                 "colonna_check": "AX",
                 "check": "volume erogato [mc/anno]",
                 "colonna_rel": [
@@ -4172,6 +4381,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BU", "row": 7},
                 "colonna_check": "AY",
                 "check": "volume fatturato [mc/anno]",
                 "colonna_rel": [
@@ -4181,6 +4391,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "BU", "row": 8},
                 "colonna_check": "AZ",
                 "check": "vol fatt<vol imm rete",
                 "colonna_rel": [
@@ -4191,7 +4402,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AF",
+                "verif_check": {"col": "BU", "row": 9},
+                "colonna_check": "BA",
                 "check": "vol erog<=vol imm rete",
                 "colonna_rel": [
                     "R",
@@ -4201,7 +4413,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AG",
+                "verif_check": {"col": "BU", "row": 10},
+                "colonna_check": "BB",
                 "check": "Vol fatt<=vol erog",
                 "colonna_rel": [
                     "S",
@@ -4211,7 +4424,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AH",
+                "verif_check": {"col": "BU", "row": 11},
+                "colonna_check": "BC",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
                     "AC"
@@ -4220,7 +4434,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AI",
+                "verif_check": {"col": "BU", "row": 12},
+                "colonna_check": "BD",
                 "check": "utenti diretti ",
                 "colonna_rel": [
                     "I"
@@ -4229,7 +4444,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AJ",
+                "verif_check": {"col": "BU", "row": 13},
+                "colonna_check": "BE",
                 "check": "Verifiche sui di cui degli utenti diretti",
                 "colonna_rel": [
                     "I",
@@ -4240,7 +4456,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AK",
+                "verif_check": {"col": "BU", "row": 14},
+                "colonna_check": "BF",
                 "check": "utenze condominiali",
                 "colonna_rel": [
                     "I",
@@ -4250,7 +4467,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AL",
+                "verif_check": {"col": "BU", "row": 15},
+                "colonna_check": "BG",
                 "check": "utenze condominiali/utenze indirette",
                 "colonna_rel": [
                     "L",
@@ -4260,7 +4478,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AM",
+                "verif_check": {"col": "BU", "row": 16},
+                "colonna_check": "BH",
                 "check": "Verifiche sui di cui degli utenti indiretti",
                 "colonna_rel": [
                     "M",
@@ -4271,7 +4490,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AN",
+                "verif_check": {"col": "BU", "row": 17},
+                "colonna_check": "BI",
                 "check": "lung rete telecontrollta<=lung rete tot",
                 "colonna_rel": [
                     "F",
@@ -4281,7 +4501,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AO",
+                "verif_check": {"col": "BU", "row": 18},
+                "colonna_check": "BJ",
                 "check": "lung rete distrettualizzata<=lung rete tot",
                 "colonna_rel": [
                     "F",
@@ -4291,7 +4512,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AP",
+                "verif_check": {"col": "BU", "row": 19},
+                "colonna_check": "BK",
                 "check": "Numero Allacci",
                 "colonna_rel": [
                     "P"
@@ -4300,7 +4522,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AQ",
+                "verif_check": {"col": "BU", "row": 20},
+                "colonna_check": "BL",
                 "check": "Verifica pressioni",
                 "colonna_rel": [
                     "AE",
@@ -4310,7 +4533,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AR",
+                "verif_check": {"col": "BU", "row": 21},
+                "colonna_check": "BM",
                 "check": "Verifica su numero riparazione allacci",
                 "colonna_rel": [
                     "AA"
@@ -4319,7 +4543,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AS",
+                "verif_check": {"col": "BU", "row": 22},
+                "colonna_check": "BN",
                 "check": "Verifica su numero riparazione rete",
                 "colonna_rel": [
                     "AB"
@@ -4328,7 +4553,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AT",
+                "verif_check": {"col": "BU", "row": 23},
+                "colonna_check": "BO",
                 "check": "misura portata",
                 "colonna_rel": [
                     "X"
@@ -4337,7 +4563,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AU",
+                "verif_check": {"col": "BU", "row": 24},
+                "colonna_check": "BP",
                 "check": "punti di clorazione",
                 "colonna_rel": [
                     "Y"
@@ -4346,7 +4573,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AW",
+                "verif_check": {"col": "BU", "row": 25},
+                "colonna_check": "BQ",
                 "check": "Differenza fra lunghezza tronchi",
                 "colonna_rel": [
                     "F",
@@ -4358,6 +4586,7 @@
         ],
         "Distrib_tronchi": [
             {
+                "verif_check": {"col": "X", "row": 4},
                 "colonna_check": "N",
                 "check": "materiale ",
                 "colonna_rel": [
@@ -4367,6 +4596,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 5},
                 "colonna_check": "O",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -4376,6 +4606,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 6},
                 "colonna_check": "P",
                 "check": "stato di conservazione nuove opere",
                 "colonna_rel": [
@@ -4386,6 +4617,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 7},
                 "colonna_check": "Q",
                 "check": "diametro [mm]",
                 "colonna_rel": [
@@ -4395,6 +4627,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 8},
                 "colonna_check": "R",
                 "check": "protezione catodica",
                 "colonna_rel": [
@@ -4404,6 +4637,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 9},
                 "colonna_check": "S",
                 "check": "lunghezza [km]",
                 "colonna_rel": [
@@ -4413,6 +4647,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 10},
                 "colonna_check": "T",
                 "check": "Indici di confidenza",
                 "colonna_rel": [
@@ -4422,6 +4657,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "X", "row": 11},
                 "colonna_check": "U",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -4433,6 +4669,7 @@
         ],
         "Fognature": [
             {
+                "verif_check": {"col": "AQ", "row": 4},
                 "colonna_check": "AB",
                 "check": "lunghezza totale [km]",
                 "colonna_rel": [
@@ -4442,6 +4679,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 5},
                 "colonna_check": "AC",
                 "check": "lunghezza rete mista soggetta a ispezione [km]",
                 "colonna_rel": [
@@ -4452,6 +4690,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 6},
                 "colonna_check": "AD",
                 "check": "lunghezza rete nera soggetta a ispezione [km]",
                 "colonna_rel": [
@@ -4462,6 +4701,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 7},
                 "colonna_check": "AE",
                 "check": "utenze totali",
                 "colonna_rel": [
@@ -4471,6 +4711,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 8},
                 "colonna_check": "AF",
                 "check": "utenze industriali",
                 "colonna_rel": [
@@ -4481,6 +4722,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 9},
                 "colonna_check": "AG",
                 "check": "volume utenze idustriali [mc/anno]",
                 "colonna_rel": [
@@ -4491,6 +4733,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 10},
                 "colonna_check": "AH",
                 "check": "numero scaricatori piena [nr]",
                 "colonna_rel": [
@@ -4500,6 +4743,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 11},
                 "colonna_check": "AI",
                 "check": "lunghezza conn.depuratore [km]",
                 "colonna_rel": [
@@ -4510,6 +4754,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 12},
                 "colonna_check": "AJ",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
@@ -4519,6 +4764,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 13},
                 "colonna_check": "AK",
                 "check": "lunghezza totale allacci [km]",
                 "colonna_rel": [
@@ -4528,6 +4774,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AQ", "row": 14},
                 "colonna_check": "AL",
                 "check": "volume fatturato [mc/anno]",
                 "colonna_rel": [
@@ -4537,7 +4784,8 @@
                 "NOTE": null
             },
             {
-                "colonna_check": "AN",
+                "verif_check": {"col": "AQ", "row": 15},
+                "colonna_check": "AM",
                 "check": "Differenza fra lunghezza tronchi",
                 "colonna_rel": [
                     "D",
@@ -4549,6 +4797,7 @@
         ],
         "Fognat_tronchi": [
             {
+                "verif_check": {"col": "AB", "row": 4},
                 "colonna_check": "N",
                 "check": "materiale ",
                 "colonna_rel": [
@@ -4558,6 +4807,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 5},
                 "colonna_check": "O",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -4567,6 +4817,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 6},
                 "colonna_check": "P",
                 "check": "stato di conservazione nuove opere",
                 "colonna_rel": [
@@ -4577,6 +4828,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 7},
                 "colonna_check": "Q",
                 "check": "diametro [mm]",
                 "colonna_rel": [
@@ -4586,6 +4838,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 8},
                 "colonna_check": "R",
                 "check": "protezione catodica",
                 "colonna_rel": [
@@ -4595,6 +4848,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 9},
                 "colonna_check": "S",
                 "check": "lunghezza [km]",
                 "colonna_rel": [
@@ -4604,6 +4858,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 10},
                 "colonna_check": "T",
                 "check": "Indici di confidenza",
                 "colonna_rel": [
@@ -4613,6 +4868,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 11},
                 "colonna_check": "U",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -4624,6 +4880,7 @@
         ],
         "Collett_tronchi": [
             {
+                "verif_check": {"col": "AB", "row": 4},
                 "colonna_check": "N",
                 "check": "materiale ",
                 "colonna_rel": [
@@ -4633,6 +4890,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 5},
                 "colonna_check": "O",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -4642,6 +4900,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 6},
                 "colonna_check": "P",
                 "check": "stato di conservazione nuove opere",
                 "colonna_rel": [
@@ -4652,6 +4911,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 7},
                 "colonna_check": "Q",
                 "check": "diametro [mm]",
                 "colonna_rel": [
@@ -4661,6 +4921,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 8},
                 "colonna_check": "R",
                 "check": "protezione catodica",
                 "colonna_rel": [
@@ -4670,6 +4931,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 9},
                 "colonna_check": "S",
                 "check": "lunghezza [km]",
                 "colonna_rel": [
@@ -4679,6 +4941,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 10},
                 "colonna_check": "T",
                 "check": "Indici di confidenza",
                 "colonna_rel": [
@@ -4688,6 +4951,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AB", "row": 11},
                 "colonna_check": "U",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -4699,6 +4963,7 @@
         ],
         "Depurat_pompe": [
             {
+                "verif_check": {"col": "AA", "row": 4},
                 "colonna_check": "O",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -4708,6 +4973,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 5},
                 "colonna_check": "P",
                 "check": "anno installazione[anno]",
                 "colonna_rel": [
@@ -4717,6 +4983,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 6},
                 "colonna_check": "Q",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -4726,6 +4993,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 7},
                 "colonna_check": "R",
                 "check": "anno installazione <anno ristrutturazione",
                 "colonna_rel": [
@@ -4736,6 +5004,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 8},
                 "colonna_check": "S",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -4746,6 +5015,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 9},
                 "colonna_check": "T",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -4756,6 +5026,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 10},
                 "colonna_check": "U",
                 "check": "anno ristruttu/indice confidenza",
                 "colonna_rel": [
@@ -4766,6 +5037,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 11},
                 "colonna_check": "V",
                 "check": "potenza [kw]",
                 "colonna_rel": null,
@@ -4773,6 +5045,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 12},
                 "colonna_check": "W",
                 "check": "portata[l/s]",
                 "colonna_rel": null,
@@ -4780,6 +5053,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 13},
                 "colonna_check": "X",
                 "check": "prevalenza [M.C.A.]",
                 "colonna_rel": null,
@@ -4787,6 +5061,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AA", "row": 14},
                 "colonna_check": "Y",
                 "check": "funzione riserva",
                 "colonna_rel": [
@@ -4798,6 +5073,7 @@
         ],
         "Sollevamenti": [
             {
+                "verif_check": {"col": "AW", "row": 4},
                 "colonna_check": "AB",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
@@ -4807,6 +5083,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 5},
                 "colonna_check": "AC",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -4816,6 +5093,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 6},
                 "colonna_check": "AD",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -4825,6 +5103,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 7},
                 "colonna_check": "AE",
                 "check": "anno costruzione [anno]",
                 "colonna_rel": [
@@ -4834,6 +5113,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 8},
                 "colonna_check": "AF",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -4843,6 +5123,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 9},
                 "colonna_check": "AG",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -4852,6 +5133,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 10},
                 "colonna_check": "AH",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -4863,6 +5145,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 11},
                 "colonna_check": "AI",
                 "check": "stato di conservazione CIVILI",
                 "colonna_rel": [
@@ -4872,6 +5155,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 12},
                 "colonna_check": "AJ",
                 "check": "stato di conservazione ELETTROM",
                 "colonna_rel": [
@@ -4881,6 +5165,7 @@
                 "NOTE": "errore su descrizione del check, non è opere civili ma eletromeccaniche"
             },
             {
+                "verif_check": {"col": "AW", "row": 13},
                 "colonna_check": "AK",
                 "check": "potenza installata",
                 "colonna_rel": [
@@ -4890,6 +5175,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 14},
                 "colonna_check": "AL",
                 "check": "consumo energia",
                 "colonna_rel": [
@@ -4899,6 +5185,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 15},
                 "colonna_check": "AM",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
@@ -4908,6 +5195,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 16},
                 "colonna_check": "AN",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -4918,6 +5206,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 17},
                 "colonna_check": "AO",
                 "check": "anno ristrutt op civ/indice confidenza",
                 "colonna_rel": [
@@ -4928,6 +5217,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 18},
                 "colonna_check": "AP",
                 "check": "anno ristrutt op elettrom/indice confidenza",
                 "colonna_rel": [
@@ -4938,6 +5228,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 19},
                 "colonna_check": "AQ",
                 "check": "anno ristrutt. Op. civili/conservazione",
                 "colonna_rel": [
@@ -4948,6 +5239,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 20},
                 "colonna_check": "AR",
                 "check": "anno ristrutt. Op. elettrom/conservazione",
                 "colonna_rel": [
@@ -4958,6 +5250,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 21},
                 "colonna_check": "AS",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -4971,6 +5264,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AW", "row": 22},
                 "colonna_check": "AT",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -4982,6 +5276,7 @@
         ],
         "Collettori": [
             {
+                "verif_check": {"col": "AE", "row": 4},
                 "colonna_check": "T",
                 "check": "lunghezza totale [km]",
                 "colonna_rel": [
@@ -4991,6 +5286,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AE", "row": 5},
                 "colonna_check": "U",
                 "check": "utenze totali",
                 "colonna_rel": [
@@ -5000,6 +5296,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AE", "row": 6},
                 "colonna_check": "V",
                 "check": "Utenze industriali",
                 "colonna_rel": [
@@ -5010,6 +5307,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AE", "row": 7},
                 "colonna_check": "W",
                 "check": "Volume utenze industriali",
                 "colonna_rel": [
@@ -5020,6 +5318,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AE", "row": 8},
                 "colonna_check": "X",
                 "check": "volume trasportato [mc/anno]",
                 "colonna_rel": [
@@ -5029,6 +5328,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AE", "row": 9},
                 "colonna_check": "Y",
                 "check": "numero scaricatori piena [nr]",
                 "colonna_rel": [
@@ -5038,6 +5338,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AE", "row": 10},
                 "colonna_check": "Z",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
@@ -5047,6 +5348,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AE", "row": 11},
                 "colonna_check": "AB",
                 "check": "Differenza fra lunghezza tronchi",
                 "colonna_rel": [
@@ -5059,6 +5361,7 @@
         ],
         "Depuratori": [
             {
+                "verif_check": {"col": "EE", "row": 4},
                 "colonna_check": "CU",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
@@ -5068,6 +5371,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 5},
                 "colonna_check": "CV",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -5077,6 +5381,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 6},
                 "colonna_check": "CW",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -5086,6 +5391,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 7},
                 "colonna_check": "CX",
                 "check": "anno costruzione [anno]",
                 "colonna_rel": [
@@ -5095,6 +5401,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 8},
                 "colonna_check": "CY",
                 "check": "anno ristrutturazione [anno] (civili+elettrom.)",
                 "colonna_rel": [
@@ -5105,6 +5412,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 9},
                 "colonna_check": "CZ",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -5114,6 +5422,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 10},
                 "colonna_check": "DA",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -5125,6 +5434,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 11},
                 "colonna_check": "DB",
                 "check": "stato di conservazione op. civili",
                 "colonna_rel": [
@@ -5134,6 +5444,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 12},
                 "colonna_check": "DC",
                 "check": "stato di conservazione op. elettromecc. ",
                 "colonna_rel": [
@@ -5143,6 +5454,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 13},
                 "colonna_check": "DD",
                 "check": "potenza installata",
                 "colonna_rel": [
@@ -5152,6 +5464,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 14},
                 "colonna_check": "DE",
                 "check": "consumo energia",
                 "colonna_rel": [
@@ -5161,6 +5474,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 15},
                 "colonna_check": "DF",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
@@ -5170,6 +5484,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 16},
                 "colonna_check": "DG",
                 "check": "potenzialita progetto [AE]",
                 "colonna_rel": [
@@ -5179,6 +5494,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 17},
                 "colonna_check": "DH",
                 "check": "carico totale trattato [AE]",
                 "colonna_rel": [
@@ -5188,6 +5504,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 18},
                 "colonna_check": "DI",
                 "check": "carico civile trattato [AE]",
                 "colonna_rel": [
@@ -5197,6 +5514,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 19},
                 "colonna_check": "DJ",
                 "check": "concentrazione media ingresso COD [mg/l]",
                 "colonna_rel": [
@@ -5206,6 +5524,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 20},
                 "colonna_check": "DK",
                 "check": "concentrazione media uscita COD [mg/l]",
                 "colonna_rel": [
@@ -5215,6 +5534,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 21},
                 "colonna_check": "DL",
                 "check": "volume totale trattato [mc/anno]",
                 "colonna_rel": [
@@ -5224,6 +5544,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 22},
                 "colonna_check": "DM",
                 "check": "Verifica per sovraccarico impianto",
                 "colonna_rel": [
@@ -5234,6 +5555,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 23},
                 "colonna_check": "DN",
                 "check": "linea acqua",
                 "colonna_rel": [
@@ -5243,6 +5565,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 24},
                 "colonna_check": "DO",
                 "check": "linea fango",
                 "colonna_rel": [
@@ -5252,6 +5575,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 25},
                 "colonna_check": "DP",
                 "check": "Tipo disidratazione",
                 "colonna_rel": [
@@ -5261,6 +5585,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 26},
                 "colonna_check": "DQ",
                 "check": "Verifica di congruità fra linea fango e numero linee fango",
                 "colonna_rel": [
@@ -5271,6 +5596,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 27},
                 "colonna_check": "DR",
                 "check": "Destinazione fango fra 1 e 5",
                 "colonna_rel": [
@@ -5280,6 +5606,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 28},
                 "colonna_check": "DS",
                 "check": "Verifica per congruenze fanghi prodotti/smaltiti/recuperati",
                 "colonna_rel": [
@@ -5294,6 +5621,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 29},
                 "colonna_check": "DT",
                 "check": "Verifica per congruenze fanghi smaltiti/smaltiti in discarica",
                 "colonna_rel": [
@@ -5304,6 +5632,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 30},
                 "colonna_check": "DU",
                 "check": "Tipo dig. Anaerobica",
                 "colonna_rel": [
@@ -5313,6 +5642,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 31},
                 "colonna_check": "DV",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -5323,6 +5653,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 32},
                 "colonna_check": "DW",
                 "check": "anno ristrutt op civ/indice confidenza",
                 "colonna_rel": [
@@ -5333,6 +5664,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 33},
                 "colonna_check": "DX",
                 "check": "anno ristrutt op elettrom/indice confidenza",
                 "colonna_rel": [
@@ -5343,6 +5675,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 34},
                 "colonna_check": "DY",
                 "check": "anno ristrutt. Op. civili/conservazione",
                 "colonna_rel": [
@@ -5353,6 +5686,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 35},
                 "colonna_check": "DZ",
                 "check": "anno ristrutt. Op. elettrom/conservazione",
                 "colonna_rel": [
@@ -5363,6 +5697,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 36},
                 "colonna_check": "EA",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -5376,6 +5711,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "EE", "row": 37},
                 "colonna_check": "EB",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
@@ -5387,6 +5723,7 @@
         ],
         "Scaricatori": [
             {
+                "verif_check": {"col": "AZ", "row": 4},
                 "colonna_check": "AD",
                 "check": "Controllo correttezza coordinate Gauss Boaga Nord",
                 "colonna_rel": [
@@ -5396,6 +5733,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 5},
                 "colonna_check": "AE",
                 "check": "Controllo correttezza coordinate Gauss Boaga Est",
                 "colonna_rel": [
@@ -5405,6 +5743,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 6},
                 "colonna_check": "AF",
                 "check": "Controllo su QUOTA",
                 "colonna_rel": [
@@ -5414,6 +5753,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 7},
                 "colonna_check": "AG",
                 "check": "Controllo su scolmatore di Baypass impianto",
                 "colonna_rel": [
@@ -5423,6 +5763,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 8},
                 "colonna_check": "AH",
                 "check": "anno costruzione [anno]",
                 "colonna_rel": [
@@ -5432,6 +5773,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 9},
                 "colonna_check": "AI",
                 "check": "anno ristrutturazione [anno]",
                 "colonna_rel": [
@@ -5441,6 +5783,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 10},
                 "colonna_check": "AJ",
                 "check": "anno costruzione opere in stato 3",
                 "colonna_rel": [
@@ -5450,6 +5793,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 11},
                 "colonna_check": "AK",
                 "check": "anno costruzione <anno ristrutturazione",
                 "colonna_rel": [
@@ -5460,6 +5804,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 12},
                 "colonna_check": "AL",
                 "check": "stato di conservazione",
                 "colonna_rel": [
@@ -5469,6 +5814,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 13},
                 "colonna_check": "AM",
                 "check": "materiale scolmatore",
                 "colonna_rel": [
@@ -5478,6 +5824,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 14},
                 "colonna_check": "AN",
                 "check": "larghezza utili",
                 "colonna_rel": [
@@ -5487,6 +5834,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 15},
                 "colonna_check": "AO",
                 "check": "lunghezza utile",
                 "colonna_rel": [
@@ -5496,6 +5844,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 16},
                 "colonna_check": "AP",
                 "check": "rapporto diluizione",
                 "colonna_rel": [
@@ -5506,6 +5855,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 17},
                 "colonna_check": "AQ",
                 "check": "Tipo telecontrollo ",
                 "colonna_rel": [
@@ -5515,6 +5865,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 18},
                 "colonna_check": "AR",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
@@ -5525,6 +5876,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 19},
                 "colonna_check": "AS",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
@@ -5535,6 +5887,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 20},
                 "colonna_check": "AT",
                 "check": "classificaz regionale",
                 "colonna_rel": [
@@ -5544,6 +5897,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 21},
                 "colonna_check": "AU",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
@@ -5554,6 +5908,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 22},
                 "colonna_check": "AV",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
@@ -5565,6 +5920,7 @@
                 "NOTE": null
             },
             {
+                "verif_check": {"col": "AZ", "row": 23},
                 "colonna_check": "AW",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
