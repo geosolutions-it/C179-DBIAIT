@@ -19,7 +19,7 @@ import ldap
 from app.utils import TemplateWithDefaults
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
-APP_VERSION = '2.0.0 (12/02/2025)'
+APP_VERSION = '1.42.2 (17/06/2024)'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,6 +59,9 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+DRAMATIQ_TIMEOUT_LIMIT=os.getenv("DRAMATIQ_TIMEOUT_LIMIT", 1200000) # goes in timeout after 20 mins by default
+DRAMATIQ_TIMEOUT_INTERVAL=os.getenv("DRAMATIQ_TIMEOUT_INTERVAL", 60000) # check the status of each actor every minute
+
 DRAMATIQ_BROKER = {
     "BROKER": os.getenv('DRAMATIQ_BROKER', "dramatiq.brokers.rabbitmq.RabbitmqBroker"),
     "OPTIONS": {
@@ -67,7 +70,7 @@ DRAMATIQ_BROKER = {
     "MIDDLEWARE": [
         "dramatiq.middleware.Prometheus",
         "dramatiq.middleware.AgeLimit",
-        "dramatiq.middleware.TimeLimit",
+        "app.scheduler.middleware.CustomTimeLimit", # we use our custom middleware
         "dramatiq.middleware.Callbacks",
         "dramatiq.middleware.Retries",
         "django_dramatiq.middleware.AdminMiddleware",
