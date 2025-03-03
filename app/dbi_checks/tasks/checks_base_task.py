@@ -97,7 +97,7 @@ class ChecksBaseTask(BaseTask):
         try:
             task = Task_CheckDbi.objects.get(pk=task_id)
         except ObjectDoesNotExist:
-            print(
+            #print(
                 f"Task with ID {task_id} was not found!"
             )
             raise
@@ -127,7 +127,7 @@ class ChecksBaseTask(BaseTask):
             traceback_info = "".join(
                 traceback.TracebackException.from_exception(exception).format()
             )
-            print(traceback_info)
+            #print(traceback_info)
 
             # try logging the exception
             try:

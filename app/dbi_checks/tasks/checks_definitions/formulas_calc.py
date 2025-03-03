@@ -68,7 +68,7 @@ class CalcFormulas:
                 continue
                 
             formula = formula_cell.value
-            print(f"Processing formula in {col_letter}{self.start_row}: {formula}")
+            #print(f"Processing formula in {col_letter}{self.start_row}: {formula}")
                 
             # Parse and compile the formula outside the loop for better performance
             parser = formulas.Parser()
@@ -168,7 +168,7 @@ class CalcFormulas:
                 if isinstance(result, float):
                     result = int(round(result))
 
-                print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
+                #print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
                 # Store the result in the target cell
                 cell.value = result
 
@@ -363,13 +363,13 @@ class CalcFormulas:
         # Step 2: Check if a linked number e.g [2] exists and matches the target file
         if int(linked_number) in external_links_map:
             if target_file in external_links_map[int(linked_number)]:
-                print(f"{linked_number} correctly links to {target_file}")
+                #print(f"{linked_number} correctly links to {target_file}")
                 # load the external workbook
                 external_wb = openpyxl.load_workbook(f'{self.external_wb_path}/DBI_A.xlsx', data_only=True)
 
                 return external_wb
         else:
-            print("[2] does not exist in the external links.")
+            #print("[2] does not exist in the external links.")
             return False
 
 

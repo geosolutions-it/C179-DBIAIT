@@ -102,7 +102,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
         try:
             orm_task = Task_CheckDbi.objects.get(pk=task_id)
         except ObjectDoesNotExist:
-            print(
+            #print(
                 f"Task with ID {task_id} was not found! Manual removal had to appear "
                 f"between task scheduling and execution."
             )
@@ -163,7 +163,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
             return result
         
         except Exception as e:
-            print(f"Error processing files in the background: {e}")
+            #print(f"Error processing files in the background: {e}")
 
 class PrioritizedDataCheckTask(ChecksBaseTask):
     """
@@ -188,7 +188,7 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
         try:
             orm_task = Task_CheckDbi.objects.get(pk=task_id)
         except ObjectDoesNotExist:
-            print(
+            #print(
                 f"Task with ID {task_id} was not found! Manual removal had to appear "
                 f"between task scheduling and execution."
             )
@@ -234,7 +234,7 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
             return result
         
         except Exception as e:
-            print(f"Error processing files in the background: {e}")
+            #print(f"Error processing files in the background: {e}")
 
 class DataQualityCheckTask(ChecksBaseTask):
     """
@@ -259,7 +259,7 @@ class DataQualityCheckTask(ChecksBaseTask):
         try:
             orm_task = Task_CheckDbi.objects.get(pk=task_id)
         except ObjectDoesNotExist:
-            print(
+            #print(
                 f"Task with ID {task_id} was not found! Manual removal had to appear "
                 f"between task scheduling and execution."
             )
@@ -305,7 +305,7 @@ class DataQualityCheckTask(ChecksBaseTask):
             return result
         
         except Exception as e:
-            print(f"Error processing files in the background: {e}")
+            #print(f"Error processing files in the background: {e}")
 
             
 

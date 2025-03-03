@@ -38,7 +38,7 @@ class YearHandler:
             return year_value
 
         except Exception as e:
-            print(f"Error retrieving year: {e}")
+            #print(f"Error retrieving year: {e}")
             return False
 
     def set_year_to_file(self):
@@ -54,7 +54,7 @@ class YearHandler:
         
         year_value = self.get_year()
         if not year_value:
-            print("Failed to retrieve the year, cannot create INPUT.xlsx.")
+            #print("Failed to retrieve the year, cannot create INPUT.xlsx.")
             return False
  
         try:
@@ -71,6 +71,6 @@ class YearHandler:
             return True
 
         except Exception as e:
-            print(f"Error creating INPUT.xlsx: {e}")
+            #print(f"Error creating INPUT.xlsx: {e}")
             return False
         
