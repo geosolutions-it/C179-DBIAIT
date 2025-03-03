@@ -20,6 +20,7 @@ class CheckExportTaskSerializer(serializers.ModelSerializer):
     second_file_name = serializers.SerializerMethodField()
     analysis_year = serializers.CharField(source='xlsx.analysis_year', read_only=True)
     check_name = serializers.SerializerMethodField()
+    task_log = serializers.SerializerMethodField()
 
     class Meta:
         model = Task_CheckDbi
@@ -46,3 +47,7 @@ class CheckExportTaskSerializer(serializers.ModelSerializer):
             "BDD": "Bontà dei dati"
         }
         return check_type_mapping.get(instance.check_type, instance.check_type)
+    
+    def get_task_log(self, obj):
+        # trim the log to a shorter size due the complexity
+        return obj.task_log[:250]
