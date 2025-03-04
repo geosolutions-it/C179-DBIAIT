@@ -298,8 +298,9 @@ class BaseCalc:
         if sheet_name not in self.log_workbook.sheetnames:
             log_sheet = self.log_workbook.create_sheet(sheet_name)
             log_sheet.append(["File", 
-                              "Foglio", 
-                              "colonna check", 
+                              "Foglio",
+                              "Codice opera",
+                              "Colonna check", 
                               "Tipo check", 
                               "Valore check errato col", 
                               "Valore errato col1", 
@@ -319,6 +320,7 @@ class BaseCalc:
 
         # Get the seed_file name in order to retrieve it
         # from the log_mapping.json
+
         seed_filename = pathlib.Path(self.seed).stem
         seed_key = seed_filename.upper()
                 
@@ -362,6 +364,8 @@ class BaseCalc:
         
                     # Get the verification check cell to check if it is OK or not
                     verif_check = check.get("verif_check", {})
+                    if verif_check is None:
+                        continue
                     verif_check_col = verif_check["col"]
                     verif_check_col_index = column_index_from_string(verif_check_col)
                     verif_check_row = verif_check["row"]
@@ -385,7 +389,6 @@ class BaseCalc:
                     else:
                         logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is not OK. \
                                     We have to write the corresponding logs")
-                        
                         column_check = check.get("colonna_check", None)
                         check_name = check.get("check", None)                 
                         column_rel = check.get("colonna_rel", None)
@@ -395,8 +398,7 @@ class BaseCalc:
                         # column_rel_idx = self.parse_col_for_pd(column_rel)
                         
                         desc = check.get("descrizione", None)
-                        # This key will be added to the log mapping
-                        criterion = check.get("criterion", 0)
+                        criterion = check.get("valore", 0)
                         logger.info(f"{check_name}, {column_rel}, {desc}")
                         
                         # Ensure column_rel is always a list (or empty if None)
@@ -421,6 +423,10 @@ class BaseCalc:
                         for index, row in filtered_rows.iterrows():
                             incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
                             
+                            # retrieve the column B which includes the unique code of each record
+                            unique_code_idx = self.parse_col_for_pd('B')
+                            unique_code = row[unique_code_idx]
+                            
                             # Handle the colonna_rel values:
                             # Initialize a dictionary to store values from each related column
                             related_values_dict = {}
@@ -442,7 +448,7 @@ class BaseCalc:
                             related_values = [related_values_dict.get(key, None) for key in list(related_values_dict.keys())]
 
                             # Append the row to the log sheet
-                            log_sheet.append([seed_key, sheet_name, column_check, updated_desc, incorrect_value] + related_values)
+                            log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
 
                 end_date = timezone.now()
 

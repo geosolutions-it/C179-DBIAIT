@@ -87,6 +87,7 @@ class CalcFormulas:
             columns_in_formula = re.findall(r'([A-Za-z_]+!)?([A-Z]{1,3})\d+', formula)
             # Remove '!' from sheet names if present
             columns_in_formula = [(match[0].rstrip('!'), match[1]) for match in columns_in_formula]
+            columns_in_formula = self.exclude_range_columns(columns_in_formula, formula)
                 
             # Check if the formula includes ranges e.g A:A or sheet with ranges. It catch patterns like: Fiumi_inreti!A:A
             # which is the way that Openpyxl interprets internally the actual patterns e.g $Fiumi_inreti.A:A 
@@ -95,6 +96,9 @@ class CalcFormulas:
             ranges_in_formula = re.findall(r'(?:(?P<sheet>[A-Za-z_][\w]*)!)?(?P<range>\$?[A-Z]{1,3}:\$?[A-Z]{1,3}|\$?[A-Z]{1,3}\$?\d+:\$?[A-Z]{1,3}\$?\d+)', formula)   
             # Regex to capture the ranges in one row e.g B4:BB4
             row_based_ranges = re.findall(r'(?P<col1>\$?[A-Z]{1,3})(?P<row>\d+):(?P<col2>\$?[A-Z]{1,3})(?P=row)', formula)
+
+            # Regex to capture the absolute rows like B$1 (They are used in the DB_prioritari file)
+            abs_rows = re.findall(r'\b[A-Z]+\$\d+\b', formula)
             
             if ranges_in_formula:
                 for match in ranges_in_formula:
@@ -128,6 +132,12 @@ class CalcFormulas:
                 for i in row_based_ranges:
                     # the structure of row_based_ranges is: [(col1, row, col2)]
                     variables[f"{i[0]}{i[1]}:{i[2]}{i[1]}"] = self.calculate_row_based_range(i) # e.g variables[B4:BB4]
+            if abs_rows:
+                abs_rows = self.exclude_abs_range_columns(abs_rows, ranges_in_formula)
+                for i in abs_rows:
+                    # the format of the abs_rows is something like "['J$1']"
+                    i = i.replace("$", "")
+                    variables[i] = self.sheet[f"{i}"].value
             
             # Iterate through each row for this column
             for row in self.sheet.iter_rows(min_row=self.start_row, max_row=self.end_row,
@@ -213,6 +223,58 @@ class CalcFormulas:
         
         return values
     
+    def exclude_range_columns(self, columns_in_formula, formula):
+        """
+        This method exclude from the columns_in_formula the columns
+        that have been added but they are part of a range and not
+        actual columns like BG6:BG10
+        """
+        cleaned_columns = []
+        for match in columns_in_formula:
+            sheet_prefix, column = match  # match is a tuple (sheet name, column)
+            
+            # Check if the column is part of a range by looking for "column+number:" pattern
+            if not re.search(rf'{column}\d+:\b', formula):  
+                cleaned_columns.append((sheet_prefix, column))
+        return cleaned_columns
+    
+    def exclude_abs_range_columns(self, abs_rows, ranges_in_formula):
+        """
+        This method excludes from the abs_rows the columns that are part of a range
+        and not actual absolute columns (like B$2 but not B$1:B$1048576).
+        """
+        cleaned_columns = []
+        
+        # Flatten the ranges_in_formula into a list of columns (excluding the sheet names)
+        columns_in_ranges = set()
+        
+        for sheet, range_expr in ranges_in_formula:
+            # Ensure the range expression is valid and not empty
+            if range_expr and ":" in range_expr:
+                start_col, end_col = range_expr.split(':')
+                
+                # Ensure both parts are valid column references
+                if '$' in start_col and '$' in end_col:
+                    start_column = start_col.split('$')[1]  # Get the column part, e.g., "B" from "$B$1"
+                    end_column = end_col.split('$')[1]      # Get the column part, e.g., "B" from "$B$1048576"
+                    
+                    # Add both start and end columns to the set
+                    columns_in_ranges.add(start_column)
+                    columns_in_ranges.add(end_column)
+                else:
+                    # If the range is invalid or does not have valid columns, skip it
+                    continue
+
+        # For each absolute row found in the formula
+        for match in abs_rows:
+            column = match.split('$')[0]  # Extract the column part of the match (e.g., "B" from B$1)
+            
+            # If the column is not part of any range, add it to the cleaned list
+            if column not in columns_in_ranges:
+                cleaned_columns.append(match)
+        
+        return cleaned_columns
+
     def clean_range(self, col_range: str) -> str:
         """
         Remove row numbers from a given range and return only the column part.
