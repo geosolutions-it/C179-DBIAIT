@@ -28,7 +28,7 @@ class BaseCalc:
 
     def __init__(
         self, 
-        orm_task: Task_CheckDbi,
+        orm_task,
         imported_file: str,
         seed: str,
         config: str,
@@ -152,13 +152,13 @@ class BaseCalc:
             
         self.orm_task.progress += self.task_progress
         self.orm_task.save()
-
+    
         # Drag the formulas
         self.drag_formulas(seed_wb)
 
         # Write the year to the resulted file
         self.year_to_file(seed_wb)
-        
+
         self.orm_task.progress += self.task_progress
         self.orm_task.save()
 
@@ -166,7 +166,6 @@ class BaseCalc:
         logger.info(f"The file is ready to be saved")
         # save logic
         seed_wb.save(seed_copy)
-
         logger.info(f"Final workbook save completed.")
         end_date = timezone.now()
 
@@ -271,6 +270,13 @@ class BaseCalc:
         except Exception as e:
             logger.error(f"An error occurred while importing sheet: {str(e)}")
             raise
+    
+    def year_to_file(self, seed_wb):
+        # Write the year to the resulted file
+        defined_year = YearHandler(self.imported_file).get_year()
+        dati_sheet = seed_wb["DATI"]
+        dati_sheet['B8'] = defined_year
+        logger.info(f"The year {defined_year} was copied to th DATI sheet")
 
     def year_to_file(self, seed_wb):
         # Write the year to the resulted file

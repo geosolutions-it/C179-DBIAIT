@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'app.authenticate',
     'app.scheduler',
     'app.dbi_checks',
+    'app.shape_checks',
 
     # Installed apps
     'rest_framework',
@@ -326,7 +327,7 @@ DBIAIT_FRZ_SELECT_ROLES = ['DBIAIT_FRZ_ROLE_R']
 DBIAIT_FRZ_UID_ROLES = ['DBIAIT_FRZ_ROLE_W']
 DBIAIT_FRZ_ADMIN_ROLES = ['DBIAIT_FRZ_ROLE_D']
 
-# DBI checks settings
+# DBI and Shape checks settings
 
 # Final files for download
 CHECKS_EXPORT_FOLDER = os.getenv("CHECKS_EXPORT_FOLDER", os.path.join(FTP_FOLDER, "checks_export"))
@@ -339,6 +340,8 @@ DBI_A_1 = os.path.join(CHECKS_SEED_FILES, "DBI_A-1.xlsx")
 DBI_A = os.path.join(CHECKS_SEED_FILES, "DBI_A.xlsx")
 DBI_PRIORITATI = os.path.join(CHECKS_SEED_FILES, "DBI_prioritari.xlsx")
 DBI_BONTA_DEI_DATI = os.path.join(CHECKS_SEED_FILES, "DBI_bonta_dei_dati.xlsx")
+SHP_ACQ = os.path.join(CHECKS_SEED_FILES, "Check_shp_ACQ.xlsx")
+SHP_FGN = os.path.join(CHECKS_SEED_FILES, "Check_shp_FGN.xlsx")
 # Get precending and current year from a specific sheet, column and row
 YEAR_VALUE = {
     "sheet": "DATI",
@@ -357,3 +360,5 @@ SHEETS_CONFIG = os.path.join(BASE_DIR, "checks", "sheets_mapping.json")
 DBI_FORMULAS = os.path.join(BASE_DIR, "checks", "dbi_formulas.json")
 LOG_MAPPING = os.path.join(BASE_DIR, "checks", "log_mapping.json")
 VERIF_CHECKS = os.path.join(BASE_DIR, "checks", "verif_checks_mapping.json")
+SHAPE_FORMULAS = os.path.join(BASE_DIR, "checks", "shape_formulas.json")
+DBF_TO_SHEET = os.path.join(BASE_DIR, "checks", "dbf_to_sheet.json")

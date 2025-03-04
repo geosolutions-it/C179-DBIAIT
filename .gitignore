@@ -30,6 +30,7 @@ dist
 # django_dramatiq task logs
 task_logs
 task_check_dbi_logs
+task_check_shape_logs
 
 # temporary export directory
 /export/tmp

@@ -112,5 +112,17 @@
       "Depuratori": {"target": "Depuratori", "start_col": "A", "start_row": 4, "source_start_row": 4},
       "Depurat_pompe": {"target": "Depurat_pompe", "start_col": "A", "start_row": 4, "source_start_row": 4},
       "Scaricatori": {"target": "Scaricatori", "start_col": "A", "start_row": 4, "source_start_row": 4}
+    },
+    "CHECK_SHP_ACQ": {
+      "Distribuzioni": {"target": "Distribuzioni", "start_col": "A", "start_row": 4, "source_start_row": 4},
+      "Distrib_tronchi": {"target": "Distrib_tronchi", "start_col": "A", "start_row": 4, "source_start_row": 4},
+      "Adduttrici": {"target": "Adduttrici", "start_col": "A", "start_row": 4, "source_start_row": 4},
+      "Addut_tronchi": {"target": "Addut_tronchi", "start_col": "A", "start_row": 4, "source_start_row": 4}
+    },
+    "CHECK_SHP_FGN": {
+      "Fognature": {"target": "Fognature", "start_col": "A", "start_row": 4, "source_start_row": 4},
+      "Fognat_tronchi": {"target": "Fognat_tronchi", "start_col": "A", "start_row": 4, "source_start_row": 4},
+      "Collettori": {"target": "Collettori", "start_col": "A", "start_row": 4, "source_start_row": 4},
+      "Collett_tronchi": {"target": "Collett_tronchi", "start_col": "A", "start_row": 4, "source_start_row": 4}
     }
   }
