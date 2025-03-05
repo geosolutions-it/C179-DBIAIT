@@ -14936,5 +14936,981 @@
                 }
             }
         ]
+    },
+    "CHECK_SHP_ACQ": {
+        "SHP_Acquedotto": [
+            {
+                "verif_check": {"col": "BY", "row": 5},
+                "colonna_check": "AE",
+                "check_name": "Controllo completezza COD_RETE",
+                "colonna_rel": [
+                    "A"
+                ],
+                "descrizione": "COD_RETE non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "BY", "row": 6},
+                "colonna_check": "AF",
+                "check_name": "Controllo congruenza COD_RETE",
+                "colonna_rel": [
+                    "A"
+                ],
+                "descrizione": "COD_RETE non presente nel foglio Distributrici/Adduttrici",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "BZ", "row": 5},
+                "colonna_check": "AG",
+                "check_name": "Controllo completezza COMUNE_NOME",
+                "colonna_rel": [
+                    "B"
+                ],
+                "descrizione": "COMUNE_NOME non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CA", "row": 5},
+                "colonna_check": "AH",
+                "check_name": "Controllo completezza COMUNE_COD",
+                "colonna_rel": [
+                    "C"
+                ],
+                "descrizione": "COMUNE_COD non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CB", "row": 5},
+                "colonna_check": "AI",
+                "check_name": "Controllo completezza COD_TRATTO",
+                "colonna_rel": [
+                    "D"
+                ],
+                "descrizione": "COD_TRATTO non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CB", "row": 6},
+                "colonna_check": "AJ",
+                "check_name": "Controllo congruenza COD_TRATTO",
+                "colonna_rel": [
+                    "D"
+                ],
+                "descrizione": "COD_TRATTO non univoco",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CB", "row": 7},
+                "colonna_check": "AK",
+                "check_name": "Controllo congruenza COD_TRATTO 2",
+                "colonna_rel": [
+                    "D"
+                ],
+                "descrizione": "COD_TRATTO non presente nei fogli Distrib_tronchi/Addut_tronchi",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CC", "row": 5},
+                "colonna_check": "AL",
+                "check_name": "Controllo completezza ID_MATER",
+                "colonna_rel": [
+                    "E"
+                ],
+                "descrizione": "ID_MATERIALE non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CC", "row": 6},
+                "colonna_check": "AM",
+                "check_name": "Controllo congruenza ID_MATER",
+                "colonna_rel": [
+                    "E"
+                ],
+                "descrizione": "ID_MATERIALE fuori range",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CD", "row": 5},
+                "colonna_check": "AN",
+                "check_name": "Controllo completezza IDX_MATER",
+                "colonna_rel": [
+                    "F"
+                ],
+                "descrizione": "IDX_MATERIALE non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CD", "row": 6},
+                "colonna_check": "AO",
+                "check_name": "Controllo congruenza IDX_MATER",
+                "colonna_rel": [
+                    "F"
+                ],
+                "descrizione": "IDX_MATERIALE non coerente con anno di posa",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CE", "row": 5},
+                "colonna_check": "AP",
+                "check_name": "Controllo completezza DIAMETRO",
+                "colonna_rel": [
+                    "G"
+                ],
+                "descrizione": "DIAMETRO non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CF", "row": 5},
+                "colonna_check": "AQ",
+                "check_name": "Controllo completezza IDX_DIAMET",
+                "colonna_rel": [
+                    "H"
+                ],
+                "descrizione": "IDX_DIAMET non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CF", "row": 6},
+                "colonna_check": "AR",
+                "check_name": "Controllo congruenza IDX_DIAMET",
+                "colonna_rel": [
+                    "H"
+                ],
+                "descrizione": "IDX_DIAMETRO non coerente con anno di posa",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CG", "row": 5},
+                "colonna_check": "AS",
+                "check_name": "Controllo completezza ANNO",
+                "colonna_rel": [
+                    "I"
+                ],
+                "descrizione": "ANNO di posa non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CG", "row": 6},
+                "colonna_check": "AT",
+                "check_name": "Controllo congruenza ANNO",
+                "colonna_rel": [
+                    "I"
+                ],
+                "descrizione": "ANNO di posa non coerente con anno di rendicontazione",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CH", "row": 5},
+                "colonna_check": "AU",
+                "check_name": "Controllo completezza IDX_ANNO",
+                "colonna_rel": [
+                    "J"
+                ],
+                "descrizione": "IDX_ANNO di posa non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CH", "row": 6},
+                "colonna_check": "AV",
+                "check_name": "Controllo congruenza IDX_ANNO",
+                "colonna_rel": [
+                    "J"
+                ],
+                "descrizione": "IDX_ANNO  non coerente con anno di rendicontazione",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CI", "row": 5},
+                "colonna_check": "AW",
+                "check_name": "Controllo completezza LUNGHEZZA",
+                "colonna_rel": [
+                    "K"
+                ],
+                "descrizione": "LUNGHEZZA non valida",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CI", "row": 6},
+                "colonna_check": "AX",
+                "check_name": "Controllo congruenza LUNGHEZZA",
+                "colonna_rel": [
+                    "K"
+                ],
+                "descrizione": "LUNGHEZZA inferiore al metro",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CJ", "row": 5},
+                "colonna_check": "AY",
+                "check_name": "Controllo completezza IDX_LUNG",
+                "colonna_rel": [
+                    "L"
+                ],
+                "descrizione": "IDX_LUNG non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CJ", "row": 6},
+                "colonna_check": "AZ",
+                "check_name": "Controllo congruenza IDX_LUNG",
+                "colonna_rel": [
+                    "L"
+                ],
+                "descrizione": "IDX_LUNG non coerente con anno di rendicontazione",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CK", "row": 5},
+                "colonna_check": "BA",
+                "check_name": "Controllo completezza ID_CONSERV",
+                "colonna_rel": [
+                    "M"
+                ],
+                "descrizione": "ID_CONSERV non valida",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CK", "row": 6},
+                "colonna_check": "BB",
+                "check_name": "Controllo congruenza ID_CONSERV",
+                "colonna_rel": [
+                    "M"
+                ],
+                "descrizione": "ID_CONSERV fuori range",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CK", "row": 7},
+                "colonna_check": "BC",
+                "check_name": "Controllo congruenza ID_CONSERV 2",
+                "colonna_rel": [
+                    "M"
+                ],
+                "descrizione": "ID_CONSERV non coerente con anno di rendicontazione",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CL", "row": 5},
+                "colonna_check": "BD",
+                "check_name": "Controllo completezza TIPO_RETE",
+                "colonna_rel": [
+                    "N"
+                ],
+                "descrizione": "TIPO_RETE non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CL", "row": 6},
+                "colonna_check": "BE",
+                "check_name": "Controllo congruenza TIPO_RETE",
+                "colonna_rel": [
+                    "N"
+                ],
+                "descrizione": "TIPO_RETE fuori range",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CM", "row": 5},
+                "colonna_check": "BF",
+                "check_name": "Controllo completezza TIPO_ACQUA",
+                "colonna_rel": [
+                    "O"
+                ],
+                "descrizione": "TIPO_ACQUA non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CM", "row": 6},
+                "colonna_check": "BG",
+                "check_name": "Controllo congruenza TIPO_ACQUA",
+                "colonna_rel": [
+                    "O"
+                ],
+                "descrizione": "TIPO_ACQUA fuori range",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CN", "row": 5},
+                "colonna_check": "BH",
+                "check_name": "Controllo FUNZ_GRAV",
+                "colonna_rel": [
+                    "P"
+                ],
+                "descrizione": "Funzionamento gravita fuori dal range",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CO", "row": 5},
+                "colonna_check": "BI",
+                "check_name": "Controllo completezza COPERTURA",
+                "colonna_rel": [
+                    "Q"
+                ],
+                "descrizione": "COPERTURA non valida",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CP", "row": 5},
+                "colonna_check": "BJ",
+                "check_name": "Controllo PROFONDITA'",
+                "colonna_rel": [
+                    "R"
+                ],
+                "descrizione": "PROFONDITA' non valida",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CQ", "row": 5},
+                "colonna_check": "BK",
+                "check_name": "Controllo completezza IDX_PROFON",
+                "colonna_rel": [
+                    "S"
+                ],
+                "descrizione": "IDX_PROFONDITA' non valida",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CQ", "row": 6},
+                "colonna_check": "BL",
+                "check_name": "Controllo congruenza IDX_PROFON",
+                "colonna_rel": [
+                    "S"
+                ],
+                "descrizione": "IDX_PROFONDITA' fuori dal range",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CR", "row": 5},
+                "colonna_check": "BM",
+                "check_name": "Controllo GEST_PRESS",
+                "colonna_rel": [
+                    "T"
+                ],
+                "descrizione": "GESTIONE PRESSIONI fuori dal range",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CS", "row": 5},
+                "colonna_check": "BN",
+                "check_name": "Controllo ID_TELECON",
+                "colonna_rel": [
+                    "U"
+                ],
+                "descrizione": "ID_TELECONTROLLO fuori dal range",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CT", "row": 5},
+                "colonna_check": "BO",
+                "check_name": "Controllo P_MED_ESER",
+                "colonna_rel": [
+                    "V"
+                ],
+                "descrizione": "P_MED_ESER no valida",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CU", "row": 5},
+                "colonna_check": "BP",
+                "check_name": "Controllo PROT_CATOD",
+                "colonna_rel": [
+                    "W"
+                ],
+                "descrizione": "PROT_CATOD non valida",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CV", "row": 5},
+                "colonna_check": "BQ",
+                "check_name": "Controllo ALLACCI",
+                "colonna_rel": [
+                    "X"
+                ],
+                "descrizione": "ALLACCI non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CW", "row": 5},
+                "colonna_check": "BR",
+                "check_name": "Controllo LUNGH_ALLACCI",
+                "colonna_rel": [
+                    "Y"
+                ],
+                "descrizione": "LUNGH_ALLACCI non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CX", "row": 5},
+                "colonna_check": "BS",
+                "check_name": "Controllo RIP_ALLACCI",
+                "colonna_rel": [
+                    "Z"
+                ],
+                "descrizione": "RIP_ALLACCI non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CY", "row": 5},
+                "colonna_check": "BT",
+                "check_name": "Controllo RIP_RETE",
+                "colonna_rel": [
+                    "AA"
+                ],
+                "descrizione": "RIP_RETE non valdio",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "CZ", "row": 5},
+                "colonna_check": "BU",
+                "check_name": "Controllo UT_MISURAT",
+                "colonna_rel": [
+                    "AB"
+                ],
+                "descrizione": "UT_MISURAT non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "DA", "row": 5},
+                "colonna_check": "BV",
+                "check_name": "Controllo ID_OP_STAT",
+                "colonna_rel": [
+                    "AC"
+                ],
+                "descrizione": "ID_OPERA_STATO non valido",
+                "valore": 0
+            },
+            {
+                "verif_check": {"col": "DB", "row": 5},
+                "colonna_check": "BW",
+                "check_name": "Controllo completezza nuovi tratti",
+                "colonna_rel": [],
+                "descrizione": "OPERA DI NUOVA COSTRUZIONE, alcuni dati mancanti",
+                "valore": 0
+            }
+        ],
+        "Controllo dati aggregati": [
+            {
+                "verif_check": {"col": "B", "row": 4},
+                "colonna_check": "B",
+                "check_name": "Consistenza tronchi",
+                "colonna_rel": [],
+                "descrizione": "Numero Tronchi:DBI e shape non coerenti",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "C", "row": 4},
+                "colonna_check": "C",
+                "check_name": "Lunghezza complessiva reti",
+                "colonna_rel": [],
+                "descrizione": "Lunghezza :DBI e shape non coerenti",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "D", "row": 4},
+                "colonna_check": "D",
+                "check_name": "Nr allacci Distribuzione",
+                "colonna_rel": [],
+                "descrizione": "Numero allacci distribuzione :DBI e shape non coerenti",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "E", "row": 4},
+                "colonna_check": "E",
+                "check_name": "NR riparazioni rete acquedotto",
+                "colonna_rel": [],
+                "descrizione": "Numero riparazioni rete :DBI e shape non coerenti",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "F", "row": 4},
+                "colonna_check": "F",
+                "check_name": "NR riparazioni allacci Distribuzione",
+                "colonna_rel": [],
+                "descrizione": "Numero riparazioni allacci :DBI e shape non coerenti",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "G", "row": 4},
+                "colonna_check": "G",
+                "check_name": "NR utenze misuratore",
+                "colonna_rel": [],
+                "descrizione": null,
+                "valore": null
+            }
+        ]
+    },
+    "CHECK_SHP_FGN": {
+        "SHP_Fognatura": [
+            {
+                "verif_check": {"col": "BU", "row": 5},
+                "colonna_check": "AC",
+                "check_name": "Controllo completezza COD_RETE",
+                "colonna_rel": [
+                    "A"
+                ],
+                "descrizione": "COD_RETE non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BU", "row": 6},
+                "colonna_check": "AD",
+                "check_name": "Controllo congruenza COD_RETE",
+                "colonna_rel": [
+                    "A"
+                ],
+                "descrizione": "COD_RETE non presente nel foglio Distributrici/Adduttrici",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BV", "row": 5},
+                "colonna_check": "AE",
+                "check_name": "Controllo completezza COMUNE_NOME",
+                "colonna_rel": [
+                    "B"
+                ],
+                "descrizione": "COMUNE_NOME non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BW", "row": 5},
+                "colonna_check": "AF",
+                "check_name": "Controllo completezza COMUNE_COD",
+                "colonna_rel": [
+                    "C"
+                ],
+                "descrizione": "COMUNE_COD non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BX", "row": 5},
+                "colonna_check": "AG",
+                "check_name": "Controllo completezza COD_TRATTO",
+                "colonna_rel": [
+                    "D"
+                ],
+                "descrizione": "COD_TRATTO non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BX", "row": 6},
+                "colonna_check": "AH",
+                "check_name": "Controllo congruenza COD_TRATTO",
+                "colonna_rel": [
+                    "D"
+                ],
+                "descrizione": "COD_TRATTO non univoco",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BX", "row": 7},
+                "colonna_check": "AI",
+                "check_name": "Controllo congruenza COD_TRATTO 2",
+                "colonna_rel": [
+                    "D"
+                ],
+                "descrizione": "COD_TRATTO non presente nei fogli Distrib_tronchi/Addut_tronchi",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BY", "row": 5},
+                "colonna_check": "AJ",
+                "check_name": "Controllo completezza ID_MATER",
+                "colonna_rel": [
+                    "E"
+                ],
+                "descrizione": "ID_MATERIALE non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BY", "row": 6},
+                "colonna_check": "AK",
+                "check_name": "Controllo congruenza ID_MATER",
+                "colonna_rel": [
+                    "E"
+                ],
+                "descrizione": "ID_MATERIALE fuori range",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BZ", "row": 5},
+                "colonna_check": "AL",
+                "check_name": "Controllo completezza IDX_MATER",
+                "colonna_rel": [
+                    "F"
+                ],
+                "descrizione": "IDX_MATERIALE non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "BZ", "row": 6},
+                "colonna_check": "AM",
+                "check_name": "Controllo congruenza IDX_MATER",
+                "colonna_rel": [
+                    "F"
+                ],
+                "descrizione": "IDX_MATERIALE non coerente con anno di posa",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CA", "row": 5},
+                "colonna_check": "AN",
+                "check_name": "Completezza SEZIONE",
+                "colonna_rel": [
+                    "G"
+                ],
+                "descrizione": "DIAMETRO non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CB", "row": 5},
+                "colonna_check": "AO",
+                "check_name": "Controllo completezza DIAMETRO",
+                "colonna_rel": [
+                    "H"
+                ],
+                "descrizione": "DIAMETRO fuori range",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CC", "row": 5},
+                "colonna_check": "AP",
+                "check_name": "Controllo completezza IDX_DIAMET",
+                "colonna_rel": [
+                    "I"
+                ],
+                "descrizione": "IDX_DIAMET non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CC", "row": 6},
+                "colonna_check": "AQ",
+                "check_name": "Controllo congruenza IDX_DIAMET",
+                "colonna_rel": [
+                    "I"
+                ],
+                "descrizione": "IDX_DIAMETRO non coerente con anno di posa",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CD", "row": 5},
+                "colonna_check": "AR",
+                "check_name": "Controllo completezza ANNO",
+                "colonna_rel": [
+                    "J"
+                ],
+                "descrizione": "ANNO di posa non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CD", "row": 6},
+                "colonna_check": "AS",
+                "check_name": "Controllo congruenza ANNO",
+                "colonna_rel": [
+                    "J"
+                ],
+                "descrizione": "ANNO di posa non coerente con anno di rendicontazione",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CE", "row": 5},
+                "colonna_check": "AT",
+                "check_name": "Controllo completezza IDX_ANNO",
+                "colonna_rel": [
+                    "K"
+                ],
+                "descrizione": "IDX_ANNO di posa non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CE", "row": 6},
+                "colonna_check": "AU",
+                "check_name": "Controllo congruenza IDX_ANNO",
+                "colonna_rel": [
+                    "K"
+                ],
+                "descrizione": "IDX_ANNO  non coerente con anno di rendicontazione",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CF", "row": 5},
+                "colonna_check": "AV",
+                "check_name": "Controllo completezza LUNGHEZZA",
+                "colonna_rel": [
+                    "L"
+                ],
+                "descrizione": "LUNGHEZZA non valida",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CF", "row": 6},
+                "colonna_check": "AW",
+                "check_name": "Controllo congruenza LUNGHEZZA",
+                "colonna_rel": [
+                    "L"
+                ],
+                "descrizione": "LUNGHEZZA inferiore al metro",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CG", "row": 5},
+                "colonna_check": "AX",
+                "check_name": "Controllo completezza IDX_LUNG",
+                "colonna_rel": [
+                    "M"
+                ],
+                "descrizione": "IDX_LUNG non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CG", "row": 6},
+                "colonna_check": "AY",
+                "check_name": "Controllo congruenza IDX_LUNG",
+                "colonna_rel": [
+                    "M"
+                ],
+                "descrizione": "IDX_LUNG non coerente con anno di rendicontazione",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CH", "row": 5},
+                "colonna_check": "AZ",
+                "check_name": "Controllo completezza ID_CONSERV",
+                "colonna_rel": [
+                    "N"
+                ],
+                "descrizione": "ID_CONSERV non valida",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CH", "row": 6},
+                "colonna_check": "BA",
+                "check_name": "Controllo congruenza ID_CONSERV",
+                "colonna_rel": [
+                    "N"
+                ],
+                "descrizione": "ID_CONSERV fuori range",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CH", "row": 7},
+                "colonna_check": "BB",
+                "check_name": "Controllo congruenza ID_CONSERV 2",
+                "colonna_rel": [
+                    "N"
+                ],
+                "descrizione": "ID_CONSERV non coerente con anno di rendicontazione",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CI", "row": 5},
+                "colonna_check": "BC",
+                "check_name": "Controllo completezza TIPO_RETE",
+                "colonna_rel": [
+                    "O"
+                ],
+                "descrizione": "TIPO_RETE non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CI", "row": 6},
+                "colonna_check": "BD",
+                "check_name": "Controllo congruenza TIPO_RETE",
+                "colonna_rel": [
+                    "O"
+                ],
+                "descrizione": "TIPO_RETE fuori range",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CJ", "row": 5},
+                "colonna_check": "BE",
+                "check_name": "Controllo ID_REFLUO_TRASPORTATO",
+                "colonna_rel": [
+                    "P"
+                ],
+                "descrizione": "ID_REFLUO_TRASPORTATO fuori range",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CK", "row": 5},
+                "colonna_check": "BF",
+                "check_name": "Controllo FUNZ_GRAV",
+                "colonna_rel": [
+                    "Q"
+                ],
+                "descrizione": "FUNZ_GRAV fuori range",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CL", "row": 5},
+                "colonna_check": "BG",
+                "check_name": "Controllo completezza RECAPITO",
+                "colonna_rel": [
+                    "R"
+                ],
+                "descrizione": "RECAPITOnon valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CM", "row": 5},
+                "colonna_check": "BH",
+                "check_name": "Controllo completezza COPERTURA",
+                "colonna_rel": [
+                    "S"
+                ],
+                "descrizione": "COPERTURA non valida",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CN", "row": 5},
+                "colonna_check": "BI",
+                "check_name": "Controllo PROF_INIZIALE",
+                "colonna_rel": [
+                    "T"
+                ],
+                "descrizione": "PROFONDITA' INIZIALE non valida",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CO", "row": 5},
+                "colonna_check": "BJ",
+                "check_name": "Controllo PROF_FINALE",
+                "colonna_rel": [
+                    "U"
+                ],
+                "descrizione": "PROFONDITA' FINALE non valida",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CP", "row": 5},
+                "colonna_check": "BK",
+                "check_name": "Controllo completezza IDX_PROFON",
+                "colonna_rel": [
+                    "V"
+                ],
+                "descrizione": "IDX_PROFONDITA' non valida",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CP", "row": 6},
+                "colonna_check": "BL",
+                "check_name": "Controllo congruenza IDX_PROFON",
+                "colonna_rel": [
+                    "V"
+                ],
+                "descrizione": "IDX_PROFONDITA' fuori dal range",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CQ", "row": 5},
+                "colonna_check": "BM",
+                "check_name": "Controllo ALLACCI",
+                "colonna_rel": [
+                    "W"
+                ],
+                "descrizione": "ALLACCI non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CR", "row": 5},
+                "colonna_check": "BN",
+                "check_name": "Controllo ALLACCI_industrialI",
+                "colonna_rel": [
+                    "X"
+                ],
+                "descrizione": "ALLACCI INDUSTRIALI non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CS", "row": 5},
+                "colonna_check": "BO",
+                "check_name": "Controllo LUNGH_ALLACCI",
+                "colonna_rel": [
+                    "Y"
+                ],
+                "descrizione": "LUNGH_ALLACCI non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CT", "row": 5},
+                "colonna_check": "BP",
+                "check_name": "Controllo RIP_ALLACCI",
+                "colonna_rel": [
+                    "Z"
+                ],
+                "descrizione": "RIP_ALLACCI non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CU", "row": 5},
+                "colonna_check": "BQ",
+                "check_name": "Controllo RIP_RETE",
+                "colonna_rel": [
+                    "AA"
+                ],
+                "descrizione": "RIP_RETE non valdio",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CV", "row": 5},
+                "colonna_check": "BR",
+                "check_name": "Controllo ID_OP_STAT",
+                "colonna_rel": [
+                    "AB"
+                ],
+                "descrizione": "ID_OPERA_STATO non valido",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "CW", "row": 5},
+                "colonna_check": "BS",
+                "check_name": "Controllo completezza nuovi tratti",
+                "colonna_rel": [],
+                "descrizione": "OPERA DI NUOVA COSTRUZIONE, alcuni dati mancanti",
+                "valore": null
+            }
+        ],
+        "Controlli aggregati": [
+            {
+                "verif_check": {"col": "B", "row": 4},
+                "colonna_check": "B",
+                "check_name": "Consistenza tronchi",
+                "colonna_rel": [],
+                "descrizione": "Numero Tronchi: DBI e shape non coerenti",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "C", "row": 4},
+                "colonna_check": "C",
+                "check_name": "Lunghezza complessiva reti",
+                "colonna_rel": [],
+                "descrizione": "Lunghezza: DBI e shape non coerenti",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "D", "row": 4},
+                "colonna_check": "D",
+                "check_name": "Lunghezza allacci rete fognaria",
+                "colonna_rel": [],
+                "descrizione": "Lunghezza allacci: DBI e shape non coerenti",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "E", "row": 4},
+                "colonna_check": "E",
+                "check_name": "NR riparazioni rete fognatura",
+                "colonna_rel": [],
+                "descrizione": "Numero riparazioni rete: DBI e shape non coerenti",
+                "valore": null
+            },
+            {
+                "verif_check": {"col": "F", "row": 4},
+                "colonna_check": "F",
+                "check_name": "NR riparazioni allacci fognatura",
+                "colonna_rel": [],
+                "descrizione": "Numero riparazioni allacci: DBI e shape non coerenti",
+                "valore": null
+            }
+        ]
     }
 }

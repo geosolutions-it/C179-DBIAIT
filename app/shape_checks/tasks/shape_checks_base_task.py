@@ -3,6 +3,7 @@ import pathlib
 import traceback
 import shutil
 import tempfile
+from openpyxl.workbook import Workbook
 
 from django.db.models import Q, ObjectDoesNotExist
 from django.conf import settings
@@ -131,6 +132,9 @@ class ShapeChecksBaseTask(BaseTask):
                 logger.info(f"Task started with file: {xlsx_file_uploaded_path}")
                 tmp_checks_export_dir = pathlib.Path(tmp_dir)
                 
+                # Create a single log workbook
+                log_workbook = Workbook()
+                
                 result = ShapeCalc(orm_task, 
                                   xlsx_file_uploaded_path,
                                   dbf_file_uploaded_path,
@@ -140,11 +144,15 @@ class ShapeChecksBaseTask(BaseTask):
                                   shp_formulas,
                                   tmp_checks_export_dir,
                                   file_year_required,
-                                  task_progress = 25,
+                                  task_progress = 20,
+                                  log_workbook = log_workbook
                                   ).run()
             
                 # zip the final file
                 if result:
+
+                    # Save logs only once after both runs
+                    log_workbook.save(tmp_checks_export_dir / "logs.xlsx")
                     # zip final output in export directory
                     export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
                     shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
