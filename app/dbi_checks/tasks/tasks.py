@@ -163,7 +163,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
             return result
         
         except Exception as e:
-            #print(f"Error processing files in the background: {e}")
+            print(f"Error processing files in the background: {e}")
 
 class PrioritizedDataCheckTask(ChecksBaseTask):
     """
@@ -234,7 +234,7 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
             return result
         
         except Exception as e:
-            #print(f"Error processing files in the background: {e}")
+            print(f"Error processing files in the background: {e}")
 
 class DataQualityCheckTask(ChecksBaseTask):
     """
