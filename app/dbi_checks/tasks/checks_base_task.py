@@ -97,7 +97,7 @@ class ChecksBaseTask(BaseTask):
         try:
             task = Task_CheckDbi.objects.get(pk=task_id)
         except ObjectDoesNotExist:
-            #print(
+            print(
                 f"Task with ID {task_id} was not found!"
             )
             raise
