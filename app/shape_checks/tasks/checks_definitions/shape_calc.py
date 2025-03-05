@@ -203,24 +203,17 @@ class ShapeCalc(BaseCalc):
                     
                     # we call the calculator two times because in these sheets
                     # there are different formulas in each row
-                    first_row_calc_values = calculator(workbook=seed_wb, 
-                                                    sheet=seed_wb[sheet_name],
-                                                    start_row=start_row, 
-                                                    end_row = start_row,
-                                                    start_col = start_col_index,
-                                                    end_col = end_col_index,
-                                                    analysis_year=analysis_year,
-                                                    external_wb_path=self.export_dir
-                                                    ).main_calc()
-                    second_row_calc_values = calculator(workbook=seed_wb, 
-                                                    sheet=seed_wb[sheet_name],
-                                                    start_row=end_row, 
-                                                    end_row = end_row,
-                                                    start_col = start_col_index,
-                                                    end_col = end_col_index,
-                                                    analysis_year=analysis_year,
-                                                    external_wb_path=self.export_dir
-                                                    ).main_calc()
+                    for row in [start_row, end_row]:
+                        sheet_with_calc_values = calculator(
+                            workbook=seed_wb, 
+                            sheet=seed_wb[sheet_name],
+                            start_row=row, 
+                            end_row=row,  # Keep start and end row the same for individual calculations
+                            start_col=start_col_index,
+                            end_col=end_col_index,
+                            analysis_year=analysis_year,
+                            external_wb_path=self.export_dir
+                        ).main_calc()
                 else:
                     sheet_with_calc_values = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
@@ -290,9 +283,14 @@ class ShapeCalc(BaseCalc):
 
                         # Get rows where column_check is NOT 0
                         start_idx = start_row - 1
-
+                        if sheet_name in {"Controllo dati aggregati", "Controllo aggregati"}:
+                            end_idx = end_row - 1
+                            rows_to_check = [start_idx, end_idx]  # Only check start and end rows
+                            filtered_rows = pd_sheet.iloc[rows_to_check]
+                            filtered_rows = filtered_rows[filtered_rows[column_check_idx] != criterion]
                         #filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:][column_check_idx] != criterion]
-                        filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
+                        else:
+                            filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
                         # Iterate through the filtered rows and retrieve the necessary information
                         for index, row in filtered_rows.iterrows():
                             incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
