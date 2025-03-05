@@ -177,7 +177,6 @@ class BaseCalc:
                                   end_date, 
                                   TaskStatus.SUCCESS
                                   )
-        
         # log file process
         self.log_file_manager(seed_wb)
 
@@ -334,9 +333,11 @@ class BaseCalc:
             log_mapping = json.load(file)
                 
         verif_checks_config = log_mapping.get(seed_key, {})
+
+        formulas_config = self.load_formulas_conf(seed_key)
         
         ## Calculate the formulas of the checks for each sheet
-        for sheet_name, f_location in self.formulas_config.items():
+        for sheet_name, f_location in formulas_config.items():
 
             pd_sheet = None
             start_date = timezone.now()
@@ -350,10 +351,11 @@ class BaseCalc:
                 start_row = f_location["start_row"]
                 # Re-definition of the last row because the copied file is processed
                 # without saving yet. We don't want to re-load it for time reasons
-                end_row = self.get_last_data_row(sheet)
+                end_row = self.get_end_row(f_location, sheet_name, sheet)
 
+                calculator = self.get_calculator()
                 # caclulate the formula in the verification check
-                sheet_with_calc_values = CalcFormulas(workbook=seed_wb, 
+                sheet_with_calc_values = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
                                                 start_row=start_row, 
                                                 end_row = end_row,
@@ -377,7 +379,7 @@ class BaseCalc:
                     verif_check_row = verif_check["row"]
 
                     # caclulate the formula in the verification check
-                    sheet_with_verif_values = CalcFormulas(workbook=seed_wb, 
+                    sheet_with_verif_values = calculator(workbook=seed_wb, 
                                                 sheet=sheet_with_calc_values,
                                                 start_row=verif_check_row, 
                                                 end_row = verif_check_row,
@@ -429,9 +431,8 @@ class BaseCalc:
                         for index, row in filtered_rows.iterrows():
                             incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
                             
-                            # retrieve the column B which includes the unique code of each record
-                            unique_code_idx = self.parse_col_for_pd('B')
-                            unique_code = row[unique_code_idx]
+                            # get the unique code (Codice opera)
+                            unique_code = self.get_the_unique_code(sheet_name, row)
                             
                             # Handle the colonna_rel values:
                             # Initialize a dictionary to store values from each related column
@@ -503,3 +504,18 @@ class BaseCalc:
         # Set an even larger width for column D
         log_sheet.column_dimensions["D"].width = 45
     
+    def get_the_unique_code(self, sheet_name, row):
+        # retrieve the column B which includes the unique code of each record
+        unique_code_idx = self.parse_col_for_pd('B')
+        unique_code = row[unique_code_idx]
+
+        return unique_code
+    
+    def get_end_row(self, f_location, sheet_name, sheet):
+        return self.get_last_data_row(sheet)
+    
+    def load_formulas_conf(self, seed_key):
+        return self.formulas_config
+    
+    def get_calculator(self):
+        return CalcFormulas
