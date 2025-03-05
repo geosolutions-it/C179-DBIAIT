@@ -135,6 +135,211 @@ class ShapeCalc(BaseCalc):
             logger.error(f"Error copying data to Excel: {e}")
             return False
 
+    def log_file_manager(self, seed_wb):
+
+        ## Configuration setup
+        # prepare the logs workbook
+        # Remove default sheet if it exists
+        if "Sheet" in self.log_workbook.sheetnames and len(self.log_workbook.sheetnames) == 1:
+            del self.log_workbook["Sheet"]
+        
+        sheet_name = "Logs"
+        if sheet_name not in self.log_workbook.sheetnames:
+            log_sheet = self.log_workbook.create_sheet(sheet_name)
+            log_sheet.append(["File", 
+                              "Foglio",
+                              "Codice opera",
+                              "Colonna check", 
+                              "Tipo check", 
+                              "Valore check errato col", 
+                              "Valore errato col1", 
+                              "Valore errato col2",
+                              "Valore errato col3",
+                              "Valore errato col4"
+
+                              ])
+        else:
+            log_sheet = self.log_workbook[sheet_name]
+        
+        # Set the style in the log file
+        self.set_logfile_style(log_sheet)
+                
+        # set the configs
+        analysis_year = YearHandler(self.imported_file).get_year()
+
+        # Get the seed_file name in order to retrieve it
+        # from the log_mapping.json
+
+        seed_filename = pathlib.Path(self.seed).stem
+        seed_key = seed_filename.upper()
+                
+        with open(settings.LOG_MAPPING, "r") as file:
+            log_mapping = json.load(file)
+                
+        verif_checks_config = log_mapping.get(seed_key, {})
+
+        formulas_config = self.load_formulas_conf(seed_key)
+        
+        ## Calculate the formulas of the checks for each sheet
+        for sheet_name, f_location in formulas_config.items():
+
+            pd_sheet = None
+            start_date = timezone.now()
+            
+            if sheet_name in seed_wb.sheetnames:
+                sheet = seed_wb[sheet_name]
+
+                # Get column indexes
+                start_col_index = column_index_from_string(f_location["start_col"])
+                end_col_index = column_index_from_string(f_location["end_col"])
+                start_row = f_location["start_row"]
+                # Re-definition of the last row because the copied file is processed
+                # without saving yet. We don't want to re-load it for time reasons
+                end_row = self.get_end_row(f_location, sheet_name, sheet)
+
+                calculator = self.get_calculator()
+                
+                if sheet_name in {"Controllo dati aggregati", "Controllo aggregati"}:
+                    
+                    # we call the calculator two times because in these sheets
+                    # there are different formulas in each row
+                    first_row_calc_values = calculator(workbook=seed_wb, 
+                                                    sheet=seed_wb[sheet_name],
+                                                    start_row=start_row, 
+                                                    end_row = start_row,
+                                                    start_col = start_col_index,
+                                                    end_col = end_col_index,
+                                                    analysis_year=analysis_year,
+                                                    external_wb_path=self.export_dir
+                                                    ).main_calc()
+                    second_row_calc_values = calculator(workbook=seed_wb, 
+                                                    sheet=seed_wb[sheet_name],
+                                                    start_row=end_row, 
+                                                    end_row = end_row,
+                                                    start_col = start_col_index,
+                                                    end_col = end_col_index,
+                                                    analysis_year=analysis_year,
+                                                    external_wb_path=self.export_dir
+                                                    ).main_calc()
+                else:
+                    sheet_with_calc_values = calculator(workbook=seed_wb, 
+                                                sheet=seed_wb[sheet_name],
+                                                start_row=start_row, 
+                                                end_row = end_row,
+                                                start_col = start_col_index,
+                                                end_col = end_col_index,
+                                                analysis_year=analysis_year,
+                                                external_wb_path=self.export_dir
+                                                ).main_calc()
+                
+                ## setup the config for each sheet
+                sheet_checks = verif_checks_config.get(sheet_name, None)
+                for check in sheet_checks:
+        
+                    # Get the verification check cell to check if it is OK or not
+                    verif_check = check.get("verif_check", {})
+                    if verif_check is None:
+                        continue
+                    verif_check_col = verif_check["col"]
+                    verif_check_col_index = column_index_from_string(verif_check_col)
+                    verif_check_row = verif_check["row"]
+
+                    # caclulate the formula in the verification check
+                    sheet_with_verif_values = calculator(workbook=seed_wb, 
+                                                sheet=sheet_with_calc_values,
+                                                start_row=verif_check_row, 
+                                                end_row = verif_check_row,
+                                                start_col = verif_check_col_index,
+                                                end_col = verif_check_col_index,
+                                                analysis_year=analysis_year,
+                                                external_wb_path=self.export_dir
+                                                ).main_calc()
+                    
+                    # retrieve the calculated verif check value
+                    verif_check_value = sheet_with_verif_values[f"{verif_check_col}{verif_check_row}"].value
+                    if verif_check_value == "OK":
+                        logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is OK")
+                            
+                    else:
+                        logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is not OK. \
+                                    We have to write the corresponding logs")
+                        column_check = check.get("colonna_check", None)
+                        check_name = check.get("check", None)                 
+                        column_rel = check.get("colonna_rel", None)
+                        
+                        # convert column names for pandas
+                        column_check_idx = self.parse_col_for_pd(column_check)
+                        # column_rel_idx = self.parse_col_for_pd(column_rel)
+                        
+                        desc = check.get("descrizione", None)
+                        criterion = check.get("valore", 0)
+                        logger.info(f"{check_name}, {column_rel}, {desc}")
+                        
+                        # Ensure column_rel is always a list (or empty if None)
+                        if column_rel is None:
+                            column_rel = []
+
+                        if pd_sheet is None:
+                            # Read all data from the worksheet
+                            data = list(sheet.iter_rows(min_row=1, 
+                                                        max_row=self.get_last_data_row(sheet_with_verif_values), 
+                                                        values_only=True))  # Read all rows as tuples
+
+                            # Convert to DataFrame
+                            pd_sheet = pd.DataFrame(data)
+
+                        # Get rows where column_check is NOT 0
+                        start_idx = start_row - 1
+
+                        #filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:][column_check_idx] != criterion]
+                        filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
+                        # Iterate through the filtered rows and retrieve the necessary information
+                        for index, row in filtered_rows.iterrows():
+                            incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
+                            
+                            # get the unique code (Codice opera)
+                            unique_code = self.get_the_unique_code(sheet_name, row)
+                            
+                            # Handle the colonna_rel values:
+                            # Initialize a dictionary to store values from each related column
+                            related_values_dict = {}
+                            for rel_col in column_rel:  # Iterate through all columns in column_rel list
+                                # Ensure to get the value of each related column (if it exists)
+                                if rel_col:
+                                    related_value = row[self.parse_col_for_pd(rel_col)] if rel_col else None
+                                    related_values_dict[rel_col] = related_value
+
+                            # Replace placeholders in the description with the corresponding values from related_values_dict
+                            # we re-define the updated_desc to be equal with the initial desc
+                            updated_desc = desc
+                            for key, value in related_values_dict.items():
+                                placeholder = f"{{{key}}}"  # e.g., {AO}
+                                if placeholder in updated_desc:
+                                    updated_desc = updated_desc.replace(placeholder, str(value))
+
+                            # Create a list for the related values, using the dictionary's get method to handle missing keys
+                            related_values = [related_values_dict.get(key, None) for key in list(related_values_dict.keys())]
+
+                            # Append the row to the log sheet
+                            log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
+
+                end_date = timezone.now()
+
+                self.import_process_state(self.orm_task.id, 
+                                        ProcessType.LOG.value,
+                                        os.path.basename(self.imported_file), 
+                                        start_date, 
+                                        end_date, 
+                                        TaskStatus.SUCCESS,
+                                        sheet=sheet_name
+                                        )
+            
+            # Remove DataFrame from memory and trigger garbage collection
+            del pd_sheet
+            gc.collect()
+        
+        self.task_progress = self.task_progress + 20
+    
     def import_process_state(self, task_id, process_type, file_name, start_date, end_date, status, sheet=""):
     
         try:
