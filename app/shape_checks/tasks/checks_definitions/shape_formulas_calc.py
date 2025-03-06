@@ -135,8 +135,8 @@ class ShapeCalcFormulas(CalcFormulas):
 
                 result = calculated_result.item() if hasattr(calculated_result, "item") else calculated_result
                 # convert the float to int if the result is float
-                if isinstance(result, float):
-                    result = int(round(result))
+                #if isinstance(result, float):
+                #    result = int(round(result))
 
                 print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
                 # Store the result in the target cell

@@ -199,7 +199,7 @@ class ShapeCalc(BaseCalc):
 
                 calculator = self.get_calculator()
                 
-                if sheet_name in {"Controllo dati aggregati", "Controllo aggregati"}:
+                if sheet_name in {"Controllo dati aggregati", "Controlli aggregati"}:
                     
                     # we call the calculator two times because in these sheets
                     # there are different formulas in each row
@@ -283,7 +283,7 @@ class ShapeCalc(BaseCalc):
 
                         # Get rows where column_check is NOT 0
                         start_idx = start_row - 1
-                        if sheet_name in {"Controllo dati aggregati", "Controllo aggregati"}:
+                        if sheet_name in {"Controllo dati aggregati", "Controlli aggregati"}:
                             end_idx = end_row - 1
                             rows_to_check = [start_idx, end_idx]  # Only check start and end rows
                             filtered_rows = pd_sheet.iloc[rows_to_check]
@@ -372,7 +372,7 @@ class ShapeCalc(BaseCalc):
 
     def get_the_unique_code(self, sheet_name, row):
             
-        if sheet_name not in {"Controllo dati aggregati", "Controllo aggregati"}:
+        if sheet_name not in {"Controllo dati aggregati", "Controlli aggregati"}:
             # retrieve the column B which includes the unique code of each record
             unique_code_idx = self.parse_col_for_pd('A')
             unique_code = row[unique_code_idx]
@@ -381,7 +381,7 @@ class ShapeCalc(BaseCalc):
             return None
         
     def get_end_row(self, f_location, sheet_name, sheet):
-        if sheet_name in {"Controllo dati aggregati", "Controllo aggregati"}:
+        if sheet_name in {"Controllo dati aggregati", "Controlli aggregati"}:
             end_row = f_location.get("end_row", 3)
         else:
             end_row = self.get_last_data_row(sheet)
