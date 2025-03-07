@@ -119,12 +119,16 @@ class ShapeCalcFormulas(CalcFormulas):
                     ref_cell = f"{col}{cell.row}"
                     if not sheet_name:
                         value = self.sheet[ref_cell].value
+                        # We set the text values in uppercase:
+                        value = self.cell_value_parser(value)
                         # We set the key of the variables using the first row with data (4)
                         # because in that way have been compliled by Formulas. The result
                         # of course is updated with the new rows.
                         variables[f"{col}{self.start_row}"] = value if value is not None else 0  # Default to 0 if empty
                     else:
                         value = self.workbook[sheet_name][ref_cell].value
+                        # We set the text values in uppercase:
+                        value = self.cell_value_parser(value)
                         variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = value if value is not None else 0  # Default to 0 if empty
 
                 # Evaluate the formula with the given variables
