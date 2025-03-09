@@ -352,7 +352,7 @@ class BaseCalc:
                 # Re-definition of the last row because the copied file is processed
                 # without saving yet. We don't want to re-load it for time reasons
                 end_row = self.get_end_row(f_location, sheet_name, sheet)
-
+                
                 calculator = self.get_calculator()
                 # caclulate the formula in the verification check
                 sheet_with_calc_values = calculator(workbook=seed_wb, 
@@ -506,7 +506,31 @@ class BaseCalc:
     
     def get_the_unique_code(self, sheet_name, row):
         # retrieve the column B which includes the unique code of each record
-        unique_code_idx = self.parse_col_for_pd('B')
+        # we set all the suffixes of the sheet names that have the 
+        # unique code in column A instead of B
+        valid_suffixes = (
+                          "_inpotab", 
+                          "_inreti", 
+                          "_tronchi", 
+                          "_pompe", 
+                          "_incaptaz", 
+                          "_com_serv",
+                          "_inadd", 
+                          "_inserba", 
+                          "_loc_serv", 
+                          "_incoll", 
+                          "_infog",
+                         )
+        
+        if any(sheet_name.endswith(suffix) for suffix in valid_suffixes):
+            # retrieve the column B which includes the unique code of each record
+            unique_code_col = "A"
+                             
+        else:
+            # retrieve the column B which includes the unique code of each record
+            unique_code_col = "B"
+        
+        unique_code_idx = self.parse_col_for_pd(unique_code_col)
         unique_code = row[unique_code_idx]
 
         return unique_code

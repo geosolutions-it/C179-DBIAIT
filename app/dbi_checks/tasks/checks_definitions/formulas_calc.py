@@ -149,12 +149,17 @@ class CalcFormulas:
                     ref_cell = f"{col}{cell.row}"
                     if not sheet_name:
                         value = self.sheet[ref_cell].value
+                        # We set the text values in uppercase:
+                        value = self.cell_value_parser(value)
                         # We set the key of the variables using the first row with data (4)
                         # because in that way have been compliled by Formulas. The result
                         # of course is updated with the new rows.
                         variables[f"{col}{self.start_row}"] = value if value is not None else 0  # Default to 0 if empty
                     else:
                         value = self.workbook[sheet_name][ref_cell].value
+                        # We set the text values in uppercase:
+                        value = self.cell_value_parser(value)
+                        
                         variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = value if value is not None else 0  # Default to 0 if empty
 
                 # Evaluate the formula with the given variables
@@ -165,8 +170,8 @@ class CalcFormulas:
 
                 result = calculated_result.item() if hasattr(calculated_result, "item") else calculated_result
                 # convert the float to int if the result is float
-                if isinstance(result, float):
-                    result = int(round(result))
+                #if isinstance(result, float):
+                #    result = int(round(result))
 
                 #print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
                 # Store the result in the target cell
@@ -372,4 +377,7 @@ class CalcFormulas:
             #print("[2] does not exist in the external links.")
             return False
 
-
+    def cell_value_parser(self, value):
+         if isinstance(value, str):
+             value = value.upper()
+         return value
