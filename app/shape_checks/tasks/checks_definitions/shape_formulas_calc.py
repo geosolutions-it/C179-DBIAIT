@@ -1,12 +1,7 @@
 import re
-import time
-import json
-
-import openpyxl.workbook
 
 import formulas
-import openpyxl
-from openpyxl.utils.cell import column_index_from_string, get_column_letter
+from openpyxl.utils.cell import get_column_letter
 
 from app.dbi_checks.tasks.checks_definitions.formulas_calc import CalcFormulas
 
@@ -29,7 +24,7 @@ class ShapeCalcFormulas(CalcFormulas):
                 
             if formula_cell.data_type != 'f':  # Skip if not a formula
                 continue
-                
+            
             formula = formula_cell.value
             print(f"Processing formula in {col_letter}{self.start_row}: {formula}")
                 
@@ -124,12 +119,12 @@ class ShapeCalcFormulas(CalcFormulas):
                         # We set the key of the variables using the first row with data (4)
                         # because in that way have been compliled by Formulas. The result
                         # of course is updated with the new rows.
-                        variables[f"{col}{self.start_row}"] = value if value is not None else 0  # Default to 0 if empty
+                        variables[f"{col}{self.start_row}"] = value if value is not None else 0  # Default to None if 0
                     else:
                         value = self.workbook[sheet_name][ref_cell].value
                         # We set the text values in uppercase:
                         value = self.cell_value_parser(value)
-                        variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = value if value is not None else 0  # Default to 0 if empty
+                        variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = value if value is not None else 0  # Default to None if 0
 
                 # Evaluate the formula with the given variables
                 try:
