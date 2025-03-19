@@ -2591,6 +2591,14 @@
                 "descrizione": "Campi non completati per opera costruita nell'anno {R} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
                 "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "BZ",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [],
+                "descrizione": "Opera di nuova costruzione non completa",
+                "valore": 0
             }
         ],
         "Fiumi_inpotab": [
@@ -2939,6 +2947,14 @@
                 ],
                 "descrizione": "Campi non completati per opera costruita nell'anno {R} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
+                "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "BW",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [],
+                "descrizione": "Opera di nuova costruzione non completa",
                 "valore": 0
             }
         ],
@@ -3331,6 +3347,14 @@
                 ],
                 "descrizione": "Campi non completati per opera costruita nell'anno {Q} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
+                "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "BY",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [],
+                "descrizione": "Opera di nuova costruzione non completa",
                 "valore": 0
             }
         ],
@@ -3837,6 +3861,14 @@
                 "descrizione": "Campi non completati per opera costruita nell'anno {Q} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
                 "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "BT",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [],
+                "descrizione": "Opera di nuova costruzione non completa",
+                "valore": 0
             }
         ],
         "Sorgenti_inpotab": [
@@ -3870,7 +3902,7 @@
         "Potabilizzatori": [
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 4
                 },
                 "colonna_check": "BM",
@@ -3884,7 +3916,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 5
                 },
                 "colonna_check": "BN",
@@ -3898,7 +3930,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 6
                 },
                 "colonna_check": "BO",
@@ -3912,7 +3944,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 7
                 },
                 "colonna_check": "BP",
@@ -3926,7 +3958,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 8
                 },
                 "colonna_check": "BQ",
@@ -3940,7 +3972,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 9
                 },
                 "colonna_check": "BR",
@@ -3954,7 +3986,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 10
                 },
                 "colonna_check": "BS",
@@ -3968,7 +4000,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 11
                 },
                 "colonna_check": "BT",
@@ -3984,7 +4016,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 12
                 },
                 "colonna_check": "BU",
@@ -3998,7 +4030,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 13
                 },
                 "colonna_check": "BV",
@@ -4012,7 +4044,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 14
                 },
                 "colonna_check": "BW",
@@ -4026,7 +4058,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 15
                 },
                 "colonna_check": "BX",
@@ -4040,7 +4072,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 16
                 },
                 "colonna_check": "BY",
@@ -4054,7 +4086,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 17
                 },
                 "colonna_check": "BZ",
@@ -4068,7 +4100,7 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 18
                 },
                 "colonna_check": "CA",
@@ -4082,85 +4114,94 @@
             },
             {
                 "verif_check": {
-                    "col": "CK",
+                    "col": "CL",
                     "row": 19
                 },
                 "colonna_check": "CB",
+                "check": "Verifica volume trattabile/Volume trattato",
+                "colonna_rel": [
+                    "R",
+                    "S"
+                ],
+                "descrizione": "Volume trattabile vs Volume trattato",
+                "valore": 0
+            },
+            {
+                "verif_check": {
+                    "col": "CL",
+                    "row": 20
+                },
+                "colonna_check": "CC",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
                     "M",
                     "BD"
                 ],
                 "descrizione": "Indice di confidenza anno costruz. {BD} non coerente con Anno di costruzione {M} - (se=9999 deve essere pari ad X; se >=2014 deve essere pari ad A)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "CK",
-                    "row": 20
+                    "col": "CL",
+                    "row": 21
                 },
-                "colonna_check": "CC",
+                "colonna_check": "CD",
                 "check": "anno ristrutt op civ/indice confidenza",
                 "colonna_rel": [
                     "M",
                     "BE"
                 ],
                 "descrizione": "Indice di confidenza anno ristrutt. Civile {BE} non coerente con Anno di ristrutturazione operre civili {M} - (se=9999 deve essere pari ad X; se >=2014 deve essere pari ad A)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "CK",
-                    "row": 21
+                    "col": "CL",
+                    "row": 22
                 },
-                "colonna_check": "CD",
+                "colonna_check": "CE",
                 "check": "anno ristrutt op elettrom/indice confidenza",
                 "colonna_rel": [
                     "P",
                     "BF"
                 ],
                 "descrizione": "Indice di confidenza anno ristrutt. Eletrtomeccanica {BF} non coerente con Anno di ristrutturazione opere elettromecaniche {P} - (se=9999 deve essere pari ad X; se >=2014 deve essere pari ad A)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "CK",
-                    "row": 22
+                    "col": "CL",
+                    "row": 23
                 },
-                "colonna_check": "CE",
+                "colonna_check": "CF",
                 "check": "anno ristrutt. Op. civili/conservazione",
                 "colonna_rel": [
                     "N",
                     "O"
                 ],
                 "descrizione": "Stato conservazione civile {O} non coerente con Anno ristrutturazione  Op. civili {N} - (se anno ristrutturazione >=2018, conservazione >=4)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "CK",
-                    "row": 23
+                    "col": "CL",
+                    "row": 24
                 },
-                "colonna_check": "CF",
+                "colonna_check": "CG",
                 "check": "anno ristrutt. Op. elettrom/conservazione",
                 "colonna_rel": [
                     "P",
                     "Q"
                 ],
                 "descrizione": "Stato conservazione elettromeccanica {P} non coerente con Anno ristrutturazione  Op. elettrom. {Q} - (se anno ristrutturazione >=2018, conservazione >=4)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "CK",
-                    "row": 24
+                    "col": "CL",
+                    "row": 25
                 },
-                "colonna_check": "CG",
+                "colonna_check": "CH",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
                     "M",
@@ -4170,21 +4211,27 @@
                     "Q"
                 ],
                 "descrizione": "Opera con anno costruzione {M} e ristrutturazione civ {N} \\elettrom{P} >=2014  e stato conservazione civ{O} \\ elettrom{Q} < 4 ",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "CK",
-                    "row": 25
+                    "col": "CL",
+                    "row": 26
                 },
-                "colonna_check": "CH",
+                "colonna_check": "CI",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
                     "M"
                 ],
                 "descrizione": "Campi non completati per opera costruita nell'anno {M} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
-                "NOTE": null,
+                "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "CJ",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [],
+                "descrizione": "Opera di nuova costruzione non completa",
                 "valore": 0
             }
         ],
@@ -4538,7 +4585,7 @@
         "Addut_tronchi": [
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 4
                 },
                 "colonna_check": "N",
@@ -4552,7 +4599,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 5
                 },
                 "colonna_check": "O",
@@ -4566,7 +4613,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 6
                 },
                 "colonna_check": "P",
@@ -4581,7 +4628,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 7
                 },
                 "colonna_check": "Q",
@@ -4595,7 +4642,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 8
                 },
                 "colonna_check": "R",
@@ -4609,7 +4656,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 9
                 },
                 "colonna_check": "S",
@@ -4623,7 +4670,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 10
                 },
                 "colonna_check": "T",
@@ -4637,7 +4684,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 11
                 },
                 "colonna_check": "U",
@@ -4648,12 +4695,23 @@
                 "descrizione": "Campi non completati per opera costruita nell'anno {F} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
                 "valore": 0
+            },
+            {
+                "verif_check": {
+                    "col": "Y",
+                    "row": 12
+                },
+                "colonna_check": "V",
+                "check": "verifica completezza su nuovi tronchi",
+                "colonna_rel": [],
+                "descrizione": "verifica completezza su nuovi tronchi",
+                "valore": 0
             }
         ],
         "Accumuli": [
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 4
                 },
                 "colonna_check": "AE",
@@ -4667,7 +4725,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 5
                 },
                 "colonna_check": "AF",
@@ -4681,7 +4739,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 6
                 },
                 "colonna_check": "AG",
@@ -4695,7 +4753,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 7
                 },
                 "colonna_check": "AH",
@@ -4709,7 +4767,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 8
                 },
                 "colonna_check": "AI",
@@ -4723,7 +4781,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 9
                 },
                 "colonna_check": "AJ",
@@ -4737,7 +4795,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 10
                 },
                 "colonna_check": "AK",
@@ -4752,7 +4810,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 11
                 },
                 "colonna_check": "AL",
@@ -4766,7 +4824,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 12
                 },
                 "colonna_check": "AM",
@@ -4780,7 +4838,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 13
                 },
                 "colonna_check": "AN",
@@ -4794,7 +4852,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 14
                 },
                 "colonna_check": "AO",
@@ -4804,12 +4862,11 @@
                     "R"
                 ],
                 "descrizione": "Controllo KO su quota serbatoio da terra{R}, tipo serbatoio {O}  - (Deve essere uguale a zero nel caso di opere di accumulo a terra o interrate)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 15
                 },
                 "colonna_check": "AP",
@@ -4823,7 +4880,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 16
                 },
                 "colonna_check": "AQ",
@@ -4833,12 +4890,11 @@
                     "Z"
                 ],
                 "descrizione": "Indice di confidenza anno costruzione {Z} non coerente con Anno di costruzione {L} -  (se 9800 deve essere pari ad A)",
-                "NOTE": "ERRATA LA DESCRIZIONE SUI CHECK rispetto alla formula. Si tratta di controllo sull'anno di costruzione non ristrutturazione come indicato nei check",
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 17
                 },
                 "colonna_check": "AR",
@@ -4852,7 +4908,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 18
                 },
                 "colonna_check": "AS",
@@ -4867,7 +4923,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 19
                 },
                 "colonna_check": "AT",
@@ -4881,7 +4937,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 20
                 },
                 "colonna_check": "AU",
@@ -4895,55 +4951,66 @@
             },
             {
                 "verif_check": {
-                    "col": "BC",
+                    "col": "BD",
                     "row": 21
                 },
                 "colonna_check": "AV",
+                "check": "In caso di assenza di clorazione si va a verificare la congruenza di compilazione dei campi tipo clorazione e anno ristrutturazione cloratore",
+                "colonna_rel": [
+                    "W",
+                    "X"
+                ],
+                "descrizione": "Incongruenza di compilazione dei campi tipo clorazione e anno ristrutturazione cloratore",
+                "valore": null
+            },
+            {
+                "verif_check": {
+                    "col": "BD",
+                    "row": 22
+                },
+                "colonna_check": "AW",
                 "check": "anno costruz/indice confid",
                 "colonna_rel": [
                     "L",
                     "Z"
                 ],
                 "descrizione": "Indice di confidenza anno costruz. {Z} non coerente con Anno di costruzione {L} - (se=9999 deve essere pari ad X; se >=2014 deve essere pari ad A)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BC",
-                    "row": 22
+                    "col": "BD",
+                    "row": 23
                 },
-                "colonna_check": "AW",
+                "colonna_check": "AX",
                 "check": "anno ristrutt/indice confidenza",
                 "colonna_rel": [
                     "M",
                     "AA"
                 ],
                 "descrizione": "Indice di confidenza anno ristrutt. {AA} non coerente con Anno di ristrutturazione {M} -  (se=9800 deve essere pari ad A; se=9999 deve essere pari a X; se >=2014 deve essere pari ad A)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BC",
-                    "row": 23
+                    "col": "BD",
+                    "row": 24
                 },
-                "colonna_check": "AX",
+                "colonna_check": "AY",
                 "check": "anno ristruttu/conservazione",
                 "colonna_rel": [
                     "M",
                     "N"
                 ],
                 "descrizione": "Stato conservazione {N} non coerente con Anno ristrutturazione {M} - (se anno ristrutturazione >=2018, conservazione >=4)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BC",
-                    "row": 24
+                    "col": "BD",
+                    "row": 25
                 },
-                "colonna_check": "AY",
+                "colonna_check": "AZ",
                 "check": "anno costr 2014/ristrutt e conserv congruenti",
                 "colonna_rel": [
                     "L",
@@ -4951,21 +5018,27 @@
                     "N"
                 ],
                 "descrizione": "Stato di conservazione {N} non coerente con anno di costruzione {L} e ristrutturazione {M} - (se anno di costruzione>=2014, anno di ristrutturazione >anno di costruzione e stato di conservazione >=4)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BC",
-                    "row": 25
+                    "col": "BD",
+                    "row": 26
                 },
-                "colonna_check": "AZ",
+                "colonna_check": "BA",
                 "check": "anno costr. 2015/celle vuote",
                 "colonna_rel": [
                     "L"
                 ],
                 "descrizione": "Campi non completati per opera costruita nell'anno {L} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
-                "NOTE": null,
+                "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "BB",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [],
+                "descrizione": "verifica completezza su nuove opere",
                 "valore": 0
             }
         ],
@@ -5314,6 +5387,14 @@
                 "descrizione": "Campi non completati per opera costruita nell'anno {L} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
                 "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "BD",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [],
+                "descrizione": "verifica completezza su nuove opere",
+                "valore": 0
             }
         ],
         "Pompaggi_pompe": [
@@ -5597,7 +5678,7 @@
         "Distribuzioni": [
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 4
                 },
                 "colonna_check": "AV",
@@ -5611,7 +5692,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 5
                 },
                 "colonna_check": "AW",
@@ -5625,7 +5706,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 6
                 },
                 "colonna_check": "AX",
@@ -5639,7 +5720,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 7
                 },
                 "colonna_check": "AY",
@@ -5653,7 +5734,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 8
                 },
                 "colonna_check": "AZ",
@@ -5668,7 +5749,7 @@
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 9
                 },
                 "colonna_check": "BA",
@@ -5678,12 +5759,11 @@
                     "S"
                 ],
                 "descrizione": "Volume immesso in rete {R} > Volume erogato {S}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 10
                 },
                 "colonna_check": "BB",
@@ -5693,12 +5773,11 @@
                     "T"
                 ],
                 "descrizione": "Volume erogato {S} > Volume fatturato {T}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 11
                 },
                 "colonna_check": "BC",
@@ -5707,12 +5786,11 @@
                     "AC"
                 ],
                 "descrizione": "Tipo telecontrollo {AC},non congruente con codifiche ammesse",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 12
                 },
                 "colonna_check": "BD",
@@ -5721,12 +5799,11 @@
                     "I"
                 ],
                 "descrizione": "Numero utenti diretti non corretto {I}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 13
                 },
                 "colonna_check": "BE",
@@ -5737,12 +5814,11 @@
                     "K"
                 ],
                 "descrizione": "Controllo utenti diretti KO: Nr. Utenti diretti {I}, nr. Utenti diretti domestici {J} , nr. Utenti diretti domestici residenti {K}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 14
                 },
                 "colonna_check": "BF",
@@ -5752,12 +5828,11 @@
                     "L"
                 ],
                 "descrizione": "Utenze condominiali {L} maggiori delle utenze dirette {I}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 15
                 },
                 "colonna_check": "BG",
@@ -5767,12 +5842,11 @@
                     "M"
                 ],
                 "descrizione": "Controllo KO: Utenze condominiali {L} vs utenze indirette {M} - (se le utenze condominiali sono nulle allora il campo utenze indirette è nullo o non compilato, viceversa le utenze indirette devono essere maggiori delle utenze condominiali)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 16
                 },
                 "colonna_check": "BH",
@@ -5783,12 +5857,11 @@
                     "O"
                 ],
                 "descrizione": "Controllo utenti indiretti KO: Nr. Utenti diretti {M}, nr. Utenti diretti domestici {N} , nr. Utenti diretti domestici residenti {O}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 17
                 },
                 "colonna_check": "BI",
@@ -5798,12 +5871,11 @@
                     "G"
                 ],
                 "descrizione": "Lughezza rete {F} < lunghezza rete telecontrollata {G}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 18
                 },
                 "colonna_check": "BJ",
@@ -5813,12 +5885,11 @@
                     "H"
                 ],
                 "descrizione": "Lughezza rete {F} < lunghezza rete telecontrollata {H}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 19
                 },
                 "colonna_check": "BK",
@@ -5827,12 +5898,11 @@
                     "P"
                 ],
                 "descrizione": "Numero allacci non corretto {P} - (>0 se rete in stato 1, 2)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 20
                 },
                 "colonna_check": "BL",
@@ -5842,12 +5912,11 @@
                     "AG"
                 ],
                 "descrizione": "Pressione minima {AE} \\ massima vuote{AG}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 21
                 },
                 "colonna_check": "BM",
@@ -5856,12 +5925,11 @@
                     "AA"
                 ],
                 "descrizione": "Numero riparazioni non corretto {AA}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 22
                 },
                 "colonna_check": "BN",
@@ -5870,12 +5938,11 @@
                     "AB"
                 ],
                 "descrizione": "Numero riparazioni non corretto {AA}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 23
                 },
                 "colonna_check": "BO",
@@ -5884,12 +5951,11 @@
                     "X"
                 ],
                 "descrizione": "Strumenti misura portata non valido {X}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 24
                 },
                 "colonna_check": "BP",
@@ -5898,12 +5964,11 @@
                     "Y"
                 ],
                 "descrizione": "Punti di clorazione sulla rete vuoto {Y}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "BU",
+                    "col": "BV",
                     "row": 25
                 },
                 "colonna_check": "BR",
@@ -5913,14 +5978,24 @@
                     "BQ"
                 ],
                 "descrizione": "Lunghezza rete {F} non corrispondente con foglio tronchi {BQ}",
-                "NOTE": null,
+                "valore": 0
+            },
+            {
+                "verif_check": {
+                    "col": "BV",
+                    "row": 27
+                },
+                "colonna_check": "BS",
+                "check": "Controllo perdite per rete",
+                "colonna_rel": [],
+                "descrizione": "Controllo perdite per rete",
                 "valore": 0
             }
         ],
         "Distrib_tronchi": [
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 4
                 },
                 "colonna_check": "N",
@@ -5934,7 +6009,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 5
                 },
                 "colonna_check": "O",
@@ -5948,7 +6023,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 6
                 },
                 "colonna_check": "P",
@@ -5963,7 +6038,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 7
                 },
                 "colonna_check": "Q",
@@ -5977,7 +6052,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 8
                 },
                 "colonna_check": "R",
@@ -5991,7 +6066,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 9
                 },
                 "colonna_check": "S",
@@ -6005,7 +6080,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 10
                 },
                 "colonna_check": "T",
@@ -6019,7 +6094,7 @@
             },
             {
                 "verif_check": {
-                    "col": "X",
+                    "col": "Y",
                     "row": 11
                 },
                 "colonna_check": "U",
@@ -6029,6 +6104,17 @@
                 ],
                 "descrizione": "Campi non completati per opera costruita nell'anno {F} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
+                "valore": 0
+            },
+            {
+                "verif_check": {
+                    "col": "Y",
+                    "row": 12
+                },
+                "colonna_check": "V",
+                "check": "verifica completezza su nuovi tronchi",
+                "colonna_rel": [],
+                "descrizione": "verifica completezza su nuovi tronchi",
                 "valore": 0
             }
         ],
@@ -6211,7 +6297,7 @@
         "Fognat_tronchi": [
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 4
                 },
                 "colonna_check": "P",
@@ -6225,7 +6311,7 @@
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 5
                 },
                 "colonna_check": "Q",
@@ -6239,7 +6325,7 @@
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 6
                 },
                 "colonna_check": "R",
@@ -6254,7 +6340,7 @@
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 7
                 },
                 "colonna_check": "S",
@@ -6268,7 +6354,7 @@
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 8
                 },
                 "colonna_check": "T",
@@ -6282,7 +6368,7 @@
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 9
                 },
                 "colonna_check": "U",
@@ -6296,7 +6382,7 @@
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 10
                 },
                 "colonna_check": "V",
@@ -6310,7 +6396,7 @@
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 11
                 },
                 "colonna_check": "W",
@@ -6324,37 +6410,42 @@
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 12
                 },
                 "colonna_check": "X",
                 "check": "Indici di confidenza",
-                "colonna_rel": [
-                    "F"
-                ],
+                "colonna_rel": [],
                 "descrizione": "Opera messa in esercizio {F} con uno o più indici pari a X - (Per le nuove opere verifica che gli indici di confidenza siano diversi da X)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 13
                 },
-                "colonna_check": "Y",
+               "colonna_check": "Y",
                 "check": "anno costr. 2015/celle vuote",
-                "colonna_rel": [
-                    "F"
-                ],
+                "colonna_rel": [],
                 "descrizione": "Campi non completati per opera costruita nell'anno {F} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
-                "NOTE": null,
+                "valore": 0
+            },
+            {
+                "verif_check": {
+                    "col": "AC",
+                    "row": 14
+                },
+                "colonna_check": "Z",
+                "check": "verifica completezza su nuovi tronchi",
+                "colonna_rel": [],
+                "descrizione": "verifica completezza su nuovi tronchi",
                 "valore": 0
             }
         ],
         "Collett_tronchi": [
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 4
                 },
                 "colonna_check": "P",
@@ -6363,12 +6454,11 @@
                     "C"
                 ],
                 "descrizione": "Materiale non congruente con codifiche ammesse {C}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 5
                 },
                 "colonna_check": "Q",
@@ -6377,12 +6467,11 @@
                     "D"
                 ],
                 "descrizione": "Stato Conservazione non congruente con codifiche ammesse {D}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 6
                 },
                 "colonna_check": "R",
@@ -6392,12 +6481,11 @@
                     "F"
                 ],
                 "descrizione": "Stato Conservazione {D} <3 per opere con anno messa in opera >=2014 {F}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 7
                 },
                 "colonna_check": "S",
@@ -6406,12 +6494,11 @@
                     "E"
                 ],
                 "descrizione": "Diametro minore o uguale a zero {E}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 8
                 },
                 "colonna_check": "T",
@@ -6420,12 +6507,11 @@
                     "G"
                 ],
                 "descrizione": "Protezione catodica non congruente con codifiche ammesse {G}",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 9
                 },
                 "colonna_check": "U",
@@ -6434,12 +6520,11 @@
                     "H"
                 ],
                 "descrizione": "Lunmghezza {H }minore uguale a zero",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 10
                 },
                 "colonna_check": "V",
@@ -6448,12 +6533,11 @@
                     "F"
                 ],
                 "descrizione": "Opera messa in esercizio {F} con uno o più indici pari a X - (Per le nuove opere verifica che gli indici di confidenza siano diversi da X)",
-                "NOTE": null,
                 "valore": 0
             },
             {
                 "verif_check": {
-                    "col": "AB",
+                    "col": "AC",
                     "row": 11
                 },
                 "colonna_check": "W",
@@ -6462,7 +6546,43 @@
                     "F"
                 ],
                 "descrizione": "Campi non completati per opera costruita nell'anno {F} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
-                "NOTE": null,
+                "valore": 0
+            },
+            {
+                "verif_check": {
+                    "col": "AC",
+                    "row": 12
+                },
+                "colonna_check": "X",
+                "check": "anno costr. 2015/celle vuote",
+                "colonna_rel": [
+                    "F"
+                ],
+                "descrizione": "Campi non completati per opera costruita nell'anno {F} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
+                "valore": 0
+            },
+            {
+                "verif_check": {
+                    "col": "AC",
+                    "row": 13
+                },
+                "colonna_check": "Y",
+                "check": "anno costr. 2015/celle vuote",
+                "colonna_rel": [
+                    "F"
+                ],
+                "descrizione": "Campi non completati per opera costruita nell'anno {F} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
+                "valore": 0
+            },
+            {
+                "verif_check": {
+                    "col": "AC",
+                    "row": 14
+                },
+                "colonna_check": "Z",
+                "check": "verifica completezza su nuovi tronchi",
+                "colonna_rel": [],
+                "descrizione": "verifica completezza su nuovi tronchi",
                 "valore": 0
             }
         ],
@@ -6706,7 +6826,6 @@
                     "M"
                 ],
                 "descrizione": "Anno costruzione {J} minore dell' anno ristrutturazione CIV {K} e elettrom {M}",
-                "NOTE": null,
                 "valore": 0
             },
             {
@@ -6734,7 +6853,6 @@
                     "N"
                 ],
                 "descrizione": "Stato di conservazione {N} non congruente con codifiche ammesse (1-5)",
-                "NOTE": "errore su descrizione del check, non è opere civili ma eletromeccaniche",
                 "valore": 0
             },
             {
@@ -6885,7 +7003,16 @@
                 "descrizione": "Campi non completati per opera costruita nell'anno {J} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
                 "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "AU",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [],
+                "descrizione": "verifica completezza su nuove opere",
+                "valore": 0
             }
+            
         ],
         "Collettori": [
             {
@@ -7500,6 +7627,14 @@
                 "descrizione": "Campi non completati per opera costruita nell'anno {K} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
                 "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "EC",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [],
+                "descrizione": "verifica completezza su nuove opere",
+                "valore": 0
             }
         ],
         "Scaricatori": [
@@ -7788,6 +7923,16 @@
                 ],
                 "descrizione": "Campi non completati per opera costruita nell'anno {M} - (Se anno di costruzione >=2015 tutti i campi devono essere completi)",
                 "NOTE": null,
+                "valore": 0
+            },
+            {
+                "verif_check": null,
+                "colonna_check": "AX",
+                "check": "verifica completezza su nuove opere",
+                "colonna_rel": [
+                    "M"
+                ],
+                "descrizione": "verifica completezza su nuove opere",
                 "valore": 0
             }
         ]
