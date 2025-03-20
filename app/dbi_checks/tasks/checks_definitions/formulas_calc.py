@@ -198,6 +198,10 @@ class CalcFormulas:
         Calculate the values in a given Excel range either from the initial sheet
         or from another one
         """
+        
+        # define the first row of the range:
+        start_row = self.get_the_first_row_from_a_range(col_range)
+
         vlookup_pattern = r'\bVLOOKUP\('
 
         if external_wb:
@@ -225,9 +229,8 @@ class CalcFormulas:
         # Iterate through the range of columns (same row range for each column)
         for col_num in range(start_num, end_num + 1):
             col_letter = get_column_letter(col_num)
-            
             # Get values in the specified column
-            column_values = [current_sheet[f'{col_letter}{row}'].value for row in range(self.start_row, self.get_last_data_row(current_sheet) + 1)]
+            column_values = [current_sheet[f'{col_letter}{row}'].value for row in range(start_row, self.get_last_data_row(current_sheet) + 1)]
             
             values.append(column_values)
 
@@ -394,3 +397,18 @@ class CalcFormulas:
          if isinstance(value, str):
              value = value.upper()
          return value
+
+    def get_the_first_row_from_a_range(self, range):
+        '''
+        This method returns the first row from a range.
+        if we have a range like B5:B1000, will take return
+        the value 5 as start row. Otherwise will return the 
+        the default self.start_row
+        '''
+        match = re.match(r'([A-Z]{1,3})(\d+):[A-Z]{1,3}(\d+)', range)
+        if match:
+            col1, row1, row2 = match.groups()
+            if row1 != row2:  # Check if row numbers are different
+                return int(row1)
+        else:
+            return self.start_row
