@@ -69,7 +69,7 @@ class CalcFormulas:
                 
             formula = formula_cell.value
             #print(f"Processing formula in {col_letter}{self.start_row}: {formula}")
-                
+
             # Parse and compile the formula outside the loop for better performance
             parser = formulas.Parser()
             ast = parser.ast(formula)[1]
@@ -99,7 +99,13 @@ class CalcFormulas:
 
             # Regex to capture the absolute rows like B$1 (They are used in the DB_prioritari file)
             abs_rows = re.findall(r'\b[A-Z]+\$\d+\b', formula)
-            
+
+            # Regex to capture the fake relative cells. The main verification formula of DB_prioritari includes
+            # cell reference in the row 1 or 2 e.g A1 where it is absolute. So, for prefenting our calculator
+            # to iterate through all the rows, we have to catch all the cells in rows 1 and 2 and exclude them
+            # from columns_in_formula
+            fake_rel_cells = re.findall(r'\b([A-Z]{1,3})([12])\b(?!:)', formula) # it outputs a format like: [('AC', '2'), ('AE', '1')]
+          
             if ranges_in_formula:
                 for match in ranges_in_formula:
                     sheet_name, col_ranges = match
@@ -138,6 +144,13 @@ class CalcFormulas:
                     # the format of the abs_rows is something like "['J$1']"
                     i = i.replace("$", "")
                     variables[i] = self.sheet[f"{i}"].value
+            
+            if fake_rel_cells:
+                # exclude fake_rel_cells from columns_in_formula
+                fake_cols_set = {col for col, row in fake_rel_cells}  # {'AC', 'AE'}
+                columns_in_formula = [match for match in columns_in_formula if match[1] not in fake_cols_set]
+                for col, row in fake_rel_cells:
+                    variables[f"{col}{row}"] = self.sheet[f"{col}{row}"].value
             
             # Iterate through each row for this column
             for row in self.sheet.iter_rows(min_row=self.start_row, max_row=self.end_row,
