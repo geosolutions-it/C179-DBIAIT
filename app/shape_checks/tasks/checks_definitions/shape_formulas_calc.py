@@ -26,7 +26,6 @@ class ShapeCalcFormulas(CalcFormulas):
                 continue
             
             formula = formula_cell.value
-            print(f"Processing formula in {col_letter}{self.start_row}: {formula}")
                 
             # Parse and compile the formula outside the loop for better performance
             parser = formulas.Parser()
