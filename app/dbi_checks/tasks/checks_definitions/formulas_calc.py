@@ -41,6 +41,7 @@ class CalcFormulas:
                  end_col:int,
                  analysis_year: int,
                  external_wb_path: str = None,
+                 seed_name: str = None,
                  ):
         self.workbook = workbook
         self.sheet = sheet
@@ -50,6 +51,7 @@ class CalcFormulas:
         self.end_col = end_col
         self.analysis_year = analysis_year
         self.external_wb_path = external_wb_path
+        self.seed_name = seed_name
 
     def main_calc(self):
         
@@ -68,6 +70,9 @@ class CalcFormulas:
                 continue
                 
             formula = formula_cell.value
+
+            if "prioritari" in self.seed_name:
+                formula = self.replace_single_cell_counta(formula)
                         
             # Parse and compile the formula outside the loop for better performance
             parser = formulas.Parser()
@@ -143,12 +148,13 @@ class CalcFormulas:
                     i = i.replace("$", "")
                     variables[i] = self.sheet[f"{i}"].value
             
-            if fake_rel_cells:
-                # exclude fake_rel_cells from columns_in_formula
-                fake_cols_set = {col for col, row in fake_rel_cells}  # {'AC', 'AE'}
-                columns_in_formula = [match for match in columns_in_formula if match[1] not in fake_cols_set]
-                for col, row in fake_rel_cells:
-                    variables[f"{col}{row}"] = self.sheet[f"{col}{row}"].value
+            if "prioritari" in self.seed_name:
+                if fake_rel_cells:
+                    # exclude fake_rel_cells from columns_in_formula
+                    fake_cols_set = {col for col, row in fake_rel_cells}  # {'AC', 'AE'}
+                    columns_in_formula = [match for match in columns_in_formula if match[1] not in fake_cols_set]
+                    for col, row in fake_rel_cells:
+                        variables[f"{col}{row}"] = self.sheet[f"{col}{row}"].value
 
             # Iterate through each row for this column
             for row in self.sheet.iter_rows(min_row=self.start_row, max_row=self.end_row,
@@ -184,7 +190,7 @@ class CalcFormulas:
                 #if isinstance(result, float):
                 #    result = int(round(result))
 
-                #print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
+                print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
                 # Store the result in the target cell
                 cell.value = result
 
@@ -410,3 +416,13 @@ class CalcFormulas:
                 return int(row1)
         else:
             return self.start_row
+        
+    def replace_single_cell_counta(self, formula: str) -> str:
+        """
+        Replaces occurrences of COUNTA(cell) with LEN(cell) when COUNTA is applied to a single cell.
+        e.g: '=IF(AND(AR6<3,COUNTA(B6)>0),1,0)' → '=IF(AND(AR6<3,LEN(B6)>0),1,0)'
+        """
+        pattern = r"COUNTA\(\s*([A-Z]+\d+)\s*\)"
+
+        # Replace with LEN(cell)
+        return re.sub(pattern, r"LEN(\1)", formula)

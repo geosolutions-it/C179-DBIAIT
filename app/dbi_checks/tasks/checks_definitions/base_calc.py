@@ -178,7 +178,7 @@ class BaseCalc:
                                   TaskStatus.SUCCESS
                                   )
         # log file process
-        self.log_file_manager(seed_wb)
+        self.log_file_manager(seed_wb, seed_basename)
 
         # Clean up by deleting the import file
         os.remove(self.imported_file)
@@ -291,7 +291,7 @@ class BaseCalc:
                 last_row = row[0].row
         return last_row
     
-    def log_file_manager(self, seed_wb):
+    def log_file_manager(self, seed_wb, seed_name):
 
         ## Configuration setup
         # prepare the logs workbook
@@ -354,7 +354,7 @@ class BaseCalc:
                 end_row = self.get_end_row(f_location, sheet_name, sheet)
                 
                 calculator = self.get_calculator()
-                # caclulate the formula in the verification check
+                # caclulate the formulas of the column checks
                 sheet_with_calc_values = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
                                                 start_row=start_row, 
@@ -362,9 +362,21 @@ class BaseCalc:
                                                 start_col = start_col_index,
                                                 end_col = end_col_index,
                                                 analysis_year=analysis_year,
-                                                external_wb_path=self.export_dir
+                                                external_wb_path=self.export_dir,
+                                                seed_name = seed_name
                                                 ).main_calc()
 
+                # Calculate the extra formulas of DB_prioritari
+                # ........................................
+                if "prioritari" in seed_name:
+                    sheet_with_calc_values = self.calc_extra_prior_formulas(
+                        calculator,
+                        seed_name,
+                        seed_wb,
+                        sheet_name,
+                        sheet_with_calc_values, 
+                        analysis_year
+                        )
                 
                 ## setup the config for each sheet
                 sheet_checks = verif_checks_config.get(sheet_name, None)
@@ -386,7 +398,8 @@ class BaseCalc:
                                                 start_col = verif_check_col_index,
                                                 end_col = verif_check_col_index,
                                                 analysis_year=analysis_year,
-                                                external_wb_path=self.export_dir
+                                                external_wb_path=self.export_dir,
+                                                seed_name = seed_name,
                                                 ).main_calc()
                     
                     # retrieve the calculated verif check value
@@ -543,3 +556,39 @@ class BaseCalc:
     
     def get_calculator(self):
         return CalcFormulas
+    
+    def calc_extra_prior_formulas(self,
+                                  calculator,
+                                  seed_name,
+                                  seed_wb,
+                                  sheet_name,
+                                  sheet_in_mem,
+                                  analysis_year):
+    
+        '''
+        This method calculates all the extra formulas that are
+        existed in the DB prioritari file
+        '''
+
+        # Load the extra formulas config
+        with open(settings.EXTRA_DB_PRIOR_FORMULAS, "r") as file:
+            extra_formulas = json.load(file)
+        extra_formulas_config = extra_formulas.get(sheet_name, {})
+
+        for conf in extra_formulas_config:
+            # Get row / col references
+            start_col_index = column_index_from_string(conf["start_col"])
+            end_col_index = column_index_from_string(conf["end_col"])
+            start_row = conf["start_row"]
+
+            extra_calc_values = calculator(workbook=seed_wb, 
+                                           sheet=sheet_in_mem,
+                                           start_row=start_row, 
+                                           end_row = start_row,
+                                           start_col = start_col_index,
+                                           end_col = end_col_index,
+                                           analysis_year=analysis_year,
+                                           external_wb_path=self.export_dir,
+                                           seed_name=seed_name,
+                                           ).main_calc()
+        return extra_calc_values

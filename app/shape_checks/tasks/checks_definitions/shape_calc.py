@@ -135,7 +135,7 @@ class ShapeCalc(BaseCalc):
             logger.error(f"Error copying data to Excel: {e}")
             return False
 
-    def log_file_manager(self, seed_wb):
+    def log_file_manager(self, seed_wb, seed_name):
 
         ## Configuration setup
         # prepare the logs workbook
