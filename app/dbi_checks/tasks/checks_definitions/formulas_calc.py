@@ -73,7 +73,7 @@ class CalcFormulas:
 
             if "prioritari" in self.seed_name:
                 formula = self.replace_single_cell_counta(formula)
-                        
+  
             # Parse and compile the formula outside the loop for better performance
             parser = formulas.Parser()
             ast = parser.ast(formula)[1]
@@ -87,7 +87,9 @@ class CalcFormulas:
 
             # Regular expression to extract the column letters from the formula (e.g., X, L) and sheet names if exist.
             # For instance, it will catch the cell A2 but also the Fiumi!A2.
-            columns_in_formula = re.findall(r'([A-Za-z_]+!)?([A-Z]{1,3})\d+', formula)
+            #columns_in_formula = re.findall(r'([A-Za-z_]+!)?([A-Z]{1,3})\d+', formula)
+            # updated columns_in_formula in order to not catch the columns insite quotes: "A2"
+            columns_in_formula = re.findall(r'(?<!["\'])([A-Za-z_]+!)?([A-Z]{1,3})\d+', formula)
             # Remove '!' from sheet names if present
             columns_in_formula = [(match[0].rstrip('!'), match[1]) for match in columns_in_formula]
             columns_in_formula = self.exclude_range_columns(columns_in_formula, formula)
@@ -190,7 +192,7 @@ class CalcFormulas:
                 #if isinstance(result, float):
                 #    result = int(round(result))
 
-                print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
+                # print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
                 # Store the result in the target cell
                 cell.value = result
 
