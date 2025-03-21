@@ -68,13 +68,11 @@ class CalcFormulas:
                 continue
                 
             formula = formula_cell.value
-            #print(f"Processing formula in {col_letter}{self.start_row}: {formula}")
-
+                        
             # Parse and compile the formula outside the loop for better performance
             parser = formulas.Parser()
             ast = parser.ast(formula)[1]
             compiled = ast.compile()
-
             # Check if the formulas include the INPUT.xlsx requirement
             if re.search(r"\[\d+\]Input anno", formula, re.IGNORECASE):
                 # Replace the entire external reference with analysis_year
@@ -151,7 +149,7 @@ class CalcFormulas:
                 columns_in_formula = [match for match in columns_in_formula if match[1] not in fake_cols_set]
                 for col, row in fake_rel_cells:
                     variables[f"{col}{row}"] = self.sheet[f"{col}{row}"].value
-            
+
             # Iterate through each row for this column
             for row in self.sheet.iter_rows(min_row=self.start_row, max_row=self.end_row,
                                             min_col=col_idx, max_col=col_idx):
