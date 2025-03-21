@@ -60,8 +60,8 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
-DRAMATIQ_TIMEOUT_LIMIT=os.getenv("DRAMATIQ_TIMEOUT_LIMIT", 1200000) # goes in timeout after 20 mins by default
-DRAMATIQ_TIMEOUT_INTERVAL=os.getenv("DRAMATIQ_TIMEOUT_INTERVAL", 60000) # check the status of each actor every minute
+DRAMATIQ_TIMEOUT_LIMIT=os.getenv("DRAMATIQ_TIMEOUT_LIMIT", 7200000) # goes in timeout after 60 mins by default
+DRAMATIQ_TIMEOUT_INTERVAL=os.getenv("DRAMATIQ_TIMEOUT_INTERVAL", 120000) # check the status of each actor every 2 minutes
 
 DRAMATIQ_BROKER = {
     "BROKER": os.getenv('DRAMATIQ_BROKER', "dramatiq.brokers.rabbitmq.RabbitmqBroker"),
