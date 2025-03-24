@@ -15594,7 +15594,7 @@
                     "A"
                 ],
                 "descrizione": "COD_RETE non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BU", "row": 6},
@@ -15604,7 +15604,7 @@
                     "A"
                 ],
                 "descrizione": "COD_RETE non presente nel foglio Distributrici/Adduttrici",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BV", "row": 5},
@@ -15614,7 +15614,7 @@
                     "B"
                 ],
                 "descrizione": "COMUNE_NOME non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BW", "row": 5},
@@ -15624,7 +15624,7 @@
                     "C"
                 ],
                 "descrizione": "COMUNE_COD non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BX", "row": 5},
@@ -15634,7 +15634,7 @@
                     "D"
                 ],
                 "descrizione": "COD_TRATTO non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BX", "row": 6},
@@ -15644,7 +15644,7 @@
                     "D"
                 ],
                 "descrizione": "COD_TRATTO non univoco",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BX", "row": 7},
@@ -15654,7 +15654,7 @@
                     "D"
                 ],
                 "descrizione": "COD_TRATTO non presente nei fogli Distrib_tronchi/Addut_tronchi",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BY", "row": 5},
@@ -15664,7 +15664,7 @@
                     "E"
                 ],
                 "descrizione": "ID_MATERIALE non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BY", "row": 6},
@@ -15674,7 +15674,7 @@
                     "E"
                 ],
                 "descrizione": "ID_MATERIALE fuori range",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BZ", "row": 5},
@@ -15684,7 +15684,7 @@
                     "F"
                 ],
                 "descrizione": "IDX_MATERIALE non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "BZ", "row": 6},
@@ -15694,7 +15694,7 @@
                     "F"
                 ],
                 "descrizione": "IDX_MATERIALE non coerente con anno di posa",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CA", "row": 5},
@@ -15704,7 +15704,7 @@
                     "G"
                 ],
                 "descrizione": "DIAMETRO non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CB", "row": 5},
@@ -15714,7 +15714,7 @@
                     "H"
                 ],
                 "descrizione": "DIAMETRO fuori range",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CC", "row": 5},
@@ -15724,7 +15724,7 @@
                     "I"
                 ],
                 "descrizione": "IDX_DIAMET non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CC", "row": 6},
@@ -15734,7 +15734,7 @@
                     "I"
                 ],
                 "descrizione": "IDX_DIAMETRO non coerente con anno di posa",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CD", "row": 5},
@@ -15744,7 +15744,7 @@
                     "J"
                 ],
                 "descrizione": "ANNO di posa non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CD", "row": 6},
@@ -15754,7 +15754,7 @@
                     "J"
                 ],
                 "descrizione": "ANNO di posa non coerente con anno di rendicontazione",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CE", "row": 5},
@@ -15764,7 +15764,7 @@
                     "K"
                 ],
                 "descrizione": "IDX_ANNO di posa non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CE", "row": 6},
@@ -15774,7 +15774,7 @@
                     "K"
                 ],
                 "descrizione": "IDX_ANNO  non coerente con anno di rendicontazione",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CF", "row": 5},
@@ -15784,7 +15784,7 @@
                     "L"
                 ],
                 "descrizione": "LUNGHEZZA non valida",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CF", "row": 6},
@@ -15794,7 +15794,7 @@
                     "L"
                 ],
                 "descrizione": "LUNGHEZZA inferiore al metro",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CG", "row": 5},
@@ -15804,7 +15804,7 @@
                     "M"
                 ],
                 "descrizione": "IDX_LUNG non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CG", "row": 6},
@@ -15814,7 +15814,7 @@
                     "M"
                 ],
                 "descrizione": "IDX_LUNG non coerente con anno di rendicontazione",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CH", "row": 5},
@@ -15824,7 +15824,7 @@
                     "N"
                 ],
                 "descrizione": "ID_CONSERV non valida",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CH", "row": 6},
@@ -15834,7 +15834,7 @@
                     "N"
                 ],
                 "descrizione": "ID_CONSERV fuori range",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CH", "row": 7},
@@ -15844,7 +15844,7 @@
                     "N"
                 ],
                 "descrizione": "ID_CONSERV non coerente con anno di rendicontazione",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CI", "row": 5},
@@ -15854,7 +15854,7 @@
                     "O"
                 ],
                 "descrizione": "TIPO_RETE non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CI", "row": 6},
@@ -15864,7 +15864,7 @@
                     "O"
                 ],
                 "descrizione": "TIPO_RETE fuori range",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CJ", "row": 5},
@@ -15874,7 +15874,7 @@
                     "P"
                 ],
                 "descrizione": "ID_REFLUO_TRASPORTATO fuori range",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CK", "row": 5},
@@ -15884,7 +15884,7 @@
                     "Q"
                 ],
                 "descrizione": "FUNZ_GRAV fuori range",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CL", "row": 5},
@@ -15894,7 +15894,7 @@
                     "R"
                 ],
                 "descrizione": "RECAPITOnon valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CM", "row": 5},
@@ -15904,7 +15904,7 @@
                     "S"
                 ],
                 "descrizione": "COPERTURA non valida",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CN", "row": 5},
@@ -15914,7 +15914,7 @@
                     "T"
                 ],
                 "descrizione": "PROFONDITA' INIZIALE non valida",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CO", "row": 5},
@@ -15924,7 +15924,7 @@
                     "U"
                 ],
                 "descrizione": "PROFONDITA' FINALE non valida",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CP", "row": 5},
@@ -15934,7 +15934,7 @@
                     "V"
                 ],
                 "descrizione": "IDX_PROFONDITA' non valida",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CP", "row": 6},
@@ -15944,7 +15944,7 @@
                     "V"
                 ],
                 "descrizione": "IDX_PROFONDITA' fuori dal range",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CQ", "row": 5},
@@ -15954,7 +15954,7 @@
                     "W"
                 ],
                 "descrizione": "ALLACCI non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CR", "row": 5},
@@ -15964,7 +15964,7 @@
                     "X"
                 ],
                 "descrizione": "ALLACCI INDUSTRIALI non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CS", "row": 5},
@@ -15974,7 +15974,7 @@
                     "Y"
                 ],
                 "descrizione": "LUNGH_ALLACCI non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CT", "row": 5},
@@ -15984,7 +15984,7 @@
                     "Z"
                 ],
                 "descrizione": "RIP_ALLACCI non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CU", "row": 5},
@@ -15994,7 +15994,7 @@
                     "AA"
                 ],
                 "descrizione": "RIP_RETE non valdio",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CV", "row": 5},
@@ -16004,7 +16004,7 @@
                     "AB"
                 ],
                 "descrizione": "ID_OPERA_STATO non valido",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "CW", "row": 5},
@@ -16012,7 +16012,7 @@
                 "check_name": "Controllo completezza nuovi tratti",
                 "colonna_rel": [],
                 "descrizione": "OPERA DI NUOVA COSTRUZIONE, alcuni dati mancanti",
-                "valore": null
+                "valore": 0
             }
         ],
         "Controlli aggregati": [
