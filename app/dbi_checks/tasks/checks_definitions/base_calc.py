@@ -408,8 +408,6 @@ class BaseCalc:
                         logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is OK")
                             
                     else:
-                        logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is not OK. \
-                                    We have to write the corresponding logs")
                         column_check = check.get("colonna_check", None)
                         check_name = check.get("check", None)                 
                         column_rel = check.get("colonna_rel", None)
@@ -420,7 +418,7 @@ class BaseCalc:
                         
                         desc = check.get("descrizione", None)
                         criterion = check.get("valore", 0)
-                        logger.info(f"{check_name}, {column_rel}, {desc}")
+                        #logger.info(f"{check_name}, {column_rel}, {desc}")
                         
                         # Ensure column_rel is always a list (or empty if None)
                         if column_rel is None:
