@@ -4,7 +4,9 @@ import formulas
 from openpyxl.utils.cell import get_column_letter
 
 from app.dbi_checks.tasks.checks_definitions.formulas_calc import CalcFormulas
+import logging
 
+logger = logging.getLogger(__name__)
 
 
 class ShapeCalcFormulas(CalcFormulas):
@@ -103,6 +105,7 @@ class ShapeCalcFormulas(CalcFormulas):
                     i = i.replace("$", "")
                     variables[i] = self.sheet[f"{i}"].value
             
+            logger.info(f"Current processing col: {col_letter}")
             # Iterate through each row for this column
             for row in self.sheet.iter_rows(min_row=self.start_row, max_row=self.end_row,
                                             min_col=col_idx, max_col=col_idx):
