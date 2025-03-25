@@ -11,6 +11,10 @@ logger = logging.getLogger(__name__)
 
 class ShapeCalcFormulas(CalcFormulas):
 
+    def __init__(self, *args, incorrect_value=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.incorrect_value = incorrect_value
+
     def main_calc(self):
         
         # Iterate through the columns in the specified range

@@ -217,8 +217,9 @@ class ShapeCalc(BaseCalc):
                 else:
                     sheet_with_calc_values = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
-                                                start_row=start_row, 
-                                                end_row = end_row,
+                                                start_row=start_row,
+                                                # temp end row for testing
+                                                end_row = end_row // 6,
                                                 start_col = start_col_index,
                                                 end_col = end_col_index,
                                                 analysis_year=analysis_year,
