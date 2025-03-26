@@ -293,37 +293,30 @@ class ShapeCalc(BaseCalc):
                             filtered_rows = filtered_rows[filtered_rows[column_check_idx] != criterion]
                         #filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:][column_check_idx] != criterion]
                         else:
-                            filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
-                        # Iterate through the filtered rows and retrieve the necessary information
+                            filtered_rows = pd_sheet.iloc[start_idx:][
+                                (pd_sheet.iloc[start_idx:, column_check_idx] != criterion) & 
+                                (pd_sheet.iloc[start_idx:, column_check_idx].notna()) & 
+                                pd_sheet.iloc[start_idx:, column_check_idx].apply(lambda x: isinstance(x, (int, float)))  # Ensure it's numeric
+                            ]
+                        
                         for index, row in filtered_rows.iterrows():
-                            incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
-                            
-                            # get the unique code (Codice opera)
-                            unique_code = self.get_the_unique_code(sheet_name, row)
-                            
-                            # Handle the colonna_rel values:
-                            # Initialize a dictionary to store values from each related column
-                            related_values_dict = {}
-                            for rel_col in column_rel:  # Iterate through all columns in column_rel list
-                                # Ensure to get the value of each related column (if it exists)
-                                if rel_col:
-                                    related_value = row[self.parse_col_for_pd(rel_col)] if rel_col else None
-                                    related_values_dict[rel_col] = related_value
-
-                            # Replace placeholders in the description with the corresponding values from related_values_dict
-                            # we re-define the updated_desc to be equal with the initial desc
-                            updated_desc = desc
-                            for key, value in related_values_dict.items():
-                                placeholder = f"{{{key}}}"  # e.g., {AO}
-                                if placeholder in updated_desc:
-                                    updated_desc = updated_desc.replace(placeholder, str(value))
-
-                            # Create a list for the related values, using the dictionary's get method to handle missing keys
-                            related_values = [related_values_dict.get(key, None) for key in list(related_values_dict.keys())]
-
+                            incorrect_value = row[column_check_idx]
+                            unique_code = "--"
+                            updated_desc = f"The column {column_check} includes incorrect values"
                             # Append the row to the log sheet
-                            log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
-
+                            log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value])
+                        
+                        # In case of a verbose file
+                        #    filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
+                        #self.verbose_log_file(column_check_idx,
+                        #                                  sheet_name,
+                        #                                  column_rel,
+                        #                                  desc,
+                        #                                  seed_key,
+                        #                                  column_check,
+                        #                                  log_sheet,
+                        #                                  filtered_rows
+                        #                                  )
                 end_date = timezone.now()
 
                 self.import_process_state(self.orm_task.id, 
@@ -399,5 +392,43 @@ class ShapeCalc(BaseCalc):
     
     def get_calculator(self):
         return ShapeCalcFormulas
+    
+    def verbose_log_file(self, column_check_idx, 
+                         sheet_name, 
+                         column_rel, 
+                         desc, 
+                         seed_key, 
+                         column_check, 
+                         log_sheet, 
+                         filtered_rows):
+        # Iterate through the filtered rows and retrieve the necessary information
+        for index, row in filtered_rows.iterrows():
+            incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
+                            
+            # get the unique code (Codice opera)
+            unique_code = self.get_the_unique_code(sheet_name, row)
+                            
+            # Handle the colonna_rel values:
+            # Initialize a dictionary to store values from each related column
+            related_values_dict = {}
+            for rel_col in column_rel:  # Iterate through all columns in column_rel list
+                # Ensure to get the value of each related column (if it exists)
+                if rel_col:
+                    related_value = row[self.parse_col_for_pd(rel_col)] if rel_col else None
+                    related_values_dict[rel_col] = related_value
+
+            # Replace placeholders in the description with the corresponding values from related_values_dict
+            # we re-define the updated_desc to be equal with the initial desc
+            updated_desc = desc
+            for key, value in related_values_dict.items():
+                placeholder = f"{{{key}}}"  # e.g., {AO}
+                if placeholder in updated_desc:
+                    updated_desc = updated_desc.replace(placeholder, str(value))
+
+            # Create a list for the related values, using the dictionary's get method to handle missing keys
+            related_values = [related_values_dict.get(key, None) for key in list(related_values_dict.keys())]
+
+            # Append the row to the log sheet
+            log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
 
     
