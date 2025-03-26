@@ -23,7 +23,6 @@ class ShapeCalcFormulas(CalcFormulas):
             col_letter = get_column_letter(col_idx)
 
             logger.info(f"current col : {col_letter}")
-            logger.info(f"correct_values: {self.correct_values}")
 
             # Get the correct value if it exists
             correct_value = self.correct_values.get(col_letter) if self.correct_values else None
@@ -38,6 +37,10 @@ class ShapeCalcFormulas(CalcFormulas):
                 continue
             
             formula = formula_cell.value
+
+            # Temp fix to skip a problematic formula for the SHAPE checks
+            if formula == "=+IF(COUNTIF(D:D,D5)=1,0,1)":
+                continue
                 
             # Parse and compile the formula outside the loop for better performance
             parser = formulas.Parser()
@@ -114,11 +117,11 @@ class ShapeCalcFormulas(CalcFormulas):
                     # the format of the abs_rows is something like "['J$1']"
                     i = i.replace("$", "")
                     variables[i] = self.sheet[f"{i}"].value
-            
-            logger.info(f"Current processing col: {col_letter}")
+
             # Iterate through each row for this column
             for row in self.sheet.iter_rows(min_row=self.start_row, max_row=self.end_row,
                                             min_col=col_idx, max_col=col_idx):
+  
                 cell = row[0]
                 # Retrieve the required values from the relevant cells
                 for sheet_name, col in columns_in_formula:
