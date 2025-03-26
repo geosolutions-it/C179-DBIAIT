@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 class ShapeCalcFormulas(CalcFormulas):
 
-    def __init__(self, *args, incorrect_value=None, **kwargs):
+    def __init__(self, *args, correct_values=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.incorrect_value = incorrect_value
+        self.correct_values = correct_values
 
     def main_calc(self):
         
@@ -21,6 +21,12 @@ class ShapeCalcFormulas(CalcFormulas):
         for col_idx in range(self.start_col, self.end_col + 1):
 
             col_letter = get_column_letter(col_idx)
+
+            logger.info(f"current col : {col_letter}")
+            logger.info(f"correct_values: {self.correct_values}")
+
+            # Get the correct value if it exists
+            correct_value = self.correct_values.get(col_letter) if self.correct_values else None
 
             # Dictionary to set the variables of the formula
             variables = {}
@@ -114,7 +120,6 @@ class ShapeCalcFormulas(CalcFormulas):
             for row in self.sheet.iter_rows(min_row=self.start_row, max_row=self.end_row,
                                             min_col=col_idx, max_col=col_idx):
                 cell = row[0]
-                    
                 # Retrieve the required values from the relevant cells
                 for sheet_name, col in columns_in_formula:
                     ref_cell = f"{col}{cell.row}"
@@ -139,6 +144,12 @@ class ShapeCalcFormulas(CalcFormulas):
                     calculated_result = f"Error: {e}"
 
                 result = calculated_result.item() if hasattr(calculated_result, "item") else calculated_result
+
+                # Check if the result is the correct value in case of the column checks
+                if correct_value is not None:
+                    if result != correct_value:
+                        cell.value = result
+                        break
                 # convert the float to int if the result is float
                 #if isinstance(result, float):
                 #    result = int(round(result))

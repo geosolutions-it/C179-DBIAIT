@@ -197,6 +197,9 @@ class ShapeCalc(BaseCalc):
                 # without saving yet. We don't want to re-load it for time reasons
                 end_row = self.get_end_row(f_location, sheet_name, sheet)
 
+                ## setup the config for each sheet
+                sheet_checks = verif_checks_config.get(sheet_name, None)
+
                 calculator = self.get_calculator()
                 
                 if sheet_name in {"Controllo dati aggregati", "Controlli aggregati"}:
@@ -215,19 +218,21 @@ class ShapeCalc(BaseCalc):
                             external_wb_path=self.export_dir
                         ).main_calc()
                 else:
+                    # Map the check columns with the corresponging correct values
+                    correct_values = {item["colonna_check"]: item["valore"] for item in sheet_checks}
+                    
                     sheet_with_calc_values = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
                                                 start_row=start_row,
                                                 # temp end row for testing
-                                                end_row = end_row // 6,
+                                                end_row = end_row,
                                                 start_col = start_col_index,
                                                 end_col = end_col_index,
                                                 analysis_year=analysis_year,
-                                                external_wb_path=self.export_dir
+                                                external_wb_path=self.export_dir,
+                                                correct_values = correct_values
                                                 ).main_calc()
                 
-                ## setup the config for each sheet
-                sheet_checks = verif_checks_config.get(sheet_name, None)
                 for check in sheet_checks:
         
                     # Get the verification check cell to check if it is OK or not
