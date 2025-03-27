@@ -260,6 +260,7 @@ class ShapeCalc(BaseCalc):
                         logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is OK")
                             
                     else:
+                        logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is NOT OK")
                         column_check = check.get("colonna_check", None)
                         check_name = check.get("check", None)                 
                         column_rel = check.get("colonna_rel", None)
@@ -283,6 +284,7 @@ class ShapeCalc(BaseCalc):
 
                             # Convert to DataFrame
                             pd_sheet = pd.DataFrame(data)
+                            logger.info(f"The data frame of the sheet {sheet_name} was created")
 
                         # Get rows where column_check is NOT 0
                         start_idx = start_row - 1
@@ -291,6 +293,7 @@ class ShapeCalc(BaseCalc):
                             rows_to_check = [start_idx, end_idx]  # Only check start and end rows
                             filtered_rows = pd_sheet.iloc[rows_to_check]
                             filtered_rows = filtered_rows[filtered_rows[column_check_idx] != criterion]
+
                         #filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:][column_check_idx] != criterion]
                         else:
                             filtered_rows = pd_sheet.iloc[start_idx:][
@@ -298,6 +301,7 @@ class ShapeCalc(BaseCalc):
                                 (pd_sheet.iloc[start_idx:, column_check_idx].notna()) & 
                                 pd_sheet.iloc[start_idx:, column_check_idx].apply(lambda x: isinstance(x, (int, float)))  # Ensure it's numeric
                             ]
+                            logger.info("filtered_rows from pandas where created")
                         
                         for index, row in filtered_rows.iterrows():
                             incorrect_value = row[column_check_idx]
@@ -306,6 +310,7 @@ class ShapeCalc(BaseCalc):
                             # Append the row to the log sheet
                             log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value])
                         
+                        logger.info("the log_sheet was created")
                         # In case of a verbose file
                         #    filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
                         #self.verbose_log_file(column_check_idx,

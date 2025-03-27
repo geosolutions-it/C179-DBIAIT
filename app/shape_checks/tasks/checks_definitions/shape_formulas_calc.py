@@ -37,11 +37,14 @@ class ShapeCalcFormulas(CalcFormulas):
                 continue
             
             formula = formula_cell.value
-
-            # Temp fix to skip a problematic formula for the SHAPE checks
-            #if formula == "=+IF(COUNTIF(D:D,D5)=1,0,1)":
-            #   continue
-            if col_letter in ("AJ", "AK"):
+            # Skip a time-consuming formulas for the SHAPE checks
+            if formula in (
+                '=+IF(N5="DISTRIBUZIONE",IF(VLOOKUP(A5,Distribuzioni!$B:$AD,29,FALSE())<3,0,1),IF(VLOOKUP(A5,Adduttrici!$B:$Z,25,FALSE())<3,0,1))',
+                '=+IF(N5="DISTRIBUZIONE",IF(COUNTIF(Distrib_tronchi!B:B,D5)>0,0,1),IF(COUNTIF(Addut_tronchi!B:B,D5)>0,0,1))',
+                '=+IF(O5="FOGNATURA",IF(VLOOKUP(A5,Fognature!B:T,19,FALSE())<3,0,1),IF(VLOOKUP(A5,Collettori!B:N,13,FALSE())<3,0,1))',
+                '=+IF(O5="FOGNATURA",IF(COUNTIF(Fognat_tronchi!$B:$B,D5)>0,0,1),IF(COUNTIF(Collett_tronchi!$B:$B,D5)>0,0,1))',
+                '=+IF(COUNTIF(D:D,D5)=1,0,1)'
+            ):
                 continue
                 
             # Parse and compile the formula outside the loop for better performance
