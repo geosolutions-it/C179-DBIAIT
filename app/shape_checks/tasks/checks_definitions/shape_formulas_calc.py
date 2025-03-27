@@ -39,7 +39,9 @@ class ShapeCalcFormulas(CalcFormulas):
             formula = formula_cell.value
 
             # Temp fix to skip a problematic formula for the SHAPE checks
-            if formula == "=+IF(COUNTIF(D:D,D5)=1,0,1)":
+            #if formula == "=+IF(COUNTIF(D:D,D5)=1,0,1)":
+            #   continue
+            if col_letter in ("AJ", "AK"):
                 continue
                 
             # Parse and compile the formula outside the loop for better performance
@@ -123,6 +125,7 @@ class ShapeCalcFormulas(CalcFormulas):
                                             min_col=col_idx, max_col=col_idx):
   
                 cell = row[0]
+                # print(row)
                 # Retrieve the required values from the relevant cells
                 for sheet_name, col in columns_in_formula:
                     ref_cell = f"{col}{cell.row}"
