@@ -130,29 +130,25 @@ DATABASES = {
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
             'options': f'-c search_path={DATABASE_SCHEMAS["system"]},public'
-        },
-        'CONN_MAX_AGE': 7200
+        }
     },
     'system': {
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
             'options': f'-c search_path={DATABASE_SCHEMAS["system"]},public'
-        },
-        'CONN_MAX_AGE': 7200
+        }
     },
     'analysis': {
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
             'options': f'-c search_path={DATABASE_SCHEMAS["analysis"]},public'
-        },
-        'CONN_MAX_AGE': 7200
+        }
     },
     'freeze': {
         'OPTIONS': {
             # extend searched schemas to enable all_domains table loading into analysis schema
             'options': f'-c search_path={DATABASE_SCHEMAS["freeze"]},public'
-        },
-        'CONN_MAX_AGE': 7200
+        }
     }
 }
 for db_key in DATABASES:
@@ -163,7 +159,6 @@ for db_key in DATABASES:
     DB['PASSWORD'] = os.getenv('DATABASE_PASSWORD', '')
     DB['HOST'] = os.getenv('DATABASE_HOST', 'localhost')
     DB['PORT'] = os.getenv('DATABASE_PORT', 5432)
-    DB.setdefault('CONN_MAX_AGE', 7200)  # Ensure it is set for all databases
 
 
 DATABASE_ROUTERS = ['app.scheduler.system_router.SystemRouter', 'app.scheduler.analysis_router.AnalysisRouter']

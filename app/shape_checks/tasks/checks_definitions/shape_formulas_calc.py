@@ -1,8 +1,14 @@
 import re
+import os
 
 import formulas
 from openpyxl.utils.cell import get_column_letter
 
+from django.db.models import ObjectDoesNotExist
+from django.utils import timezone
+
+from app.dbi_checks.models import TaskStatus, ProcessType
+from app.shape_checks.models import Task_CheckShape, ShapeCheckProcessState
 from app.dbi_checks.tasks.checks_definitions.formulas_calc import CalcFormulas
 import logging
 
@@ -11,14 +17,18 @@ logger = logging.getLogger(__name__)
 
 class ShapeCalcFormulas(CalcFormulas):
 
-    def __init__(self, *args, correct_values=None, **kwargs):
+    def __init__(self, *args, main_sheet=None, task_id=None, correct_values=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.main_sheet = main_sheet
+        self.task_id = task_id
         self.correct_values = correct_values
 
     def main_calc(self):
         
         # Iterate through the columns in the specified range
         for col_idx in range(self.start_col, self.end_col + 1):
+
+            start_date = timezone.now()
 
             col_letter = get_column_letter(col_idx)
 
@@ -165,7 +175,20 @@ class ShapeCalcFormulas(CalcFormulas):
 
                 # print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
                 # Store the result in the target cell
+
                 cell.value = result
+
+            end_date = timezone.now()
+
+            self.import_column_state(self.task_id, 
+                                     ProcessType.CALCULATION.value,
+                                     start_date, 
+                                     end_date, 
+                                     TaskStatus.SUCCESS,
+                                     sheet=self.main_sheet
+                                    )
+
+            logger.info(f"Column {col_letter} was calculated")
 
         # return the caclulated_result as single value and not as a numpy array e.g Array("OK", dtype=object)
         return self.sheet
@@ -195,5 +218,27 @@ class ShapeCalcFormulas(CalcFormulas):
         ]
 
         return valid_columns
+    
+    def import_column_state(self, task_id, process_type, start_date, end_date, status, sheet=""):
+    
+        try:
+            task = Task_CheckShape.objects.get(pk=task_id)
+
+            ShapeCheckProcessState.objects.create(
+                task=task,
+                process_type = process_type,
+                sheet_name=(sheet if sheet else ""),
+                import_start_timestamp=start_date,
+                import_end_timestamp=end_date,
+                status=status
+            )
+            return True
+
+        except ObjectDoesNotExist:
+            logger.error(f"Task with ID {task_id} was not found: {str(e)}")
+            raise
+        except Exception as e:
+            logger.error(f"An error occurred while importing sheet: {str(e)}")
+            raise
 
 

@@ -210,12 +210,14 @@ class ShapeCalc(BaseCalc):
                         sheet_with_calc_values = calculator(
                             workbook=seed_wb, 
                             sheet=seed_wb[sheet_name],
+                            main_sheet=sheet_name,
                             start_row=row, 
                             end_row=row,  # Keep start and end row the same for individual calculations
                             start_col=start_col_index,
                             end_col=end_col_index,
                             analysis_year=analysis_year,
-                            external_wb_path=self.export_dir
+                            external_wb_path=self.export_dir,
+                            task_id=self.orm_task.id
                         ).main_calc()
                 else:
                     # Map the check columns with the corresponging correct values
@@ -223,6 +225,7 @@ class ShapeCalc(BaseCalc):
                     
                     sheet_with_calc_values = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
+                                                main_sheet=sheet_name,
                                                 start_row=start_row,
                                                 # temp end row for testing
                                                 end_row = end_row,
@@ -230,6 +233,7 @@ class ShapeCalc(BaseCalc):
                                                 end_col = end_col_index,
                                                 analysis_year=analysis_year,
                                                 external_wb_path=self.export_dir,
+                                                task_id=self.orm_task.id,
                                                 correct_values = correct_values
                                                 ).main_calc()
                 
@@ -246,12 +250,14 @@ class ShapeCalc(BaseCalc):
                     # caclulate the formula in the verification check
                     sheet_with_verif_values = calculator(workbook=seed_wb, 
                                                 sheet=sheet_with_calc_values,
+                                                main_sheet=sheet_name,
                                                 start_row=verif_check_row, 
                                                 end_row = verif_check_row,
                                                 start_col = verif_check_col_index,
                                                 end_col = verif_check_col_index,
                                                 analysis_year=analysis_year,
-                                                external_wb_path=self.export_dir
+                                                external_wb_path=self.export_dir,
+                                                task_id=self.orm_task.id
                                                 ).main_calc()
                     
                     # retrieve the calculated verif check value
