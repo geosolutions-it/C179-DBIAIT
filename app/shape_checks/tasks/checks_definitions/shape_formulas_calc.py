@@ -25,6 +25,9 @@ class ShapeCalcFormulas(CalcFormulas):
 
     def main_calc(self):
         
+        # A list which will include all the columns with incorrect values (which they are not OK)
+        verif_checks_results = []
+        
         # Iterate through the columns in the specified range
         for col_idx in range(self.start_col, self.end_col + 1):
 
@@ -167,15 +170,14 @@ class ShapeCalcFormulas(CalcFormulas):
                 # Check if the result is the correct value in case of the column checks
                 if correct_value is not None:
                     if result != correct_value:
+                        # store this as 1 which means that this column is not OK
+                        verif_checks_results.append(col_letter)
                         cell.value = result
-                        break
-                # convert the float to int if the result is float
-                #if isinstance(result, float):
-                #    result = int(round(result))
+                        # we can use break if we want to skip the column from further caclulations
+                        # break
 
                 # print(f"Sheet: {self.sheet}, Row {cell.row} ({col_letter}{cell.row}): {result}")
                 # Store the result in the target cell
-
                 cell.value = result
 
             end_date = timezone.now()
@@ -189,9 +191,8 @@ class ShapeCalcFormulas(CalcFormulas):
                                     )
 
             logger.info(f"Column {col_letter} was calculated")
-
         # return the caclulated_result as single value and not as a numpy array e.g Array("OK", dtype=object)
-        return self.sheet
+        return (self.sheet, verif_checks_results)
     
     def replace_with_year(self, formula):
         pattern = r"\$?'ANNO INPUT'!\$?[A-Z]+\$?\d+|\$?'ANNO INPUT'![A-Z]+\d+"

@@ -201,13 +201,15 @@ class ShapeCalc(BaseCalc):
                 sheet_checks = verif_checks_config.get(sheet_name, None)
 
                 calculator = self.get_calculator()
-                
+
+                # Map the check columns with the corresponging correct values
+                correct_values = {item["colonna_check"]: item["valore"] for item in sheet_checks}
                 if sheet_name in {"Controllo dati aggregati", "Controlli aggregati"}:
                     
                     # we call the calculator two times because in these sheets
                     # there are different formulas in each row
                     for row in [start_row, end_row]:
-                        sheet_with_calc_values = calculator(
+                        sheet_with_calc_values, verif_checks_results = calculator(
                             workbook=seed_wb, 
                             sheet=seed_wb[sheet_name],
                             main_sheet=sheet_name,
@@ -217,13 +219,12 @@ class ShapeCalc(BaseCalc):
                             end_col=end_col_index,
                             analysis_year=analysis_year,
                             external_wb_path=self.export_dir,
-                            task_id=self.orm_task.id
+                            task_id=self.orm_task.id,
+                            correct_values = correct_values
                         ).main_calc()
                 else:
-                    # Map the check columns with the corresponging correct values
-                    correct_values = {item["colonna_check"]: item["valore"] for item in sheet_checks}
                     
-                    sheet_with_calc_values = calculator(workbook=seed_wb, 
+                    sheet_with_calc_values, verif_checks_results = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
                                                 main_sheet=sheet_name,
                                                 start_row=start_row,
@@ -241,33 +242,15 @@ class ShapeCalc(BaseCalc):
         
                     # Get the verification check cell to check if it is OK or not
                     verif_check = check.get("verif_check", {})
+
+                    column_check = check.get("colonna_check", None)
+                    
                     if verif_check is None:
                         continue
-                    verif_check_col = verif_check["col"]
-                    verif_check_col_index = column_index_from_string(verif_check_col)
-                    verif_check_row = verif_check["row"]
 
-                    # caclulate the formula in the verification check
-                    sheet_with_verif_values = calculator(workbook=seed_wb, 
-                                                sheet=sheet_with_calc_values,
-                                                main_sheet=sheet_name,
-                                                start_row=verif_check_row, 
-                                                end_row = verif_check_row,
-                                                start_col = verif_check_col_index,
-                                                end_col = verif_check_col_index,
-                                                analysis_year=analysis_year,
-                                                external_wb_path=self.export_dir,
-                                                task_id=self.orm_task.id
-                                                ).main_calc()
+                    if column_check in verif_checks_results:
                     
-                    # retrieve the calculated verif check value
-                    verif_check_value = sheet_with_verif_values[f"{verif_check_col}{verif_check_row}"].value
-                    if verif_check_value == "OK":
-                        logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is OK")
-                            
-                    else:
-                        logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is NOT OK")
-                        column_check = check.get("colonna_check", None)
+                        logger.info(f"The check column {column_check} is NOT OK")
                         check_name = check.get("check", None)                 
                         column_rel = check.get("colonna_rel", None)
                         
@@ -285,7 +268,7 @@ class ShapeCalc(BaseCalc):
                         if pd_sheet is None:
                             # Read all data from the worksheet
                             data = list(sheet.iter_rows(min_row=1, 
-                                                        max_row=self.get_last_data_row(sheet_with_verif_values), 
+                                                        max_row=self.get_last_data_row(sheet_with_calc_values), 
                                                         values_only=True))  # Read all rows as tuples
 
                             # Convert to DataFrame
@@ -309,25 +292,29 @@ class ShapeCalc(BaseCalc):
                             ]
                             logger.info("filtered_rows from pandas where created")
                         
-                        for index, row in filtered_rows.iterrows():
-                            incorrect_value = row[column_check_idx]
-                            unique_code = "--"
-                            updated_desc = f"The column {column_check} includes incorrect values"
+                        # non verbose file
+                        #for index, row in filtered_rows.iterrows():
+                        #    incorrect_value = row[column_check_idx]
+                        #    unique_code = "--"
+                        #    updated_desc = f"The column {column_check} includes incorrect values"
                             # Append the row to the log sheet
-                            log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value])
+                        #    log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value])
                         
-                        logger.info("the log_sheet was created")
+                        # logger.info("the log_sheet was created")
                         # In case of a verbose file
                         #    filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
-                        #self.verbose_log_file(column_check_idx,
-                        #                                  sheet_name,
-                        #                                  column_rel,
-                        #                                  desc,
-                        #                                  seed_key,
-                        #                                  column_check,
-                        #                                  log_sheet,
-                        #                                  filtered_rows
-                        #                                  )
+                        self.verbose_log_file(column_check_idx,
+                                                          sheet_name,
+                                                          column_rel,
+                                                          desc,
+                                                          seed_key,
+                                                          column_check,
+                                                          log_sheet,
+                                                          filtered_rows
+                                                          )
+                    else:
+                        logger.info(f"The column check {column_check} is OK")
+                
                 end_date = timezone.now()
 
                 self.import_process_state(self.orm_task.id, 

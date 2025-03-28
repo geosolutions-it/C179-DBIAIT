@@ -15540,7 +15540,7 @@
                 "check_name": "Consistenza tronchi",
                 "colonna_rel": [],
                 "descrizione": "Numero Tronchi:DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "C", "row": 4},
@@ -15548,7 +15548,7 @@
                 "check_name": "Lunghezza complessiva reti",
                 "colonna_rel": [],
                 "descrizione": "Lunghezza :DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "D", "row": 4},
@@ -15556,7 +15556,7 @@
                 "check_name": "Nr allacci Distribuzione",
                 "colonna_rel": [],
                 "descrizione": "Numero allacci distribuzione :DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "E", "row": 4},
@@ -15564,7 +15564,7 @@
                 "check_name": "NR riparazioni rete acquedotto",
                 "colonna_rel": [],
                 "descrizione": "Numero riparazioni rete :DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "F", "row": 4},
@@ -15572,7 +15572,7 @@
                 "check_name": "NR riparazioni allacci Distribuzione",
                 "colonna_rel": [],
                 "descrizione": "Numero riparazioni allacci :DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "G", "row": 4},
@@ -15580,7 +15580,7 @@
                 "check_name": "NR utenze misuratore",
                 "colonna_rel": [],
                 "descrizione": null,
-                "valore": null
+                "valore": 0
             }
         ]
     },
@@ -16022,7 +16022,7 @@
                 "check_name": "Consistenza tronchi",
                 "colonna_rel": [],
                 "descrizione": "Numero Tronchi: DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "C", "row": 4},
@@ -16030,7 +16030,7 @@
                 "check_name": "Lunghezza complessiva reti",
                 "colonna_rel": [],
                 "descrizione": "Lunghezza: DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "D", "row": 4},
@@ -16038,7 +16038,7 @@
                 "check_name": "Lunghezza allacci rete fognaria",
                 "colonna_rel": [],
                 "descrizione": "Lunghezza allacci: DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "E", "row": 4},
@@ -16046,7 +16046,7 @@
                 "check_name": "NR riparazioni rete fognatura",
                 "colonna_rel": [],
                 "descrizione": "Numero riparazioni rete: DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             },
             {
                 "verif_check": {"col": "F", "row": 4},
@@ -16054,7 +16054,7 @@
                 "check_name": "NR riparazioni allacci fognatura",
                 "colonna_rel": [],
                 "descrizione": "Numero riparazioni allacci: DBI e shape non coerenti",
-                "valore": null
+                "valore": 0
             }
         ]
     }
