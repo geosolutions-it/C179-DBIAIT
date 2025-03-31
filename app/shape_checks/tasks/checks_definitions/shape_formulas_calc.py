@@ -1,5 +1,5 @@
 import re
-import os
+import math
 
 import formulas
 from openpyxl.utils.cell import get_column_letter
@@ -152,12 +152,14 @@ class ShapeCalcFormulas(CalcFormulas):
                         # We set the key of the variables using the first row with data (4)
                         # because in that way have been compliled by Formulas. The result
                         # of course is updated with the new rows.
-                        variables[f"{col}{self.start_row}"] = value if value is not None else 0  # Default to None if 0
+                        # variables[f"{col}{self.start_row}"] = value if value is not None else 0  # Default to None if 0
+                        variables[f"{col}{self.start_row}"] = self.sanitize_value(value, formula)
                     else:
                         value = self.workbook[sheet_name][ref_cell].value
                         # We set the text values in uppercase:
                         value = self.cell_value_parser(value)
-                        variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = value if value is not None else 0  # Default to None if 0
+                        # variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = value if value is not None else 0  # Default to None if 0
+                        variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = self.sanitize_value(value, formula)
 
                 # Evaluate the formula with the given variables
                 try:
@@ -241,5 +243,18 @@ class ShapeCalcFormulas(CalcFormulas):
         except Exception as e:
             logger.error(f"An error occurred while importing sheet: {str(e)}")
             raise
+
+    def sanitize_value(self, value, formula):
+        '''
+        This method handles the empty cells like the Excel
+        '''
+        pattern = r'<>""'
+        if value is None and re.search(pattern, formula):
+            value = ""
+            return value
+        if value is None or (isinstance(value, float) and math.isnan(value)) or value == "":
+            return 0
+
+        return value
 
 

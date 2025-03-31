@@ -220,7 +220,6 @@ class ShapeCalc(BaseCalc):
                             analysis_year=analysis_year,
                             external_wb_path=self.export_dir,
                             task_id=self.orm_task.id,
-                            correct_values = correct_values
                         ).main_calc()
                 else:
                     
@@ -244,76 +243,114 @@ class ShapeCalc(BaseCalc):
                     verif_check = check.get("verif_check", {})
 
                     column_check = check.get("colonna_check", None)
+                    column_rel = check.get("colonna_rel", None)
+                    desc = check.get("descrizione", None)
+                    criterion = check.get("valore", 0)
                     
                     if verif_check is None:
                         continue
 
-                    if column_check in verif_checks_results:
-                    
-                        logger.info(f"The check column {column_check} is NOT OK")
-                        check_name = check.get("check", None)                 
-                        column_rel = check.get("colonna_rel", None)
-                        
+                    if pd_sheet is None:
+                        # Read all data from the worksheet
+                        data = list(sheet.iter_rows(min_row=1, 
+                                                            max_row=self.get_last_data_row(sheet_with_calc_values), 
+                                                            values_only=True))  # Read all rows as tuples
+
+                        # Convert to DataFrame
+                        pd_sheet = pd.DataFrame(data)
+                        logger.info(f"The data frame of the sheet {sheet_name} was created")
+
+                    # Get rows where column_check is NOT 0
+                    start_idx = start_row - 1
+                    if sheet_name in {"Controllo dati aggregati", "Controlli aggregati"}:
+                            
                         # convert column names for pandas
                         column_check_idx = self.parse_col_for_pd(column_check)
                         # column_rel_idx = self.parse_col_for_pd(column_rel)
                         
-                        desc = check.get("descrizione", None)
-                        criterion = check.get("valore", 0)
+                        verif_check_col = verif_check["col"]
+                        verif_check_col_index = column_index_from_string(verif_check_col)
+                        verif_check_row = verif_check["row"]
                         
-                        # Ensure column_rel is always a list (or empty if None)
-                        if column_rel is None:
-                            column_rel = []
+                        # caclulate the formula in the verification check
+                        sheet_with_verif_values,  verif_checks_results = calculator(workbook=seed_wb, 
+                                                sheet=sheet_with_calc_values,
+                                                main_sheet=sheet_name,
+                                                start_row=verif_check_row, 
+                                                end_row = verif_check_row,
+                                                start_col = verif_check_col_index,
+                                                end_col = verif_check_col_index,
+                                                analysis_year=analysis_year,
+                                                external_wb_path=self.export_dir,
+                                                task_id=self.orm_task.id,
+                                                ).main_calc()
+                        
+                        # retrieve the calculated verif check value
+                        verif_check_value = sheet_with_verif_values[f"{verif_check_col}{verif_check_row}"].value
+                        if verif_check_value != "OK":
+                            logger.info(f"The check of the cell {verif_check_col}{verif_check_row} is not OK")
 
-                        if pd_sheet is None:
-                            # Read all data from the worksheet
-                            data = list(sheet.iter_rows(min_row=1, 
-                                                        max_row=self.get_last_data_row(sheet_with_calc_values), 
-                                                        values_only=True))  # Read all rows as tuples
-
-                            # Convert to DataFrame
-                            pd_sheet = pd.DataFrame(data)
-                            logger.info(f"The data frame of the sheet {sheet_name} was created")
-
-                        # Get rows where column_check is NOT 0
-                        start_idx = start_row - 1
-                        if sheet_name in {"Controllo dati aggregati", "Controlli aggregati"}:
                             end_idx = end_row - 1
+
                             rows_to_check = [start_idx, end_idx]  # Only check start and end rows
                             filtered_rows = pd_sheet.iloc[rows_to_check]
                             filtered_rows = filtered_rows[filtered_rows[column_check_idx] != criterion]
 
-                        #filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:][column_check_idx] != criterion]
+                            self.verbose_log_file(column_check_idx,
+                                                  sheet_name,
+                                                  column_rel,
+                                                  desc,
+                                                  seed_key,
+                                                  column_check,
+                                                  log_sheet,
+                                                  filtered_rows
+                                                  )
                         else:
+                            logger.info(f"The column check {column_check} is OK")
+
+                    else:
+                        if column_check in verif_checks_results:
+                        
+                            logger.info(f"The check column {column_check} is NOT OK")
+                            
+                            # convert column names for pandas
+                            column_check_idx = self.parse_col_for_pd(column_check)
+                            # column_rel_idx = self.parse_col_for_pd(column_rel)
+                            
+                            # Ensure column_rel is always a list (or empty if None)
+                            if column_rel is None:
+                                column_rel = []
+
+
                             filtered_rows = pd_sheet.iloc[start_idx:][
-                                (pd_sheet.iloc[start_idx:, column_check_idx] != criterion) & 
-                                (pd_sheet.iloc[start_idx:, column_check_idx].notna()) & 
-                                pd_sheet.iloc[start_idx:, column_check_idx].apply(lambda x: isinstance(x, (int, float)))  # Ensure it's numeric
-                            ]
+                                    (pd_sheet.iloc[start_idx:, column_check_idx] != criterion) & 
+                                    (pd_sheet.iloc[start_idx:, column_check_idx].notna()) & 
+                                    pd_sheet.iloc[start_idx:, column_check_idx].apply(lambda x: isinstance(x, (int, float)))  # Ensure it's numeric
+                                ]
                             logger.info("filtered_rows from pandas where created")
                         
-                        # non verbose file
-                        #for index, row in filtered_rows.iterrows():
-                        #    incorrect_value = row[column_check_idx]
-                        #    unique_code = "--"
-                        #    updated_desc = f"The column {column_check} includes incorrect values"
-                            # Append the row to the log sheet
-                        #    log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value])
-                        
-                        # logger.info("the log_sheet was created")
-                        # In case of a verbose file
-                        #    filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
-                        self.verbose_log_file(column_check_idx,
-                                                          sheet_name,
-                                                          column_rel,
-                                                          desc,
-                                                          seed_key,
-                                                          column_check,
-                                                          log_sheet,
-                                                          filtered_rows
-                                                          )
-                    else:
-                        logger.info(f"The column check {column_check} is OK")
+                            # non verbose file
+                            #for index, row in filtered_rows.iterrows():
+                            #    incorrect_value = row[column_check_idx]
+                            #    unique_code = "--"
+                            #    updated_desc = f"The column {column_check} includes incorrect values"
+                                # Append the row to the log sheet
+                            #    log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value])
+                            
+                            # logger.info("the log_sheet was created")
+                            # In case of a verbose file
+                            #    filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
+                            self.verbose_log_file(column_check_idx,
+                                                            sheet_name,
+                                                            column_rel,
+                                                            desc,
+                                                            seed_key,
+                                                            column_check,
+                                                            log_sheet,
+                                                            filtered_rows
+                                                            )
+                        else:
+                            logger.info(f"The column check {column_check} is OK")
                 
                 end_date = timezone.now()
 
