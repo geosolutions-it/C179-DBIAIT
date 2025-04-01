@@ -290,7 +290,7 @@ class SpecShapeCalcFormulas:
 
         # Convert to DataFrame
         df = pd.DataFrame(data)
-        # Get rows where column_check is NOT 0
+
         start_idx = self.start_row - 1
         end_idx = self.end_row
         
@@ -306,6 +306,117 @@ class SpecShapeCalcFormulas:
             incorrect_value = True
         
         return calculated_values, incorrect_value
+    
+    def countif_with_sheet(self, col):
+        '''
+        This method calculates the formula below:
+        =+IF(N5="DISTRIBUZIONE",IF(COUNTIF(Distrib_tronchi!B:B,D5)>0,0,1),IF(COUNTIF(Addut_tronchi!B:B,D5)>0,0,1))
+        '''
+
+        # Get the correct value if it exists
+        correct_value = self.correct_values.get(col) if self.correct_values else None
+        incorrect_value = False
+        
+        if self.sheet_name == "SHP_Acquedotto":
+            col_var = "N"
+            col_value = "DISTRIBUZIONE"
+            sheet1 = "Distrib_tronchi"
+            sheet2 = "Addut_tronchi"
+        elif self.sheet_name == "SHP_Fognatura":
+            col_var = "O"
+            col_value = "FOGNATURA"
+            sheet1 = "Fognat_tronchi"
+            sheet2 = "Collett_tronchi"
+        else:
+            logger.info("The sheet was not found during the specialized formulas calculations")
+       
+       # Get the correct value if it exists
+        correct_value = self.correct_values.get(col) if self.correct_values else None
+        incorrect_value = False
+        # dataframe of the main sheet
+        ws = self.workbook[self.sheet_name]
+        data = ws.values
+
+        # Convert to DataFrame
+        df = pd.DataFrame(data).dropna(how='all')  # Remove fully empty rows
+
+        # dataframes of the relative sheets
+        ws_sheet1 = self.workbook[sheet1]
+        sheet1_data = ws_sheet1.values
+
+        # Convert to DataFrame
+        df_sheet1 = pd.DataFrame(sheet1_data).dropna(how='all')
+
+        ws_sheet2 = self.workbook[sheet2]
+        sheet2_data = ws_sheet2.values
+
+        # Convert to DataFrame
+        df_sheet2 = pd.DataFrame(sheet2_data).dropna(how='all')
+
+        start_idx = self.start_row - 1
+        end_idx = self.end_row
+
+        df_subset = df.iloc[start_idx:end_idx, :].copy()
+
+        df_subset = df_subset.rename(columns={0: "A", 13: "N", 3: "D"})  # Column A (ID), Column N (Condition), Column D (Value to check)
+
+        # In other sheets beyond the main sheet, the start row is the row 4
+        sheet1_set = set(df_sheet1.iloc[3:, 1])  # Column B of Distrib_tronchi
+        sheet2_set = set(df_sheet2.iloc[3:, 1])  # Column B of Addut_tronchi
+
+        # Apply the formula logic using .map()
+        def apply_formula(row):
+            if row[col_var] == col_value:
+                value_exists = row["D"] in sheet1_set  # Check if D5 exists in Distrib_tronchi B column
+            else:
+                value_exists = row["D"] in sheet2_set  # Check if D5 exists in Addut_tronchi B column
+
+            return 0 if value_exists else 1
+
+        import pdb; pdb.set_trace()
+        df_subset["Calculated_Value"] = df_subset.apply(apply_formula, axis=1)
+
+        # Check if the calculated values match the expected correct values
+        if correct_value is not None:
+            if (df_subset["Calculated_Value"] != correct_value).any():
+                incorrect_value = True
+        
+        return (df_subset["Calculated_Value"], incorrect_value)
+
+"""
+    def lookup_with_sheet(self):
+        
+        start_idx = self.start_row - 1
+        end_idx = self.end_row
+
+        # Setup the dataframe for the main sheet
+        ws = self.workbook[self.sheet_name]
+        data = ws.values
+        # Convert to DataFrame
+        df = pd.DataFrame(data)
+
+        # Setup the dataframe for the related sheets
+        ws_distribuzioni = self.workbook["Distribuzioni"]
+        distribuzioni_data = ws_distribuzioni.values
+        # Convert to DataFrame
+        df_distribuzioni = pd.DataFrame(distribuzioni_data)
+
+        df_subset = df.iloc[start_idx:end_idx, :].copy()
+
+        df_subset = df_subset.rename(columns={0: "A", 13: "N"})  # Column A (ID) & Column N (Condition)
+
+        distribuzioni_lookup = df_distribuzioni.set_index(1).iloc[:, 28].to_dict()  # Column B -> Column AD
+        adduttrici_lookup = df_adduttrici.set_index(1).iloc[:, 24].to_dict()  # Column B -> Column Z
+
+        def apply_formula(row):
+            if row["N"] == "DISTRIBUZIONE":
+                value = distribuzioni_lookup.get(row["A"], float("inf"))  # Default to large number
+            else:
+                value = adduttrici_lookup.get(row["A"], float("inf"))  # Default to large number
+            return 0 if value < 3 else 1
+
+        df_subset["Calculated_Value"] = df_subset.apply(apply_formula, axis=1)
+"""
 
 
 
