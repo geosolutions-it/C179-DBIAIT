@@ -1,0 +1,12 @@
+{  
+    "SHP_Acquedotto": {
+         "spec_formulas": [
+          {"col": "AJ", "method_name": "simple_countif"}
+        ]
+    },
+    "SHP_Fognatura": {
+         "spec_formulas": [
+          {"col": "AH", "method_name": "simple_countif"}
+        ]
+    }
+  }

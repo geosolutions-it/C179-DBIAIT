@@ -1,8 +1,11 @@
 import re
 import math
 
+import pandas as pd
+
 import formulas
 from openpyxl.utils.cell import get_column_letter
+import openpyxl.workbook
 
 from django.db.models import ObjectDoesNotExist
 from django.utils import timezone
@@ -17,11 +20,12 @@ logger = logging.getLogger(__name__)
 
 class ShapeCalcFormulas(CalcFormulas):
 
-    def __init__(self, *args, main_sheet=None, task_id=None, correct_values=None, **kwargs):
+    def __init__(self, *args, main_sheet=None, task_id=None, correct_values=None, columns_to_avoid=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.main_sheet = main_sheet
         self.task_id = task_id
         self.correct_values = correct_values
+        self.columns_to_avoid = columns_to_avoid
 
     def main_calc(self):
         
@@ -51,14 +55,9 @@ class ShapeCalcFormulas(CalcFormulas):
             
             formula = formula_cell.value
             # Skip a time-consuming formulas for the SHAPE checks
-            if formula in (
-                '=+IF(N5="DISTRIBUZIONE",IF(VLOOKUP(A5,Distribuzioni!$B:$AD,29,FALSE())<3,0,1),IF(VLOOKUP(A5,Adduttrici!$B:$Z,25,FALSE())<3,0,1))',
-                '=+IF(N5="DISTRIBUZIONE",IF(COUNTIF(Distrib_tronchi!B:B,D5)>0,0,1),IF(COUNTIF(Addut_tronchi!B:B,D5)>0,0,1))',
-                '=+IF(O5="FOGNATURA",IF(VLOOKUP(A5,Fognature!B:T,19,FALSE())<3,0,1),IF(VLOOKUP(A5,Collettori!B:N,13,FALSE())<3,0,1))',
-                '=+IF(O5="FOGNATURA",IF(COUNTIF(Fognat_tronchi!$B:$B,D5)>0,0,1),IF(COUNTIF(Collett_tronchi!$B:$B,D5)>0,0,1))',
-                '=+IF(COUNTIF(D:D,D5)=1,0,1)'
-            ):
-                continue
+            if self.columns_to_avoid:
+                if col_letter in self.columns_to_avoid:
+                    continue
                 
             # Parse and compile the formula outside the loop for better performance
             parser = formulas.Parser()
@@ -256,5 +255,57 @@ class ShapeCalcFormulas(CalcFormulas):
             return 0
 
         return value
+    
+
+class SpecShapeCalcFormulas:
+    """
+    This class calculates the time-consuming formulas for the SHAPE checks
+    """
+
+    def __init__(self,
+                 workbook: openpyxl.workbook.Workbook,
+                 sheet_name: str,
+                 start_row: int,
+                 end_row: int,
+                 correct_values=None
+                 ):
+        self.workbook = workbook
+        self.sheet_name = sheet_name
+        self.start_row = start_row
+        self.end_row = end_row
+        self.correct_values = correct_values
+
+    def simple_countif(self, col):
+        '''
+        This function calculates the formula below:
+        +IF(COUNTIF(D:D,D5)=1,0,1)
+        '''
+        # Get the correct value if it exists
+        correct_value = self.correct_values.get(col) if self.correct_values else None
+        incorrect_value = False
+        # sheet definition
+        ws = self.workbook[self.sheet_name]
+
+        data = ws.values
+
+        # Convert to DataFrame
+        df = pd.DataFrame(data)
+        # Get rows where column_check is NOT 0
+        start_idx = self.start_row - 1
+        end_idx = self.end_row
+        
+        # the index for column D in pandas is 3
+        column_d = df.iloc[start_idx:end_idx, 3]
+
+        value_counts_all = column_d.value_counts()
+
+        calculated_values = column_d.map(lambda x: 0 if value_counts_all[x] == 1 else 1)
+
+        # check if the calculated_values includes incorrect values
+        if (calculated_values != correct_value).any():
+            incorrect_value = True
+        
+        return calculated_values, incorrect_value
+
 
 

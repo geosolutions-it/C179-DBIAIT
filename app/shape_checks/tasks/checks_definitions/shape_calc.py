@@ -18,7 +18,10 @@ from app.dbi_checks.models import TaskStatus, ProcessType
 from app.dbi_checks.utils import YearHandler
 from app.dbi_checks.tasks.checks_definitions.base_calc import BaseCalc
 
-from app.shape_checks.tasks.checks_definitions.shape_formulas_calc import ShapeCalcFormulas
+from app.shape_checks.tasks.checks_definitions.shape_formulas_calc import (
+    ShapeCalcFormulas, 
+    SpecShapeCalcFormulas
+    )
 from app.shape_checks.models import Task_CheckShape, ShapeCheckProcessState
 
 
@@ -179,6 +182,10 @@ class ShapeCalc(BaseCalc):
         verif_checks_config = log_mapping.get(seed_key, {})
 
         formulas_config = self.load_formulas_conf(seed_key)
+
+        # Load the specialized (time-consuming) formulas
+        with open(settings.SPEC_SHAPE_FORMULAS, "r") as file:
+            spec_shape_formulas = json.load(file)
         
         ## Calculate the formulas of the checks for each sheet
         for sheet_name, f_location in formulas_config.items():
@@ -222,7 +229,16 @@ class ShapeCalc(BaseCalc):
                             task_id=self.orm_task.id,
                         ).main_calc()
                 else:
+                    # a list to store the specialized column that the first calculation
+                    # has to avoid
+                    columns_to_avoid = []
+                    # Calculate the specialized (time-consuming) formulas
+                    spec_shape_formulas_config = spec_shape_formulas[sheet_name]
                     
+                    for f in spec_shape_formulas_config.get("spec_formulas", {}):
+                        col = f["col"]
+                        columns_to_avoid.append(col)
+                    # Calculate the main column checks
                     sheet_with_calc_values, verif_checks_results = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
                                                 main_sheet=sheet_name,
@@ -234,8 +250,34 @@ class ShapeCalc(BaseCalc):
                                                 analysis_year=analysis_year,
                                                 external_wb_path=self.export_dir,
                                                 task_id=self.orm_task.id,
-                                                correct_values = correct_values
+                                                correct_values = correct_values,
+                                                columns_to_avoid = columns_to_avoid
                                                 ).main_calc()
+
+                    # Initialization of the SpecShapeClass
+                    spec_shape_calc_formulas_instance = SpecShapeCalcFormulas(
+                            seed_wb,
+                            sheet_name,
+                            start_row,
+                            end_row,
+                            correct_values
+                        )
+                    # Dict with with the calculated columns
+                    calc_spec_columns = {}
+                    for f in spec_shape_formulas_config.get("spec_formulas", {}):
+                        col = f["col"]
+                        method_name = f['method_name']
+                        # Dynamically call the method based on the JSON mapping
+                        if hasattr(spec_shape_calc_formulas_instance, method_name):
+                            method = getattr(spec_shape_calc_formulas_instance, method_name)
+                            logger.info(f"Processing {col} using {method}")
+                            calc_spec_columns[col], incorrect_value = method(col)
+                            # Check if the result includes incorrect values
+                            if incorrect_value:
+                                verif_checks_results.append(col)
+
+                        else:
+                            logger.info(f"Method {method_name} not found in class.")
                 
                 for check in sheet_checks:
         
@@ -259,6 +301,12 @@ class ShapeCalc(BaseCalc):
                         # Convert to DataFrame
                         pd_sheet = pd.DataFrame(data)
                         logger.info(f"The data frame of the sheet {sheet_name} was created")
+
+                        # Extend the pd_sheet in order to include the specialized columns of the SHAPE checks
+                        for key, value in calc_spec_columns.items():
+                            col_idx = self.parse_col_for_pd(key)
+                            row_idx = start_row - 1
+                            pd_sheet.loc[row_idx:, col_idx] = value
 
                     # Get rows where column_check is NOT 0
                     start_idx = start_row - 1
