@@ -90,6 +90,7 @@ class ShapeCalcFormulas(CalcFormulas):
                 continue
             
             formula = formula_cell.value
+    
             # Skip a time-consuming formulas for the SHAPE checks
             if self.columns_to_avoid:
                 if col_letter in self.columns_to_avoid:
@@ -510,6 +511,12 @@ class SpecShapeCalcFormulas:
                 value = sheet1_lookup.get(row["A"], float("inf"))  # Default to large number
             else:
                 value = sheet2_lookup.get(row["A"], float("inf"))  # Default to large number
+            # Convert value to float if it's a string
+            try:
+                value = float(value)
+            except ValueError:
+                value = float("inf")  # Default to a high number if conversion fails
+            
             return 0 if value < 3 else 1
 
         df_subset["Calculated_Value"] = df_subset.apply(apply_formula, axis=1)
