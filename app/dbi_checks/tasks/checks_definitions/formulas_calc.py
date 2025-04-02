@@ -1,6 +1,5 @@
 import re
-import time
-import json
+import math
 
 import openpyxl.workbook
 
@@ -173,13 +172,13 @@ class CalcFormulas:
                         # We set the key of the variables using the first row with data (4)
                         # because in that way have been compliled by Formulas. The result
                         # of course is updated with the new rows.
-                        variables[f"{col}{self.start_row}"] = value if value is not None else 0  # Default to 0 if empty
+                        variables[f"{col}{self.start_row}"] = self.sanitize_value(value, formula)  # Default to 0 if empty
                     else:
                         value = self.workbook[sheet_name][ref_cell].value
                         # We set the text values in uppercase:
                         value = self.cell_value_parser(value)
                         
-                        variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = value if value is not None else 0  # Default to 0 if empty
+                        variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = self.sanitize_value(value, formula)  # Default to 0 if empty
 
                 # Evaluate the formula with the given variables
                 try:
@@ -428,3 +427,12 @@ class CalcFormulas:
 
         # Replace with LEN(cell)
         return re.sub(pattern, r"LEN(\1)", formula)
+    
+    def sanitize_value(self, value, formula):
+        '''
+        This method handles the empty cells like the Excel
+        '''
+        if value is None or (isinstance(value, float) and math.isnan(value)) or value == "":
+            return 0
+
+        return value
