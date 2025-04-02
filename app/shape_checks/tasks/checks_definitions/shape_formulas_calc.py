@@ -5,6 +5,7 @@ import pandas as pd
 
 import formulas
 from openpyxl.utils.cell import get_column_letter
+from openpyxl.utils import column_index_from_string
 import openpyxl.workbook
 
 from django.db.models import ObjectDoesNotExist
@@ -17,6 +18,41 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
+class ImportStateHelper:
+    """
+    Imports the column state for a given task.
+
+    :param task_id: ID of the task to update.
+    :param process_type: Type of the process.
+    :param start_date: Start timestamp of import.
+    :param end_date: End timestamp of import.
+    :param status: Status of the import.
+    :param sheet: Optional sheet name.
+    :return: True if successful, raises an exception otherwise.
+    """
+    @staticmethod
+    def import_column_state(task_id, process_type, start_date, end_date, status, sheet=""):
+    
+        try:
+            task = Task_CheckShape.objects.get(pk=task_id)
+
+            ShapeCheckProcessState.objects.create(
+                task=task,
+                process_type = process_type,
+                sheet_name=(sheet if sheet else ""),
+                import_start_timestamp=start_date,
+                import_end_timestamp=end_date,
+                status=status
+            )
+            return True
+
+        except ObjectDoesNotExist:
+            logger.error(f"Task with ID {task_id} was not found: {str(e)}")
+            raise
+        except Exception as e:
+            logger.error(f"An error occurred while importing sheet: {str(e)}")
+            raise
 
 class ShapeCalcFormulas(CalcFormulas):
 
@@ -183,7 +219,7 @@ class ShapeCalcFormulas(CalcFormulas):
 
             end_date = timezone.now()
 
-            self.import_column_state(self.task_id, 
+            ImportStateHelper.import_column_state(self.task_id, 
                                      ProcessType.CALCULATION.value,
                                      start_date, 
                                      end_date, 
@@ -220,28 +256,6 @@ class ShapeCalcFormulas(CalcFormulas):
         ]
 
         return valid_columns
-    
-    def import_column_state(self, task_id, process_type, start_date, end_date, status, sheet=""):
-    
-        try:
-            task = Task_CheckShape.objects.get(pk=task_id)
-
-            ShapeCheckProcessState.objects.create(
-                task=task,
-                process_type = process_type,
-                sheet_name=(sheet if sheet else ""),
-                import_start_timestamp=start_date,
-                import_end_timestamp=end_date,
-                status=status
-            )
-            return True
-
-        except ObjectDoesNotExist:
-            logger.error(f"Task with ID {task_id} was not found: {str(e)}")
-            raise
-        except Exception as e:
-            logger.error(f"An error occurred while importing sheet: {str(e)}")
-            raise
 
     def sanitize_value(self, value, formula):
         '''
@@ -267,12 +281,14 @@ class SpecShapeCalcFormulas:
                  sheet_name: str,
                  start_row: int,
                  end_row: int,
+                 task_id = None,
                  correct_values=None
                  ):
         self.workbook = workbook
         self.sheet_name = sheet_name
         self.start_row = start_row
         self.end_row = end_row
+        self.task_id = task_id
         self.correct_values = correct_values
 
     def simple_countif(self, col):
@@ -280,6 +296,7 @@ class SpecShapeCalcFormulas:
         This function calculates the formula below:
         +IF(COUNTIF(D:D,D5)=1,0,1)
         '''
+        start_date = timezone.now()
         # Get the correct value if it exists
         correct_value = self.correct_values.get(col) if self.correct_values else None
         incorrect_value = False
@@ -304,15 +321,25 @@ class SpecShapeCalcFormulas:
         # check if the calculated_values includes incorrect values
         if (calculated_values != correct_value).any():
             incorrect_value = True
+
+        end_date = timezone.now()
+        ImportStateHelper.import_column_state(self.task_id, 
+                                     ProcessType.CALCULATION.value,
+                                     start_date, 
+                                     end_date, 
+                                     TaskStatus.SUCCESS,
+                                     sheet=self.sheet_name
+                                    )
         
         return calculated_values, incorrect_value
     
     def countif_with_sheet(self, col):
         '''
-        This method calculates the formula below:
+        This method calculates the formulas below:
         =+IF(N5="DISTRIBUZIONE",IF(COUNTIF(Distrib_tronchi!B:B,D5)>0,0,1),IF(COUNTIF(Addut_tronchi!B:B,D5)>0,0,1))
+        =+IF(O5="FOGNATURA",IF(COUNTIF($Fognat_tronchi.$B:$B,D5)>0,0,1),IF(COUNTIF($Collett_tronchi.$B:$B,D5)>0,0,1))
         '''
-
+        start_date = timezone.now()
         # Get the correct value if it exists
         correct_value = self.correct_values.get(col) if self.correct_values else None
         incorrect_value = False
@@ -330,6 +357,10 @@ class SpecShapeCalcFormulas:
         else:
             logger.info("The sheet was not found during the specialized formulas calculations")
        
+       # Defind the column indices for the col_var
+        col_var_idx = column_index_from_string(col)
+        col_var_idx -= 1
+    
        # Get the correct value if it exists
         correct_value = self.correct_values.get(col) if self.correct_values else None
         incorrect_value = False
@@ -358,7 +389,9 @@ class SpecShapeCalcFormulas:
 
         df_subset = df.iloc[start_idx:end_idx, :].copy()
 
-        df_subset = df_subset.rename(columns={0: "A", 13: "N", 3: "D"})  # Column A (ID), Column N (Condition), Column D (Value to check)
+        df_subset = df_subset.rename(columns={0: "A", 
+                                              col_var_idx: col_var, 
+                                              3: "D"})  # Column N or O (Condition), Column D (Value to check)
 
         # In other sheets beyond the main sheet, the start row is the row 4
         sheet1_set = set(df_sheet1.iloc[3:, 1])  # Column B of Distrib_tronchi
@@ -373,7 +406,6 @@ class SpecShapeCalcFormulas:
 
             return 0 if value_exists else 1
 
-        import pdb; pdb.set_trace()
         df_subset["Calculated_Value"] = df_subset.apply(apply_formula, axis=1)
 
         # Check if the calculated values match the expected correct values
@@ -381,42 +413,123 @@ class SpecShapeCalcFormulas:
             if (df_subset["Calculated_Value"] != correct_value).any():
                 incorrect_value = True
         
+        end_date = timezone.now()
+        ImportStateHelper.import_column_state(self.task_id, 
+                                     ProcessType.CALCULATION.value,
+                                     start_date, 
+                                     end_date, 
+                                     TaskStatus.SUCCESS,
+                                     sheet=self.sheet_name
+                                    )
+        
         return (df_subset["Calculated_Value"], incorrect_value)
 
-"""
-    def lookup_with_sheet(self):
+
+    def lookup_with_sheet(self, col):
+        '''
+        This method calculates the formulas below:
+        =+IF(N5="DISTRIBUZIONE",IF(VLOOKUP(A5,$Distribuzioni.$B:$AD,29,FALSE())<3,0,1),IF(VLOOKUP(A5,$Adduttrici.$B:$Z,25,FALSE())<3,0,1))
+        =+IF(O5="FOGNATURA",IF(VLOOKUP(A5,$Fognature.B:T,19,FALSE())<3,0,1),IF(VLOOKUP(A5,$Collettori.B:N,13,FALSE())<3,0,1))
+        '''
+        start_date = timezone.now()
+        # Get the correct value if it exists
+        correct_value = self.correct_values.get(col) if self.correct_values else None
+        incorrect_value = False
+        
+        if self.sheet_name == "SHP_Acquedotto":
+            col_var = "N"
+            col_value = "DISTRIBUZIONE"
+            sheet1 = "Distribuzioni"
+            sheet2 = "Adduttrici"
+            start_range_col1 = "B"
+            end_range_col1 = "AD"
+            start_range_col2 = "B"
+            end_range_col2 = "Z"
+
+        elif self.sheet_name == "SHP_Fognatura":
+            col_var = "O"
+            col_value = "FOGNATURA"
+            sheet1 = "Fognature"
+            sheet2 = "Collettori"
+            start_range_col1 = "B"
+            end_range_col1 = "T"
+            start_range_col2 = "B"
+            end_range_col2 = "N"
+        else:
+            logger.info("The sheet was not found during the specialized formulas calculations")
+       
+       # Define the column indices for the col_var
+        col_var_idx = column_index_from_string(col)
+        col_var_idx -= 1
+
+        # Define end col range indices
+        start_range_col1_idx = column_index_from_string(start_range_col1)
+        start_range_col1_idx -= 1
+        start_range_col2_idx = column_index_from_string(start_range_col2)
+        start_range_col2_idx -= 1
+        end_range_col1_idx = column_index_from_string(end_range_col1)
+        end_range_col1_idx -= 1
+        end_range_col2_idx = column_index_from_string(end_range_col2)
+        end_range_col2_idx -= 1
+    
+       # Get the correct value if it exists
+        correct_value = self.correct_values.get(col) if self.correct_values else None
+        incorrect_value = False
+
+        # dataframe of the main sheet
+        ws = self.workbook[self.sheet_name]
+        data = ws.values
+
+        # Convert to DataFrame
+        df = pd.DataFrame(data).dropna(how='all')  # Remove fully empty rows
         
         start_idx = self.start_row - 1
         end_idx = self.end_row
 
-        # Setup the dataframe for the main sheet
-        ws = self.workbook[self.sheet_name]
-        data = ws.values
-        # Convert to DataFrame
-        df = pd.DataFrame(data)
-
         # Setup the dataframe for the related sheets
-        ws_distribuzioni = self.workbook["Distribuzioni"]
-        distribuzioni_data = ws_distribuzioni.values
+        ws_sheet1 = self.workbook[sheet1]
+        sheet1_data = ws_sheet1.values
         # Convert to DataFrame
-        df_distribuzioni = pd.DataFrame(distribuzioni_data)
+        df_sheet1 = pd.DataFrame(sheet1_data).dropna(how='all')
+
+        ws_sheet2 = self.workbook[sheet2]
+        sheet2_data = ws_sheet2.values
+        # Convert to DataFrame
+        df_sheet2 = pd.DataFrame(sheet2_data).dropna(how='all')
 
         df_subset = df.iloc[start_idx:end_idx, :].copy()
 
-        df_subset = df_subset.rename(columns={0: "A", 13: "N"})  # Column A (ID) & Column N (Condition)
+        df_subset = df_subset.rename(columns={0: "A", 
+                                              col_var_idx: col_var})  # Column A (ID) & Column N (Condition)
 
-        distribuzioni_lookup = df_distribuzioni.set_index(1).iloc[:, 28].to_dict()  # Column B -> Column AD
-        adduttrici_lookup = df_adduttrici.set_index(1).iloc[:, 24].to_dict()  # Column B -> Column Z
+        sheet1_lookup = df_sheet1.set_index(start_range_col1_idx).iloc[:, end_range_col1_idx].to_dict()  # Column B -> Column AD or T
+        sheet2_lookup = df_sheet2.set_index(start_range_col2_idx).iloc[:, end_range_col2_idx].to_dict()  # Column B -> Column Z or N
 
         def apply_formula(row):
-            if row["N"] == "DISTRIBUZIONE":
-                value = distribuzioni_lookup.get(row["A"], float("inf"))  # Default to large number
+            if row[col_var] == col_value:
+                value = sheet1_lookup.get(row["A"], float("inf"))  # Default to large number
             else:
-                value = adduttrici_lookup.get(row["A"], float("inf"))  # Default to large number
+                value = sheet2_lookup.get(row["A"], float("inf"))  # Default to large number
             return 0 if value < 3 else 1
 
         df_subset["Calculated_Value"] = df_subset.apply(apply_formula, axis=1)
-"""
+
+        # Check if the calculated values match the expected correct values
+        if correct_value is not None:
+            if (df_subset["Calculated_Value"] != correct_value).any():
+                incorrect_value = True
+        
+        end_date = timezone.now()
+        ImportStateHelper.import_column_state(self.task_id, 
+                                     ProcessType.CALCULATION.value,
+                                     start_date, 
+                                     end_date, 
+                                     TaskStatus.SUCCESS,
+                                     sheet=self.sheet_name
+                                    )
+        
+        return (df_subset["Calculated_Value"], incorrect_value)
+
 
 
 

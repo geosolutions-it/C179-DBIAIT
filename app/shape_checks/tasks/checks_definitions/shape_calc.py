@@ -260,6 +260,7 @@ class ShapeCalc(BaseCalc):
                             sheet_name,
                             start_row,
                             end_row,
+                            self.orm_task.id,
                             correct_values
                         )
                     # Dict with with the calculated columns
