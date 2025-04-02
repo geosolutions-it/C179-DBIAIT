@@ -511,12 +511,17 @@ class SpecShapeCalcFormulas:
                 value = sheet1_lookup.get(row["A"], float("inf"))  # Default to large number
             else:
                 value = sheet2_lookup.get(row["A"], float("inf"))  # Default to large number
-            # Convert value to float if it's a string
+
+            # Handle NoneType explicitly
+            if value is None:
+                value = float("inf")  # Default to a large number
+
+            # Convert to float if it's a valid number
             try:
                 value = float(value)
-            except ValueError:
-                value = float("inf")  # Default to a high number if conversion fails
-            
+            except (ValueError, TypeError):  
+                value = float("inf")  # If conversion fails, use a large number
+
             return 0 if value < 3 else 1
 
         df_subset["Calculated_Value"] = df_subset.apply(apply_formula, axis=1)
