@@ -504,14 +504,14 @@ class SpecShapeCalcFormulas:
         df_subset = df_subset.rename(columns={0: "A", 
                                               col_var_idx: col_var})  # Column A (ID) & Column N (Condition)
 
-        sheet1_lookup = df_sheet1.set_index(start_range_col1_idx).iloc[:, end_range_col1_idx].to_dict()  # Column B -> Column AD or T
-        sheet2_lookup = df_sheet2.set_index(start_range_col2_idx).iloc[:, end_range_col2_idx].to_dict()  # Column B -> Column Z or N
+        sheet1_lookup = df_sheet1.set_index(start_range_col1_idx)[end_range_col1_idx].to_dict() # Column B -> Column AD or T
+        sheet2_lookup = df_sheet2.set_index(start_range_col2_idx)[end_range_col2_idx].to_dict()  # Column B -> Column Z or N
 
         def apply_formula(row):
             if row[col_var] == col_value:
-                value = sheet1_lookup.get(row["A"], float("inf"))  # Default to large number
+                value = sheet1_lookup.get(row["A"], 0)  # Default to 0
             else:
-                value = sheet2_lookup.get(row["A"], float("inf"))  # Default to large number
+                value = sheet2_lookup.get(row["A"], 0)  # Default to 0
 
             # Handle NoneType explicitly
             if value is None:
@@ -521,7 +521,7 @@ class SpecShapeCalcFormulas:
             try:
                 value = float(value)
             except (ValueError, TypeError):  
-                value = float("inf")  # If conversion fails, use a large number
+                value = float("inf")  # If conversion fails, return 0
 
             return 0 if value < 3 else 1
 
