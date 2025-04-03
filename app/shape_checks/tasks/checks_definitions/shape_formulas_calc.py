@@ -275,6 +275,7 @@ class ShapeCalcFormulas(CalcFormulas):
 class SpecShapeCalcFormulas:
     """
     This class calculates the time-consuming formulas for the SHAPE checks
+    Related issue: https://github.com/geosolutions-it/C179-DBIAIT/issues/462
     """
 
     def __init__(self,
@@ -359,7 +360,7 @@ class SpecShapeCalcFormulas:
             logger.info("The sheet was not found during the specialized formulas calculations")
        
        # Defind the column indices for the col_var
-        col_var_idx = column_index_from_string(col)
+        col_var_idx = column_index_from_string(col_var)
         col_var_idx -= 1
     
        # Get the correct value if it exists
@@ -460,7 +461,7 @@ class SpecShapeCalcFormulas:
             logger.info("The sheet was not found during the specialized formulas calculations")
        
        # Define the column indices for the col_var
-        col_var_idx = column_index_from_string(col)
+        col_var_idx = column_index_from_string(col_var)
         col_var_idx -= 1
 
         # Define end col range indices

@@ -255,6 +255,7 @@ class ShapeCalc(BaseCalc):
                                                 ).main_calc()
 
                     # Initialization of the SpecShapeClass
+                    # Related issue: https://github.com/geosolutions-it/C179-DBIAIT/issues/462
                     spec_shape_calc_formulas_instance = SpecShapeCalcFormulas(
                             seed_wb,
                             sheet_name,
