@@ -262,8 +262,9 @@ class ShapeCalcFormulas(CalcFormulas):
         '''
         This method handles the empty cells like the Excel
         '''
-        pattern = r'<>""'
-        if value is None and re.search(pattern, formula):
+        pattern1 = r'<>""'
+        pattern2 = r'=""'
+        if value is None and (re.search(pattern1, formula) or re.search(pattern2, formula)):
             value = ""
             return value
         if value is None or (isinstance(value, float) and math.isnan(value)) or value == "":
