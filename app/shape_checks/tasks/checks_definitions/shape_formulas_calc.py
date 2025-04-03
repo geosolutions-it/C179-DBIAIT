@@ -264,7 +264,8 @@ class ShapeCalcFormulas(CalcFormulas):
         '''
         pattern1 = r'<>""'
         pattern2 = r'=""'
-        if value is None and (re.search(pattern1, formula) or re.search(pattern2, formula)):
+
+        if (value is None or (isinstance(value, float) and math.isnan(value))) and (re.search(pattern1, formula) or re.search(pattern2, formula)):
             value = ""
             return value
         if value is None or (isinstance(value, float) and math.isnan(value)) or value == "":
