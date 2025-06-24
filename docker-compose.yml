@@ -1,0 +1,26 @@
+services:
+  dbiait:
+    container_name: dbiait
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: "sleep infinity"
+    entrypoint: ["/usr/src/dbiait/deploy/install_env.sh"]
+    ports:
+      - "8000:8000"
+  #dramatiq:
+  #  container_name: dramatiq
+  #  build:
+  #    context: ./
+  #    dockerfile: Dockerfile
+  #  entrypoint: sleep infinity
+  #  ports:
+  #    - "8000:8000"
+  #rabbitmq:
+  #  container_name: rabbitmq
+  #  build:
+  #    context: ./
+  #    dockerfile: Dockerfile
+  #  entrypoint: sleep infinity
+  #  ports:
+  #    - "8000:8000"

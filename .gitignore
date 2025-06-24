@@ -39,11 +39,5 @@ task_check_shape_logs
 /export/*.zip*
 /export/checks_export
 
-# Dockerfile
-Dockerfile
-
-# Docker-compose
-docker-compose.yml
-
 # .env files
 .env
