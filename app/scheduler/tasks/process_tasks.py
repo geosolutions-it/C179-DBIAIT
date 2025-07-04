@@ -62,11 +62,10 @@ class BaseProcessTask(BaseTask):
 
     def execute(self, task_id: int, *args, gpkg_path: str = None, **kwargs) -> None:
         try:
-            print(f"PROCESSING {self.name}...")
             analysis_cursor = connection.cursor()
             with analysis_cursor as cursor:
                 cursor.callproc(
-                    f"{settings.DATABASE_SCHEMAS[u'analysis']}.{self.algorithm}")
+                    f"{settings.DATABASE_SCHEMAS[u'analysis']}.{self.algorithm}".encode('utf-8') )
                 result = cursor.fetchone()
         except Exception as e:
             print(e)

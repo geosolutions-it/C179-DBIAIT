@@ -6,6 +6,8 @@ x-common:
   restart: unless-stopped
   env_file:
     - .env
+  volumes:
+    - .:/usr/src/dbiait/
   depends_on:
     db:
       condition: service_healthy
@@ -47,14 +49,14 @@ services:
   db:
     container_name: postgres
     image: postgis/postgis:15-3.4-alpine
-    environment:
-      "POSTGRES_PASSWORD": "password"
     env_file:
       - .env
     volumes:
       - dbdata:/var/lib/postgresql/data
     healthcheck:
       test: "pg_isready -d postgres -U postgres"
+    ports:
+      - "5434:5432"
   
 volumes:
   dbiait:
