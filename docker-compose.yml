@@ -1,10 +1,19 @@
+x-common:
+  &common
+  build:
+    context: ./
+    dockerfile: Dockerfile
+  restart: unless-stopped
+  env_file:
+    - .env
+  depends_on:
+    db:
+      condition: service_healthy
+
 services:
   dbiait:
+    << : *common
     container_name: dbiait
-    restart: unless-stopped
-    build:
-      context: ./
-      dockerfile: Dockerfile
     command: ["source /opt/conda/etc/profile.d/conda.sh && conda activate dbiait && gunicorn -c /usr/src/dbiait/deploy/gunicorn.conf.py"]
     entrypoint: ["/usr/src/dbiait/deploy/entrypoint.sh"]
     ports:
@@ -17,14 +26,12 @@ services:
       interval: 20s
       timeout: 5s
       retries: 2
-  #dramatiq:
-  #  container_name: dramatiq
-  #  build:
-  #    context: ./
-  #    dockerfile: Dockerfile
-  #  entrypoint: sleep infinity
-  #  ports:
-  #    - "8000:8000"
+
+  dramatiq:
+    << : *common
+    container_name: dramatiq
+    command: ["bash", "-c", "source /opt/conda/etc/profile.d/conda.sh && conda activate dbiait && python /usr/src/dbiait/manage.py global_interpreter_rundramatiq"]
+
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.13-management
@@ -36,6 +43,7 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
+
   db:
     container_name: postgres
     image: postgis/postgis:15-3.4-alpine
@@ -45,6 +53,8 @@ services:
       - .env
     volumes:
       - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: "pg_isready -d postgres -U postgres"
   
 volumes:
   dbiait:
