@@ -286,6 +286,12 @@ DATABASE_FOLDER = os.getenv("DATABASE_FOLDER", f"{pathlib.Path().absolute()}/dat
 IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'config', "layers.json"))
 IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
 
+if not os.path.exists(IMPORT_FOLDER):
+    os.makedirs(IMPORT_FOLDER, exist_ok=True)
+
+if not os.path.exists(FTP_FOLDER):
+    os.makedirs(FTP_FOLDER, exist_ok=True)
+
 # Directory in which generated exports are kept
 EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(FTP_FOLDER, "export"))
 

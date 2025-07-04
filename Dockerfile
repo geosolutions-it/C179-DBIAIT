@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # and ca-certificates for secure connections.
 # Clean up apt lists to reduce image size.
 RUN apt-get update -y && apt-get install wget gdal-bin git vim \
-    gcc libsasl2-dev python-dev-is-python3 libldap2-dev \
+    gcc libsasl2-dev python-dev-is-python3 libldap2-dev curl \
     libssl-dev ffmpeg libsm6 libxext6 exiv2 -y && \
     rm -rf /var/lib/apt/lists/*
 
