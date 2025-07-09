@@ -108,6 +108,8 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
     check_name = None
     check_type = None
     task_class = None
+    groups_config = None
+    groups_key = None
 
     def get_context_files(self, form):
         """
@@ -141,6 +143,7 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
             dbi_formulas = json.load(file)
 
         if self.check_type == CheckType.CDO:
+            # CDO doesn't include groups so, it immediatly returns the config objects
             return {
             "seed_file": self.seed_file,
             "second_seed_file": self.second_seed_file,
@@ -149,6 +152,34 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
             "dbi_formulas_obj": dbi_formulas.get(self.dbi_formulas_obj, {}),
             "second_dbi_formulas_obj": dbi_formulas.get(self.second_dbi_formulas_obj, {}),
             }
+        
+        # Load group-specific filtering if applicable
+        selected_group = self.request.POST.get("group")
+        if self.groups_config and selected_group:
+            with open(self.groups_config, "r") as f:
+                groups_data = json.load(f)
+
+            group_set = groups_data.get(self.groups_key, {})
+            group_info = group_set.get(selected_group, {})
+            group_sheets = group_info.get("sheets", [])
+
+            # Filter the sheet mappings and formulas
+            full_sheet_mapping = sheets_config.get(self.sheet_mapping_obj, {})
+            full_formulas = dbi_formulas.get(self.dbi_formulas_obj, {})
+
+            filtered_sheet_mapping = {
+                k: v for k, v in full_sheet_mapping.items() if k in group_sheets
+            }
+            filtered_formulas = {
+                k: v for k, v in full_formulas.items() if k in group_sheets
+            }
+
+            return {
+                "seed_file": self.seed_file,
+                "sheet_mapping_obj": filtered_sheet_mapping,
+                "dbi_formulas_obj": filtered_formulas,
+            }
+        # fallback return
         return {
             "seed_file": self.seed_file,
             "sheet_mapping_obj": sheets_config.get(self.sheet_mapping_obj, {}),
@@ -224,6 +255,8 @@ class PrioritizedDataCheckStart(BaseCheckStart):
     check_name = "prioritized_data_check"
     check_type = CheckType.DP
     task_class = PrioritizedDataCheckTask
+    groups_config = settings.DBI_GROUPS
+    groups_key = "DATI_PRIORITATI_GROUPS"
 
 class DataQualityCheckStart(BaseCheckStart):
     template_name = u'dbi_checks/active-data-quality-check.html'
@@ -234,6 +267,8 @@ class DataQualityCheckStart(BaseCheckStart):
     check_name = "data_quality_check"
     check_type = CheckType.BDD
     task_class = DataQualityCheckTask
+    groups_config = settings.DBI_GROUPS
+    groups_key = "BONTA_DEI_DATI_GROUPS"
 
 # API based views
 class GetCheckStatus(generics.ListAPIView):

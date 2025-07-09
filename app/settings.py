@@ -365,3 +365,4 @@ SHAPE_VERIF_FORMULAS = os.path.join(BASE_DIR, "checks", "shape_verif_formulas.js
 DBF_TO_SHEET = os.path.join(BASE_DIR, "checks", "dbf_to_sheet.json")
 EXTRA_DB_PRIOR_FORMULAS = os.path.join(BASE_DIR, "checks", "extra_db_prioritari_formulas.json")
 SPEC_SHAPE_FORMULAS = os.path.join(BASE_DIR, "checks", "spec_shape_formulas.json")
+DBI_GROUPS = os.path.join(BASE_DIR, "checks", "dbi_groups_to_sheets.json")
