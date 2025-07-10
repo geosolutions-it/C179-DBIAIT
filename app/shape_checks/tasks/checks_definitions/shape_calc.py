@@ -207,6 +207,9 @@ class ShapeCalc(BaseCalc):
                 ## setup the config for each sheet
                 sheet_checks = verif_checks_config.get(sheet_name, None)
 
+                # Dict with with the calculated columns
+                calc_spec_columns = {}
+
                 calculator = self.get_calculator()
 
                 # Map the check columns with the corresponging correct values
@@ -231,13 +234,22 @@ class ShapeCalc(BaseCalc):
                 else:
                     # a list to store the specialized column that the first calculation
                     # has to avoid
-                    columns_to_avoid = []
+                    time_consuming_columns = []
+
+                    # a dict which will include the "col": "method_name" in case
+                    # that the specific group includes time-consuming formulas
+                    custom_formulas = {}
                     # Calculate the specialized (time-consuming) formulas
                     spec_shape_formulas_config = spec_shape_formulas[sheet_name]
                     
                     for f in spec_shape_formulas_config.get("spec_formulas", {}):
                         col = f["col"]
-                        columns_to_avoid.append(col)
+                        custom_formula = f['method_name']
+                        
+                        col_index = column_index_from_string(col)
+                        if start_col_index <= col_index <= end_col_index:
+                            time_consuming_columns.append(col)
+                            custom_formulas[col] = custom_formula
                     # Calculate the main column checks
                     sheet_with_calc_values, verif_checks_results = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
@@ -251,35 +263,33 @@ class ShapeCalc(BaseCalc):
                                                 external_wb_path=self.export_dir,
                                                 task_id=self.orm_task.id,
                                                 correct_values = correct_values,
-                                                columns_to_avoid = columns_to_avoid
+                                                columns_to_avoid = time_consuming_columns
                                                 ).main_calc()
 
                     # Initialization of the SpecShapeClass
                     # Related issue: https://github.com/geosolutions-it/C179-DBIAIT/issues/462
-                    spec_shape_calc_formulas_instance = SpecShapeCalcFormulas(
-                            seed_wb,
-                            sheet_name,
-                            start_row,
-                            end_row,
-                            self.orm_task.id,
-                            correct_values
-                        )
-                    # Dict with with the calculated columns
-                    calc_spec_columns = {}
-                    for f in spec_shape_formulas_config.get("spec_formulas", {}):
-                        col = f["col"]
-                        method_name = f['method_name']
-                        # Dynamically call the method based on the JSON mapping
-                        if hasattr(spec_shape_calc_formulas_instance, method_name):
-                            method = getattr(spec_shape_calc_formulas_instance, method_name)
-                            logger.info(f"Processing {col} using {method}")
-                            calc_spec_columns[col], incorrect_value = method(col)
-                            # Check if the result includes incorrect values
-                            if incorrect_value:
-                                verif_checks_results.append(col)
+                    # Check if the time consuming columns are included for this specific range (group)
+                    if time_consuming_columns:
+                        spec_shape_calc_formulas_instance = SpecShapeCalcFormulas(
+                                seed_wb,
+                                sheet_name,
+                                start_row,
+                                end_row,
+                                self.orm_task.id,
+                                correct_values
+                            )
+                        for col, method_name in custom_formulas.items():
+                            # Dynamically call the method based on the JSON mapping
+                            if hasattr(spec_shape_calc_formulas_instance, method_name):
+                                method = getattr(spec_shape_calc_formulas_instance, method_name)
+                                logger.info(f"Processing {col} using {method}")
+                                calc_spec_columns[col], incorrect_value = method(col)
+                                # Check if the result includes incorrect values
+                                if incorrect_value:
+                                    verif_checks_results.append(col)
 
-                        else:
-                            logger.info(f"Method {method_name} not found in class.")
+                            else:
+                                logger.info(f"Method {method_name} not found in class.")
                 
                 for check in sheet_checks:
         
@@ -469,11 +479,7 @@ class ShapeCalc(BaseCalc):
         return end_row
     
     def load_formulas_conf(self, seed_key):
-        # Open the json file with the verif shape formulas
-        with open(settings.SHAPE_VERIF_FORMULAS, "r") as file:
-            shape_verif_formulas = json.load(file)
-        formulas_config = shape_verif_formulas.get(seed_key, {})
-        return formulas_config
+        return self.formulas_config
     
     def get_calculator(self):
         return ShapeCalcFormulas

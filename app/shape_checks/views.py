@@ -80,10 +80,10 @@ class BaseShapeCheckStart(LoginRequiredMixin, FormView):
     redirected_view = None
     seed_file = None
     sheet_mapping_obj = None
-    shape_formulas_obj = None
     check_name = None
     check_type = None
-    # task_class = None
+    task_class = None
+    groups_key = None
 
     def get_context_files(self, form):
         """
@@ -109,14 +109,29 @@ class BaseShapeCheckStart(LoginRequiredMixin, FormView):
         """
         with open(settings.SHEETS_CONFIG, "r") as file:
             sheets_config = json.load(file)
-        with open(settings.SHAPE_FORMULAS, "r") as file:
+        with open(settings.SHAPE_GROUPS, "r") as file:
             shape_formulas = json.load(file)
+
+        # Load group-specific filtering
+        selected_group = self.request.POST.get("group")
+        group_columns = {}
+
+        group_set = shape_formulas.get(self.groups_key, {})
+
+        if selected_group == "__all__":
+            # If the user selects to run all the process we have
+            # to add also the controlli_aggregat sheet
+            base_group = group_set.get("__all__", {})
+            extra_group = group_set.get("gruppo_controlli_aggregati", {})
+            group_columns = {**base_group, **extra_group}
+        elif selected_group:
+            group_columns = group_set.get(selected_group, {})
 
         return {
             "seed_file": self.seed_file,
             "sheet_mapping_obj": sheets_config.get(self.sheet_mapping_obj, {}),
-            "shape_formulas_obj": shape_formulas.get(self.shape_formulas_obj, {}),
-            }
+            "shape_formulas_obj": group_columns,
+        }
 
     def form_valid(self, form):
         xlsx_file, dbf_file = self.get_context_files(form)
@@ -170,10 +185,10 @@ class ShpAcqCheckStart(BaseShapeCheckStart):
     redirected_view = u"shp-acq-check-view"
     seed_file = settings.SHP_ACQ
     sheet_mapping_obj = "CHECK_SHP_ACQ"
-    shape_formulas_obj = "SHP_ACQ_formulas"
     check_name = "shp_acq_check"
     check_type = ShapeCheckType.ACQ
     task_class = ShpAcqCheckTask
+    groups_key = "SHP_ACQ_GROUPS"
 
 
 class ShpFgnCheckStart(BaseShapeCheckStart):
@@ -181,10 +196,10 @@ class ShpFgnCheckStart(BaseShapeCheckStart):
     redirected_view = u"shp-fgn-check-view"
     seed_file = settings.SHP_FGN
     sheet_mapping_obj = "CHECK_SHP_FGN"
-    shape_formulas_obj = "SHP_FGN_formulas"
     check_name = "shp_fgn_check"
     check_type = ShapeCheckType.FGN
     task_class = ShpFgnCheckTask
+    groups_key = "SHP_FGN_GROUPS"
 
 # API views
 class GetShapeCheckStatus(generics.ListAPIView):
