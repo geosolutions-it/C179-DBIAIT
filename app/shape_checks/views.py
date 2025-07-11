@@ -103,7 +103,7 @@ class BaseShapeCheckStart(LoginRequiredMixin, FormView):
             shutil.copyfileobj(src_file, dst_file, length=1024 * 1024)
         return uploaded_path
 
-    def load_config(self):
+    def load_config(self, selected_group):
         """
         Load seed files and configuration for sheets and formulas based on check type.
         """
@@ -112,8 +112,6 @@ class BaseShapeCheckStart(LoginRequiredMixin, FormView):
         with open(settings.SHAPE_GROUPS, "r") as file:
             shape_formulas = json.load(file)
 
-        # Load group-specific filtering
-        selected_group = self.request.POST.get("group")
         group_columns = {}
 
         group_set = shape_formulas.get(self.groups_key, {})
@@ -140,8 +138,11 @@ class BaseShapeCheckStart(LoginRequiredMixin, FormView):
             self.save_context_file(dbf_file, dbf_file.name)
             ]
 
+        # Load group-specific filtering if applicable
+        selected_group = self.request.POST.get("group", None)
+        
         # Get the seed files and config
-        config_data = self.load_config()
+        config_data = self.load_config(selected_group)
 
         if all(os.path.exists(path) for path in uploaded_file_paths):
             
@@ -160,7 +161,8 @@ class BaseShapeCheckStart(LoginRequiredMixin, FormView):
                     self.request.user,
                     *uploaded_file_paths,
                     name=self.check_name,
-                    check_type=self.check_type
+                    check_type=self.check_type,
+                    group=selected_group
                 )
                 self.task_class.send(task_id=task_id, context_data=context_data)
                 return redirect(self.get_success_url())

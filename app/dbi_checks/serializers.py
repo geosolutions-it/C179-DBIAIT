@@ -21,10 +21,11 @@ class CheckExportTaskSerializer(serializers.ModelSerializer):
     analysis_year = serializers.CharField(source='xlsx.analysis_year', read_only=True)
     check_name = serializers.SerializerMethodField()
     task_log = serializers.SerializerMethodField()
+    group = serializers.SerializerMethodField()
 
     class Meta:
         model = Task_CheckDbi
-        fields = (u'id', u'user', u'file_name', u'second_file_name', u'check_name', u'start_date', u'end_date',
+        fields = (u'id', u'user', u'file_name', u'second_file_name', u'check_name', u'group', u'start_date', u'end_date',
                   u'analysis_year', u'status', u'style_class', u'status_icon', 
                   u'task_log')
     
@@ -51,3 +52,16 @@ class CheckExportTaskSerializer(serializers.ModelSerializer):
     def get_task_log(self, obj):
         # trim the log to a shorter size due the complexity
         return obj.task_log[:250]
+    
+    def get_group(self, obj):
+        group_mapping = {
+            "__all__": "Tutti i gruppi",
+            "gruppo_captazioni": "Captazioni",
+            "gruppo_impianti_acquedotto": "Impianti Acquedotto",
+            "gruppo_reti_acquedotto_adduttrici": "Reti Acquedotto Adduttrici",
+            "gruppo_reti_acquedotto_distribuzioni": "Reti Acquedotto Distribuzioni",
+            "gruppo_impianti_fognatura": "Impianti Fognatura",
+            "gruppo_reti_fognatura_collettori": "Reti Fognatura Collettori",
+            "gruppo_reti_fognatura_fognature": "Reti Fognatura Fognature"
+        }
+        return group_mapping.get(obj.group, obj.group or "---")

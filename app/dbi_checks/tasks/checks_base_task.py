@@ -37,6 +37,7 @@ class ChecksBaseTask(BaseTask):
         file_path: str,
         name: str,
         check_type: str,
+        group: str,
     ):
 
         # Check if the xlsx files exists
@@ -81,6 +82,7 @@ class ChecksBaseTask(BaseTask):
             imported=True,
             check_type=check_type,
             name=name,
+            group=group,
         )
         current_task.save()
 

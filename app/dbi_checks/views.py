@@ -133,7 +133,7 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
             shutil.copyfileobj(src_file, dst_file, length=1024 * 1024)
         return uploaded_path
 
-    def load_config(self):
+    def load_config(self, selected_group):
         """
         Load seed files and configuration for sheets and formulas based on check type.
         """
@@ -153,8 +153,6 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
             "second_dbi_formulas_obj": dbi_formulas.get(self.second_dbi_formulas_obj, {}),
             }
         
-        # Load group-specific filtering if applicable
-        selected_group = self.request.POST.get("group")
         if self.groups_config and selected_group:
             with open(self.groups_config, "r") as f:
                 groups_data = json.load(f)
@@ -190,11 +188,14 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
         xlsx_file1, xlsx_file2 = self.get_context_files(form)
         uploaded_file_paths = [self.save_context_file(xlsx_file1, xlsx_file1.name)]
 
+        # Load group-specific filtering if applicable
+        selected_group = self.request.POST.get("group", None)
+
         if xlsx_file2:
             uploaded_file_paths.append(self.save_context_file(xlsx_file2, xlsx_file2.name))
 
         # Get the seed files and config
-        config_data = self.load_config()
+        config_data = self.load_config(selected_group)
 
         if all(os.path.exists(path) for path in uploaded_file_paths):
             
@@ -204,7 +205,7 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
                 **config_data
             )
             context_data = {
-                "args": context.args, 
+                "args": context.args,
                 "kwargs": context.kwargs
             }
 
@@ -213,7 +214,8 @@ class BaseCheckStart(LoginRequiredMixin, FormView):
                     self.request.user,
                     *uploaded_file_paths,
                     name=self.check_name,
-                    check_type=self.check_type
+                    check_type=self.check_type,
+                    group=selected_group
                 )
                 self.task_class.send(task_id=task_id, context_data=context_data)
                 return redirect(self.get_success_url())

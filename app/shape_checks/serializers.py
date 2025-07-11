@@ -19,10 +19,11 @@ class ShapeCheckExportTaskSerializer(serializers.ModelSerializer):
     second_file_name = serializers.SerializerMethodField()
     analysis_year = serializers.CharField(source='xlsx_dbf.analysis_year', read_only=True)
     check_name = serializers.SerializerMethodField()
+    group = serializers.SerializerMethodField()
 
     class Meta:
         model = Task_CheckShape
-        fields = (u'id', u'user', u'file_name', u'second_file_name', u'check_name', u'start_date', u'end_date',
+        fields = (u'id', u'user', u'file_name', u'second_file_name', u'check_name', u'group', u'start_date', u'end_date',
                   u'analysis_year', u'status', u'style_class', u'status_icon', 
                   u'task_log')
     
@@ -45,3 +46,19 @@ class ShapeCheckExportTaskSerializer(serializers.ModelSerializer):
             "FGN": "SHP Fognatura"
         }
         return check_type_mapping.get(instance.check_type, instance.check_type)
+    
+    def get_group(self, obj):
+        group_mapping = {
+            "__all__": "Tutti i gruppi",
+            "gruppo_codice_rete_e_tratto": "Codice Rete e Tratto",
+            "gruppo_materiale_e_diametro": "Materiale e Diametro",
+            "gruppo_anno_e_lunghezza": "Anno e Lunghezza",
+            "gruppo_stato_conservazione_tipo_rete_tipo_acqua": "Stato Conservazione, Tipo Rete, Tipo Acqua",
+            "gruppo_funzionamento_copertura_profondita": "Funzionamento, Copertura, Profondità",
+            "gruppo_pressioni_telecontrollo_e_protezione_catodica": "Pressioni, Telecontrollo e Protezione Catodica",
+            "gruppo_allacci_riparazioni_misuratori": "Allacci, Riparazioni, Misuratori",
+            "gruppo_stato_opera_e_completezza": "Stato Opera e Completezza",
+            "gruppo_controlli_aggregati": "Controlli Aggregati"
+
+        }
+        return group_mapping.get(obj.group, obj.group or "---")
