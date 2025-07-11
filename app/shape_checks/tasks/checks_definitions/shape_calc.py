@@ -4,6 +4,7 @@ import pathlib
 import pandas as pd
 from dbfread import DBF
 import gc
+from collections import defaultdict
 
 from openpyxl.formula.translate import Translator
 from openpyxl import load_workbook
@@ -140,6 +141,9 @@ class ShapeCalc(BaseCalc):
 
     def log_file_manager(self, seed_wb, seed_name):
 
+        # Initialize summary tracking
+        summary_data = defaultdict(int)
+        
         ## Configuration setup
         # prepare the logs workbook
         # Remove default sheet if it exists
@@ -353,7 +357,8 @@ class ShapeCalc(BaseCalc):
                                                   seed_key,
                                                   column_check,
                                                   log_sheet,
-                                                  filtered_rows
+                                                  filtered_rows,
+                                                  summary_data
                                                   )
                         else:
                             logger.info(f"The column check {column_check} is OK")
@@ -379,26 +384,17 @@ class ShapeCalc(BaseCalc):
                                 ]
                             logger.info("filtered_rows from pandas where created")
                         
-                            # non verbose file
-                            #for index, row in filtered_rows.iterrows():
-                            #    incorrect_value = row[column_check_idx]
-                            #    unique_code = "--"
-                            #    updated_desc = f"The column {column_check} includes incorrect values"
-                                # Append the row to the log sheet
-                            #    log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value])
-                            
-                            # logger.info("the log_sheet was created")
-                            # In case of a verbose file
-                            #    filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
-                            self.verbose_log_file(column_check_idx,
-                                                            sheet_name,
-                                                            column_rel,
-                                                            desc,
-                                                            seed_key,
-                                                            column_check,
-                                                            log_sheet,
-                                                            filtered_rows
-                                                            )
+                            self.verbose_log_file(
+                                column_check_idx,
+                                sheet_name,
+                                column_rel,
+                                desc,
+                                seed_key,
+                                column_check,
+                                log_sheet,
+                                filtered_rows,
+                                summary_data
+                            )
                         else:
                             logger.info(f"The column check {column_check} is OK")
                 
@@ -416,6 +412,9 @@ class ShapeCalc(BaseCalc):
             # Remove DataFrame from memory and trigger garbage collection
             del pd_sheet
             gc.collect()
+
+        # Add the summary after all sheets are processed
+        self.add_summary_sheet(summary_data)
         
         self.task_progress = self.task_progress + 20
     
@@ -485,7 +484,8 @@ class ShapeCalc(BaseCalc):
                          seed_key, 
                          column_check, 
                          log_sheet, 
-                         filtered_rows):
+                         filtered_rows,
+                         summary_data):
         # Iterate through the filtered rows and retrieve the necessary information
         for index, row in filtered_rows.iterrows():
             incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
@@ -515,5 +515,8 @@ class ShapeCalc(BaseCalc):
 
             # Append the row to the log sheet
             log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
+
+            # Track summary entry
+            summary_data[(seed_key, sheet_name, column_check, updated_desc)] += 1
 
     

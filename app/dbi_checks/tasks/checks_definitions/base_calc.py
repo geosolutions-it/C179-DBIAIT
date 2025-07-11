@@ -5,6 +5,7 @@ import json
 import datetime
 import pandas as pd
 import gc
+from collections import defaultdict
 
 from django.utils import timezone
 from django.db.models import ObjectDoesNotExist
@@ -293,6 +294,9 @@ class BaseCalc:
     
     def log_file_manager(self, seed_wb, seed_name):
 
+        # Initialize summary tracking
+        summary_data = defaultdict(int)
+        
         ## Configuration setup
         # prepare the logs workbook
         # Remove default sheet if it exists
@@ -468,6 +472,9 @@ class BaseCalc:
                             # Append the row to the log sheet
                             log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
 
+                            # Track summary entry
+                            summary_data[(seed_key, sheet_name, column_check, updated_desc)] += 1
+
                 end_date = timezone.now()
 
                 self.import_process_state(self.orm_task.id, 
@@ -482,6 +489,9 @@ class BaseCalc:
             # Remove DataFrame from memory and trigger garbage collection
             del pd_sheet
             gc.collect()
+
+        # Add the summary after all sheets are processed
+        self.add_summary_sheet(summary_data)
         
         self.task_progress = self.task_progress + 20
 
@@ -590,3 +600,17 @@ class BaseCalc:
                                            seed_name=seed_name,
                                            ).main_calc()
         return extra_calc_values
+    
+    def add_summary_sheet(self, summary_data):
+        summary_sheet_name = "Summary"
+        if summary_sheet_name in self.log_workbook.sheetnames:
+            del self.log_workbook[summary_sheet_name]
+
+        summary_sheet = self.log_workbook.create_sheet(summary_sheet_name)
+        summary_sheet.append(["File", "Foglio", "Colonna check", "Descrizione", "Numero errori"])
+
+        # Add the same style to the summary sheet
+        self.set_logfile_style(summary_sheet)
+
+        for (seed, sheet_name, column_check, updated_desc), count in summary_data.items():
+            summary_sheet.append([seed, sheet_name, column_check, updated_desc, count])
