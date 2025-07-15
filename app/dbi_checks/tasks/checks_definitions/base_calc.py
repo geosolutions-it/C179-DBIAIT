@@ -310,13 +310,14 @@ class BaseCalc:
                               "Foglio",
                               "Codice opera",
                               "Colonna check", 
-                              "Tipo check", 
-                              "Valore check errato col", 
-                              "Valore errato col1", 
-                              "Valore errato col2",
-                              "Valore errato col3",
-                              "Valore errato col4"
-
+                              "Descrizione", 
+                              "Valore colonna check", 
+                              "Valore colonna 1", 
+                              "Valore colonna 2",
+                              "Valore colonna 3",
+                              "Valore colonna 4",
+                              "Valore colonna 5",
+                              "Valore colonna 6"
                               ])
         else:
             log_sheet = self.log_workbook[sheet_name]
