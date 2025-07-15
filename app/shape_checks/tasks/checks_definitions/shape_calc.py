@@ -45,7 +45,8 @@ class ShapeCalc(BaseCalc):
         export_dir: pathlib.Path,
         file_year_required: bool = False,
         task_progress: int = 0,
-        log_workbook = None
+        log_workbook = None,
+        summary_data = None,
     ):
         super().__init__(orm_task,
                          imported_file,
@@ -56,6 +57,7 @@ class ShapeCalc(BaseCalc):
                          file_year_required,
                          task_progress,
                          log_workbook,
+                         summary_data,
                          )
         self.imported_dbf_file = imported_dbf_file
         self.sheet_for_dbf = sheet_for_dbf
@@ -140,9 +142,6 @@ class ShapeCalc(BaseCalc):
             return False
 
     def log_file_manager(self, seed_wb, seed_name):
-
-        # Initialize summary tracking
-        summary_data = defaultdict(int)
         
         ## Configuration setup
         # prepare the logs workbook
@@ -357,8 +356,7 @@ class ShapeCalc(BaseCalc):
                                                   seed_key,
                                                   column_check,
                                                   log_sheet,
-                                                  filtered_rows,
-                                                  summary_data
+                                                  filtered_rows
                                                   )
                         else:
                             logger.info(f"The column check {column_check} is OK")
@@ -392,8 +390,7 @@ class ShapeCalc(BaseCalc):
                                 seed_key,
                                 column_check,
                                 log_sheet,
-                                filtered_rows,
-                                summary_data
+                                filtered_rows
                             )
                         else:
                             logger.info(f"The column check {column_check} is OK")
@@ -412,9 +409,6 @@ class ShapeCalc(BaseCalc):
             # Remove DataFrame from memory and trigger garbage collection
             del pd_sheet
             gc.collect()
-
-        # Add the summary after all sheets are processed
-        self.add_summary_sheet(summary_data)
         
         self.task_progress = self.task_progress + 20
     
@@ -485,7 +479,7 @@ class ShapeCalc(BaseCalc):
                          column_check, 
                          log_sheet, 
                          filtered_rows,
-                         summary_data):
+                         ):
         # Iterate through the filtered rows and retrieve the necessary information
         for index, row in filtered_rows.iterrows():
             incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
@@ -517,6 +511,6 @@ class ShapeCalc(BaseCalc):
             log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
 
             # Track summary entry
-            summary_data[(seed_key, sheet_name, column_check, updated_desc)] += 1
+            self.summary_data[(seed_key, sheet_name, column_check)] += 1
 
     

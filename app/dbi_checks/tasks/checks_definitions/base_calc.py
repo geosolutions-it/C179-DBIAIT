@@ -37,7 +37,8 @@ class BaseCalc:
         export_dir: pathlib.Path,
         file_year_required: bool = False,
         task_progress: int = 0,
-        log_workbook = None
+        log_workbook = None,
+        summary_data = None,
     ):
         """
         Initialization function of data export
@@ -56,6 +57,7 @@ class BaseCalc:
         self.file_year_required = file_year_required
         self.task_progress = task_progress
         self.log_workbook = log_workbook
+        self.summary_data = summary_data if summary_data is not None else defaultdict(int)
 
         self.logger = None
 
@@ -293,9 +295,6 @@ class BaseCalc:
         return last_row
     
     def log_file_manager(self, seed_wb, seed_name):
-
-        # Initialize summary tracking
-        summary_data = defaultdict(int)
         
         ## Configuration setup
         # prepare the logs workbook
@@ -474,7 +473,7 @@ class BaseCalc:
                             log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
 
                             # Track summary entry
-                            summary_data[(seed_key, sheet_name, column_check, updated_desc)] += 1
+                            self.summary_data[(seed_key, sheet_name, column_check)] += 1
 
                 end_date = timezone.now()
 
@@ -490,9 +489,6 @@ class BaseCalc:
             # Remove DataFrame from memory and trigger garbage collection
             del pd_sheet
             gc.collect()
-
-        # Add the summary after all sheets are processed
-        self.add_summary_sheet(summary_data)
         
         self.task_progress = self.task_progress + 20
 
@@ -608,10 +604,10 @@ class BaseCalc:
             del self.log_workbook[summary_sheet_name]
 
         summary_sheet = self.log_workbook.create_sheet(summary_sheet_name)
-        summary_sheet.append(["File", "Foglio", "Colonna check", "Descrizione", "Numero errori"])
+        summary_sheet.append(["File", "Foglio", "Colonna check", "Numero errori"])
 
         # Add the same style to the summary sheet
         self.set_logfile_style(summary_sheet)
 
-        for (seed, sheet_name, column_check, updated_desc), count in summary_data.items():
-            summary_sheet.append([seed, sheet_name, column_check, updated_desc, count])
+        for (seed, sheet_name, column_check), count in summary_data.items():
+            summary_sheet.append([seed, sheet_name, column_check, count])
