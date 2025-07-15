@@ -453,8 +453,8 @@ class ShapeCalc(BaseCalc):
     def get_the_unique_code(self, sheet_name, row):
             
         if sheet_name not in {"Controllo dati aggregati", "Controlli aggregati"}:
-            # retrieve the column B which includes the unique code of each record
-            unique_code_idx = self.parse_col_for_pd('A')
+            # retrieve the column D which includes the unique code (COD_TRATTO) of each record
+            unique_code_idx = self.parse_col_for_pd('D')
             unique_code = row[unique_code_idx]
             return unique_code
         else:
