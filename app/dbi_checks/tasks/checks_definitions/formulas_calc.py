@@ -41,6 +41,7 @@ class CalcFormulas:
                  analysis_year: int,
                  external_wb_path: str = None,
                  seed_name: str = None,
+                 correct_values: list = None,
                  ):
         self.workbook = workbook
         self.sheet = sheet
@@ -51,13 +52,20 @@ class CalcFormulas:
         self.analysis_year = analysis_year
         self.external_wb_path = external_wb_path
         self.seed_name = seed_name
+        self.correct_values = correct_values
 
     def main_calc(self):
+        
+        # A list which will include all the columns with incorrect values (which they are not OK)
+        verif_checks_results = []
         
         # Iterate through the columns in the specified range
         for col_idx in range(self.start_col, self.end_col + 1):
 
             col_letter = get_column_letter(col_idx)
+
+            # Get the correct value if it exists
+            correct_value = self.correct_values.get(col_letter) if self.correct_values else None
 
             # Dictionary to set the variables of the formula
             variables = {}
@@ -187,6 +195,13 @@ class CalcFormulas:
                     calculated_result = f"Error: {e}"
 
                 result = calculated_result.item() if hasattr(calculated_result, "item") else calculated_result
+                
+                # Check if the result is the correct value in case of the column checks
+                if correct_value is not None:
+                    if result != correct_value:
+                        # store this as 1 which means that this column is not OK
+                        verif_checks_results.append(col_letter)
+                
                 # convert the float to int if the result is float
                 #if isinstance(result, float):
                 #    result = int(round(result))
@@ -196,7 +211,7 @@ class CalcFormulas:
                 cell.value = result
 
         # return the caclulated_result as single value and not as a numpy array e.g Array("OK", dtype=object)
-        return self.sheet
+        return (self.sheet, verif_checks_results)
 
     def calculate_range(self, formula: str,  col_range: str, sheet_name: str = None, external_wb: openpyxl.workbook.Workbook = None) -> list:
         """

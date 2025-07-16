@@ -56,11 +56,10 @@ class ImportStateHelper:
 
 class ShapeCalcFormulas(CalcFormulas):
 
-    def __init__(self, *args, main_sheet=None, task_id=None, correct_values=None, columns_to_avoid=None, **kwargs):
+    def __init__(self, *args, main_sheet=None, task_id=None, columns_to_avoid=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.main_sheet = main_sheet
         self.task_id = task_id
-        self.correct_values = correct_values
         self.columns_to_avoid = columns_to_avoid
 
     def main_calc(self):
