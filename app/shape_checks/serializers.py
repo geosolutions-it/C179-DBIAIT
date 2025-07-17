@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from django.conf import settings
 from rest_framework import serializers
 
 from app.shape_checks.models import Task_CheckShape, ShapeCheckProcessState
@@ -48,17 +49,5 @@ class ShapeCheckExportTaskSerializer(serializers.ModelSerializer):
         return check_type_mapping.get(instance.check_type, instance.check_type)
     
     def get_group(self, obj):
-        group_mapping = {
-            "__all__": "Tutti i gruppi",
-            "gruppo_codice_rete_e_tratto": "Codice Rete e Tratto",
-            "gruppo_materiale_e_diametro": "Materiale e Diametro",
-            "gruppo_anno_e_lunghezza": "Anno e Lunghezza",
-            "gruppo_stato_conservazione_tipo_rete_tipo_acqua": "Stato Conservazione, Tipo Rete, Tipo Acqua",
-            "gruppo_funzionamento_copertura_profondita": "Funzionamento, Copertura, Profondità",
-            "gruppo_pressioni_telecontrollo_e_protezione_catodica": "Pressioni, Telecontrollo e Protezione Catodica",
-            "gruppo_allacci_riparazioni_misuratori": "Allacci, Riparazioni, Misuratori",
-            "gruppo_stato_opera_e_completezza": "Stato Opera e Completezza",
-            "gruppo_controlli_aggregati": "Controlli Aggregati"
-
-        }
+        group_mapping = getattr(settings, "SHAPE_GROUP_MAPPING", {})
         return group_mapping.get(obj.group, obj.group or "---")

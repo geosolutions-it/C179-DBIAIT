@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from django.conf import settings
 from rest_framework import serializers
 
 from app.dbi_checks.models import Task_CheckDbi, ProcessState
@@ -54,14 +55,5 @@ class CheckExportTaskSerializer(serializers.ModelSerializer):
         return obj.task_log[:250]
     
     def get_group(self, obj):
-        group_mapping = {
-            "__all__": "Tutti i gruppi",
-            "gruppo_captazioni": "Captazioni",
-            "gruppo_impianti_acquedotto": "Impianti Acquedotto",
-            "gruppo_reti_acquedotto_adduttrici": "Reti Acquedotto Adduttrici",
-            "gruppo_reti_acquedotto_distribuzioni": "Reti Acquedotto Distribuzioni",
-            "gruppo_impianti_fognatura": "Impianti Fognatura",
-            "gruppo_reti_fognatura_collettori": "Reti Fognatura Collettori",
-            "gruppo_reti_fognatura_fognature": "Reti Fognatura Fognature"
-        }
+        group_mapping = getattr(settings, "DBI_GROUP_MAPPING", {})
         return group_mapping.get(obj.group, obj.group or "---")

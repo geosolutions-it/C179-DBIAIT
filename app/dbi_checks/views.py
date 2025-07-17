@@ -258,7 +258,7 @@ class PrioritizedDataCheckStart(BaseCheckStart):
     check_type = CheckType.DP
     task_class = PrioritizedDataCheckTask
     groups_config = settings.DBI_GROUPS
-    groups_key = "DATI_PRIORITATI_GROUPS"
+    groups_key = "DATI_PRIORITARI_GROUPS"
 
 class DataQualityCheckStart(BaseCheckStart):
     template_name = u'dbi_checks/active-data-quality-check.html'
