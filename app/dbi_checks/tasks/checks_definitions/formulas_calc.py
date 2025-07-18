@@ -352,7 +352,7 @@ class CalcFormulas:
 
 		# Generate all column names between start and end
         result = [
-		    (get_column_letter(col), row)
+		    self.sheet[f"{get_column_letter(col)}{row}"].value
 		    for col in range(start_index, end_index + 1)
 		]
 
