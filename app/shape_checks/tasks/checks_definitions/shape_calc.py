@@ -60,13 +60,25 @@ class ShapeCalc(BaseCalc):
         self.sheet_for_dbf = sheet_for_dbf
     
     def drag_formulas(self, seed_wb):
-        
-        # Before dragging the formulas we have to copy
-        # the DBF content to the specialized sheet
+        # Before dragging the formulas we have to copy the DBF content
         dbf_copy_result = self.copy_from_dbf(seed_wb)
 
-        if dbf_copy_result:
+        if not dbf_copy_result:
+            return  # Stop if DBF copy failed
+
+        sheets_to_skip = {"Controllo dati aggregati", "Controlli aggregati"}
+        # Temporarily filter formulas_config to exclude sheets I want to skip
+        original_config = self.formulas_config
+        self.formulas_config = {
+            sheet: cfg for sheet, cfg in original_config.items()
+            if sheet not in sheets_to_skip
+        }
+
+        try:
             super().drag_formulas(seed_wb)
+        finally:
+            # Restore original formulas_config to avoid affecting other methods
+            self.formulas_config = original_config
     
     def copy_from_dbf(self, seed_wb):
         try:
