@@ -463,8 +463,12 @@ class SpecShapeCalcFormulas:
                                               3: "D"})  # Column N or O (Condition), Column D (Value to check)
 
         # In other sheets beyond the main sheet, the start row is the row 4
-        sheet1_set = set(df_sheet1.iloc[3:, 1])  # Column B of Distrib_tronchi
-        sheet2_set = set(df_sheet2.iloc[3:, 1])  # Column B of Addut_tronchi
+        # in excel but in pandas is row 3 because the empty rows are removed
+        start_index_B = 2
+        sheet1_set = set(df_sheet1.iloc[start_index_B:, 1])  # Column B of Distrib_tronchi
+        sheet2_set = set(df_sheet2.iloc[start_index_B:, 1])  # Column B of Addut_tronchi
+
+        import pdb; pdb.set_trace()
 
         # Apply the formula logic using .map()
         def apply_formula(row):
