@@ -468,8 +468,6 @@ class SpecShapeCalcFormulas:
         sheet1_set = set(df_sheet1.iloc[start_index_B:, 1])  # Column B of Distrib_tronchi
         sheet2_set = set(df_sheet2.iloc[start_index_B:, 1])  # Column B of Addut_tronchi
 
-        import pdb; pdb.set_trace()
-
         # Apply the formula logic using .map()
         def apply_formula(row):
             if row[col_var] == col_value:
