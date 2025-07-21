@@ -56,11 +56,10 @@ class ImportStateHelper:
 
 class ShapeCalcFormulas(CalcFormulas):
 
-    def __init__(self, *args, main_sheet=None, task_id=None, correct_values=None, columns_to_avoid=None, **kwargs):
+    def __init__(self, *args, main_sheet=None, task_id=None, columns_to_avoid=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.main_sheet = main_sheet
         self.task_id = task_id
-        self.correct_values = correct_values
         self.columns_to_avoid = columns_to_avoid
 
     def main_calc(self):
@@ -146,12 +145,12 @@ class ShapeCalcFormulas(CalcFormulas):
                            
                             col_ranges = re.sub(r'(\d+)(?=\$?\d*$)', '', col_ranges)  # Remove row number after the first column
                             formatted_variable = f"[{linked_number}]{sheet_name.upper()}!{col_ranges}"
-                            variables[formatted_variable] = self.calculate_range(formula, col_ranges, sheet_name, external_wb)
+                            variables[formatted_variable] = self.calculate_range(formula, col_ranges, sheet_name, external_wb, context_sheet_name=self.main_sheet)
                         else:
                             formatted_variable = f"{sheet_name.upper()}!{col_ranges}"  # e.g FIUMI_INRETI!A:A
-                            variables[formatted_variable] = self.calculate_range(formula, col_ranges, sheet_name)
+                            variables[formatted_variable] = self.calculate_range(formula, col_ranges, sheet_name, context_sheet_name=self.main_sheet)
                     else:
-                        variables[col_ranges] = self.calculate_range(formula, col_ranges)
+                        variables[col_ranges] = self.calculate_range(formula, col_ranges, context_sheet_name=self.main_sheet)
                 
             if row_based_ranges:
 
@@ -231,6 +230,72 @@ class ShapeCalcFormulas(CalcFormulas):
             logger.info(f"Column {col_letter} was calculated")
         # return the caclulated_result as single value and not as a numpy array e.g Array("OK", dtype=object)
         return (self.sheet, verif_checks_results)
+    
+    def calculate_range(
+            self,
+            formula: str,
+            col_range: str,
+            sheet_name: str = None,
+            external_wb: openpyxl.workbook.Workbook = None,
+            context_sheet_name: str = None
+        ) -> list:
+        vlookup_pattern = r'\bVLOOKUP\('
+
+        if external_wb:
+            current_sheet = external_wb[sheet_name]
+        else:
+            current_sheet = self.sheet if not sheet_name else self.workbook[sheet_name]
+
+        col_range = col_range.replace('$', '')
+        col_range = self.clean_range(col_range)
+
+        start_col, end_col = col_range.split(':')
+        start_num = column_index_from_string(start_col)
+        end_num = column_index_from_string(end_col)
+
+        values = []
+
+        if context_sheet_name in {"Controllo dati aggregati", "Controlli aggregati"}:
+            # For these sheets, start from row 1 and skip None values
+            start_row = 1
+            for col_num in range(start_num, end_num + 1):
+                col_letter = get_column_letter(col_num)
+                last_row = self.get_last_data_row_in_column(current_sheet, col_letter)
+
+                column_values = []
+                for row in range(start_row, last_row + 1):
+                    val = current_sheet[f'{col_letter}{row}'].value
+                    if val not in (None, ""):
+                        column_values.append(val)
+
+                values.append(column_values)
+
+        else:
+            # For all other sheets, defer to parent behavior (including empty cells)
+            start_row = super().get_the_first_row_from_a_range(col_range)
+
+            for col_num in range(start_num, end_num + 1):
+                col_letter = get_column_letter(col_num)
+                last_row = self.get_last_data_row_in_column(current_sheet, col_letter)
+
+                column_values = []
+                for row in range(start_row, last_row + 1):
+                    val = current_sheet[f'{col_letter}{row}'].value
+                    column_values.append(val)
+
+                values.append(column_values)
+
+        if re.search(vlookup_pattern, formula, re.IGNORECASE):
+            values = [list(tup) for tup in zip(*values)]
+
+        return values
+
+    def get_last_data_row_in_column(self, sheet, col_letter: str) -> int:
+        for row in reversed(range(1, sheet.max_row + 1)):
+            cell_value = sheet[f"{col_letter}{row}"].value
+            if cell_value not in (None, ""):
+                return row
+        return 0
     
     def replace_with_year(self, formula):
         pattern = r"\$?'ANNO INPUT'!\$?[A-Z]+\$?\d+|\$?'ANNO INPUT'![A-Z]+\d+"
@@ -398,8 +463,10 @@ class SpecShapeCalcFormulas:
                                               3: "D"})  # Column N or O (Condition), Column D (Value to check)
 
         # In other sheets beyond the main sheet, the start row is the row 4
-        sheet1_set = set(df_sheet1.iloc[3:, 1])  # Column B of Distrib_tronchi
-        sheet2_set = set(df_sheet2.iloc[3:, 1])  # Column B of Addut_tronchi
+        # in excel but in pandas is row 3 because the empty rows are removed
+        start_index_B = 2
+        sheet1_set = set(df_sheet1.iloc[start_index_B:, 1])  # Column B of Distrib_tronchi
+        sheet2_set = set(df_sheet2.iloc[start_index_B:, 1])  # Column B of Addut_tronchi
 
         # Apply the formula logic using .map()
         def apply_formula(row):

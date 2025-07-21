@@ -4,6 +4,7 @@ import traceback
 import shutil
 import tempfile
 from openpyxl.workbook import Workbook
+from collections import defaultdict
 
 from django.db.models import Q, ObjectDoesNotExist
 from django.conf import settings
@@ -136,8 +137,9 @@ class ShapeChecksBaseTask(BaseTask):
                 
                 # Create a single log workbook
                 log_workbook = Workbook()
+                summary_data = defaultdict(int)
                 
-                result = ShapeCalc(orm_task, 
+                shape_calc = ShapeCalc(orm_task, 
                                   xlsx_file_uploaded_path,
                                   dbf_file_uploaded_path,
                                   self.sheet_for_dbf,
@@ -147,12 +149,15 @@ class ShapeChecksBaseTask(BaseTask):
                                   tmp_checks_export_dir,
                                   file_year_required,
                                   task_progress = 20,
-                                  log_workbook = log_workbook
-                                  ).run()
+                                  log_workbook = log_workbook,
+                                  summary_data=summary_data
+                                  )
+                result = shape_calc.run()
             
                 # zip the final file
                 if result:
 
+                    shape_calc.add_summary_sheet(summary_data)
                     # Save logs only once after both runs
                     log_workbook.save(tmp_checks_export_dir / "logs.xlsx")
                     # zip final output in export directory

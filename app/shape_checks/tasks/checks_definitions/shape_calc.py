@@ -4,6 +4,7 @@ import pathlib
 import pandas as pd
 from dbfread import DBF
 import gc
+from collections import defaultdict
 
 from openpyxl.formula.translate import Translator
 from openpyxl import load_workbook
@@ -44,7 +45,8 @@ class ShapeCalc(BaseCalc):
         export_dir: pathlib.Path,
         file_year_required: bool = False,
         task_progress: int = 0,
-        log_workbook = None
+        log_workbook = None,
+        summary_data = None,
     ):
         super().__init__(orm_task,
                          imported_file,
@@ -55,6 +57,7 @@ class ShapeCalc(BaseCalc):
                          file_year_required,
                          task_progress,
                          log_workbook,
+                         summary_data,
                          )
         self.imported_dbf_file = imported_dbf_file
         self.sheet_for_dbf = sheet_for_dbf
@@ -151,7 +154,7 @@ class ShapeCalc(BaseCalc):
             return False
 
     def log_file_manager(self, seed_wb, seed_name):
-
+        
         ## Configuration setup
         # prepare the logs workbook
         # Remove default sheet if it exists
@@ -165,12 +168,12 @@ class ShapeCalc(BaseCalc):
                               "Foglio",
                               "Codice opera",
                               "Colonna check", 
-                              "Tipo check", 
-                              "Valore check errato col", 
-                              "Valore errato col1", 
-                              "Valore errato col2",
-                              "Valore errato col3",
-                              "Valore errato col4"
+                              "Descrizione", 
+                              "Valore colonna check", 
+                              "Valore colonna 1", 
+                              "Valore colonna 2",
+                              "Valore colonna 3",
+                              "Valore colonna 4"
 
                               ])
         else:
@@ -401,26 +404,16 @@ class ShapeCalc(BaseCalc):
                                 ]
                             logger.info("filtered_rows from pandas where created")
                         
-                            # non verbose file
-                            #for index, row in filtered_rows.iterrows():
-                            #    incorrect_value = row[column_check_idx]
-                            #    unique_code = "--"
-                            #    updated_desc = f"The column {column_check} includes incorrect values"
-                                # Append the row to the log sheet
-                            #    log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value])
-                            
-                            # logger.info("the log_sheet was created")
-                            # In case of a verbose file
-                            #    filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
-                            self.verbose_log_file(column_check_idx,
-                                                            sheet_name,
-                                                            column_rel,
-                                                            desc,
-                                                            seed_key,
-                                                            column_check,
-                                                            log_sheet,
-                                                            filtered_rows
-                                                            )
+                            self.verbose_log_file(
+                                column_check_idx,
+                                sheet_name,
+                                column_rel,
+                                desc,
+                                seed_key,
+                                column_check,
+                                log_sheet,
+                                filtered_rows
+                            )
                         else:
                             logger.info(f"The column check {column_check} is OK")
                 
@@ -476,8 +469,8 @@ class ShapeCalc(BaseCalc):
     def get_the_unique_code(self, sheet_name, row):
             
         if sheet_name not in {"Controllo dati aggregati", "Controlli aggregati"}:
-            # retrieve the column B which includes the unique code of each record
-            unique_code_idx = self.parse_col_for_pd('A')
+            # retrieve the column D which includes the unique code (COD_TRATTO) of each record
+            unique_code_idx = self.parse_col_for_pd('D')
             unique_code = row[unique_code_idx]
             return unique_code
         else:
@@ -503,7 +496,8 @@ class ShapeCalc(BaseCalc):
                          seed_key, 
                          column_check, 
                          log_sheet, 
-                         filtered_rows):
+                         filtered_rows,
+                         ):
         # Iterate through the filtered rows and retrieve the necessary information
         for index, row in filtered_rows.iterrows():
             incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
@@ -533,5 +527,8 @@ class ShapeCalc(BaseCalc):
 
             # Append the row to the log sheet
             log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
+
+            # Track summary entry
+            self.summary_data[(seed_key, sheet_name, column_check)] += 1
 
     

@@ -3520,7 +3520,7 @@
                 },
                 "colonna_check": "E",
                 "check": "Verifica volume prelevato opere in potab",
-                "colonna_rel": null,
+                "colonna_rel": "B",
                 "descrizione": "Volume immesso in rete diverso da zero su opera in potabilizzazione",
                 "NOTE": null,
                 "valore": 0
@@ -3879,7 +3879,7 @@
                 },
                 "colonna_check": "E",
                 "check": "Verifica volume prelevato opere in potab",
-                "colonna_rel": null,
+                "colonna_rel": "B",
                 "descrizione": "Volume immesso in rete diverso da zero su opera in potabilizzazione",
                 "NOTE": null,
                 "valore": 0
@@ -15149,7 +15149,8 @@
                 "colonna_check": "AK",
                 "check_name": "Controllo congruenza COD_TRATTO 2",
                 "colonna_rel": [
-                    "D"
+                    "D", 
+                    "I"
                 ],
                 "descrizione": "COD_TRATTO non presente nei fogli Distrib_tronchi/Addut_tronchi",
                 "valore": 0
@@ -15199,7 +15200,8 @@
                 "colonna_check": "AP",
                 "check_name": "Controllo completezza DIAMETRO",
                 "colonna_rel": [
-                    "G"
+                    "G",
+                    "I"
                 ],
                 "descrizione": "DIAMETRO non valido",
                 "valore": 0
@@ -15209,7 +15211,8 @@
                 "colonna_check": "AQ",
                 "check_name": "Controllo completezza IDX_DIAMET",
                 "colonna_rel": [
-                    "H"
+                    "H",
+                    "I"
                 ],
                 "descrizione": "IDX_DIAMET non valido",
                 "valore": 0
@@ -15219,7 +15222,8 @@
                 "colonna_check": "AR",
                 "check_name": "Controllo congruenza IDX_DIAMET",
                 "colonna_rel": [
-                    "H"
+                    "H",
+                    "I"
                 ],
                 "descrizione": "IDX_DIAMETRO non coerente con anno di posa",
                 "valore": 0
@@ -15653,7 +15657,7 @@
                 "colonna_rel": [
                     "D"
                 ],
-                "descrizione": "COD_TRATTO non presente nei fogli Distrib_tronchi/Addut_tronchi",
+                "descrizione": "COD_TRATTO non presente nei fogli Fognat_tronchi/Collett_tronchi",
                 "valore": 0
             },
             {
@@ -15703,7 +15707,7 @@
                 "colonna_rel": [
                     "G"
                 ],
-                "descrizione": "DIAMETRO non valido",
+                "descrizione": "SEZIONE non valida",
                 "valore": 0
             },
             {
@@ -15711,7 +15715,8 @@
                 "colonna_check": "AO",
                 "check_name": "Controllo completezza DIAMETRO",
                 "colonna_rel": [
-                    "H"
+                    "H",
+                    "J"
                 ],
                 "descrizione": "DIAMETRO fuori range",
                 "valore": 0
@@ -15721,7 +15726,8 @@
                 "colonna_check": "AP",
                 "check_name": "Controllo completezza IDX_DIAMET",
                 "colonna_rel": [
-                    "I"
+                    "I",
+                    "J"
                 ],
                 "descrizione": "IDX_DIAMET non valido",
                 "valore": 0
@@ -15731,7 +15737,8 @@
                 "colonna_check": "AQ",
                 "check_name": "Controllo congruenza IDX_DIAMET",
                 "colonna_rel": [
-                    "I"
+                    "I",
+                    "J"
                 ],
                 "descrizione": "IDX_DIAMETRO non coerente con anno di posa",
                 "valore": 0
