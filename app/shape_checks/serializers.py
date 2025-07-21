@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from django.conf import settings
 from rest_framework import serializers
 
 from app.shape_checks.models import Task_CheckShape, ShapeCheckProcessState
@@ -19,10 +20,11 @@ class ShapeCheckExportTaskSerializer(serializers.ModelSerializer):
     second_file_name = serializers.SerializerMethodField()
     analysis_year = serializers.CharField(source='xlsx_dbf.analysis_year', read_only=True)
     check_name = serializers.SerializerMethodField()
+    group = serializers.SerializerMethodField()
 
     class Meta:
         model = Task_CheckShape
-        fields = (u'id', u'user', u'file_name', u'second_file_name', u'check_name', u'start_date', u'end_date',
+        fields = (u'id', u'user', u'file_name', u'second_file_name', u'check_name', u'group', u'start_date', u'end_date',
                   u'analysis_year', u'status', u'style_class', u'status_icon', 
                   u'task_log')
     
@@ -45,3 +47,7 @@ class ShapeCheckExportTaskSerializer(serializers.ModelSerializer):
             "FGN": "SHP Fognatura"
         }
         return check_type_mapping.get(instance.check_type, instance.check_type)
+    
+    def get_group(self, obj):
+        group_mapping = getattr(settings, "SHAPE_GROUP_MAPPING", {})
+        return group_mapping.get(obj.group, obj.group or "---")

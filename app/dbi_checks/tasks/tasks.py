@@ -34,6 +34,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
         file_path2: str,
         name: str,
         check_type: str,
+        group: str,
     ):
 
         # Check if the xlsx files exists
@@ -80,6 +81,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
             imported=True,
             check_type=check_type,
             name=name,
+            group=group
         )
         current_task.save()
 

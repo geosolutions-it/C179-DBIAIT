@@ -360,8 +360,34 @@ SHEETS_CONFIG = os.path.join(BASE_DIR, "checks", "sheets_mapping.json")
 DBI_FORMULAS = os.path.join(BASE_DIR, "checks", "dbi_formulas.json")
 LOG_MAPPING = os.path.join(BASE_DIR, "checks", "log_mapping.json")
 VERIF_CHECKS = os.path.join(BASE_DIR, "checks", "verif_checks_mapping.json")
-SHAPE_FORMULAS = os.path.join(BASE_DIR, "checks", "shape_formulas.json")
-SHAPE_VERIF_FORMULAS = os.path.join(BASE_DIR, "checks", "shape_verif_formulas.json")
 DBF_TO_SHEET = os.path.join(BASE_DIR, "checks", "dbf_to_sheet.json")
 EXTRA_DB_PRIOR_FORMULAS = os.path.join(BASE_DIR, "checks", "extra_db_prioritari_formulas.json")
 SPEC_SHAPE_FORMULAS = os.path.join(BASE_DIR, "checks", "spec_shape_formulas.json")
+DBI_GROUPS = os.path.join(BASE_DIR, "checks", "dbi_sheet_groups.json")
+SHAPE_GROUPS = os.path.join(BASE_DIR, "checks", "shape_column_groups.json")
+
+# Group configuration for the UI
+DBI_GROUP_MAPPING = {
+    "__all__": "Tutti i gruppi",
+    "gruppo_captazioni": "Captazioni",
+    "gruppo_impianti_acquedotto": "Impianti Acquedotto",
+    "gruppo_reti_acquedotto_adduttrici": "Reti Acquedotto Adduttrici",
+    "gruppo_reti_acquedotto_distribuzioni": "Reti Acquedotto Distribuzioni",
+    "gruppo_impianti_fognatura": "Impianti Fognatura",
+    "gruppo_reti_fognatura_collettori": "Reti Fognatura Collettori",
+    "gruppo_reti_fognatura_fognature": "Reti Fognatura Fognature"
+}
+
+SHAPE_GROUP_MAPPING = {
+    "__all__": "Tutti i gruppi",
+    "gruppo_codice_rete_e_tratto": "Codice Rete e Tratto",
+    "gruppo_materiale_e_diametro": "Materiale e Diametro",
+    "gruppo_anno_e_lunghezza": "Anno e Lunghezza",
+    "gruppo_stato_conservazione_tipo_rete_tipo_acqua": "Stato Conservazione, Tipo Rete, Tipo Acqua",
+    "gruppo_funzionamento_copertura_profondita": "Funzionamento, Copertura, Profondità",
+    "gruppo_pressioni_telecontrollo_e_protezione_catodica": "Pressioni, Telecontrollo e Protezione Catodica",
+    "gruppo_allacci_riparazioni_misuratori": "Allacci, Riparazioni, Misuratori",
+    "gruppo_stato_opera_e_completezza": "Stato Opera e Completezza",
+    "gruppo_controlli_aggregati": "Controlli Aggregati"
+
+}

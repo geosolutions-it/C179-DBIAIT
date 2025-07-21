@@ -1,0 +1,94 @@
+{
+  "DATI_PRIORITARI_GROUPS": {
+    "__all__": {
+      "label": "Tutti i gruppi",
+      "sheets": [
+        "Fiumi", "Laghi", "Pozzi", "Sorgenti",
+        "Potabilizzatori", "Adduttrici", "Addut_tronchi", "Accumuli",
+        "Pompaggi", "Distribuzioni", "Distrib_tronchi",
+        "Fognature", "Fognat_tronchi", "Sollevamenti",
+        "Collettori", "Collett_tronchi", "Depuratori", "Scaricatori"
+      ]
+    },
+    "gruppo_captazioni": {
+      "label": "Gruppo Captazioni",
+      "sheets": ["Fiumi", "Laghi", "Pozzi", "Sorgenti"]
+    },
+    "gruppo_impianti_acquedotto": {
+      "label": "Gruppo Impianti Acquedotto",
+      "sheets": ["Potabilizzatori", "Accumuli", "Pompaggi"]
+    },
+    "gruppo_reti_acquedotto_adduttrici": {
+      "label": "Gruppo Reti Acquedotto Adduttrici",
+      "sheets": ["Adduttrici", "Addut_tronchi"]
+    },
+    "gruppo_reti_acquedotto_distribuzioni": {
+      "label": "Gruppo Reti Acquedotto Distribuzioni",
+      "sheets": ["Distribuzioni", "Distrib_tronchi"]
+    },
+    "gruppo_impianti_fognatura": {
+      "label": "Gruppo Impianti Fognatura",
+      "sheets": ["Sollevamenti", "Depuratori", "Scaricatori"]
+    },
+    "gruppo_reti_fognatura_collettori": {
+      "label": "Gruppo Reti Fognatura Collettori",
+      "sheets": ["Collettori", "Collett_tronchi"]
+    },
+    "gruppo_reti_fognatura_fognature": {
+      "label": "Gruppo Reti Fognatura Fognature",
+      "sheets": ["Fognature", "Fognat_tronchi"]
+    }
+  },
+  "BONTA_DEI_DATI_GROUPS": {
+    "__all__": {
+      "label": "Tutti i gruppi",
+      "sheets": [
+        "Fiumi", "Fiumi_inpotab", "Laghi", "Laghi_inpotab",
+        "Pozzi", "Pozzi_pompe", "Pozzi_inpotab", "Sorgenti",
+        "Sorgenti_inpotab", "Potabilizzatori", "Potab_pompe", "Adduttrici",
+        "Addut_tronchi", "Accumuli", "Pompaggi", "Pompaggi_pompe",
+        "Distribuzioni", "Distrib_tronchi", "Fognature", "Fognat_tronchi",
+        "Sollevamenti", "Sollev_pompe", "Collettori", "Collett_tronchi",
+        "Depuratori", "Depurat_pompe", "Scaricatori"
+    ]
+    },
+    "gruppo_captazioni": {
+      "label": "Gruppo Captazioni",
+      "sheets": [
+        "Fiumi", "Fiumi_inpotab", "Laghi", 
+        "Laghi_inpotab", "Pozzi", "Pozzi_pompe", 
+        "Pozzi_inpotab", "Sorgenti", "Sorgenti_inpotab"
+      ]
+    },
+    "gruppo_impianti_acquedotto": {
+      "label": "Gruppo Impianti Acquedotto",
+      "sheets": [
+        "Potabilizzatori", "Potab_pompe", "Accumuli", 
+        "Pompaggi", "Pompaggi_pompe"
+      ]
+    },
+    "gruppo_reti_acquedotto_adduttrici": {
+      "label": "Gruppo Reti Acquedotto Adduttrici",
+      "sheets": ["Adduttrici", "Addut_tronchi"]
+    },
+    "gruppo_reti_acquedotto_distribuzioni": {
+      "label": "Gruppo Reti Acquedotto Distribuzioni",
+      "sheets": ["Distribuzioni", "Distrib_tronchi"]
+    },
+    "gruppo_impianti_fognatura": {
+      "label": "Gruppo Impianti Fognatura",
+      "sheets": [
+          "Sollevamenti", "Sollev_pompe", "Depuratori", 
+          "Depurat_pompe", "Scaricatori"
+        ]
+    },
+    "gruppo_reti_fognatura_collettori": {
+      "label": "Gruppo Reti Fognatura Collettori",
+      "sheets": ["Collettori", "Collett_tronchi"]
+    },
+    "gruppo_reti_fognatura_fognature": {
+      "label": "Gruppo Reti Fognatura Fognature",
+      "sheets": ["Fognature", "Fognat_tronchi"]
+    }
+  }
+}

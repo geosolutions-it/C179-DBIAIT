@@ -137,6 +137,7 @@ const table_function_mapper = {
                 data.file_name,
                 data.second_file_name,
                 data.check_name,
+                data.group || "",
                 get_local_date(data.start_date)  || "--/--/---" ,
                 get_local_date(data.end_date)  || "--/--/---" ,
                 data.analysis_year,

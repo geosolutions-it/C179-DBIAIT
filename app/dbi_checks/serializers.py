@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from django.conf import settings
 from rest_framework import serializers
 
 from app.dbi_checks.models import Task_CheckDbi, ProcessState
@@ -21,10 +22,11 @@ class CheckExportTaskSerializer(serializers.ModelSerializer):
     analysis_year = serializers.CharField(source='xlsx.analysis_year', read_only=True)
     check_name = serializers.SerializerMethodField()
     task_log = serializers.SerializerMethodField()
+    group = serializers.SerializerMethodField()
 
     class Meta:
         model = Task_CheckDbi
-        fields = (u'id', u'user', u'file_name', u'second_file_name', u'check_name', u'start_date', u'end_date',
+        fields = (u'id', u'user', u'file_name', u'second_file_name', u'check_name', u'group', u'start_date', u'end_date',
                   u'analysis_year', u'status', u'style_class', u'status_icon', 
                   u'task_log')
     
@@ -51,3 +53,7 @@ class CheckExportTaskSerializer(serializers.ModelSerializer):
     def get_task_log(self, obj):
         # trim the log to a shorter size due the complexity
         return obj.task_log[:250]
+    
+    def get_group(self, obj):
+        group_mapping = getattr(settings, "DBI_GROUP_MAPPING", {})
+        return group_mapping.get(obj.group, obj.group or "---")
