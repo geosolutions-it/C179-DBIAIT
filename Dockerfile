@@ -31,6 +31,7 @@ ENV PATH="/opt/conda/bin:$PATH"
 COPY . /usr/src/dbiait/
 COPY environment.yml /usr/src/dbiait/environment.yml
 
+RUN conda tos accept --override-channels --channel defaults
 RUN conda env create -f /usr/src/dbiait/environment.yml
 WORKDIR /usr/src/dbiait/
 
