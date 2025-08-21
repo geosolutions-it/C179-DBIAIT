@@ -49,7 +49,7 @@ class GpkgImportDefinition(BaseImportDefinition):
                 f"Import configuration file {settings.IMPORT_CONF_FILE} does not exist."
             )
 
-        with open(config_file, "r") as cfg:
+        with open(config_file, "r", encoding='utf-8') as cfg:
             config = json.load(cfg)
         fc_list = config["featureclasses"]
         fc_list.sort()

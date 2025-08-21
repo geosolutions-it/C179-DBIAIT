@@ -21,7 +21,7 @@ class Command(BaseCommand):
         for csv_file in file_available:
             db_cursor, db_conn = self.__create_db_connection()
             try:
-                with open(f'{options["folder_path"][0]}/{csv_file}') as f:
+                with open(f'{options["folder_path"][0]}/{csv_file}', encoding='utf-8') as f:
                     next(f)  # needed for skip the headers
                     table_name = f"dbiait_analysis.{csv_file.lower().replace('.csv', '')}"
                     db_cursor.execute(f"TRUNCATE table {table_name};")

@@ -208,7 +208,7 @@ class ShapeChecksBaseTask(BaseTask):
 
             # try logging the exception
             try:
-                with open(task.logfile, "a") as log:
+                with open(task.logfile, "a", encoding='utf-8') as log:
                     log.write(traceback_info)
             except:
                 pass

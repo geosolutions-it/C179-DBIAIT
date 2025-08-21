@@ -10,7 +10,7 @@ echo "-----------------------------------------------------"
 
 cmd="$@"
 
-source /opt/conda/etc/profile.d/conda.sh && conda activate dbiait && python /usr/src/dbiait/manage.py collectstatic
+source /opt/conda/etc/profile.d/conda.sh && conda activate dbiait && python /usr/src/dbiait/manage.py collectstatic --no-input
 source /opt/conda/etc/profile.d/conda.sh && conda activate dbiait && python /usr/src/dbiait/manage.py migrate
 
 echo $"\n\n\n"

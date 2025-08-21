@@ -69,7 +69,7 @@ class Command(BaseCommand):
         output_path = os.path.dirname(os.path.abspath(__file__))
         for configuration in aggregation:
             filename = f'{output_path}/conversion_output/{configuration["sheet"]}'
-            with open(f"{filename}.json", "w+") as file:
+            with open(f"{filename}.json", "w+", encoding='utf-8') as file:
                 output = self.__output_structure()
                 output["sheet"] = configuration["sheet"]
                 output["sources"][0]["fields"] = [

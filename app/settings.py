@@ -159,6 +159,7 @@ for db_key in DATABASES:
     DB['PASSWORD'] = os.getenv('DATABASE_PASSWORD', '')
     DB['HOST'] = os.getenv('DATABASE_HOST', 'localhost')
     DB['PORT'] = os.getenv('DATABASE_PORT', 5432)
+    DB['CONN_MAX_AGE'] = None
 
 
 DATABASE_ROUTERS = ['app.scheduler.system_router.SystemRouter', 'app.scheduler.analysis_router.AnalysisRouter']
