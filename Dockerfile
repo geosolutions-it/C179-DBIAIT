@@ -33,6 +33,8 @@ COPY environment.yml /usr/src/dbiait/environment.yml
 
 RUN conda tos accept --override-channels --channel defaults
 RUN conda env create -f /usr/src/dbiait/environment.yml
+RUN conda clean --all --yes
+
 WORKDIR /usr/src/dbiait/
 
 RUN mkdir /var/log/gunicorn/ -p
