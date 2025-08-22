@@ -31,10 +31,19 @@ ENV PATH="/opt/conda/bin:$PATH"
 COPY . /usr/src/dbiait/
 COPY environment.yml /usr/src/dbiait/environment.yml
 
+RUN set -eux; \
+    groupadd --gid 1000 dbiait; \
+    useradd --uid 1000 --gid dbiait --create-home dbiait; \
+    chown -R dbiait:dbiait /usr/src/dbiait
+
+RUN mkdir -p /var/log/gunicorn/; \
+    chown -R dbiait:dbiait /var/log/gunicorn
+
+USER dbiait
+
 RUN conda tos accept --override-channels --channel defaults
 RUN conda env create -f /usr/src/dbiait/environment.yml
 RUN conda clean --all --yes
 
 WORKDIR /usr/src/dbiait/
 
-RUN mkdir /var/log/gunicorn/ -p
