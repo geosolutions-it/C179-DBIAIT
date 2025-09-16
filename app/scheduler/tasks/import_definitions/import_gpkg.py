@@ -119,14 +119,30 @@ class GpkgImportDefinition(BaseImportDefinition):
         if gtype != 3:
             options += '-nlt PROMOTE_TO_MULTI'
         commands = [ogr_exe, options]
+        print(commands)
         return commands
 
     def execute_command(self, commands, feedback):
-        try:
-            self.GdalUtils.runGdal(commands, feedback)
-        except Exception as e:
-            print(e)
-            traceback.print_exc()
+        from subprocess import PIPE, Popen
+        print("executing command")
+        process = Popen(" ".join(commands), stdout=PIPE, stderr=PIPE, shell=True)
+        stdout, stderr = process.communicate()
+        print(stdout)
+        print(stderr)
+        if (
+            stderr is not None
+            and stderr != b""
+            and b"ERROR" in stderr
+            and b"error" in stderr
+            or b"Syntax error" in stderr
+        ):
+            try:
+                err = stderr.decode()
+            except Exception as e:
+                err = stderr.decode("latin1")
+                print(f"Original error returned: {err}")
+                raise Exception(e)
+
 
 
     def import_into_postgis(self, name, cont, feedback):
