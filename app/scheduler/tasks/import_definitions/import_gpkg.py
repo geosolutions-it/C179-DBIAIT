@@ -116,7 +116,7 @@ class GpkgImportDefinition(BaseImportDefinition):
         options += '-overwrite '
         options += '-lco GEOMETRY_NAME=geom '
         options += '-nln ' + db_schema + '.' + layer_name + ' '
-        options += ' -t_srs EPSG:25832'
+        options += ' -t_srs EPSG:25832 '
         if gtype != 3:
             options += '-nlt PROMOTE_TO_MULTI'
         commands = [ogr_exe, options]
