@@ -6,7 +6,7 @@ dependencies:
   - python=3.6
   - pip
   - qgis=3.16
-  - proj
+  - proj==7.2.0
   - gunicorn
   - pip:
     - -r requirements.txt

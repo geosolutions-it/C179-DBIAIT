@@ -1,8 +1,6 @@
 x-common:
   &common
-  build:
-    context: ./
-    dockerfile: Dockerfile
+  image: harbor-new.tst.k8s.publiacqua.it/webgis/dbiait:1.42.2
   restart: unless-stopped
   env_file:
     - .env
