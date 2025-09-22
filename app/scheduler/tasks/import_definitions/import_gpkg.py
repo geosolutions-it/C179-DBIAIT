@@ -116,19 +116,16 @@ class GpkgImportDefinition(BaseImportDefinition):
         options += '-overwrite '
         options += '-lco GEOMETRY_NAME=geom '
         options += '-nln ' + db_schema + '.' + layer_name + ' '
+        options += ' -t_srs EPSG:25832'
         if gtype != 3:
             options += '-nlt PROMOTE_TO_MULTI'
         commands = [ogr_exe, options]
-        print(commands)
         return commands
 
     def execute_command(self, commands, feedback):
         from subprocess import PIPE, Popen
-        print("executing command")
         process = Popen(" ".join(commands), stdout=PIPE, stderr=PIPE, shell=True)
         stdout, stderr = process.communicate()
-        print(stdout)
-        print(stderr)
         if (
             stderr is not None
             and stderr != b""

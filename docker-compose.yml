@@ -8,6 +8,8 @@ x-common:
     - .env
   volumes:
     - .:/usr/src/dbiait/
+    - ./import/:/tmp/import/
+    - ./export/:/tmp/export/
   depends_on:
     db:
       condition: service_healthy
