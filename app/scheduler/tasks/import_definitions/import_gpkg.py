@@ -4,6 +4,7 @@ import traceback
 
 # import QGis API
 from qgis.core import *
+from django.db import connection
 
 from django.conf import settings
 from app.scheduler.utils import Schema, TaskStatus
@@ -207,7 +208,6 @@ class GpkgImportDefinition(BaseImportDefinition):
             """
             commands = self.create_gdal_commands(name, gtype)
             self.execute_command(commands, feedback)
-
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -238,6 +238,17 @@ class GpkgImportDefinition(BaseImportDefinition):
                 task_status = TaskStatus.RUNNING
                 try:
                     self.import_into_postgis(layername.lower(), cont, feedback)
+                    print("Fixing epsg")
+                    try:
+                        with connection.cursor() as cursor:
+                            cursor.execute(
+                            f"SELECT UpdateGeometrySRID('dbiait_analysis', '{layername.lower()}','geom',25832);"
+                        )
+                        print("epsg fixed")
+                    except Exception:
+                        print("no geometry found")
+                        pass
+
                     task_status = TaskStatus.SUCCESS
                     end_date = timezone.now()
                 except Exception as e:
