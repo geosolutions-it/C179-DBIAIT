@@ -12,6 +12,8 @@ RUN apt-get update -y && apt-get install wget gdal-bin git vim \
     libssl-dev ffmpeg libsm6 libxext6 exiv2 -y && \
     rm -rf /var/lib/apt/lists/*
 
+#RUN apt purge proj-bin -y
+
 # Set the working directory to /tmp for downloading the installer
 WORKDIR /tmp
 
