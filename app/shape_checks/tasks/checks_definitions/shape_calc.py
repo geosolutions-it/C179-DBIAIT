@@ -463,7 +463,7 @@ class ShapeCalc(BaseCalc):
         # Write the year to the resulted file
         defined_year = YearHandler(self.imported_file).get_year()
         anno_sheet = seed_wb["ANNO INPUT"]
-        anno_sheet['A1'] = defined_year
+        anno_sheet['A1'] = int(defined_year)
         logger.info(f"The year {defined_year} was copied to the ANNO INPUT sheet")
 
     def get_the_unique_code(self, sheet_name, row):
