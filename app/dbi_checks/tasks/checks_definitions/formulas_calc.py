@@ -147,9 +147,6 @@ class CalcFormulas:
                 
             if row_based_ranges:
                 columns_in_formula = self.exclude_cols_from_row_ranges(row_based_ranges, columns_in_formula)
-                for i in row_based_ranges:
-                    # the structure of row_based_ranges is: [(col1, row, col2)]
-                    variables[f"{i[0]}{i[1]}:{i[2]}{i[1]}"] = self.calculate_row_based_range(i) # e.g variables[B4:BB4]
             if abs_rows:
                 abs_rows = self.exclude_abs_range_columns(abs_rows, ranges_in_formula)
                 for i in abs_rows:
@@ -169,7 +166,7 @@ class CalcFormulas:
             for row in self.sheet.iter_rows(min_row=self.start_row, max_row=self.end_row,
                                             min_col=col_idx, max_col=col_idx):
                 cell = row[0]
-                    
+                
                 # Retrieve the required values from the relevant cells
                 for sheet_name, col in columns_in_formula:
                     ref_cell = f"{col}{cell.row}"
@@ -188,6 +185,12 @@ class CalcFormulas:
                         
                         variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = self.sanitize_value(value, formula)  # Default to 0 if empty
 
+                # Update the row-based range under the fixed key 'A4:L4'
+                for start_col, _, end_col in row_based_ranges:
+                    variables[f"{start_col}{self.start_row}:{end_col}{self.start_row}"] = (
+                        self.calculate_row_based_range((start_col, cell.row, end_col))
+                    )
+                
                 # Evaluate the formula with the given variables
                 try:
                     calculated_result = compiled(**variables)
@@ -340,8 +343,9 @@ class CalcFormulas:
 
     def calculate_row_based_range(self, row_range):
         """
-        Given a row-based range like ('B', '4', 'BB'),
-        this function returns a list of all (column, row) tuples.
+        Given a row-based range like ('B', 4, 'BB'),
+        this function returns a list of the cell values
+        across that row between the given start and end columns.
         """
         start_col, row, end_col = row_range  # Unpack the values
         row = int(row)  # Ensure row is an integer

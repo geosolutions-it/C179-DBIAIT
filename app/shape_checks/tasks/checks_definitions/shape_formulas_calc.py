@@ -153,17 +153,7 @@ class ShapeCalcFormulas(CalcFormulas):
                         variables[col_ranges] = self.calculate_range(formula, col_ranges, context_sheet_name=self.main_sheet)
                 
             if row_based_ranges:
-
                 columns_in_formula = self.exclude_cols_from_row_ranges(row_based_ranges, columns_in_formula)
-                for sheet_name, col1, row, col2 in row_based_ranges:
-                    if not sheet_name:
-                        # the structure of row_based_ranges is: [(col1, row, col2)]
-                        var = f"{col1}{row}:{col2}{row}"
-                        variables[var] = self.calculate_row_based_range([col1, row, col2]) # e.g variables[B4:BB4]
-                    else:
-                        # the structure of row_based_ranges is: [(col1, row, col2)]
-                        var = f"{sheet_name.upper()}!{col1}{row}:{col2}{row}"
-                        variables[var] = self.calculate_row_based_range([col1, row, col2]) # e.g variables[sheet!B4:BB4]
             if abs_rows:
                 abs_rows = self.exclude_abs_range_columns(abs_rows, ranges_in_formula)
                 for i in abs_rows:
@@ -196,6 +186,15 @@ class ShapeCalcFormulas(CalcFormulas):
                         # variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = value if value is not None else 0  # Default to None if 0
                         variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = self.sanitize_value(value, formula)
 
+                # Update row-based ranges for the current row
+                for sheet_name, col1, _, col2 in row_based_ranges:
+                    if not sheet_name:
+                        var = f"{col1}{self.start_row}:{col2}{self.start_row}"
+                        variables[var] = self.calculate_row_based_range([col1, cell.row, col2])
+                    else:
+                        var = f"{sheet_name.upper()}!{col1}{self.start_row}:{col2}{self.start_row}"
+                        variables[var] = self.calculate_row_based_range([col1, cell.row, col2])
+                
                 # Evaluate the formula with the given variables
                 try:
                     calculated_result = compiled(**variables)

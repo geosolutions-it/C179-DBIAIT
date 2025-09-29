@@ -56,7 +56,7 @@
         "end_col": "BU"
       }
     },
-    "stato_opera_e_completezza": {
+    "gruppo_stato_opera_e_completezza": {
       "SHP_Acquedotto": {
         "start_row": 5,
         "start_col": "BV",
@@ -122,7 +122,7 @@
         "end_col": "BP"
       }
     },
-    "stato_opera_e_completezza": {
+    "gruppo_stato_opera_e_completezza": {
       "SHP_Fognatura": {
         "start_row": 5,
         "start_col": "BR",
