@@ -164,7 +164,7 @@ class BaseShapeCheckStart(LoginRequiredMixin, FormView):
                     check_type=self.check_type,
                     group=selected_group
                 )
-                self.task_class(task_id=task_id, context_data=context_data)
+                self.task_class.send(task_id=task_id, context_data=context_data)
                 return redirect(self.get_success_url())
             except (exceptions.SchedulingParametersError, Exception) as e:
                 logger.error(f"Unexpected error: {str(e)}")
