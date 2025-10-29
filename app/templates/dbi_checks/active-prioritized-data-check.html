@@ -1,0 +1,153 @@
+{% extends "dbi_checks/base-dbi-checks.html" %}
+{% load utils %}
+{% load static %}
+
+{% block import_content %}
+{% if object_list%}
+<div class="container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Processi</th>
+        <th>Avanzamento</th>
+        <th>Stato</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="import-status-table">
+      <tr>
+        <td colspan="3" class="text-center">
+          <small class="text-secondary">Attendere...</small>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="table table-sm" id="dt-import-sheet-table">
+    <thead>
+      <tr>
+        <th style="width: 150px;">Processo</th>
+        <th style="width: 200px;">File</th>
+        <th style="width: 150px;">Foglio</th>
+        <th style="width: 120px;">Inizio</th>
+        <th style="width: 120px;">Fine</th>
+        <th style="width: 100px;">Status</th>
+        </tr>
+    </thead>
+     <tbody id="test-sheet-import-table">
+      <tr>
+        <td class="text-center">
+          <small class="text-secondary">Attendere...</small>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<script>
+  window.addEventListener("load", function () {
+    ajax_call("{% url 'get-check-status-api-view' %}", "#import-status-table");
+    setInterval(function () { ajax_call("{% url 'get-check-status-api-view' %}", "#import-status-table") }, 5000);
+  });
+</script>
+<script>
+  window.addEventListener("load", function () {
+    setInterval(function () {
+      var url = "{% url 'process-state-status-api-view' %}" + "?task_id=";
+      var taskId = $("#import-status-table #task_uuid").text();
+      ajax_call(url + taskId, "#test-sheet-import-table")
+      }, 5000
+    );
+  });
+</script>
+<script>
+  $(document).ready(function() {
+    $('#dt-import-sheet-table').DataTable( {
+        "language": {
+            "url": "{% static 'i18n/Italian.json' %}"
+        },
+        "order": [[ 4, "desc" ]]
+    } );
+} );
+</script>
+{% else %}
+<div class="container mt-5">
+  <form method="POST" enctype="multipart/form-data" action="{% url 'pd-check-start-view' %}" class="mt-5">
+    {% csrf_token %}
+    <div class="form-group mt-5">
+      <div class="form-group">
+        <label for="id_xlsx_file">ANNO A</label>
+        <input type="file" name="xlsx_file" id="id_xlsx_file" class="form-control" required>
+      </div>
+    </div>
+
+    <!-- Dropdown for Group Selection -->
+    <div class="form-group mt-4">
+      <label for="id_group">SELEZIONA GRUPPO</label>
+      <select name="group" id="id_group" class="form-control" required>
+        <option value="__all__" selected>Tutti i gruppi</option>
+        <option value="gruppo_captazioni">Gruppo Captazioni</option>
+        <option value="gruppo_impianti_acquedotto">Gruppo Impianti Acquedotto</option>
+        <option value="gruppo_reti_acquedotto_adduttrici">Gruppo Reti Acquedotto Adduttrici</option>
+        <option value="gruppo_reti_acquedotto_distribuzioni">Gruppo Reti Acquedotto Distribuzioni</option>
+        <option value="gruppo_impianti_fognatura">Gruppo Impianti Fognatura</option>
+        <option value="gruppo_reti_fognatura_collettori">Gruppo Reti Fognatura Collettori</option>
+        <option value="gruppo_reti_fognatura_fognature">Gruppo Reti Fognatura Fognature</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-info mb-2 btn-block" onclick="loadIcon();">AVVIA</button>
+  </form>
+</div>
+{% endif %}
+{% if error %}
+<div class="modal fade in" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-danger">
+        {{ error }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info" data-dismiss="modal">va bene</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#error-modal").modal('show');
+    });
+    // Redirect after modal is closed
+    $('#error-modal').on('hidden.bs.modal', function () {
+            window.location.href = "{% url 'prioritized-data-view' %}";
+        });
+</script>
+{% endif %}
+<style>
+  #custom-loading-modal .modal-dialog{
+    display: table;
+    position: relative;
+    margin: 0 auto;
+    top: calc(50% - 24px);
+  }
+  #custom-loading-modal .modal-dialog .modal-content{
+    background-color: transparent;
+    border: none;
+  }
+</style>
+<script>
+  function loadIcon() {
+    if(document.getElementById("id_xlsx_file").files.length != 0){
+      $('.custom-loading-modal').modal('show');
+    }
+  }
+</script>
+{% endblock %}

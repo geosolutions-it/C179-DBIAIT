@@ -1,0 +1,332 @@
+import os
+import tempfile
+import pathlib
+import shutil
+from openpyxl.workbook import Workbook
+from collections import defaultdict
+
+from django.db.models import Q, ObjectDoesNotExist
+from django.contrib.auth import get_user_model
+from django.conf import settings
+
+from app.dbi_checks.utils import YearHandler
+from app.dbi_checks.models import Task_CheckDbi, Xlsx
+from app.dbi_checks.tasks.checks_definitions.base_calc import BaseCalc
+from app.dbi_checks.tasks.checks_base_task import ChecksBaseTask
+
+from app.scheduler.tasks.base_task import trace_it
+from app.scheduler.utils import TaskStatus, Schema
+from app.scheduler import exceptions
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+class ConsistencyCheckTask(ChecksBaseTask):
+    """
+    Dramatiq Consistency check task definition class.
+    """
+
+    @classmethod
+    def pre_send(
+        cls,
+        requesting_user: get_user_model(),
+        file_path1: str,
+        file_path2: str,
+        name: str,
+        check_type: str,
+        group: str,
+    ):
+
+        # Check if the xlsx files exists
+        file1 = pathlib.Path(file_path1)
+        file2 = pathlib.Path(file_path2)
+        if not file1.exists() or not file2.exists():
+            raise exceptions.SchedulingParametersError(
+                f"Provided *.xlsx files do not exist: {file1.name}, {file2.name}"
+            )
+
+        colliding_tasks = Task_CheckDbi.objects.filter(
+            Q(status=TaskStatus.QUEUED) | Q(status=TaskStatus.RUNNING)
+        ).exclude(Q(schema=Schema.ANALYSIS))
+
+        if len(colliding_tasks) > 0:
+            raise exceptions.QueuingCriteriaViolated(
+                "Qualcosa è andato storto durante il caricamento o l'elaborazione"
+                "Si prega di riprovare più tardi"
+                # f"Following tasks prevent scheduling this operation: {[task.id for task in colliding_tasks]}"
+            )
+
+        # Get analysis year
+        analysis_year = YearHandler(file1).get_year()
+
+        if not analysis_year:
+            raise exceptions.SchedulingParametersError(
+                f"L'anno di analisi non è presente nel file caricato. L'anno deve essere presente nella cella B8 del foglio DATI per il file DBI_A"
+            )
+
+        # Get or create Xlsx ORM model instance for this task execution
+        xlsx, created = Xlsx.objects.get_or_create(name=f"{file1.name.split('.')[0]}_{file2.name.split('.')[0]}",
+                                                   file_path=file_path1,
+                                                   second_file_path=file_path2,
+                                                   analysis_year = analysis_year,
+                                                   )
+        if created:
+            xlsx.save()
+
+        # Create Task ORM model instance for this task execution
+        current_task = Task_CheckDbi(
+            requesting_user=requesting_user,
+            schema=cls.schema,
+            xlsx=xlsx,
+            imported=True,
+            check_type=check_type,
+            name=name,
+            group=group
+        )
+        current_task.save()
+
+        return current_task.id
+
+    @trace_it
+    def execute(self, 
+                task_id: int,
+                *args, 
+                **kwargs
+                ) -> None:
+        
+        """
+        Method for executing the DBI checks
+        """
+        
+        file_year_required = True
+        result = False
+
+        try:
+            orm_task = Task_CheckDbi.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
+            )
+            raise
+        try:         
+            # Unpack context_dict into individual variables
+            (xlsx_file1_uploaded_path,
+             xlsx_file2_uploaded_path,
+            ) = args
+
+            DBI_A = kwargs.get("seed_file", {})
+            DBI_A_1 = kwargs.get("second_seed_file", {})
+            dbi_a_config = kwargs.get("sheet_mapping_obj", {})
+            dbi_a_1_config = kwargs.get("second_sheet_mapping_obj", {})
+            dbi_a_formulas = kwargs.get("dbi_formulas_obj", {})
+            dbi_a_1_formulas = kwargs.get("second_dbi_formulas_obj", {})
+
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                logger.info(f"Task started with file: {xlsx_file1_uploaded_path}")
+                tmp_checks_export_dir = pathlib.Path(tmp_dir)
+
+                # Create a single log workbook
+                log_workbook = Workbook()
+                summary_data = defaultdict(int)
+                
+                base_calc_1 = BaseCalc(orm_task, 
+                                  xlsx_file1_uploaded_path, 
+                                  DBI_A, 
+                                  dbi_a_config, 
+                                  dbi_a_formulas,
+                                  tmp_checks_export_dir,
+                                  file_year_required,
+                                  task_progress = 20,
+                                  log_workbook = log_workbook,
+                                  summary_data=summary_data
+                                  )
+                
+                result = base_calc_1.run()
+            
+                # Copy the second file using the DBI_A_1 seed only if the first copy is completed
+                if result:
+                    logger.info(f"Task started with file: {xlsx_file2_uploaded_path}")
+                    file_year_required = False
+                    base_calc_2 = BaseCalc(orm_task, 
+                             xlsx_file2_uploaded_path, 
+                             DBI_A_1, 
+                             dbi_a_1_config, 
+                             dbi_a_1_formulas,
+                             tmp_checks_export_dir,
+                             file_year_required,
+                             task_progress = 20,
+                             log_workbook = log_workbook,
+                             summary_data=summary_data
+                             )
+                    
+                    result = base_calc_2.run()
+
+                    base_calc_1.add_summary_sheet(summary_data)
+                    
+                    # Save logs only once after both runs
+                    log_workbook.save(tmp_checks_export_dir / "logs.xlsx")
+                    # zip final output in export directory
+                    export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
+                    shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
+                    logger.info(f"Zip created")
+
+            return result
+        
+        except Exception as e:
+            print(f"Error processing files in the background: {e}")
+
+class PrioritizedDataCheckTask(ChecksBaseTask):
+    """
+    Dramatiq PrioritizedData check task definition class.
+
+    """
+    
+    @trace_it
+    def execute(self, 
+                task_id: int,
+                *args, 
+                **kwargs
+                ) -> None:
+        
+        """
+        Method for executing the DBI checks
+        """
+        
+        file_year_required = False
+        result = False
+
+        try:
+            orm_task = Task_CheckDbi.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
+            )
+            raise
+        try:         
+            # Unpack context_dict into individual variables
+            (
+            xlsx_file_uploaded_path,
+            ) = args
+
+            DATI_PRIORITATI = kwargs.get("seed_file", {})
+            dbi_prior_config = kwargs.get("sheet_mapping_obj", {})
+            dbi_prior_formulas = kwargs.get("dbi_formulas_obj", {})
+
+
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                logger.info(f"Task started with file: {xlsx_file_uploaded_path}")
+                tmp_checks_export_dir = pathlib.Path(tmp_dir)
+
+                # Create a single log workbook
+                log_workbook = Workbook()
+                summary_data = defaultdict(int)
+                
+                base_calc = BaseCalc(orm_task, 
+                                  xlsx_file_uploaded_path, 
+                                  DATI_PRIORITATI, 
+                                  dbi_prior_config, 
+                                  dbi_prior_formulas,
+                                  tmp_checks_export_dir,
+                                  file_year_required,
+                                  task_progress = 40,
+                                  log_workbook = log_workbook,
+                                  summary_data=summary_data
+                                  )
+                result = base_calc.run()
+            
+                if result:
+                    base_calc.add_summary_sheet(summary_data)
+                    # Save logs only once after both runs
+                    log_workbook.save(tmp_checks_export_dir / "logs.xlsx")
+                    
+                    # zip final output in export directory
+                    export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
+                    shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
+                    logger.info(f"Zip created")
+
+            return result
+        
+        except Exception as e:
+            print(f"Error processing files in the background: {e}")
+
+class DataQualityCheckTask(ChecksBaseTask):
+    """
+    Dramatiq Data Quality check (Bonta dei dati) task definition class.
+
+    """
+    
+    @trace_it
+    def execute(self, 
+                task_id: int,
+                *args, 
+                **kwargs
+                ) -> None:
+        
+        """
+        Method for executing the DBI checks
+        """
+        
+        file_year_required = True
+        result = False
+
+        try:
+            orm_task = Task_CheckDbi.objects.get(pk=task_id)
+        except ObjectDoesNotExist:
+            print(
+                f"Task with ID {task_id} was not found! Manual removal had to appear "
+                f"between task scheduling and execution."
+            )
+            raise
+        try:         
+            # Unpack context_dict into individual variables
+            (xlsx_file_uploaded_path,
+            ) = args
+
+            DBI_BONTA_DEI_DATI = kwargs.get("seed_file", {})
+            dbi_bonta_config = kwargs.get("sheet_mapping_obj", {})
+            dbi_bonta_formulas = kwargs.get("dbi_formulas_obj", {})
+
+
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                logger.info(f"Task started with file: {xlsx_file_uploaded_path}")
+                tmp_checks_export_dir = pathlib.Path(tmp_dir)
+                
+                # Create a single log workbook
+                log_workbook = Workbook()
+                summary_data = defaultdict(int)
+                
+                base_calc = BaseCalc(orm_task, 
+                                  xlsx_file_uploaded_path, 
+                                  DBI_BONTA_DEI_DATI, 
+                                  dbi_bonta_config, 
+                                  dbi_bonta_formulas,
+                                  tmp_checks_export_dir,
+                                  file_year_required,
+                                  task_progress = 40,
+                                  log_workbook = log_workbook,
+                                  summary_data=summary_data
+                                  )
+                
+                result = base_calc.run()
+            
+                if result:
+                    base_calc.add_summary_sheet(summary_data)
+                    # Save logs only once after both runs
+                    log_workbook.save(tmp_checks_export_dir / "logs.xlsx")
+                    
+                    # zip final output in export directory
+                    export_file = os.path.join(settings.CHECKS_EXPORT_FOLDER, f"checks_task_{orm_task.id}")
+                    shutil.make_archive(export_file, "zip", tmp_checks_export_dir)
+                    logger.info(f"Zip created")
+
+            return result
+        
+        except Exception as e:
+            print(f"Error processing files in the background: {e}")
+
+            
+
+    

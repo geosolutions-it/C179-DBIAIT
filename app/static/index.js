@@ -98,6 +98,55 @@ const table_function_mapper = {
             });
         }
     },
+    "#test-sheet-import-table": function (response) {
+        const table = $("#dt-import-sheet-table").DataTable();
+        if (response) {
+            table.clear().draw();
+            response.forEach(function (data) {
+                var row = table.row.add([
+                    data.process_type,
+                    data.file_name,
+                    data.sheet_name,
+                    get_local_date(data.import_start_timestamp),
+                    get_local_date(data.import_end_timestamp),
+                    data.status
+                    ]).draw( false ).node();
+                $(row).addClass(data.style_class);
+            });
+        }
+    },
+    "#check-export-status-table": function (response) {
+        const table = $("#check-export-table").DataTable();
+        if (response) {
+            table.clear().draw();
+            response.forEach(function (data) {
+            var escaped = escape(data.task_log)
+            if (escaped.length > 10000) {
+                var escaped = escape(data.task_log).substr(0, 10000) + "......<br>Controlla il log nello zip per maggiori informazioni";
+            }
+            var errorModal = '<a href="#" onclick="display_error_log(\'' + escaped + '\', \'' + data.status + '\')" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="'+ data.status_icon + '"></i></a>'
+            if (data.status == 'RUNNING' || data.status == 'QUEUED') {
+                download = ""
+            } else {
+                var download = '<a href="download/' + data.id + '" target="_blank"><i class="fas fa-download"></i></a>';
+            }
+
+            table.row.add([
+                data.id,
+                data.user,
+                data.file_name,
+                data.second_file_name,
+                data.check_name,
+                data.group || "",
+                get_local_date(data.start_date)  || "--/--/---" ,
+                get_local_date(data.end_date)  || "--/--/---" ,
+                data.analysis_year,
+                errorModal,
+                download,
+                ]).draw( false );
+            });
+        }
+    },
 }
 
 function filter_datatables_results(word_to_filter) {

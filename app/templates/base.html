@@ -75,18 +75,16 @@
   {% block content %}
   {# Main Page Content #}
   {% endblock %}
-  <footer class="navbar-fixed-bottom row-fluid mt-auto base-footer">
+  <footer class="fixed-bottom mt-auto base-footer w-100">
     <div class="navbar-inner">
       <div class="container">
-        © Copyright 2020
+        © Copyright 2025
       </div>
     </div>
   </footer>
-
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
-
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-body">
@@ -99,9 +97,16 @@
           </a>
         </div>
       </div>
-
     </div>
   </div>
+  <div class="modal fade custom-loading-modal" role="dialog" id="custom-loading-modal" data-backdrop="static" data-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <img src="{% static 'loading_icon.gif' %}" width="100" height="100"/>
+        </div>
+    </div>
+  </div>
+<div>
 </body>
 
 </html>

@@ -306,7 +306,7 @@ import json
 
 sheet_config_path = "<you_config_file_path>"
 
-with open(sheet_config_path, 'r') as scp:
+with open(sheet_config_path, 'r', encoding='utf-8') as scp:
     sheet_config = json.load(scp)
 
 export_config_schema.validate(sheet_config)

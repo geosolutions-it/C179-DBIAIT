@@ -19,7 +19,7 @@ import ldap
 from app.utils import TemplateWithDefaults
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
-APP_VERSION = '1.42.2 (17/06/2024)'
+APP_VERSION = '2.0.0 (12/02/2025)'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -53,10 +53,15 @@ INSTALLED_APPS = [
     # DBIAIT apps
     'app.authenticate',
     'app.scheduler',
+    'app.dbi_checks',
+    'app.shape_checks',
 
     # Installed apps
     'rest_framework',
 ]
+
+DRAMATIQ_TIMEOUT_LIMIT=os.getenv("DRAMATIQ_TIMEOUT_LIMIT", 14400000) # goes in timeout after 4 hours by default
+DRAMATIQ_TIMEOUT_INTERVAL=os.getenv("DRAMATIQ_TIMEOUT_INTERVAL", 120000) # check the status of each actor every 2 minutes
 
 DRAMATIQ_BROKER = {
     "BROKER": os.getenv('DRAMATIQ_BROKER', "dramatiq.brokers.rabbitmq.RabbitmqBroker"),
@@ -66,7 +71,7 @@ DRAMATIQ_BROKER = {
     "MIDDLEWARE": [
         "dramatiq.middleware.Prometheus",
         "dramatiq.middleware.AgeLimit",
-        "dramatiq.middleware.TimeLimit",
+        "app.scheduler.middleware.CustomTimeLimit", # we use our custom middleware
         "dramatiq.middleware.Callbacks",
         "dramatiq.middleware.Retries",
         "django_dramatiq.middleware.AdminMiddleware",
@@ -154,6 +159,7 @@ for db_key in DATABASES:
     DB['PASSWORD'] = os.getenv('DATABASE_PASSWORD', '')
     DB['HOST'] = os.getenv('DATABASE_HOST', 'localhost')
     DB['PORT'] = os.getenv('DATABASE_PORT', 5432)
+    DB['CONN_MAX_AGE'] = None
 
 
 DATABASE_ROUTERS = ['app.scheduler.system_router.SystemRouter', 'app.scheduler.analysis_router.AnalysisRouter']
@@ -281,6 +287,12 @@ DATABASE_FOLDER = os.getenv("DATABASE_FOLDER", f"{pathlib.Path().absolute()}/dat
 IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'config', "layers.json"))
 IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
 
+if not os.path.exists(IMPORT_FOLDER):
+    os.makedirs(IMPORT_FOLDER, exist_ok=True)
+
+if not os.path.exists(FTP_FOLDER):
+    os.makedirs(FTP_FOLDER, exist_ok=True)
+
 # Directory in which generated exports are kept
 EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(FTP_FOLDER, "export"))
 
@@ -321,3 +333,68 @@ DBIAIT_ANL_SELECT_ROLES = ['DBIAIT_ANL_ROLE_R']
 DBIAIT_FRZ_SELECT_ROLES = ['DBIAIT_FRZ_ROLE_R']
 DBIAIT_FRZ_UID_ROLES = ['DBIAIT_FRZ_ROLE_W']
 DBIAIT_FRZ_ADMIN_ROLES = ['DBIAIT_FRZ_ROLE_D']
+
+# DBI and Shape checks settings
+
+# Final files for download
+CHECKS_EXPORT_FOLDER = os.getenv("CHECKS_EXPORT_FOLDER", os.path.join(FTP_FOLDER, "checks_export"))
+if not os.path.exists(CHECKS_EXPORT_FOLDER):
+    os.mkdir(CHECKS_EXPORT_FOLDER)
+
+# Directory which standard seed files exist
+CHECKS_SEED_FILES = os.getenv("CHECKS_SEED_FILES", os.path.join(EXPORT_CONF_DIR, "checks", "checks_seed_files"))
+DBI_A_1 = os.path.join(CHECKS_SEED_FILES, "DBI_A-1.xlsx")
+DBI_A = os.path.join(CHECKS_SEED_FILES, "DBI_A.xlsx")
+DBI_PRIORITATI = os.path.join(CHECKS_SEED_FILES, "DBI_prioritari.xlsx")
+DBI_BONTA_DEI_DATI = os.path.join(CHECKS_SEED_FILES, "DBI_bonta_dei_dati.xlsx")
+SHP_ACQ = os.path.join(CHECKS_SEED_FILES, "Check_shp_ACQ.xlsx")
+SHP_FGN = os.path.join(CHECKS_SEED_FILES, "Check_shp_FGN.xlsx")
+# Get precending and current year from a specific sheet, column and row
+YEAR_VALUE = {
+    "sheet": "DATI",
+    "row": 8,
+    "column": 2
+}
+
+# Upload settings
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+FILE_UPLOAD_HANDLERS = [
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]
+DEFAULT_FILE_STORAGE_CHUNK_SIZE = 1 * 1024 * 1024  # 1 MB
+SHEETS_CONFIG = os.path.join(EXPORT_CONF_DIR, "checks", "sheets_mapping.json")
+DBI_FORMULAS = os.path.join(EXPORT_CONF_DIR, "checks", "dbi_formulas.json")
+LOG_MAPPING = os.path.join(EXPORT_CONF_DIR, "checks", "log_mapping.json")
+VERIF_CHECKS = os.path.join(EXPORT_CONF_DIR, "checks", "verif_checks_mapping.json")
+DBF_TO_SHEET = os.path.join(EXPORT_CONF_DIR, "checks", "dbf_to_sheet.json")
+EXTRA_DB_PRIOR_FORMULAS = os.path.join(EXPORT_CONF_DIR, "checks", "extra_db_prioritari_formulas.json")
+SPEC_SHAPE_FORMULAS = os.path.join(EXPORT_CONF_DIR, "checks", "spec_shape_formulas.json")
+DBI_GROUPS = os.path.join(EXPORT_CONF_DIR, "checks", "dbi_sheet_groups.json")
+SHAPE_GROUPS = os.path.join(EXPORT_CONF_DIR, "checks", "shape_column_groups.json")
+
+# Group configuration for the UI
+DBI_GROUP_MAPPING = {
+    "__all__": "Tutti i gruppi",
+    "gruppo_captazioni": "Captazioni",
+    "gruppo_impianti_acquedotto": "Impianti Acquedotto",
+    "gruppo_reti_acquedotto_adduttrici": "Reti Acquedotto Adduttrici",
+    "gruppo_reti_acquedotto_distribuzioni": "Reti Acquedotto Distribuzioni",
+    "gruppo_impianti_fognatura": "Impianti Fognatura",
+    "gruppo_reti_fognatura_collettori": "Reti Fognatura Collettori",
+    "gruppo_reti_fognatura_fognature": "Reti Fognatura Fognature"
+}
+
+SHAPE_GROUP_MAPPING = {
+    "__all__": "Tutti i gruppi",
+    "gruppo_codice_rete_e_tratto": "Codice Rete e Tratto",
+    "gruppo_materiale_e_diametro": "Materiale e Diametro",
+    "gruppo_anno_e_lunghezza": "Anno e Lunghezza",
+    "gruppo_stato_conservazione_tipo_rete_tipo_acqua": "Stato Conservazione, Tipo Rete, Tipo Acqua",
+    "gruppo_funzionamento_copertura_profondita": "Funzionamento, Copertura, Profondità",
+    "gruppo_pressioni_telecontrollo_e_protezione_catodica": "Pressioni, Telecontrollo e Protezione Catodica",
+    "gruppo_allacci_riparazioni_misuratori": "Allacci, Riparazioni, Misuratori",
+    "gruppo_stato_opera_e_completezza": "Stato Opera e Completezza",
+    "gruppo_controlli_aggregati": "Controlli Aggregati"
+
+}

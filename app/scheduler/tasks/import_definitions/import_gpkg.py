@@ -4,6 +4,7 @@ import traceback
 
 # import QGis API
 from qgis.core import *
+from django.db import connection
 
 from django.conf import settings
 from app.scheduler.utils import Schema, TaskStatus
@@ -49,7 +50,7 @@ class GpkgImportDefinition(BaseImportDefinition):
                 f"Import configuration file {settings.IMPORT_CONF_FILE} does not exist."
             )
 
-        with open(config_file, "r") as cfg:
+        with open(config_file, "r", encoding='utf-8') as cfg:
             config = json.load(cfg)
         fc_list = config["featureclasses"]
         fc_list.sort()
@@ -116,18 +117,19 @@ class GpkgImportDefinition(BaseImportDefinition):
         options += '-overwrite '
         options += '-lco GEOMETRY_NAME=geom '
         options += '-nln ' + db_schema + '.' + layer_name + ' '
+        #options += ' -t_srs EPSG:25832 '
         if gtype != 3:
             options += '-nlt PROMOTE_TO_MULTI'
         commands = [ogr_exe, options]
         return commands
-
+    
     def execute_command(self, commands, feedback):
         try:
             self.GdalUtils.runGdal(commands, feedback)
+            print(feedback.textLog())
         except Exception as e:
             print(e)
             traceback.print_exc()
-
 
     def import_into_postgis(self, name, cont, feedback):
         """
@@ -185,7 +187,6 @@ class GpkgImportDefinition(BaseImportDefinition):
             """
             commands = self.create_gdal_commands(name, gtype)
             self.execute_command(commands, feedback)
-
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -216,6 +217,17 @@ class GpkgImportDefinition(BaseImportDefinition):
                 task_status = TaskStatus.RUNNING
                 try:
                     self.import_into_postgis(layername.lower(), cont, feedback)
+                    print("Fixing epsg")
+                    try:
+                        with connection.cursor() as cursor:
+                            cursor.execute(
+                            f"SELECT UpdateGeometrySRID('dbiait_analysis', '{layername.lower()}','geom',25832);"
+                        )
+                        print("epsg fixed")
+                    except Exception:
+                        print("no geometry found")
+                        pass
+
                     task_status = TaskStatus.SUCCESS
                     end_date = timezone.now()
                 except Exception as e:

@@ -1,0 +1,113 @@
+{% extends "dbi_checks/base-dbi-checks.html" %}
+{% load utils %}
+{% load static %}
+
+{% block history_content %}
+<div class="container">
+  
+  {% block export_content%}
+  <table class="table" id="check-export-table">
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>Utente</th>
+        <th>DBI A</th>
+        <th>DBI A-1</th>
+        <th>Check</th>
+        <th>Gruppo</th>
+        <th>Data Inizio</th>
+        <th>Data Fine</th>
+        <th>Anno di Analisi</th>
+        <th>Esito</th>
+        <th>Download</th>
+      </tr>
+    </thead>
+    <tbody id="check-export-status-table">
+      {% if object_list %}
+    </tbody>
+  </table>
+</div>
+<br>
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="importHistoryModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Log</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="task-log">
+          <div class="text-center text-secondary">
+            <small>please wait...</small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% if error %}
+<div class="modal fade in" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-danger">
+        {{ error }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info" data-dismiss="modal">va bene</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#error-modal").modal('show');
+    });
+</script>
+{% endif %}
+<script>
+  $(document).ready(function() {
+    $('#check-export-table').DataTable( {
+         retrieve: true,
+        "language": {
+            "url": "{% static 'i18n/Italian.json' %}"
+        },
+         "columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [ 2,3,4 ],
+                "searchable": false
+            }
+        ],
+        "order": [[ 0, "desc" ]]
+    } );
+} );
+</script>
+<script>
+  window.addEventListener("load", function () {
+    ajax_call("{% url 'get-check-export-status-api-view' %}", "#check-export-status-table");
+    setInterval(function () { ajax_call("{% url 'get-check-export-status-api-view' %}", "#check-export-status-table") }, 15000);
+  });
+</script>
+<script>
+//clear form values
+if ( window.history.replaceState ) {
+  window.history.replaceState( null, null, window.location.href );
+}
+</script>
+{% endblock %}
+{% endblock %}

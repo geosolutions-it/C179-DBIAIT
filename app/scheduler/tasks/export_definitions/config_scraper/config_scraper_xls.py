@@ -60,7 +60,7 @@ class XlsExportConfig(BaseExportConfig):
         if year is not None:
             sett = settings.EXPORT_CONF_FILE.substitute({"year": year})
 
-        with open(sett, "r") as ecf:
+        with open(sett, "r", encoding='utf-8') as ecf:
             config = json.load(ecf)
 
         sheets_config_files = config.get("xls_sheet_configs", None)
@@ -95,7 +95,7 @@ class XlsExportConfig(BaseExportConfig):
                 )
 
             try:
-                with open(sheet_config_path, "r") as scp:
+                with open(sheet_config_path, "r", encoding='utf-8') as scp:
                     sheet = json.load(scp)
             except Exception as e:
                 raise ExportConfigError(

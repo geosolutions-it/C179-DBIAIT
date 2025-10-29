@@ -9,7 +9,7 @@ class SystemRouter:
     db_key = 'system'
 
     def _check_name(self, name):
-        if name.startswith("auth_") or name.startswith("django_") or name.startswith("scheduler_"):
+        if name.startswith("auth_") or name.startswith("django_") or name.startswith("scheduler_") or name.startswith("dbi_checks_") or name.startswith("shape_checks_"):
             return True
         return False
 
