@@ -87,6 +87,24 @@
         <input type="file" name="dbf_file" id="id_dbf_file" class="form-control" required>
     </div>
     </div>
+
+    <!-- Dropdown for Group Selection -->
+    <div class="form-group mt-4">
+      <label for="id_group">SELEZIONA GRUPPO</label>
+      <select name="group" id="id_group" class="form-control" required>
+        <option value="__all__" selected>Tutti i gruppi</option>
+        <option value="gruppo_codice_rete_e_tratto">Gruppo Codice Rete e Tratto</option>
+        <option value="gruppo_materiale_e_diametro">Gruppo Materiale e Diametro</option>
+        <option value="gruppo_anno_e_lunghezza">Gruppo Anno e Lunghezza</option>
+        <option value="gruppo_stato_conservazione_tipo_rete_tipo_acqua">Gruppo Stato Conservazione, Tipo Rete, Tipo Acqua</option>
+        <option value="gruppo_funzionamento_copertura_profondita">Gruppo Funzionamento, Copertura, Profondità</option>
+        <option value="gruppo_pressioni_telecontrollo_e_protezione_catodica">Gruppo Pressioni, Telecontrollo e Protezione Catodica</option>
+        <option value="gruppo_allacci_riparazioni_misuratori">Gruppo Allacci, Riparazioni, Misuratori</option>
+        <option value="gruppo_stato_opera_e_completezza">Gruppo Stato Opera e Completezza</option>
+        <option value="gruppo_controlli_aggregati">Gruppo Controlli Aggregati</option>
+      </select>
+    </div>
+    
     <button type="submit" class="btn btn-info mb-2 btn-block" onclick="loadIcon();">AVVIA</button>
   </form>
 </div>

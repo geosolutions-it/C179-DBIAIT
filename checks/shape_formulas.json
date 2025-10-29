@@ -1,8 +1,0 @@
-{   
-    "SHP_ACQ_formulas": {
-      "SHP_Acquedotto": {"start_row": 5, "start_col": "AE", "end_col": "BW"}
-    },
-    "SHP_FGN_formulas": {
-      "SHP_Fognatura": {"start_row": 5, "start_col": "AC", "end_col": "BS"}
-    }
-  }

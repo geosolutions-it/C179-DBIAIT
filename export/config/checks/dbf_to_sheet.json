@@ -1,0 +1,10 @@
+{
+  "SHP_Acquedotto": {
+    "start_col": "A",
+    "start_row": 5
+  },
+  "SHP_Fognatura": {
+    "start_col": "A",
+    "start_row": 5
+  }
+}

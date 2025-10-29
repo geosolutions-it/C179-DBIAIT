@@ -56,11 +56,10 @@ class ImportStateHelper:
 
 class ShapeCalcFormulas(CalcFormulas):
 
-    def __init__(self, *args, main_sheet=None, task_id=None, correct_values=None, columns_to_avoid=None, **kwargs):
+    def __init__(self, *args, main_sheet=None, task_id=None, columns_to_avoid=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.main_sheet = main_sheet
         self.task_id = task_id
-        self.correct_values = correct_values
         self.columns_to_avoid = columns_to_avoid
 
     def main_calc(self):
@@ -146,25 +145,15 @@ class ShapeCalcFormulas(CalcFormulas):
                            
                             col_ranges = re.sub(r'(\d+)(?=\$?\d*$)', '', col_ranges)  # Remove row number after the first column
                             formatted_variable = f"[{linked_number}]{sheet_name.upper()}!{col_ranges}"
-                            variables[formatted_variable] = self.calculate_range(formula, col_ranges, sheet_name, external_wb)
+                            variables[formatted_variable] = self.calculate_range(formula, col_ranges, sheet_name, external_wb, context_sheet_name=self.main_sheet)
                         else:
                             formatted_variable = f"{sheet_name.upper()}!{col_ranges}"  # e.g FIUMI_INRETI!A:A
-                            variables[formatted_variable] = self.calculate_range(formula, col_ranges, sheet_name)
+                            variables[formatted_variable] = self.calculate_range(formula, col_ranges, sheet_name, context_sheet_name=self.main_sheet)
                     else:
-                        variables[col_ranges] = self.calculate_range(formula, col_ranges)
+                        variables[col_ranges] = self.calculate_range(formula, col_ranges, context_sheet_name=self.main_sheet)
                 
             if row_based_ranges:
-
                 columns_in_formula = self.exclude_cols_from_row_ranges(row_based_ranges, columns_in_formula)
-                for sheet_name, col1, row, col2 in row_based_ranges:
-                    if not sheet_name:
-                        # the structure of row_based_ranges is: [(col1, row, col2)]
-                        var = f"{col1}{row}:{col2}{row}"
-                        variables[var] = self.calculate_row_based_range([col1, row, col2]) # e.g variables[B4:BB4]
-                    else:
-                        # the structure of row_based_ranges is: [(col1, row, col2)]
-                        var = f"{sheet_name.upper()}!{col1}{row}:{col2}{row}"
-                        variables[var] = self.calculate_row_based_range([col1, row, col2]) # e.g variables[sheet!B4:BB4]
             if abs_rows:
                 abs_rows = self.exclude_abs_range_columns(abs_rows, ranges_in_formula)
                 for i in abs_rows:
@@ -197,6 +186,15 @@ class ShapeCalcFormulas(CalcFormulas):
                         # variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = value if value is not None else 0  # Default to None if 0
                         variables[f"{sheet_name.upper()}!{col}{self.start_row}"] = self.sanitize_value(value, formula)
 
+                # Update row-based ranges for the current row
+                for sheet_name, col1, _, col2 in row_based_ranges:
+                    if not sheet_name:
+                        var = f"{col1}{self.start_row}:{col2}{self.start_row}"
+                        variables[var] = self.calculate_row_based_range([col1, cell.row, col2])
+                    else:
+                        var = f"{sheet_name.upper()}!{col1}{self.start_row}:{col2}{self.start_row}"
+                        variables[var] = self.calculate_row_based_range([col1, cell.row, col2])
+                
                 # Evaluate the formula with the given variables
                 try:
                     calculated_result = compiled(**variables)
@@ -232,6 +230,72 @@ class ShapeCalcFormulas(CalcFormulas):
         # return the caclulated_result as single value and not as a numpy array e.g Array("OK", dtype=object)
         return (self.sheet, verif_checks_results)
     
+    def calculate_range(
+            self,
+            formula: str,
+            col_range: str,
+            sheet_name: str = None,
+            external_wb: openpyxl.workbook.Workbook = None,
+            context_sheet_name: str = None
+        ) -> list:
+        vlookup_pattern = r'\bVLOOKUP\('
+
+        if external_wb:
+            current_sheet = external_wb[sheet_name]
+        else:
+            current_sheet = self.sheet if not sheet_name else self.workbook[sheet_name]
+
+        col_range = col_range.replace('$', '')
+        col_range = self.clean_range(col_range)
+
+        start_col, end_col = col_range.split(':')
+        start_num = column_index_from_string(start_col)
+        end_num = column_index_from_string(end_col)
+
+        values = []
+
+        if context_sheet_name in {"Controllo dati aggregati", "Controlli aggregati"}:
+            # For these sheets, start from row 1 and skip None values
+            start_row = 1
+            for col_num in range(start_num, end_num + 1):
+                col_letter = get_column_letter(col_num)
+                last_row = self.get_last_data_row_in_column(current_sheet, col_letter)
+
+                column_values = []
+                for row in range(start_row, last_row + 1):
+                    val = current_sheet[f'{col_letter}{row}'].value
+                    if val not in (None, ""):
+                        column_values.append(val)
+
+                values.append(column_values)
+
+        else:
+            # For all other sheets, defer to parent behavior (including empty cells)
+            start_row = super().get_the_first_row_from_a_range(col_range)
+
+            for col_num in range(start_num, end_num + 1):
+                col_letter = get_column_letter(col_num)
+                last_row = self.get_last_data_row_in_column(current_sheet, col_letter)
+
+                column_values = []
+                for row in range(start_row, last_row + 1):
+                    val = current_sheet[f'{col_letter}{row}'].value
+                    column_values.append(val)
+
+                values.append(column_values)
+
+        if re.search(vlookup_pattern, formula, re.IGNORECASE):
+            values = [list(tup) for tup in zip(*values)]
+
+        return values
+
+    def get_last_data_row_in_column(self, sheet, col_letter: str) -> int:
+        for row in reversed(range(1, sheet.max_row + 1)):
+            cell_value = sheet[f"{col_letter}{row}"].value
+            if cell_value not in (None, ""):
+                return row
+        return 0
+    
     def replace_with_year(self, formula):
         pattern = r"\$?'ANNO INPUT'!\$?[A-Z]+\$?\d+|\$?'ANNO INPUT'![A-Z]+\d+"
         return re.sub(
@@ -262,8 +326,10 @@ class ShapeCalcFormulas(CalcFormulas):
         '''
         This method handles the empty cells like the Excel
         '''
-        pattern = r'<>""'
-        if value is None and re.search(pattern, formula):
+        pattern1 = r'<>""'
+        pattern2 = r'=""'
+
+        if (value is None or (isinstance(value, float) and math.isnan(value))) and (re.search(pattern1, formula) or re.search(pattern2, formula)):
             value = ""
             return value
         if value is None or (isinstance(value, float) and math.isnan(value)) or value == "":
@@ -275,6 +341,7 @@ class ShapeCalcFormulas(CalcFormulas):
 class SpecShapeCalcFormulas:
     """
     This class calculates the time-consuming formulas for the SHAPE checks
+    Related issue: https://github.com/geosolutions-it/C179-DBIAIT/issues/462
     """
 
     def __init__(self,
@@ -359,7 +426,7 @@ class SpecShapeCalcFormulas:
             logger.info("The sheet was not found during the specialized formulas calculations")
        
        # Defind the column indices for the col_var
-        col_var_idx = column_index_from_string(col)
+        col_var_idx = column_index_from_string(col_var)
         col_var_idx -= 1
     
        # Get the correct value if it exists
@@ -395,8 +462,10 @@ class SpecShapeCalcFormulas:
                                               3: "D"})  # Column N or O (Condition), Column D (Value to check)
 
         # In other sheets beyond the main sheet, the start row is the row 4
-        sheet1_set = set(df_sheet1.iloc[3:, 1])  # Column B of Distrib_tronchi
-        sheet2_set = set(df_sheet2.iloc[3:, 1])  # Column B of Addut_tronchi
+        # in excel but in pandas is row 3 because the empty rows are removed
+        start_index_B = 2
+        sheet1_set = set(df_sheet1.iloc[start_index_B:, 1])  # Column B of Distrib_tronchi
+        sheet2_set = set(df_sheet2.iloc[start_index_B:, 1])  # Column B of Addut_tronchi
 
         # Apply the formula logic using .map()
         def apply_formula(row):
@@ -460,7 +529,7 @@ class SpecShapeCalcFormulas:
             logger.info("The sheet was not found during the specialized formulas calculations")
        
        # Define the column indices for the col_var
-        col_var_idx = column_index_from_string(col)
+        col_var_idx = column_index_from_string(col_var)
         col_var_idx -= 1
 
         # Define end col range indices
@@ -503,14 +572,14 @@ class SpecShapeCalcFormulas:
         df_subset = df_subset.rename(columns={0: "A", 
                                               col_var_idx: col_var})  # Column A (ID) & Column N (Condition)
 
-        sheet1_lookup = df_sheet1.set_index(start_range_col1_idx).iloc[:, end_range_col1_idx].to_dict()  # Column B -> Column AD or T
-        sheet2_lookup = df_sheet2.set_index(start_range_col2_idx).iloc[:, end_range_col2_idx].to_dict()  # Column B -> Column Z or N
+        sheet1_lookup = df_sheet1.set_index(start_range_col1_idx)[end_range_col1_idx].to_dict() # Column B -> Column AD or T
+        sheet2_lookup = df_sheet2.set_index(start_range_col2_idx)[end_range_col2_idx].to_dict()  # Column B -> Column Z or N
 
         def apply_formula(row):
             if row[col_var] == col_value:
-                value = sheet1_lookup.get(row["A"], float("inf"))  # Default to large number
+                value = sheet1_lookup.get(row["A"], 0)  # Default to 0
             else:
-                value = sheet2_lookup.get(row["A"], float("inf"))  # Default to large number
+                value = sheet2_lookup.get(row["A"], 0)  # Default to 0
 
             # Handle NoneType explicitly
             if value is None:
@@ -520,7 +589,7 @@ class SpecShapeCalcFormulas:
             try:
                 value = float(value)
             except (ValueError, TypeError):  
-                value = float("inf")  # If conversion fails, use a large number
+                value = float("inf")  # If conversion fails, return 0
 
             return 0 if value < 3 else 1
 

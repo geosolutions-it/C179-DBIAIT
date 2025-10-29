@@ -83,6 +83,22 @@
         <input type="file" name="xlsx_file" id="id_xlsx_file" class="form-control" required>
       </div>
     </div>
+
+    <!-- Dropdown for Group Selection -->
+    <div class="form-group mt-4">
+      <label for="id_group">SELEZIONA GRUPPO</label>
+      <select name="group" id="id_group" class="form-control" required>
+        <option value="__all__" selected>Tutti i gruppi</option>
+        <option value="gruppo_captazioni">Gruppo Captazioni</option>
+        <option value="gruppo_impianti_acquedotto">Gruppo Impianti Acquedotto</option>
+        <option value="gruppo_reti_acquedotto_adduttrici">Gruppo Reti Acquedotto Adduttrici</option>
+        <option value="gruppo_reti_acquedotto_distribuzioni">Gruppo Reti Acquedotto Distribuzioni</option>
+        <option value="gruppo_impianti_fognatura">Gruppo Impianti Fognatura</option>
+        <option value="gruppo_reti_fognatura_collettori">Gruppo Reti Fognatura Collettori</option>
+        <option value="gruppo_reti_fognatura_fognature">Gruppo Reti Fognatura Fognature</option>
+      </select>
+    </div>
+
     <button type="submit" class="btn btn-info mb-2 btn-block" onclick="loadIcon();">AVVIA</button>
   </form>
 </div>

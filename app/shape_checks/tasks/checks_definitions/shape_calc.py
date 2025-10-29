@@ -4,6 +4,7 @@ import pathlib
 import pandas as pd
 from dbfread import DBF
 import gc
+from collections import defaultdict
 
 from openpyxl.formula.translate import Translator
 from openpyxl import load_workbook
@@ -44,7 +45,8 @@ class ShapeCalc(BaseCalc):
         export_dir: pathlib.Path,
         file_year_required: bool = False,
         task_progress: int = 0,
-        log_workbook = None
+        log_workbook = None,
+        summary_data = None,
     ):
         super().__init__(orm_task,
                          imported_file,
@@ -55,18 +57,31 @@ class ShapeCalc(BaseCalc):
                          file_year_required,
                          task_progress,
                          log_workbook,
+                         summary_data,
                          )
         self.imported_dbf_file = imported_dbf_file
         self.sheet_for_dbf = sheet_for_dbf
     
     def drag_formulas(self, seed_wb):
-        
-        # Before dragging the formulas we have to copy
-        # the DBF content to the specialized sheet
+        # Before dragging the formulas we have to copy the DBF content
         dbf_copy_result = self.copy_from_dbf(seed_wb)
 
-        if dbf_copy_result:
+        if not dbf_copy_result:
+            return  # Stop if DBF copy failed
+
+        sheets_to_skip = {"Controllo dati aggregati", "Controlli aggregati"}
+        # Temporarily filter formulas_config to exclude sheets I want to skip
+        original_config = self.formulas_config
+        self.formulas_config = {
+            sheet: cfg for sheet, cfg in original_config.items()
+            if sheet not in sheets_to_skip
+        }
+
+        try:
             super().drag_formulas(seed_wb)
+        finally:
+            # Restore original formulas_config to avoid affecting other methods
+            self.formulas_config = original_config
     
     def copy_from_dbf(self, seed_wb):
         try:
@@ -139,7 +154,7 @@ class ShapeCalc(BaseCalc):
             return False
 
     def log_file_manager(self, seed_wb, seed_name):
-
+        
         ## Configuration setup
         # prepare the logs workbook
         # Remove default sheet if it exists
@@ -153,12 +168,12 @@ class ShapeCalc(BaseCalc):
                               "Foglio",
                               "Codice opera",
                               "Colonna check", 
-                              "Tipo check", 
-                              "Valore check errato col", 
-                              "Valore errato col1", 
-                              "Valore errato col2",
-                              "Valore errato col3",
-                              "Valore errato col4"
+                              "Descrizione", 
+                              "Valore colonna check", 
+                              "Valore colonna 1", 
+                              "Valore colonna 2",
+                              "Valore colonna 3",
+                              "Valore colonna 4"
 
                               ])
         else:
@@ -207,6 +222,9 @@ class ShapeCalc(BaseCalc):
                 ## setup the config for each sheet
                 sheet_checks = verif_checks_config.get(sheet_name, None)
 
+                # Dict with with the calculated columns
+                calc_spec_columns = {}
+
                 calculator = self.get_calculator()
 
                 # Map the check columns with the corresponging correct values
@@ -231,13 +249,22 @@ class ShapeCalc(BaseCalc):
                 else:
                     # a list to store the specialized column that the first calculation
                     # has to avoid
-                    columns_to_avoid = []
+                    time_consuming_columns = []
+
+                    # a dict which will include the "col": "method_name" in case
+                    # that the specific group includes time-consuming formulas
+                    custom_formulas = {}
                     # Calculate the specialized (time-consuming) formulas
                     spec_shape_formulas_config = spec_shape_formulas[sheet_name]
                     
                     for f in spec_shape_formulas_config.get("spec_formulas", {}):
                         col = f["col"]
-                        columns_to_avoid.append(col)
+                        custom_formula = f['method_name']
+                        
+                        col_index = column_index_from_string(col)
+                        if start_col_index <= col_index <= end_col_index:
+                            time_consuming_columns.append(col)
+                            custom_formulas[col] = custom_formula
                     # Calculate the main column checks
                     sheet_with_calc_values, verif_checks_results = calculator(workbook=seed_wb, 
                                                 sheet=seed_wb[sheet_name],
@@ -251,34 +278,33 @@ class ShapeCalc(BaseCalc):
                                                 external_wb_path=self.export_dir,
                                                 task_id=self.orm_task.id,
                                                 correct_values = correct_values,
-                                                columns_to_avoid = columns_to_avoid
+                                                columns_to_avoid = time_consuming_columns
                                                 ).main_calc()
 
                     # Initialization of the SpecShapeClass
-                    spec_shape_calc_formulas_instance = SpecShapeCalcFormulas(
-                            seed_wb,
-                            sheet_name,
-                            start_row,
-                            end_row,
-                            self.orm_task.id,
-                            correct_values
-                        )
-                    # Dict with with the calculated columns
-                    calc_spec_columns = {}
-                    for f in spec_shape_formulas_config.get("spec_formulas", {}):
-                        col = f["col"]
-                        method_name = f['method_name']
-                        # Dynamically call the method based on the JSON mapping
-                        if hasattr(spec_shape_calc_formulas_instance, method_name):
-                            method = getattr(spec_shape_calc_formulas_instance, method_name)
-                            logger.info(f"Processing {col} using {method}")
-                            calc_spec_columns[col], incorrect_value = method(col)
-                            # Check if the result includes incorrect values
-                            if incorrect_value:
-                                verif_checks_results.append(col)
+                    # Related issue: https://github.com/geosolutions-it/C179-DBIAIT/issues/462
+                    # Check if the time consuming columns are included for this specific range (group)
+                    if time_consuming_columns:
+                        spec_shape_calc_formulas_instance = SpecShapeCalcFormulas(
+                                seed_wb,
+                                sheet_name,
+                                start_row,
+                                end_row,
+                                self.orm_task.id,
+                                correct_values
+                            )
+                        for col, method_name in custom_formulas.items():
+                            # Dynamically call the method based on the JSON mapping
+                            if hasattr(spec_shape_calc_formulas_instance, method_name):
+                                method = getattr(spec_shape_calc_formulas_instance, method_name)
+                                logger.info(f"Processing {col} using {method}")
+                                calc_spec_columns[col], incorrect_value = method(col)
+                                # Check if the result includes incorrect values
+                                if incorrect_value:
+                                    verif_checks_results.append(col)
 
-                        else:
-                            logger.info(f"Method {method_name} not found in class.")
+                            else:
+                                logger.info(f"Method {method_name} not found in class.")
                 
                 for check in sheet_checks:
         
@@ -378,26 +404,16 @@ class ShapeCalc(BaseCalc):
                                 ]
                             logger.info("filtered_rows from pandas where created")
                         
-                            # non verbose file
-                            #for index, row in filtered_rows.iterrows():
-                            #    incorrect_value = row[column_check_idx]
-                            #    unique_code = "--"
-                            #    updated_desc = f"The column {column_check} includes incorrect values"
-                                # Append the row to the log sheet
-                            #    log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value])
-                            
-                            # logger.info("the log_sheet was created")
-                            # In case of a verbose file
-                            #    filtered_rows = pd_sheet.iloc[start_idx:][pd_sheet.iloc[start_idx:, column_check_idx] != criterion]
-                            self.verbose_log_file(column_check_idx,
-                                                            sheet_name,
-                                                            column_rel,
-                                                            desc,
-                                                            seed_key,
-                                                            column_check,
-                                                            log_sheet,
-                                                            filtered_rows
-                                                            )
+                            self.verbose_log_file(
+                                column_check_idx,
+                                sheet_name,
+                                column_rel,
+                                desc,
+                                seed_key,
+                                column_check,
+                                log_sheet,
+                                filtered_rows
+                            )
                         else:
                             logger.info(f"The column check {column_check} is OK")
                 
@@ -447,14 +463,14 @@ class ShapeCalc(BaseCalc):
         # Write the year to the resulted file
         defined_year = YearHandler(self.imported_file).get_year()
         anno_sheet = seed_wb["ANNO INPUT"]
-        anno_sheet['A1'] = defined_year
+        anno_sheet['A1'] = int(defined_year)
         logger.info(f"The year {defined_year} was copied to the ANNO INPUT sheet")
 
     def get_the_unique_code(self, sheet_name, row):
             
         if sheet_name not in {"Controllo dati aggregati", "Controlli aggregati"}:
-            # retrieve the column B which includes the unique code of each record
-            unique_code_idx = self.parse_col_for_pd('A')
+            # retrieve the column D which includes the unique code (COD_TRATTO) of each record
+            unique_code_idx = self.parse_col_for_pd('D')
             unique_code = row[unique_code_idx]
             return unique_code
         else:
@@ -468,11 +484,7 @@ class ShapeCalc(BaseCalc):
         return end_row
     
     def load_formulas_conf(self, seed_key):
-        # Open the json file with the verif shape formulas
-        with open(settings.SHAPE_VERIF_FORMULAS, "r", encoding='utf-8') as file:
-            shape_verif_formulas = json.load(file)
-        formulas_config = shape_verif_formulas.get(seed_key, {})
-        return formulas_config
+        return self.formulas_config
     
     def get_calculator(self):
         return ShapeCalcFormulas
@@ -484,7 +496,8 @@ class ShapeCalc(BaseCalc):
                          seed_key, 
                          column_check, 
                          log_sheet, 
-                         filtered_rows):
+                         filtered_rows,
+                         ):
         # Iterate through the filtered rows and retrieve the necessary information
         for index, row in filtered_rows.iterrows():
             incorrect_value = row[column_check_idx]  # Value of the cell in `colonna_check`
@@ -514,5 +527,8 @@ class ShapeCalc(BaseCalc):
 
             # Append the row to the log sheet
             log_sheet.append([seed_key, sheet_name, unique_code, column_check, updated_desc, incorrect_value] + related_values)
+
+            # Track summary entry
+            self.summary_data[(seed_key, sheet_name, column_check)] += 1
 
     

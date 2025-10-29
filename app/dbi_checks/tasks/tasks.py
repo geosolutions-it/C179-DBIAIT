@@ -3,6 +3,7 @@ import tempfile
 import pathlib
 import shutil
 from openpyxl.workbook import Workbook
+from collections import defaultdict
 
 from django.db.models import Q, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
@@ -34,6 +35,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
         file_path2: str,
         name: str,
         check_type: str,
+        group: str,
     ):
 
         # Check if the xlsx files exists
@@ -80,6 +82,7 @@ class ConsistencyCheckTask(ChecksBaseTask):
             imported=True,
             check_type=check_type,
             name=name,
+            group=group
         )
         current_task.save()
 
@@ -126,8 +129,9 @@ class ConsistencyCheckTask(ChecksBaseTask):
 
                 # Create a single log workbook
                 log_workbook = Workbook()
+                summary_data = defaultdict(int)
                 
-                result = BaseCalc(orm_task, 
+                base_calc_1 = BaseCalc(orm_task, 
                                   xlsx_file1_uploaded_path, 
                                   DBI_A, 
                                   dbi_a_config, 
@@ -135,14 +139,17 @@ class ConsistencyCheckTask(ChecksBaseTask):
                                   tmp_checks_export_dir,
                                   file_year_required,
                                   task_progress = 20,
-                                  log_workbook = log_workbook
-                                  ).run()
+                                  log_workbook = log_workbook,
+                                  summary_data=summary_data
+                                  )
+                
+                result = base_calc_1.run()
             
                 # Copy the second file using the DBI_A_1 seed only if the first copy is completed
                 if result:
                     logger.info(f"Task started with file: {xlsx_file2_uploaded_path}")
                     file_year_required = False
-                    result = BaseCalc(orm_task, 
+                    base_calc_2 = BaseCalc(orm_task, 
                              xlsx_file2_uploaded_path, 
                              DBI_A_1, 
                              dbi_a_1_config, 
@@ -150,8 +157,13 @@ class ConsistencyCheckTask(ChecksBaseTask):
                              tmp_checks_export_dir,
                              file_year_required,
                              task_progress = 20,
-                             log_workbook = log_workbook
-                             ).run()
+                             log_workbook = log_workbook,
+                             summary_data=summary_data
+                             )
+                    
+                    result = base_calc_2.run()
+
+                    base_calc_1.add_summary_sheet(summary_data)
                     
                     # Save logs only once after both runs
                     log_workbook.save(tmp_checks_export_dir / "logs.xlsx")
@@ -210,8 +222,9 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
 
                 # Create a single log workbook
                 log_workbook = Workbook()
+                summary_data = defaultdict(int)
                 
-                result = BaseCalc(orm_task, 
+                base_calc = BaseCalc(orm_task, 
                                   xlsx_file_uploaded_path, 
                                   DATI_PRIORITATI, 
                                   dbi_prior_config, 
@@ -219,10 +232,13 @@ class PrioritizedDataCheckTask(ChecksBaseTask):
                                   tmp_checks_export_dir,
                                   file_year_required,
                                   task_progress = 40,
-                                  log_workbook = log_workbook
-                                  ).run()
+                                  log_workbook = log_workbook,
+                                  summary_data=summary_data
+                                  )
+                result = base_calc.run()
             
                 if result:
+                    base_calc.add_summary_sheet(summary_data)
                     # Save logs only once after both runs
                     log_workbook.save(tmp_checks_export_dir / "logs.xlsx")
                     
@@ -280,8 +296,9 @@ class DataQualityCheckTask(ChecksBaseTask):
                 
                 # Create a single log workbook
                 log_workbook = Workbook()
+                summary_data = defaultdict(int)
                 
-                result = BaseCalc(orm_task, 
+                base_calc = BaseCalc(orm_task, 
                                   xlsx_file_uploaded_path, 
                                   DBI_BONTA_DEI_DATI, 
                                   dbi_bonta_config, 
@@ -289,11 +306,14 @@ class DataQualityCheckTask(ChecksBaseTask):
                                   tmp_checks_export_dir,
                                   file_year_required,
                                   task_progress = 40,
-                                  log_workbook = log_workbook
-                                  ).run()
+                                  log_workbook = log_workbook,
+                                  summary_data=summary_data
+                                  )
+                
+                result = base_calc.run()
             
                 if result:
-                    
+                    base_calc.add_summary_sheet(summary_data)
                     # Save logs only once after both runs
                     log_workbook.save(tmp_checks_export_dir / "logs.xlsx")
                     

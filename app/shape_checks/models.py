@@ -43,11 +43,13 @@ class Task_CheckShape(models.Model):
         default=ShapeCheckType.ACQ,
     )
     name = models.CharField(max_length=100)
+    group = models.CharField(max_length=100, blank=True, null=True)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, null=False, default=TaskStatus.QUEUED)
     logfile = models.CharField(max_length=300, blank=True, default=None)
     progress = models.IntegerField(default=0)
+    
 
     def save(self, *args, **kwargs):
         if not self.logfile:

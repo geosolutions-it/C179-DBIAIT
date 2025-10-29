@@ -1,0 +1,141 @@
+{
+  "SHP_ACQ_GROUPS": {
+    "__all__": {
+      "SHP_Acquedotto": {
+        "start_row": 5,
+        "start_col": "AE",
+        "end_col": "BW"
+      }
+    },
+    "gruppo_codice_rete_e_tratto": {
+      "SHP_Acquedotto": {
+        "start_row": 5,
+        "start_col": "AE",
+        "end_col": "AK"
+      }
+    },
+    "gruppo_materiale_e_diametro": {
+      "SHP_Acquedotto": {
+        "start_row": 5,
+        "start_col": "AL",
+        "end_col": "AR"
+      }
+    },
+    "gruppo_anno_e_lunghezza": {
+      "SHP_Acquedotto": {
+        "start_row": 5,
+        "start_col": "AS",
+        "end_col": "AZ"
+      }
+    },
+    "gruppo_stato_conservazione_tipo_rete_tipo_acqua": {
+      "SHP_Acquedotto": {
+        "start_row": 5,
+        "start_col": "BA",
+        "end_col": "BG"
+      }
+    },
+    "gruppo_funzionamento_copertura_profondita": {
+      "SHP_Acquedotto": {
+        "start_row": 5,
+        "start_col": "BH",
+        "end_col": "BL"
+      }
+    },
+    "gruppo_pressioni_telecontrollo_e_protezione_catodica": {
+      "SHP_Acquedotto": {
+        "start_row": 5,
+        "start_col": "BM",
+        "end_col": "BP"
+      }
+    },
+    "gruppo_allacci_riparazioni_misuratori": {
+      "SHP_Acquedotto": {
+        "start_row": 5,
+        "start_col": "BQ",
+        "end_col": "BU"
+      }
+    },
+    "gruppo_stato_opera_e_completezza": {
+      "SHP_Acquedotto": {
+        "start_row": 5,
+        "start_col": "BV",
+        "end_col": "BW"
+      }
+    },
+    "gruppo_controlli_aggregati": {
+      "Controllo dati aggregati": {
+        "start_row": 2,
+        "end_row": 3,
+        "start_col": "B",
+        "end_col": "G"
+      }
+    }
+  },
+  "SHP_FGN_GROUPS": {
+    "__all__": {
+      "SHP_Fognatura": {
+        "start_row": 5,
+        "start_col": "AC",
+        "end_col": "BS"
+      }
+    },
+    "gruppo_codice_rete_e_tratto": {
+      "SHP_Fognatura": {
+        "start_row": 5,
+        "start_col": "AC",
+        "end_col": "AI"
+      }
+    },
+    "gruppo_materiale_e_diametro": {
+      "SHP_Fognatura": {
+        "start_row": 5,
+        "start_col": "AJ",
+        "end_col": "AQ"
+      }
+    },
+    "gruppo_anno_e_lunghezza": {
+      "SHP_Fognatura": {
+        "start_row": 5,
+        "start_col": "AR",
+        "end_col": "AY"
+      }
+    },
+    "gruppo_stato_conservazione_tipo_rete_tipo_acqua": {
+      "SHP_Fognatura": {
+        "start_row": 5,
+        "start_col": "AZ",
+        "end_col": "BE"
+      }
+    },
+    "gruppo_funzionamento_copertura_profondita": {
+      "SHP_Fognatura": {
+        "start_row": 5,
+        "start_col": "BF",
+        "end_col": "BL"
+      }
+    },
+    "gruppo_allacci_riparazioni_misuratori": {
+      "SHP_Fognatura": {
+        "start_row": 5,
+        "start_col": "BM",
+        "end_col": "BP"
+      }
+    },
+    "gruppo_stato_opera_e_completezza": {
+      "SHP_Fognatura": {
+        "start_row": 5,
+        "start_col": "BR",
+        "end_col": "BS"
+      }
+    },
+    "gruppo_controlli_aggregati": {
+      "Controlli aggregati": {
+        "start_row": 2,
+        "end_row": 3,
+        "start_col": "B",
+        "end_col": "F"
+      }
+    }
+  }
+}
