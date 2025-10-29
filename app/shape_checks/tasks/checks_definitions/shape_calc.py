@@ -90,7 +90,7 @@ class ShapeCalc(BaseCalc):
             dbf_table = DBF(self.imported_dbf_file, load=True)
             df = pd.DataFrame(iter(dbf_table))
 
-            with open(settings.DBF_TO_SHEET, "r") as file:
+            with open(settings.DBF_TO_SHEET, "r", encoding='utf-8') as file:
                 dbf_to_sheet_config = json.load(file)
 
             self.orm_task.progress += self.task_progress
@@ -191,7 +191,7 @@ class ShapeCalc(BaseCalc):
         seed_filename = pathlib.Path(self.seed).stem
         seed_key = seed_filename.upper()
                 
-        with open(settings.LOG_MAPPING, "r") as file:
+        with open(settings.LOG_MAPPING, "r", encoding='utf-8') as file:
             log_mapping = json.load(file)
                 
         verif_checks_config = log_mapping.get(seed_key, {})
@@ -199,7 +199,7 @@ class ShapeCalc(BaseCalc):
         formulas_config = self.load_formulas_conf(seed_key)
 
         # Load the specialized (time-consuming) formulas
-        with open(settings.SPEC_SHAPE_FORMULAS, "r") as file:
+        with open(settings.SPEC_SHAPE_FORMULAS, "r", encoding='utf-8') as file:
             spec_shape_formulas = json.load(file)
         
         ## Calculate the formulas of the checks for each sheet

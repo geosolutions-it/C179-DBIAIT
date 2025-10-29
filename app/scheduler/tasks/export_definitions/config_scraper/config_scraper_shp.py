@@ -29,7 +29,7 @@ class ShpExportConfig(BaseExportConfig):
         if self.ref_year is not None:
             sett = settings.SHAPEFILE_EXPORT_CONFIG.substitute({"year": self.ref_year})
 
-        with open(sett, "r") as ecf:
+        with open(sett, "r", encoding='utf-8') as ecf:
             config = json.load(ecf)
 
         shapes_config_files = config.get("shp_files_configs", None)
@@ -64,7 +64,7 @@ class ShpExportConfig(BaseExportConfig):
                 )
 
             try:
-                with open(shape_config_path, "r") as scp:
+                with open(shape_config_path, "r", encoding='utf-8') as scp:
                     shape_conf = json.load(scp)
             except Exception as e:
                 raise ExportConfigError(

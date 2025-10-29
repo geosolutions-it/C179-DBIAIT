@@ -86,7 +86,7 @@ class BaseFreezeDefinition:
             os.makedirs(output_dir, exist_ok=True)
 
         for config in os.listdir(input_dir):
-            with open(f"{input_dir}/{config}", 'r') as file:
+            with open(f"{input_dir}/{config}", 'r', encoding='utf-8') as file:
                 sheet_conf = json.loads(file.read())
 
             for x in sheet_conf['sources']:
@@ -100,6 +100,6 @@ class BaseFreezeDefinition:
                         j_table = {"name": f"{join_table_name}_{ref_year}", "alias": join_table_name}
                         y['table'] = j_table
 
-            with open(f"{output_dir}/{config}", 'w') as new_conf:
+            with open(f"{output_dir}/{config}", 'w', encoding='utf-8') as new_conf:
                 new_conf.write(json.dumps(sheet_conf, indent=4))
         return True

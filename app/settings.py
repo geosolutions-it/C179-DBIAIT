@@ -159,6 +159,7 @@ for db_key in DATABASES:
     DB['PASSWORD'] = os.getenv('DATABASE_PASSWORD', '')
     DB['HOST'] = os.getenv('DATABASE_HOST', 'localhost')
     DB['PORT'] = os.getenv('DATABASE_PORT', 5432)
+    DB['CONN_MAX_AGE'] = None
 
 
 DATABASE_ROUTERS = ['app.scheduler.system_router.SystemRouter', 'app.scheduler.analysis_router.AnalysisRouter']
@@ -285,6 +286,12 @@ IMPORT_FOLDER = os.getenv("IMPORT_FOLDER", os.path.join(FTP_FOLDER, "import"))
 DATABASE_FOLDER = os.getenv("DATABASE_FOLDER", f"{pathlib.Path().absolute()}/database/")
 IMPORT_CONF_FILE = os.getenv("IMPORT_CONF_FILE", os.path.join(IMPORT_FOLDER, 'config', "layers.json"))
 IMPORT_DOMAINS_FILE = os.getenv("IMPORT_DOMAINS_FILE", os.path.join(IMPORT_FOLDER, 'config', "domains.csv"))
+
+if not os.path.exists(IMPORT_FOLDER):
+    os.makedirs(IMPORT_FOLDER, exist_ok=True)
+
+if not os.path.exists(FTP_FOLDER):
+    os.makedirs(FTP_FOLDER, exist_ok=True)
 
 # Directory in which generated exports are kept
 EXPORT_FOLDER = os.getenv("EXPORT_FOLDER", os.path.join(FTP_FOLDER, "export"))

@@ -1,0 +1,11 @@
+name: dbiait
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.6
+  - pip
+  - qgis=3.16
+  - gunicorn
+  - pip:
+    - -r requirements.txt

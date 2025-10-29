@@ -99,7 +99,7 @@ class BaseShapeCheckStart(LoginRequiredMixin, FormView):
         """
         temp_path = file_obj.temporary_file_path()
         uploaded_path = os.path.join(tempfile.gettempdir(), file_name)
-        with open(temp_path, "rb") as src_file, open(uploaded_path, "wb") as dst_file:
+        with open(temp_path, "rb", encoding='utf-8') as src_file, open(uploaded_path, "wb") as dst_file:
             shutil.copyfileobj(src_file, dst_file, length=1024 * 1024)
         return uploaded_path
 
@@ -107,9 +107,9 @@ class BaseShapeCheckStart(LoginRequiredMixin, FormView):
         """
         Load seed files and configuration for sheets and formulas based on check type.
         """
-        with open(settings.SHEETS_CONFIG, "r") as file:
+        with open(settings.SHEETS_CONFIG, "r", encoding='utf-8') as file:
             sheets_config = json.load(file)
-        with open(settings.SHAPE_GROUPS, "r") as file:
+        with open(settings.SHAPE_FORMULAS, "r", encoding='utf-8') as file:
             shape_formulas = json.load(file)
 
         group_columns = {}

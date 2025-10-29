@@ -333,7 +333,7 @@ class BaseCalc:
         seed_filename = pathlib.Path(self.seed).stem
         seed_key = seed_filename.upper()
                 
-        with open(settings.LOG_MAPPING, "r") as file:
+        with open(settings.LOG_MAPPING, "r", encoding='utf-8') as file:
             log_mapping = json.load(file)
                 
         verif_checks_config = log_mapping.get(seed_key, {})
@@ -562,7 +562,7 @@ class BaseCalc:
         '''
 
         # Load the extra formulas config
-        with open(settings.EXTRA_DB_PRIOR_FORMULAS, "r") as file:
+        with open(settings.EXTRA_DB_PRIOR_FORMULAS, "r", encoding='utf-8') as file:
             extra_formulas = json.load(file)
         extra_formulas_config = extra_formulas.get(sheet_name, {})
 
